@@ -905,13 +905,13 @@
       "anchor": {
         "at": [
           13.07,
-          47.525
+          47.9
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 90.0,
         "side": "F"
       },
-      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
+      "anchor_source": "W2 PCB-PWRA-4: W2 PWR-L6-SCRIPT: C122 (CIN_HF2) 0.375 mm up for the SW-CBOOT link under it (SNVSBD5D 11.1)"
     },
     {
       "ref": "C123",
@@ -5138,24 +5138,6 @@
         "why": "scripted pour E1SW-BAR of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
       },
       {
-        "id": "CU-E1SW-Q102",
-        "net": "E1_SW",
-        "layer": "F.Cu",
-        "width_mm": 1.45,
-        "path": [
-          [
-            26.025,
-            36.725
-          ],
-          [
-            26.325,
-            36.725
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour E1SW-Q102 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
         "id": "CU-CONVIN-SPINE",
         "net": "E1_CONV_IN",
         "layer": "F.Cu",
@@ -5264,24 +5246,6 @@
         "why": "scripted pour CONVIN-U107-L of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
       },
       {
-        "id": "CU-CONVIN-U107-L-BAR",
-        "net": "E1_CONV_IN",
-        "layer": "F.Cu",
-        "width_mm": 1.05,
-        "path": [
-          [
-            10.725,
-            46.675
-          ],
-          [
-            13.02,
-            46.675
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour CONVIN-U107-L-BAR of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
         "id": "CU-CONVIN-U107-VIN2",
         "net": "E1_CONV_IN",
         "layer": "F.Cu",
@@ -5372,24 +5336,6 @@
         "why": "scripted pour CONVIN-U108-VIN2 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
       },
       {
-        "id": "CU-SYS12SW-PIN",
-        "net": "E1_SYS12_SW",
-        "layer": "F.Cu",
-        "width_mm": 0.7,
-        "path": [
-          [
-            16.0,
-            46.65
-          ],
-          [
-            16.0,
-            48.95
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour SYS12SW-PIN of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
         "id": "CU-SYS12SW-L102",
         "net": "E1_SYS12_SW",
         "layer": "F.Cu",
@@ -5444,24 +5390,6 @@
         "why": "scripted pour SYS12-CROSS of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
       },
       {
-        "id": "CU-SYS12-Q201",
-        "net": "SYS12",
-        "layer": "F.Cu",
-        "width_mm": 1.4,
-        "path": [
-          [
-            31.43,
-            58.2
-          ],
-          [
-            31.505,
-            58.2
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour SYS12-Q201 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
         "id": "CU-LAB5RAW-F102",
         "net": "E1_LAB5_RAW",
         "layer": "F.Cu",
@@ -5496,60 +5424,6 @@
         ],
         "locked": true,
         "why": "scripted pour LAB5RAW-BAR of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
-        "id": "CU-LAB5RAW-BAR-1",
-        "net": "E1_LAB5_RAW",
-        "layer": "F.Cu",
-        "width_mm": 0.8,
-        "path": [
-          [
-            16.0,
-            75.2
-          ],
-          [
-            17.875,
-            77.0
-          ]
-        ],
-        "locked": true,
-        "why": "joins pad 1, which pour LAB5RAW-BAR touched and its track misses"
-      },
-      {
-        "id": "CU-LAB5RAW-VOUT1",
-        "net": "E1_LAB5_RAW",
-        "layer": "F.Cu",
-        "width_mm": 1.3,
-        "path": [
-          [
-            11.95,
-            77.45
-          ],
-          [
-            12.05,
-            77.45
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour LAB5RAW-VOUT1 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
-        "id": "CU-LAB5RAW-VOUT2",
-        "net": "E1_LAB5_RAW",
-        "layer": "F.Cu",
-        "width_mm": 1.3,
-        "path": [
-          [
-            15.95,
-            77.45
-          ],
-          [
-            16.05,
-            77.45
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour LAB5RAW-VOUT2 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
       },
       {
         "id": "CU-LAB5FUSED",
@@ -5622,42 +5496,6 @@
         ],
         "locked": true,
         "why": "scripted pour LAB5-F104 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
-        "id": "CU-LAB5-B-TOP",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 2.2,
-        "path": [
-          [
-            1.7,
-            91.5
-          ],
-          [
-            25.4,
-            91.5
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour LAB5-B-TOP of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
-        "id": "CU-LAB5-B-SPINE",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 2.2,
-        "path": [
-          [
-            25.4,
-            28.4
-          ],
-          [
-            25.4,
-            91.5
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour LAB5-B-SPINE of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
       },
       {
         "id": "CU-LAB5-B-BAND",
@@ -5858,24 +5696,6 @@
         "why": "scripted pour LAB5-J208-14 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
       },
       {
-        "id": "CU-GND-U107-L",
-        "net": "GND",
-        "layer": "F.Cu",
-        "width_mm": 1.5,
-        "path": [
-          [
-            8.3,
-            48.25
-          ],
-          [
-            14.3,
-            48.25
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour GND-U107-L of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
         "id": "CU-GND-C119",
         "net": "GND",
         "layer": "F.Cu",
@@ -6020,28 +5840,6 @@
         "why": "scripted pour GND-C111 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
       },
       {
-        "id": "CU-E1SW-BAR-J-E1SW-Q102",
-        "net": "E1_SW",
-        "layer": "F.Cu",
-        "width_mm": 1.45,
-        "path": [
-          [
-            26.175,
-            34.4
-          ],
-          [
-            26.175,
-            36.0
-          ],
-          [
-            26.175,
-            36.725
-          ]
-        ],
-        "locked": true,
-        "why": "joint of the scripted pours E1SW-BAR and E1SW-Q102, which meet edge to edge (make_board.py board_copper)"
-      },
-      {
         "id": "CU-CONVIN-U107-R-J-CONVIN-U107-R-BAR",
         "net": "E1_CONV_IN",
         "layer": "F.Cu",
@@ -6062,28 +5860,6 @@
         ],
         "locked": true,
         "why": "joint of the scripted pours CONVIN-U107-R and CONVIN-U107-R-BAR, which meet edge to edge (make_board.py board_copper)"
-      },
-      {
-        "id": "CU-CONVIN-U107-L-J-CONVIN-U107-L-BAR",
-        "net": "E1_CONV_IN",
-        "layer": "F.Cu",
-        "width_mm": 1.05,
-        "path": [
-          [
-            8.8,
-            45.6
-          ],
-          [
-            10.3,
-            46.675
-          ],
-          [
-            10.725,
-            46.675
-          ]
-        ],
-        "locked": true,
-        "why": "joint of the scripted pours CONVIN-U107-L and CONVIN-U107-L-BAR, which meet edge to edge (make_board.py board_copper)"
       },
       {
         "id": "CU-CONVIN-U108-J-CONVIN-U108-VIN1",
@@ -6128,72 +5904,6 @@
         ],
         "locked": true,
         "why": "joint of the scripted pours CONVIN-U108 and CONVIN-U108-VIN2, which meet edge to edge (make_board.py board_copper)"
-      },
-      {
-        "id": "CU-SYS12SW-PIN-J-SYS12SW-L102",
-        "net": "E1_SYS12_SW",
-        "layer": "F.Cu",
-        "width_mm": 0.7,
-        "path": [
-          [
-            16.0,
-            48.95
-          ],
-          [
-            16.0,
-            49.3
-          ],
-          [
-            16.0,
-            51.05
-          ]
-        ],
-        "locked": true,
-        "why": "joint of the scripted pours SYS12SW-PIN and SYS12SW-L102, which meet edge to edge (make_board.py board_copper)"
-      },
-      {
-        "id": "CU-LAB5RAW-BAR-J-LAB5RAW-VOUT1",
-        "net": "E1_LAB5_RAW",
-        "layer": "F.Cu",
-        "width_mm": 1.3,
-        "path": [
-          [
-            12.0,
-            75.2
-          ],
-          [
-            12.0,
-            76.8
-          ],
-          [
-            12.0,
-            77.45
-          ]
-        ],
-        "locked": true,
-        "why": "joint of the scripted pours LAB5RAW-BAR and LAB5RAW-VOUT1, which meet edge to edge (make_board.py board_copper)"
-      },
-      {
-        "id": "CU-LAB5RAW-BAR-J-LAB5RAW-VOUT2",
-        "net": "E1_LAB5_RAW",
-        "layer": "F.Cu",
-        "width_mm": 1.3,
-        "path": [
-          [
-            16.0,
-            75.2
-          ],
-          [
-            16.0,
-            76.8
-          ],
-          [
-            16.0,
-            77.45
-          ]
-        ],
-        "locked": true,
-        "why": "joint of the scripted pours LAB5RAW-BAR and LAB5RAW-VOUT2, which meet edge to edge (make_board.py board_copper)"
       },
       {
         "id": "CU-LAB5FUSED-J-LAB5FUSED-C111",
@@ -6304,6 +6014,760 @@
         ],
         "locked": true,
         "why": "joint of the scripted pours GND-U107-R and GND-C120, which meet edge to edge (make_board.py board_copper)"
+      },
+      {
+        "id": "SC-U107-SWLINK",
+        "net": "E1_SYS12_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            16.0,
+            46.375
+          ],
+          [
+            11.15,
+            46.375
+          ],
+          [
+            11.15,
+            45.3
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: SW to the CBOOT capacitor C127.2 under the device through the gap between VIN2 (pin 12) and RBOOT (pin 13), then under C122.1 and above R127.2; F.Cu only, no via (gate-drive charge only: branch of C127) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-CBOOT",
+        "net": "E1_SYS12_CBOOT",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            14.3,
+            45.375
+          ],
+          [
+            13.5,
+            45.375
+          ],
+          [
+            13.5,
+            43.525
+          ],
+          [
+            12.65,
+            43.525
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: CBOOT pin 14 to RBOOT R127.1 (short) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-CBOOT-C127",
+        "net": "E1_SYS12_CBOOT",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            12.65,
+            43.55
+          ],
+          [
+            11.15,
+            43.575
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: R127.1 to CBOOT C127.1 (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-RBOOT",
+        "net": "E1_SYS12_RBOOT",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            14.3,
+            45.875
+          ],
+          [
+            12.65,
+            45.875
+          ],
+          [
+            12.65,
+            45.3
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: RBOOT pin 13 to R127.2, between the CBOOT track and the SW link (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-VCC",
+        "net": "E1_SYS12_VCC",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            15.475,
+            44.5
+          ],
+          [
+            15.475,
+            43.3
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: VCC pin 2 to CVCC C128.1, short (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-AGND",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            16.0,
+            44.5
+          ],
+          [
+            16.0,
+            43.7
+          ],
+          [
+            16.4,
+            43.3
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: AGND pin 3 to CVCC C128.2, short (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-FB",
+        "net": "E1_SYS12_FB",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            16.525,
+            44.5
+          ],
+          [
+            16.525,
+            44.0
+          ],
+          [
+            17.4,
+            44.0
+          ],
+          [
+            17.4,
+            41.6
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: FB pin 4 round C128.2 to RFBB R125.1; FB node on F.Cu only (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-FB-R128",
+        "net": "E1_SYS12_FB",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            16.075,
+            41.5
+          ],
+          [
+            17.6,
+            41.5
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: RFF R128.2 to RFBB R125.1 (FB node) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-FB-R124",
+        "net": "E1_SYS12_FB",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            17.6,
+            41.5
+          ],
+          [
+            17.6,
+            39.85
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: RFBB R125.1 to RFBT R124.2 (FB node) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-FF",
+        "net": "E1_SYS12_FF",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            14.425,
+            41.5
+          ],
+          [
+            14.475,
+            39.85
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: RFF R128.1 to CFF C129.2 (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-BIAS",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            14.4,
+            44.825
+          ],
+          [
+            13.95,
+            42.55
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: BIAS pin 1 down to the output sense line (sense/bias pin, milliamperes: branch of U107 pad 1) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-SENSE",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            19.25,
+            39.85
+          ],
+          [
+            19.25,
+            38.9
+          ],
+          [
+            16.025,
+            38.9
+          ],
+          [
+            13.65,
+            38.9
+          ],
+          [
+            13.65,
+            42.2
+          ],
+          [
+            13.95,
+            42.55
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: the output sense of RFBT R124.1 and CFF C129.1 to the BIAS via, below the divider and away from SW (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-SENSE-C129",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            16.025,
+            39.85
+          ],
+          [
+            16.025,
+            38.9
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: CFF C129.1 to the output sense (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-SENSE-V1S",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            13.65,
+            38.9
+          ],
+          [
+            12.9,
+            38.3
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: the output sense line to its via below zone 3' (\"VIAS to BIAS\"; the via outside the bond zone) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-SENSE-IN2",
+        "net": "SYS12",
+        "layer": "In2.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            12.9,
+            38.3
+          ],
+          [
+            12.9,
+            55.0
+          ],
+          [
+            6.2,
+            61.7
+          ],
+          [
+            6.2,
+            62.0
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: the BIAS / RFBT output sense on In2.Cu (In1.Cu GND between it and the F.Cu SW copper) to the SYS12 bar left of zone 3' (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-VINBAR",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            9.15,
+            46.725
+          ],
+          [
+            10.2,
+            47.05
+          ],
+          [
+            13.07,
+            47.05
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: CIN2 C119.1 to CIN_HF2 C122.1 along the VIN2 level, above the SW-CBOOT link (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-B-TOP-1",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 2.4,
+        "path": [
+          [
+            2.0,
+            91.5
+          ],
+          [
+            13.0,
+            91.5
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu: top run from the L101 vias, 2.4 mm (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-B-TOP-2",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 2.3,
+        "path": [
+          [
+            13.0,
+            91.5
+          ],
+          [
+            25.4,
+            91.5
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu: top run to the spine, 2.3 mm (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-B-SPINE-1",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 2.5,
+        "path": [
+          [
+            25.6,
+            28.6
+          ],
+          [
+            25.6,
+            66.0
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu: spine 2.5 mm (x 24.35-26.85: 0.3 mm off thermal_bond zone 3, 0.2 mm off the E1_CONV_IN vias at x 27.5) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-B-SPINE-2",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 2.2,
+        "path": [
+          [
+            25.4,
+            66.0
+          ],
+          [
+            25.4,
+            91.5
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu: spine 2.2 mm above y 66 (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-B-PAR1",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 2.15,
+        "path": [
+          [
+            26.0,
+            37.0
+          ],
+          [
+            28.05,
+            37.0
+          ],
+          [
+            28.05,
+            41.0
+          ],
+          [
+            26.0,
+            41.0
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu: parallel strip beside the spine at y 37-41 (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-B-PAR2",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 2.5,
+        "path": [
+          [
+            26.0,
+            48.3
+          ],
+          [
+            28.05,
+            48.3
+          ],
+          [
+            28.05,
+            51.7
+          ],
+          [
+            26.0,
+            51.7
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu: parallel strip beside the spine at y 48-52 (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-B-PAR3",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 2.2,
+        "path": [
+          [
+            25.4,
+            72.5
+          ],
+          [
+            27.75,
+            72.5
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu: join of the strip at y 72.5 (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-B-PAR3-S",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 2.5,
+        "path": [
+          [
+            27.75,
+            72.5
+          ],
+          [
+            27.75,
+            84.0
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu: parallel strip beside the spine at y 72-84 (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-B-PAR3-T",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 2.2,
+        "path": [
+          [
+            27.75,
+            84.0
+          ],
+          [
+            25.4,
+            84.0
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu: join of the strip at y 84 (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-LAB5-F-BAND",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 2.0,
+        "path": [
+          [
+            26.2,
+            27.8
+          ],
+          [
+            39.6,
+            27.8
+          ]
+        ],
+        "locked": true,
+        "why": "PWR3A LAB5 E1-05 path A copper on 2 oz F.Cu: F.Cu strip over the B.Cu band (y 26.8-28.8, free at 0.20 mm) into the RISE-L copper; three vias to the band at its left end (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U107-PGND2",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 1.2,
+        "path": [
+          [
+            8.3,
+            48.4
+          ],
+          [
+            14.3,
+            48.4
+          ]
+        ],
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: PGND2 to C122.2 and C119.2 (clear of C122.1) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-Q102-S",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            26.175,
+            35.0
+          ],
+          [
+            26.175,
+            36.9
+          ]
+        ],
+        "locked": true,
+        "why": "BATT 1.6 mm pin-group bar over the Q102 sources S1-S3 from the E1_SW bar (power switch: no neck, no stem) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-Q201-S",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            31.468,
+            58.05
+          ],
+          [
+            31.468,
+            59.5
+          ]
+        ],
+        "locked": true,
+        "why": "BATT 1.6 mm from the SYS12 crossing onto the Q201 source (power switch: no neck, no stem) (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U108-VOUT1",
+        "net": "E1_LAB5_RAW",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            12.0,
+            76.2
+          ],
+          [
+            12.0,
+            77.3
+          ]
+        ],
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: BATT 1.6 mm onto VOUT1 (pin 8) from its via (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U108-VOUT2",
+        "net": "E1_LAB5_RAW",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            16.0,
+            76.2
+          ],
+          [
+            16.0,
+            77.3
+          ]
+        ],
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: BATT 1.6 mm onto VOUT2 (pin 9) from its via (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U108-R129",
+        "net": "E1_LAB5_RAW",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            16.0,
+            77.0
+          ],
+          [
+            17.875,
+            77.0
+          ]
+        ],
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: the regulation point RFBT R129.1 at the VOUT2 copper, at the class width (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U108-VLDOIN",
+        "net": "E1_LAB5_RAW",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            11.75,
+            79.725
+          ],
+          [
+            11.0,
+            79.725
+          ],
+          [
+            11.0,
+            78.35
+          ],
+          [
+            11.45,
+            77.9
+          ]
+        ],
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: VLDOIN pin 5 (LDO bias input, milliamperes: branch of U108 pad 5) to VOUT1 (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U108-AGND6",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            11.75,
+            79.225
+          ],
+          [
+            13.4,
+            79.225
+          ]
+        ],
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: AGND pin 6 to PGND pin 19 under the module (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U108-AGND11",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            16.25,
+            79.225
+          ],
+          [
+            14.6,
+            79.225
+          ]
+        ],
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: AGND pin 11 to PGND pin 19 under the module (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U108-FB",
+        "net": "E1_LAB5_FB",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            16.25,
+            78.725
+          ],
+          [
+            17.875,
+            78.725
+          ],
+          [
+            18.7,
+            78.1
+          ],
+          [
+            19.525,
+            77.0
+          ]
+        ],
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: FB pin 10 to RFBB R130.1 and RFBT R129.2 (feedback resistors at FB), F.Cu only (W2 PWR-L6-SCRIPT, make_board.py)"
+      },
+      {
+        "id": "SC-U108-RT",
+        "net": "E1_LAB5_RT",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            16.25,
+            79.725
+          ],
+          [
+            22.15,
+            79.725
+          ]
+        ],
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: RT pin 12 to R131.1 (W2 PWR-L6-SCRIPT, make_board.py)"
       },
       {
         "id": "GND-C107-2-S",
@@ -6439,11 +6903,11 @@
         "path": [
           [
             13.07,
-            48.3
+            48.675
           ],
           [
             14.095,
-            48.3
+            48.675
           ]
         ],
         "locked": true,
@@ -6496,8 +6960,8 @@
             57.525
           ],
           [
-            10.7,
-            57.525
+            10.1435,
+            56.1815
           ]
         ],
         "locked": true,
@@ -6532,8 +6996,12 @@
             43.15
           ],
           [
-            17.625,
-            43.15
+            16.625,
+            42.275
+          ],
+          [
+            16.2007,
+            42.6993
           ]
         ],
         "locked": true,
@@ -7018,16 +7486,12 @@
             44.65
           ],
           [
-            16.0,
-            43.9
-          ],
-          [
-            16.7071,
-            43.1929
+            16.2007,
+            42.6993
           ]
         ],
         "locked": true,
-        "why": "GND fan-out of U107.3 to its plane via"
+        "why": "GND fan-out of U107.3 to the GND via at [16.2007, 42.6993]"
       },
       {
         "id": "GND-U107-9-S",
@@ -7058,8 +7522,12 @@
             48.1
           ],
           [
-            14.55,
-            49.05
+            13.65,
+            48.1
+          ],
+          [
+            12.15,
+            48.1
           ]
         ],
         "locked": true,
@@ -7171,7 +7639,11 @@
           ],
           [
             14.0,
-            77.4
+            79.225
+          ],
+          [
+            15.0607,
+            80.2857
           ]
         ],
         "locked": true,
@@ -9172,8 +9644,8 @@
             93.275
           ],
           [
-            26.8777,
-            92.3027
+            25.575,
+            93.275
           ]
         ],
         "locked": true,
@@ -10708,6 +11180,102 @@
         "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
       },
       {
+        "id": "SC-U107-SENSE-V1",
+        "net": "SYS12",
+        "at": [
+          12.9,
+          38.3
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: BIAS / output-sense via (\"VIAS to BIAS\"), below thermal_bond zone 3' (W2 PWR-L6-SCRIPT, make_board.py; the project via 0.6/0.3)"
+      },
+      {
+        "id": "SC-U107-SENSE-V2",
+        "net": "SYS12",
+        "at": [
+          6.2,
+          62.0
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: the output sense up into the SYS12 bar left of thermal_bond zone 3' (W2 PWR-L6-SCRIPT, make_board.py; the project via 0.6/0.3)"
+      },
+      {
+        "id": "SC-LAB5-F-BAND-V1",
+        "net": "LAB5",
+        "at": [
+          26.2,
+          27.8
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "E1-05 path A: F.Cu band strip to the B.Cu band and spine (W2 PWR-L6-SCRIPT, make_board.py; the project via 0.6/0.3)"
+      },
+      {
+        "id": "SC-LAB5-F-BAND-V2",
+        "net": "LAB5",
+        "at": [
+          27.0,
+          28.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "E1-05 path A: F.Cu band strip to the B.Cu band (W2 PWR-L6-SCRIPT, make_board.py; the project via 0.6/0.3)"
+      },
+      {
+        "id": "SC-LAB5-F-BAND-V3",
+        "net": "LAB5",
+        "at": [
+          27.9,
+          28.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "E1-05 path A: F.Cu band strip to the B.Cu band (W2 PWR-L6-SCRIPT, make_board.py; the project via 0.6/0.3)"
+      },
+      {
+        "id": "SC-U108-VOUT-V1",
+        "net": "E1_LAB5_RAW",
+        "at": [
+          12.0,
+          76.2
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: thermal via at VOUT1 to the In4.Cu VOUT polygon (W2 PWR-L6-SCRIPT, make_board.py; the project via 0.6/0.3)"
+      },
+      {
+        "id": "SC-U108-VOUT-V2",
+        "net": "E1_LAB5_RAW",
+        "at": [
+          16.0,
+          76.2
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: thermal via at VOUT2 to the In4.Cu VOUT polygon (W2 PWR-L6-SCRIPT, make_board.py; the project via 0.6/0.3)"
+      },
+      {
+        "id": "SC-U108-VOUT-V3",
+        "net": "E1_LAB5_RAW",
+        "at": [
+          14.0,
+          76.2
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: thermal via between the VOUT pins to the In4.Cu VOUT polygon (W2 PWR-L6-SCRIPT, make_board.py; the project via 0.6/0.3)"
+      },
+      {
         "id": "GND-C107-2-V",
         "net": "GND",
         "at": [
@@ -10796,7 +11364,7 @@
         "net": "GND",
         "at": [
           14.095,
-          48.3
+          48.675
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10831,8 +11399,8 @@
         "id": "GND-C125-2-V",
         "net": "GND",
         "at": [
-          10.7,
-          57.525
+          10.1435,
+          56.1815
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10855,8 +11423,8 @@
         "id": "GND-C128-2-V",
         "net": "GND",
         "at": [
-          17.625,
-          43.15
+          16.2007,
+          42.6993
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11176,18 +11744,6 @@
         "why": "GND plane via of TP107.1"
       },
       {
-        "id": "GND-U107-3-V",
-        "net": "GND",
-        "at": [
-          16.7071,
-          43.1929
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "GND plane via of U107.3"
-      },
-      {
         "id": "GND-U107-9-V",
         "net": "GND",
         "at": [
@@ -11203,8 +11759,8 @@
         "id": "GND-U107-11-V",
         "net": "GND",
         "at": [
-          14.55,
-          49.05
+          12.15,
+          48.1
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11275,8 +11831,8 @@
         "id": "GND-U108-20-V",
         "net": "GND",
         "at": [
-          14.0,
-          77.4
+          15.0607,
+          80.2857
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12607,8 +13163,8 @@
         "id": "GND-R202-2-V",
         "net": "GND",
         "at": [
-          26.8777,
-          92.3027
+          25.575,
+          93.275
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -13174,6 +13730,58 @@
         "priority": 2,
         "pad_connection": "solid",
         "why": "merged scripted pours CONVIN-STRAP+CONVIN-STRAP-L (KiCad 10.0.7 reports zones_intersect for same-net zones of one priority that overlap, sr-rx-pcb run 43287918183)"
+      },
+      {
+        "id": "SC-U107-SW-ENTRY",
+        "net": "E1_SYS12_SW",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            15.25,
+            46.5
+          ],
+          [
+            16.75,
+            46.5
+          ],
+          [
+            16.75,
+            49.6
+          ],
+          [
+            15.25,
+            49.6
+          ]
+        ],
+        "priority": 3,
+        "pad_connection": "solid",
+        "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: SW pin 10 (0.4 x 2.4 mm between the PGND/VIN pins) up to the L102.1 trunk: 1.5 mm wide inside the pin rows (0.2 mm to the PGND/VIN pins), the BATT trunk 0.8 mm beyond the pin end (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
+      },
+      {
+        "id": "SC-U108-VOUT-IN4",
+        "net": "E1_LAB5_RAW",
+        "layer": "In4.Cu",
+        "outline": [
+          [
+            11.2,
+            75.5
+          ],
+          [
+            16.8,
+            75.5
+          ],
+          [
+            16.8,
+            76.9
+          ],
+          [
+            11.2,
+            76.9
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: VOUT pins 8/9 joined by a polygon on a lower layer (In4.Cu, over the GND fill) through the three VOUT vias (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       }
     ]
   },
@@ -13509,7 +14117,9 @@
     "timeout_s": 2040,
     "fanout": false,
     "ignore_net_classes": [
-      "SCRIPTED_GND"
+      "SCRIPTED_BATT",
+      "SCRIPTED_GND",
+      "SCRIPTED_SIG"
     ],
     "class_layers": {
       "BATT": [
@@ -14297,38 +14907,134 @@
   "tht_pocket_margin_mm": 1.0,
   "tht_pockets_note": "proposed plate relief pockets (M-07) = THT pads and NPTH pegs of each placed top part + 1.0 mm (mechanical/params/boards.json tht_pockets margin), rounded outward to 0.05 mm; margin boxes less than 3 mm apart share one pocket (make_probe_spec.py RIB)",
   "neck_exempt": {
-    "C134": {
-      "escape_mm": 1.05,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-BAR-J-LAB5RAW-VOUT1 (E1_LAB5_RAW, 1.3 mm, pad 1)"
-    },
-    "C135": {
-      "escape_mm": 1.3,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-BAR-1 (E1_LAB5_RAW, 0.8 mm, pad 1), LAB5RAW-BAR-J-LAB5RAW-VOUT2 (E1_LAB5_RAW, 1.3 mm, pad 1)"
-    },
     "J208": {
       "escape_mm": 1.55,
       "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5-J208-2 (LAB5, 0.3 mm, pad 2), LAB5-J208-6 (LAB5, 0.3 mm, pad 6), LAB5-J208-10 (LAB5, 0.3 mm, pad 10), LAB5-J208-14 (LAB5, 0.3 mm, pad 14), LAB5-J208-BAR-J-LAB5-J208-14 (LAB5, 0.3 mm, pad 10)"
-    },
-    "L102": {
-      "escape_mm": 0.85,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12SW-PIN-J-SYS12SW-L102 (E1_SYS12_SW, 0.7 mm, pad 1)"
-    },
-    "Q102": {
-      "escape_mm": 2.45,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): E1SW-Q102 (E1_SW, 1.45 mm, pad 2), E1SW-BAR-J-E1SW-Q102 (E1_SW, 1.45 mm, pad 2)"
-    },
-    "Q201": {
-      "escape_mm": 0.1,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12-Q201 (SYS12, 1.4 mm, pad 2)"
+    }
+  },
+  "branch_exempt": {
+    "C127": {
+      "max_mm": 7.0,
+      "min_width_mm": 0.25,
+      "reason": "W2 PWR-L6-SCRIPT converter stage (TI LM61460 SNVSBD5D (rev. D): SW-CBOOT link (SNVSBD5D 11.1: through the VIN2-RBOOT gap) to the bootstrap capacitor; gate-drive charge only"
     },
     "U107": {
-      "escape_mm": 0.3,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12SW-PIN (E1_SYS12_SW, 0.7 mm, pad 10)"
+      "pads": [
+        "1"
+      ],
+      "max_mm": 40.0,
+      "min_width_mm": 0.25,
+      "reason": "W2 PWR-L6-SCRIPT converter stage (TI LM61460 SNVSBD5D (rev. D): BIAS pin 1 and the RFBT / CFF output sense: bias and sense current (milliamperes), In2.Cu under the In1.Cu GND"
     },
     "U108": {
-      "escape_mm": 0.1,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-VOUT1 (E1_LAB5_RAW, 1.3 mm, pad 8), LAB5RAW-VOUT2 (E1_LAB5_RAW, 1.3 mm, pad 9)"
+      "pads": [
+        "5"
+      ],
+      "max_mm": 3.5,
+      "min_width_mm": 0.25,
+      "reason": "W2 PWR-L6-SCRIPT converter stage (TI LM61460 SNVSBD5D (rev. D): VLDOIN pin 5 (internal LDO input, milliamperes) to VOUT1 between the module pins"
     }
+  },
+  "exemption_policy": {
+    "why": "W2 PWR-L6-SCRIPT (synthesis PWR-L6-SCRIPT, judge 1 power rating): class-width exemptions follow the pad they serve. branch_exempt only for test points, resistors of 100 ohm or more and sense or logic pins; no neck on TVS, connector or harness lands, shunts, fuses, power-switch nodes, eFuse IN/OUT or converter capacitors; a neck at least as wide as its pad and no longer than it (no pin stems); pin entries are pours within half the class width of the pad"
+  },
+  "converter_zones": {
+    "zones": {
+      "3": {
+        "rect": [
+          7,
+          39,
+          24,
+          63
+        ],
+        "own_nets": [
+          "E1_CONV_IN",
+          "E1_EN_LAB5",
+          "E1_EN_SYS12",
+          "E1_N",
+          "E1_PG_SYS12",
+          "E1_SW",
+          "E1_SYS12_CBOOT",
+          "E1_SYS12_FB",
+          "E1_SYS12_FF",
+          "E1_SYS12_RBOOT",
+          "E1_SYS12_RT",
+          "E1_SYS12_SW",
+          "E1_SYS12_VCC",
+          "GND",
+          "LIME3V3",
+          "SYS12"
+        ]
+      },
+      "4": {
+        "rect": [
+          7,
+          73,
+          21,
+          87
+        ],
+        "own_nets": [
+          "E1_CONV_IN",
+          "E1_EN_LAB5",
+          "E1_LAB5_FB",
+          "E1_LAB5_FUSED",
+          "E1_LAB5_RAW",
+          "E1_LAB5_RT",
+          "E1_PG_LAB5",
+          "E2_LIME_EF",
+          "GND"
+        ]
+      }
+    },
+    "layers": [
+      "F.Cu",
+      "In1.Cu"
+    ],
+    "scripted_nets": [
+      "E1_LAB5_FB",
+      "E1_LAB5_RT",
+      "E1_SYS12_CBOOT",
+      "E1_SYS12_FB",
+      "E1_SYS12_FF",
+      "E1_SYS12_RBOOT",
+      "E1_SYS12_SW",
+      "E1_SYS12_VCC"
+    ],
+    "rule": "W2 PWR-L6-SCRIPT: on F.Cu and In1.Cu over the converter zones 3'/4' (contract thermal_bond zones 3 and 4) only the nets with a pad inside the zone (own_nets) carry copper; In1.Cu is the solid GND plane under the converters. The scripted nets are not autorouted (scripted classes); freeze/plan6.py keeps the zones as F.Cu keep-outs for the other nets, freeze/freeze6.py drops router copper of other nets there; board_audit.py checks it (MODEL)",
+    "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2, https://www.ti.com/lit/ds/symlink/lm61460.pdf, and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1 and figure 11-2, https://www.ti.com/lit/ds/symlink/tpsm63606.pdf, both re-read 2026-11-14 (curl default User-Agent, HTTP 200, sha256 2c8a0bf3... and d1c157ff...; fetch-only, not committed)"
+  },
+  "script": {
+    "notes": [
+      "dropped CU-CONVIN-U107-L-BAR: VIN2 bar re-scripted above the SW-CBOOT link (C122 moved up)",
+      "dropped CU-CONVIN-U107-L-J-CONVIN-U107-L-BAR: joint of the old VIN2 bar (it crossed the SW-CBOOT link)",
+      "dropped CU-E1SW-BAR-J-E1SW-Q102: joint of the old Q102 stem",
+      "dropped CU-E1SW-Q102: Q102 source stem 1.45 mm < BATT 1.6 (power switch): a 1.6 mm pin-group bar instead",
+      "dropped CU-GND-U107-L: PGND2 bar re-scripted clear of the moved C122.1",
+      "dropped CU-LAB5-B-SPINE: B.Cu LAB5 spine 2.2 mm: wider (2.5 mm) where the bond zone 3 keep-out and the E1_CONV_IN via column allow, with parallel strips (E1-05 path A)",
+      "dropped CU-LAB5-B-TOP: B.Cu LAB5 top run 2.2 mm: 2.4 / 2.3 mm (E1-05 path A)",
+      "dropped CU-LAB5RAW-BAR-1: R129.1 stub 0.8 mm < BATT 1.6: a 1.6 mm track to the regulation point instead",
+      "dropped CU-LAB5RAW-BAR-J-LAB5RAW-VOUT1: joint of the old VOUT1 stem",
+      "dropped CU-LAB5RAW-BAR-J-LAB5RAW-VOUT2: joint of the old VOUT2 stem",
+      "dropped CU-LAB5RAW-VOUT1: U108 VOUT1 stem 1.3 mm < BATT 1.6: a 1.6 mm entry instead",
+      "dropped CU-LAB5RAW-VOUT2: U108 VOUT2 stem 1.3 mm < BATT 1.6: a 1.6 mm entry instead",
+      "dropped CU-SYS12-Q201: Q201 source stem 1.4 mm < BATT 1.6 (power switch): a 1.6 mm entry instead",
+      "dropped CU-SYS12SW-PIN: U107 SW stem 0.7 mm: the SW entry pour instead (within half the class width of the pin)",
+      "dropped CU-SYS12SW-PIN-J-SYS12SW-L102: joint of the old SW stem"
+    ],
+    "converter_nets": [
+      "E1_SYS12_SW",
+      "E1_SYS12_CBOOT",
+      "E1_SYS12_RBOOT",
+      "E1_SYS12_VCC",
+      "E1_SYS12_FB",
+      "E1_SYS12_FF",
+      "E1_LAB5_FB",
+      "E1_LAB5_RT"
+    ],
+    "planned_file": null,
+    "planned_result": null,
+    "planned_nets": {},
+    "rule": "make_board.py script_copper (SC- converter stages, 2 oz rework of the SHRINK-2 stems) and planned_copper (PL-/PLV-/PE- from script-planned-6l.json, freeze/plan6.py)"
   },
   "edge_keepout": {
     "width_mm": 0.2,
@@ -14730,15 +15436,26 @@
     "rule": "make_board.py board_copper: F.Cu/B.Cu pours of PWR_A.spec-shrink2.json as locked tracks (ids CU-<pour>); same-net overlapping In2.Cu pours merged"
   },
   "gnd_fanout": {
-    "vias": 199,
+    "vias": 198,
     "stubs": 200,
     "pads_joined_by_scripted_gnd_pours": [],
     "rule": "make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to a 0.7 / 0.3 via, or to a GND via within 3 mm"
   },
   "moves": {
-    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 782a4b55f4a18554271f245b6c38174f3a250d91a163efbc2bdb8b1d58d7d72c",
-    "moved_refs": 193,
-    "manual": []
+    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 a1a95a1fbf6d9fe4b79b17014c2f7dc408cb67345f1b9952b0db0bdb0d8c740f",
+    "moved_refs": 194,
+    "manual": [
+      {
+        "ref": "C122",
+        "to": [
+          13.07,
+          47.9
+        ],
+        "rotation": 90,
+        "side": "F",
+        "why": "W2 PWR-L6-SCRIPT: C122 (CIN_HF2) 0.375 mm up for the SW-CBOOT link under it (SNVSBD5D 11.1)"
+      }
+    ]
   },
   "generator": "build/kicad/boards/PWR_A/make_board.py"
 }

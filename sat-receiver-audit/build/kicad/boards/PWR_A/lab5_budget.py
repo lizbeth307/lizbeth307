@@ -26,6 +26,12 @@ What is measured and what is modelled:
     from the scripted pours of the spec when the converter is anchored (an upper bound: the whole orthogonal path at the
     narrowest pour width, F.Cu only); TBD while the SHRINK-2 converter is a reserved block (GR-5A pending).
 Copper: annealed copper (IACS) at 20 C and at 50 C (the E1-05 thermal test ambient; the copper itself runs warmer).
+W2 PWR-L6-SCRIPT: both power boards are 6 layers with 2 oz outer / 0.5 oz inner copper (pcb/boards/PWR_B.json layers.copper_option
+outer_2oz, pcb/generated/stackup-6l.json): the PWR-B network takes 0.070 mm on F.Cu/B.Cu and 0.0152 mm on the inner layers, the
+PWR-A planner paths the 2 oz PWR3A width. Path B is restated per destination (synthesis e105_decision, on E1-05's own basis
+"10 mOhm = 32 mV at 3.2 A"): the drop from L101.2 to each TPS2553 input on PWR-B at the worst-case concurrent currents, the
+TPS2553 limits of tools/assembly_data.py NET_CURRENT (protective column) for the output net of each switch, segment by segment
+(multi-sink network solve). This file gives the PWR-B part and the B2B part; board_audit.py adds the PWR-A copper of the board.
 """
 from __future__ import annotations
 
@@ -61,6 +67,10 @@ B2B_SRC = ('Samtec LSHM product specification Revision H (dated September 9, 202
            'c51386286aeaaa9b167188eef2d, the copy W2 B2B read): "Contact Resistance (LLCR) EIA-364-23 delta 15 mOhm maximum '
            '(Samtec defined)"; section 3.1 current rating 2 A (one pin powered per row); no initial value stated')
 BUDGET = 0.010             # Ohm, E1-05
+DROP_BUDGET_MV = 32.0      # mV: E1-05 "every 10 mOhm is 32 mV at 3.2 A" (design/E1.json), the per-destination restatement
+STACKUP_6L = BASE / 'pcb/generated/stackup-6l.json'
+ASSEMBLY = BASE / 'tools/assembly_data.py'
+SWITCH = 'TPS2553'         # the current-limited switches at the path-B destinations
 NET = 'LAB5'
 PWR_A_ENDS = {'E1': [('F102', '2')], 'E2_LT3045': [('U204', p) for p in '1234'] + [('U205', p) for p in '1234']}
 JOIN = 1e-3                # mm, node merge
@@ -152,6 +162,95 @@ class Net:
         return v[0]
 
 
+def net_drops(net, sources, sinks):
+    """Voltage drop (V) from the shorted sources to every node of a resistor network when the currents of sinks {node: A} are
+    drawn at the same time (nodal solve, sources at 0 V): {root: drop}. Superposition of every sink, segment by segment."""
+    roots = sorted({net.find(k) for k in net.parent}, key=repr)
+    src = {net.find(s) for s in sources}
+    index = {}
+    for r in roots:
+        if r not in src:
+            index[r] = len(index)
+    n = len(index)
+    g = [[0.0] * n for _ in range(n)]
+    for a, b, ohm in net.edges:
+        ra, rb = net.find(a), net.find(b)
+        if ra == rb:
+            continue
+        c = 1.0 / ohm
+        ia, ib = index.get(ra), index.get(rb)  # None = a source (0 V)
+        if ia is not None:
+            g[ia][ia] += c
+        if ib is not None:
+            g[ib][ib] += c
+        if ia is not None and ib is not None:
+            g[ia][ib] -= c
+            g[ib][ia] -= c
+    rhs = [0.0] * n
+    for node, amps in sinks.items():
+        r = net.find(node)
+        if r in index:
+            rhs[index[r]] += amps
+    for col in range(n):
+        piv = max(range(col, n), key=lambda r: abs(g[r][col]))
+        if abs(g[piv][col]) < 1e-15:
+            raise SystemExit('lab5_budget: a sink is not joined to the source by the copper')
+        g[col], g[piv] = g[piv], g[col]
+        rhs[col], rhs[piv] = rhs[piv], rhs[col]
+        for r in range(col + 1, n):
+            f = g[r][col] / g[col][col]
+            if f:
+                for k in range(col, n):
+                    g[r][k] -= f * g[col][k]
+                rhs[r] -= f * rhs[col]
+    v = [0.0] * n
+    for r in range(n - 1, -1, -1):
+        v[r] = (rhs[r] - sum(g[r][k] * v[k] for k in range(r + 1, n))) / g[r][r]
+    out = {r: 0.0 for r in src}
+    out.update({r: v[i] for r, i in index.items()})
+    return out
+
+
+def copper_option(spec):
+    """(outer mm, inner mm, option name) of the spec's copper option (pcb/generated/stackup-6l.json), or None."""
+    name = (spec.get('layers') or {}).get('copper_option')
+    if not name:
+        return None
+    opt = bg.read_json(STACKUP_6L)['copper_options'][name]
+    return opt['outer_copper_mm'], opt['inner_copper_mm'], name
+
+
+def net_current():
+    """tools/assembly_data.py NET_CURRENT (read as data: the dict literal of the file, no import of the tool)."""
+    import ast
+    tree = ast.parse(ASSEMBLY.read_text(encoding='utf-8'))
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(getattr(t, 'id', None) == 'NET_CURRENT' for t in node.targets):
+            return ast.literal_eval(node.value)
+    raise SystemExit('lab5_budget: no NET_CURRENT in tools/assembly_data.py')
+
+
+def destinations(board, graph, net_name=NET):
+    """Path-B destinations on PWR-B: the IN pads of the TPS2553 switches on LAB5 with the protective current of the net that
+    NET_CURRENT rates by that switch (its protection text names the ref): [(ref, pad, rated net, amps, source)]."""
+    nc = net_current()
+    out = []
+    refs = sorted({p['ref'] for p in board.pads if p['net'] == net_name}, key=bg.sort_ref)
+    for ref in refs:
+        comp = graph.get(ref) or {}
+        if SWITCH not in str(comp.get('value', '')):
+            continue
+        pins = {str(p['number']): p for p in comp.get('pins', [])}
+        inp = next((n for n, p in pins.items() if str(p.get('name', '')).upper() == 'IN' and p.get('net') == net_name), None)
+        # the NET_CURRENT row whose protection names this switch (its OUT pin may feed the rated net through a filter)
+        onet = next((n for n, row in sorted(nc.items()) if str(row[2]).startswith(f'{ref} {SWITCH}')), None)
+        if inp is None or onet is None:
+            continue
+        cont, prot, why, src = nc[onet]
+        out.append((ref, inp, onet, float(prot), f'tools/assembly_data.py NET_CURRENT {onet}: {why} ({src})'))
+    return out
+
+
 def project(px, py, x1, y1, x2, y2):
     dx, dy = x2 - x1, y2 - y1
     ll = dx * dx + dy * dy
@@ -159,14 +258,17 @@ def project(px, py, x1, y1, x2, y2):
     return t, (x1 + t * dx, y1 + t * dy)
 
 
-def pwr_b_network(board, temp_c, t_outer, plating, thickness, net_name=NET):
+def pwr_b_network(board, temp_c, t_outer, plating, thickness, net_name=NET, t_inner=None, zone_joints=False):
     """LAB5 copper of PWR_B (or net_name of any routed board, W2 PCB-PWRA-4 board_audit.py) as a network. Track pieces
-    are split at every via, pad or track end that touches them."""
+    are split at every via, pad or track end that touches them. W2 PWR-L6-SCRIPT: with t_inner an inner-layer track takes the
+    inner copper; with zone_joints a zone of the net (board.zones 'boxes', the planned board of board_audit.py) is an ideal
+    joint of the tracks, vias and pads it touches (the pin-entry pours are at most half a class width long)."""
     net = Net()
     tracks = [t for t in board.tracks if t.net == net_name]
     vias = [v for v in board.vias if v['net'] == net_name]
     pads = [p for p in board.pads if p['net'] == net_name]
-    unmodelled = [z['name'] or 'zone' for z in board.zones if z['net'] == net_name and not z['keepout']]
+    joint_zones = [z for z in board.zones if zone_joints and z['net'] == net_name and not z['keepout'] and z.get('boxes')]
+    unmodelled = [z['name'] or 'zone' for z in board.zones if z['net'] == net_name and not z['keepout'] and z not in joint_zones]
     branch = {}  # pad key -> (track width, far end node of the narrowest track that touches the pad)
     for t in tracks:
         s = t.shape
@@ -206,7 +308,8 @@ def pwr_b_network(board, temp_c, t_outer, plating, thickness, net_name=NET):
             if length <= JOIN:
                 net.join(cuts[a], cuts[b])
             else:
-                net.res(cuts[a], cuts[b], rho(temp_c) * length / (t.width * t_outer))
+                foil = t_outer if (t_inner is None or t.layer in ('F.Cu', 'B.Cu')) else t_inner
+                net.res(cuts[a], cuts[b], rho(temp_c) * length / (t.width * foil))
     for i, v in enumerate(vias):
         layers = [l for l in v['layers'] if l in ('F.Cu', 'B.Cu')]
         r_out = v['drill'] / 2
@@ -215,8 +318,30 @@ def pwr_b_network(board, temp_c, t_outer, plating, thickness, net_name=NET):
             net.res(('via', i, a), ('via', i, b), rho(temp_c) * thickness / area)
     for p in pads:
         net.node(('pad', p['ref'], p['number']))
+    for z in joint_zones:  # ideal joint: everything of the net that touches one of the zone's rectangles on its layer
+        key = ('zone', z['name'])
+        net.node(key)
+        lay = z['layers'][0]
+        for x0, y0, x1, y1 in z['boxes']:
+            for t in tracks:
+                if t.layer != lay:
+                    continue
+                s = t.shape
+                for ex, ey, tp in ((s.x1, s.y1, 0.0), (s.x2, s.y2, 1.0)):
+                    if x0 - s.r <= ex <= x1 + s.r and y0 - s.r <= ey <= y1 + s.r:
+                        net.join(('end', t.layer, round(ex, 4), round(ey, 4)), key)
+            for i, v in enumerate(vias):
+                if x0 - v['size'] / 2 <= v['x'] <= x1 + v['size'] / 2 and y0 - v['size'] / 2 <= v['y'] <= y1 + v['size'] / 2:
+                    for l in v['layers']:
+                        if l == lay:
+                            net.join(('via', i, l), key)
+            for p in pads:
+                bx = p['geo'].bbox
+                if (lay in p['layers'] or p['kind'] == 'thru_hole') and not (bx[2] < x0 or bx[0] > x1 or bx[3] < y0 or bx[1] > y1):
+                    net.join(('pad', p['ref'], p['number']), key)
     net.branch = branch
-    return net, {'tracks': len(tracks), 'vias': len(vias), 'pads': len(pads), 'zones_not_modelled': unmodelled}
+    return net, {'tracks': len(tracks), 'vias': len(vias), 'pads': len(pads), 'zones_not_modelled': unmodelled,
+                 **({'zones_as_ideal_joints': sorted(z['name'] for z in joint_zones)} if joint_zones else {})}
 
 
 def pad_centres(spec, ref, numbers):
@@ -254,6 +379,12 @@ def build():
     plating = netclasses['formulas']['via']['plating_mm']
     w_class = netclasses['classes'][netclasses['nets'][NET]['class']]['outer_min_width_mm']
     pwr_b_spec = bg.read_json(PWR_B_SPEC)
+    t_inner, option = None, None
+    opt = copper_option(pwr_b_spec)
+    if opt:  # W2 PWR-L6-SCRIPT: both power boards on the 6-layer 2 oz option (PWR_A make_board.py COPPER_OPTION, the same)
+        t_outer, t_inner, option = opt
+        o6 = bg.read_json(STACKUP_6L)['copper_options'][option]
+        w_class = o6['power_classes'][netclasses['nets'][NET]['class']]['outer_min_width_mm']
     graph = bg.load_graph()
     pair = spec['b2b'][0]
     mine, mate_ref = pair['ref'], pair['mate_ref']
@@ -270,7 +401,7 @@ def build():
     loads = sorted({(p['ref'], p['number']) for p in board.pads if p['net'] == NET and p['ref'] != mate_ref},
                    key=lambda x: (bg.sort_ref(x[0]), x[1]))
     for tk, tc in temps.items():
-        net, info = pwr_b_network(board, tc, t_outer, plating, thickness)
+        net, info = pwr_b_network(board, tc, t_outer, plating, thickness, t_inner=t_inner)
         rows = []
         for ref, num in loads:
             src = [('pad', mate_ref, c) for c in lab5_contacts]
@@ -283,6 +414,32 @@ def build():
                          'to_start_of_last_track_mohm': r4(shared * 1e3) if shared is not None else None})
         pwr_b[tk] = rows
     e2_loads = [r['pad'] for r in pwr_b['20C'] if r['sheet'] == 'E2' and r['pad'].split('.')[0].startswith('U')]
+    # W2 PWR-L6-SCRIPT: path B per destination, current-weighted (synthesis e105_decision): every TPS2553 input on PWR-B LAB5 at
+    # the protective current of its output net, all at once, from the shorted J209 LAB5 contacts; the B2B delta at the share
+    # per contact of the total current
+    dests = destinations(board, graph)
+    i_total = sum(d[3] for d in dests)
+    weighted = {}
+    for tk, tc in temps.items():
+        net, _info = pwr_b_network(board, tc, t_outer, plating, thickness, t_inner=t_inner)
+        src = [('pad', mate_ref, c) for c in lab5_contacts]
+        v = net_drops(net, src, {('pad', r, n): a for r, n, _o, a, _w in dests})
+        weighted[tk] = {f'{r}.{n}': r4(v[net.find(('pad', r, n))] * 1e3) for r, n, _o, _a, _w in dests}
+    b2b_drop_mv = r4(i_total / len(lab5_contacts) * B2B_DELTA * 1e3)
+    path_b_weighted = {
+        'label': ('MODEL: path B restated per destination (synthesis e105_decision): drop from L101.2 to each TPS2553 input <= '
+                  f'{DROP_BUDGET_MV} mV (E1-05 "10 mOhm = 32 mV at 3.2 A") at the worst-case concurrent currents, segment by segment. '
+                  'This block: the PWR-B copper (multi-sink solve from the shorted J209 LAB5 contacts) and the B2B LLCR delta at the '
+                  'per-contact share; board_audit.py adds the PWR-A copper L101.2 -> J208 at the total current'),
+        'drop_budget_mv': DROP_BUDGET_MV,
+        'destinations': [{'pad': f'{r}.{n}', 'out_net': o, 'current_a': a, 'current_source': w} for r, n, o, a, w in dests],
+        'total_current_a': r4(i_total),
+        'b2b': {'contacts': len(lab5_contacts), 'delta_per_contact_mohm': B2B_DELTA * 1e3,
+                'drop_mv_max': b2b_drop_mv, 'initial_resistance': 'TBD (not stated in the Samtec product specification)'},
+        'pwr_b_drop_mv': weighted,
+        'not_included': 'the PWR-A LAB5 loads (U503, U553, J104, J206.2 and their bypasses) draw through the PWR-A trunk too; E1-05 '
+                        'names E1 -> E2, so they are left out, as the synthesis says (MODEL)',
+    }
 
     # --- PWR-A: anchored ends only ---
     l101 = pad_centres(spec, 'L101', ['2'])
@@ -381,8 +538,9 @@ def build():
     return {
         'schema': 'srrx-pwra-lab5-budget-v1',
         'board_id': 'PWR_A',
-        'status': 'MODEL: copper resistance from geometry (IACS copper, finished 1 oz outer); no PWR-A board exists, no '
-                  'measurement; E1-05 and every bench gate stay OPEN',
+        'status': (f'MODEL: copper resistance from geometry (IACS copper, finished outer {t_outer} mm'
+                   + (f', inner {t_inner} mm, copper option {option}' if option else '') + '); no PWR-A board exists, no '
+                   'measurement; E1-05 and every bench gate stay OPEN'),
         'generator': 'build/kicad/boards/PWR_A/lab5_budget.py',
         'inputs': {
             'spec_sha256': bg.sha256_bytes(bg.canonical(spec)),
@@ -396,9 +554,12 @@ def build():
             'alpha_per_k': ALPHA, 'alpha_source': ALPHA_SRC,
             'resistivity_ohm_mm_20c': r6(rho(20.0)), 'resistivity_ohm_mm_hot': r6(rho(T_HOT)), 'hot_c': T_HOT,
             'outer_copper_mm': t_outer, 'board_thickness_mm': thickness, 'via_plating_mm': plating,
-            'copper_source': 'pcb/generated/netclasses.json stackup (https://jlcpcb.com/impedance, JLC04161H-7628, read '
-                             '2026-11-07) and formulas.via.plating_mm (https://jlcpcb.com/capabilities/pcb-capabilities, '
+            'copper_source': ('pcb/generated/stackup-6l.json copper_options.' + option + ' (jlcpcb.com read 2026-11-13; '
+                              'pcb/boards/PWR_B.json layers.copper_option) and ' if option else
+                              'pcb/generated/netclasses.json stackup (https://jlcpcb.com/impedance, JLC04161H-7628, read '
+                              '2026-11-07) and ') + 'formulas.via.plating_mm (https://jlcpcb.com/capabilities/pcb-capabilities, '
                              'hole wall average plating 18 um, read 2026-11-07)',
+            'inner_copper_mm': t_inner, 'copper_option': option,
             'class_width_mm': w_class, 'class': netclasses['nets'][NET]['class'],
             'budget_mohm': BUDGET * 1e3, 'design_current_a': i_design,
             'drop_per_10_mohm_mv': r4(0.010 * i_design * 1e3),
@@ -411,12 +572,13 @@ def build():
                      f'from the {len(lab5_contacts)} shorted {mate_ref} LAB5 contacts to each LAB5 pad, and to the start of the narrowest track '
                      'that reaches the pad (the branch that carries only that load; the rest is shared trunk)',
             'board': PWR_B_BOARD.relative_to(BASE).as_posix(),
-            'network': pwr_b_network(board, 20.0, t_outer, plating, thickness)[1],
+            'network': pwr_b_network(board, 20.0, t_outer, plating, thickness, t_inner=t_inner)[1],
             'by_temperature': shared_b,
             'e2_loads': e2_loads,
         },
         'pwr_a_paths': out_paths,
         'path_b_remaining_budget': remaining,
+        'path_b_current_weighted': path_b_weighted,
         'upstream_e1_lab5_raw': upstream,
         'upstream_e1_lab5_fused': fused,
         'e1_end': e1_ref,
@@ -427,7 +589,8 @@ def build():
 def findings(doc):
     out = []
     a = doc['pwr_a_paths']['A_E1_to_LT3045']['by_temperature']['20C']
-    out.append(f"A (E1 -> LT3045, PWR-A only): the narrowest legal LAB5 copper (PWR3A 1.85 mm, one outer layer) gives "
+    w = doc['constants']['class_width_mm']
+    out.append(f"A (E1 -> LT3045, PWR-A only): the narrowest legal LAB5 copper (PWR3A {w} mm, one outer layer) gives "
                f"{a['narrowest_legal_mohm']['orthogonal']} mOhm on the orthogonal path at 20 C; the 10 mOhm budget needs "
                f"width x outer layers >= {a['width_x_outer_layers_mm_for_whole_budget']['orthogonal']} mm there")
     for pad, row in doc['path_b_remaining_budget']['20C'].items():

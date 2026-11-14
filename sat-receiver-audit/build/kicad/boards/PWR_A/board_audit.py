@@ -21,6 +21,15 @@ Checks (brief of W2 PCB-PWRA-4; the rest is in check_boards review.json and the 
               E1_LAB5_RAW U108 VOUT -> F102.1 and E1_LAB5_FUSED F102.2 -> L101.1; a net the copper does not join
               is reported as not joined
   fill        top courtyards over the usable area (outline less the hole keep-outs), MODEL
+  converters  (W2 PWR-L6-SCRIPT, MODEL geometry; TI LM61460 SNVSBD5D rev. D section 11.1 / figure 11-2 and TPSM63606 SLVSGB4B
+              rev. B section 11.1, re-read 2026-11-14): CVCC within 2 mm of VCC/AGND, the feedback dividers within 5 mm of FB,
+              no via on E1_SYS12_SW, the SW-CBOOT link on F.Cu through the VIN2-RBOOT gap, the FB nodes on F.Cu only, the U108
+              VOUT pins joined by an In4.Cu/B.Cu polygon, AGND 6/11 to PGND 19 under U108, no copper of a foreign net on F.Cu or
+              In1.Cu over the converter zones 3'/4' (board-spec converter_zones), In1.Cu a solid GND plane
+  class_widths (W2 PWR-L6-SCRIPT, planned board only) pcb/check_boards.py check_classes on the scripted copper of the spec (2 oz
+              widths of the copper option, exemption policy), MODEL
+  e1_05       (W2 PWR-L6-SCRIPT) path A against 10 mOhm; path B per destination: the PWR-A copper L101.2 -> J208 at the total
+              TPS2553 current + the B2B delta + the PWR-B drop of lab5-budget.json path_b_current_weighted, against 32 mV (MODEL)
 With --review (a record folder such as route-iteration-2/, whose board pcb/check_boards.py --all does not see) it also
 writes DIR/review.json: pcb/check_boards.py review_board on that board and spec, with the PWR_B board of record as the
 B2B mate, as check_boards --board PWR_A writes it for an installed board.
@@ -79,22 +88,32 @@ class _Identity:
 class SpecBoard:
     """The planned board of a spec (no routed board yet): footprints, pads and the scripted locked copper of
     make_board.py in contract mm, in the shape the check_boards reader gives (the copper section then models only the
-    scripted tracks and vias)."""
+    scripted tracks and vias; W2 PWR-L6-SCRIPT: pads as their copper boxes, scripted pours as zones filled to their outline,
+    the 6 copper layers, so check_boards check_classes runs on it)."""
 
     def __init__(self, spec):
         import make_board as mb
         inp = mb.Inputs(spec)
+        self.copper_layers = list(mb.COPPER6) if spec.get('layers', {}).get('copper') == 6 else ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu']
         self.footprints, self.pads, self.tracks, self.vias, self.zones, self.copper = [], [], [], [], [], []
+        self.unverified = []
+        self.path = None
         for ref, pa in inp.parts.items():
             pads = []
             for q in pa.pads:
-                layers = ['F.Cu', 'B.Cu'] if q['type'] in ('thru_hole', 'np_thru_hole') else [f'{pa.side}.Cu']
+                layers = list(self.copper_layers) if q['type'] in ('thru_hole', 'np_thru_hole') else [f'{pa.side}.Cu']
+                x0, y0, x1, y1 = q['box']
+                geo = cb.Poly([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
                 rec = {'ref': ref, 'number': q['number'], 'kind': q['type'], 'net': q['net'], 'layers': layers,
-                       'geo': _Box(q['box']), 'x': q['at'][0], 'y': q['at'][1]}
+                       'geo': geo, 'x': q['at'][0], 'y': q['at'][1], 'w': x1 - x0, 'h': y1 - y0, 'angle': 0.0, 'shape': 'rect',
+                       'drill': list(q['drill'] or [])}
                 pads.append(rec)
                 self.pads.append(rec)
+                if q['type'] != 'np_thru_hole':
+                    for lay in layers:
+                        self.copper.append(cb.Item('pad', q['net'], lay, geo, ref=ref, pad=q['number'], extra=rec))
             self.footprints.append({'ref': ref, 'side': 'top' if pa.side == 'F' else 'bottom', 'courtyard': tuple(pa.box),
-                                    'pads': pads})
+                                    'pads': pads, 'lib': inp.graph.get(ref, {}).get('footprint', '')})
         for t in spec['pre_route']['tracks']:
             for a, b in zip(t['path'], t['path'][1:]):
                 it = cb.Item('track', t['net'], t['layer'], cb.Capsule(a[0], a[1], b[0], b[1], t['width_mm'] / 2))
@@ -102,9 +121,156 @@ class SpecBoard:
                 self.tracks.append(it)
                 self.copper.append(it)
         for v in spec['pre_route']['vias']:
-            self.vias.append({'x': v['at'][0], 'y': v['at'][1], 'size': v['diameter_mm'], 'drill': v['drill_mm'],
-                              'net': v['net'], 'layers': ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu']})
+            rec = {'x': v['at'][0], 'y': v['at'][1], 'size': v['diameter_mm'], 'drill': v['drill_mm'], 'net': v['net'],
+                   'layers': list(self.copper_layers), 'id': v.get('id')}
+            self.vias.append(rec)
+            for lay in self.copper_layers:
+                self.copper.append(cb.Item('via', v['net'], lay, cb.Capsule(rec['x'], rec['y'], rec['x'], rec['y'], rec['size'] / 2), extra=rec))
+        for z in spec['pre_route']['zones']:
+            if z['outline'] == 'board':
+                self.zones.append({'net': z['net'], 'layers': [z['layer']], 'keepout': False, 'outline': [], 'fills': {},
+                                   'name': z['id'], 'plane': True})
+                continue
+            poly = cb.Poly([tuple(p) for p in z['outline']])
+            self.zones.append({'net': z['net'], 'layers': [z['layer']], 'keepout': False, 'outline': [tuple(p) for p in z['outline']],
+                               'fills': {z['layer']: [poly]}, 'name': z['id'], 'boxes': mb.outline_boxes([tuple(p) for p in z['outline']])})
+            self.copper.append(cb.Item('zone', z['net'], z['layer'], poly, extra=self.zones[-1]))
         self.holes = [{'ref': f'H{k + 1}', 'net': None} for k in range(len(read(CONTRACT)['boards'][spec['contract']['board']]['holes_mm']))]
+
+
+SCRIPT_SOURCE = ('TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April '
+                 '2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for '
+                 'TI\'s "as close as possible"')
+# converter small-signal parts: ref -> ({own pad: converter pin}, limit mm), pad centre to pin centre (make_spec SMALL_SIGNAL_ANCHORS)
+CONVERTER_PARTS = {
+    'C128': ({'1': 'U107.2', '2': 'U107.3'}, 2.0), 'R125': ({'1': 'U107.4'}, 5.0), 'R128': ({'2': 'U107.4'}, 5.0),
+    'R124': ({'2': 'U107.4'}, 5.0), 'C129': ({'1': 'U107.4'}, 5.0), 'C127': ({'1': 'U107.14'}, 5.0),
+    'R127': ({'1': 'U107.14', '2': 'U107.13'}, 5.0), 'R130': ({'1': 'U108.10'}, 5.0), 'R129': ({'2': 'U108.10'}, 5.0),
+}
+
+
+def converter_checks(board, spec):
+    """W2 PWR-L6-SCRIPT converter-stage checks on the planned (or routed) board, MODEL geometry: rows and findings."""
+    rows, findings = [], []
+    pads = {(p['ref'], p['number']): p for p in board.pads}
+
+    def row(check, ok, detail):
+        rows.append({'check': check, 'ok': bool(ok), 'detail': detail, 'label': 'MODEL', 'source': SCRIPT_SOURCE})
+        if not ok:
+            findings.append({'check': 'converters', 'item': check, 'detail': detail})
+
+    def pad(ref_pin):
+        ref, num = ref_pin.split('.')
+        return pads.get((ref, num))
+    for ref, (pins, limit) in CONVERTER_PARTS.items():
+        dist = {}
+        for num, pin in pins.items():
+            a, b = pads.get((ref, num)), pad(pin)
+            dist[f'{ref}.{num}-{pin}'] = r4(math.hypot(a['x'] - b['x'], a['y'] - b['y'])) if a and b else None
+        ok = all(d is not None and d <= limit + EPS for d in dist.values())
+        row(f'{ref} within {limit} mm', ok, f'pad centre to pin centre {dist} (limit {limit} mm)')
+    sw_vias = [v for v in board.vias if v['net'] == 'E1_SYS12_SW']
+    row('no via on E1_SYS12_SW', not sw_vias, f'{len(sw_vias)} via(s) of E1_SYS12_SW')
+    # the SW-CBOOT link: F.Cu copper of E1_SYS12_SW through the gap between VIN2 (pin 12) and RBOOT (pin 13), joining U107.10 to C127.2
+    p12, p13 = pad('U107.12'), pad('U107.13')
+    if p12 and p13:
+        b12, b13 = p12['geo'].bbox, p13['geo'].bbox
+        lo, hi = sorted((b13[3], b12[1])) if b13[3] <= b12[1] else sorted((b12[3], b13[1]))
+        gap = (max(b12[0], b13[0]), lo, min(b12[2], b13[2]), hi)
+        through = [t for t in board.tracks if t.net == 'E1_SYS12_SW' and t.layer == 'F.Cu'
+                   and cb.seg_box_gap(t.shape.x1, t.shape.y1, t.shape.x2, t.shape.y2, gap) <= 0.0]
+        fcu = [t for t in board.tracks if t.net == 'E1_SYS12_SW' and t.layer != 'F.Cu']
+        joined = joined_on(board, 'E1_SYS12_SW', 'F.Cu', [('U107', '10'), ('C127', '2')])
+        row('SW-CBOOT link on F.Cu through the VIN2-RBOOT gap', bool(through) and joined and not fcu,
+            f'gap {[r4(v) for v in gap]}: {len(through)} F.Cu E1_SYS12_SW piece(s) through it; U107.10 and C127.2 joined on F.Cu: '
+            f'{joined}; E1_SYS12_SW copper off F.Cu: {len(fcu)}')
+    for net in ('E1_SYS12_FB', 'E1_LAB5_FB'):
+        off = [t for t in board.tracks if t.net == net and t.layer != 'F.Cu'] + [v for v in board.vias if v['net'] == net]
+        mine = [p for p in board.pads if p['net'] == net]
+        joined = joined_on(board, net, 'F.Cu', [(p['ref'], p['number']) for p in mine])
+        row(f'{net} node on F.Cu only', not off and joined, f'{len(off)} piece(s) or via(s) off F.Cu; pads {len(mine)} joined on F.Cu: {joined}')
+    vout = [pad('U108.8'), pad('U108.9')]
+    polys = [z for z in board.zones if z['net'] == 'E1_LAB5_RAW' and z['layers'][0] in ('In4.Cu', 'B.Cu') and z.get('outline')]
+    near = {}
+    for z in polys:
+        poly = cb.Poly(z['outline'])
+        vs = [v for v in board.vias if v['net'] == 'E1_LAB5_RAW' and poly.contains(v['x'], v['y'])]
+        near[z['name']] = [sum(1 for v in vs if math.hypot(v['x'] - q['x'], v['y'] - q['y']) <= 2.0) for q in vout if q]
+    ok = any(len(n) == 2 and all(k >= 1 for k in n) for n in near.values())
+    row('U108 VOUT pins joined by an In4.Cu or B.Cu polygon', ok, f'E1_LAB5_RAW polygons {sorted(near)}: vias within 2 mm of VOUT1/VOUT2 {near}')
+    for agnd in ('U108.6', 'U108.11'):
+        a, g = pad(agnd), pad('U108.19')
+        hit = [t for t in board.tracks if t.net == 'GND' and t.layer == 'F.Cu' and a and g and touches_pad(t, a) and touches_pad(t, g)]
+        row(f'{agnd} AGND to PGND pin 19 under the module', bool(hit), f'{len(hit)} F.Cu GND track(s) from {agnd} to U108.19')
+    cz = spec.get('converter_zones') or {}
+    for zi, z in sorted((cz.get('zones') or {}).items()):
+        box = tuple(z['rect'])
+        own = set(z['own_nets'])
+        foreign = sorted({t.net for t in board.tracks if t.layer in ('F.Cu', 'In1.Cu') and t.net not in own
+                          and cb.seg_box_gap(t.shape.x1, t.shape.y1, t.shape.x2, t.shape.y2, box) <= 0.0}
+                         | {v['net'] for v in board.vias if v['net'] not in own and box[0] <= v['x'] <= box[2] and box[1] <= v['y'] <= box[3]}
+                         | {zz['net'] for zz in board.zones if zz['layers'][0] in ('F.Cu', 'In1.Cu') and zz['net'] not in own
+                            and zz.get('outline') and bg.rects_overlap(poly_box(zz['outline']), box)})
+        row(f'no foreign net on F.Cu / In1.Cu over converter zone {zi}', not foreign, f'zone {list(box)}: foreign nets {foreign}')
+    in1 = [z for z in board.zones if z['layers'][0] == 'In1.Cu']
+    in1_tracks = [t for t in board.tracks if t.layer == 'In1.Cu']
+    row('In1.Cu solid GND plane', bool(in1) and all(z['net'] == 'GND' and z.get('plane') for z in in1) and not in1_tracks,
+        f'In1.Cu zones {[(z["name"], z["net"]) for z in in1]}, tracks {len(in1_tracks)}')
+    return rows, findings
+
+
+def poly_box(outline):
+    xs, ys = [p[0] for p in outline], [p[1] for p in outline]
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
+def touches_pad(t, p):
+    s = t.shape
+    x0, y0, x1, y1 = p['geo'].bbox
+    return cb.seg_box_gap(s.x1, s.y1, s.x2, s.y2, (x0, y0, x1, y1)) <= s.r + EPS
+
+
+def joined_on(board, net, layer, pins):
+    """The pads `pins` of a net are joined by its tracks and zones on one layer (no vias), MODEL union-find."""
+    items = [('t', t) for t in board.tracks if t.net == net and t.layer == layer]
+    items += [('z', z) for z in board.zones if z['net'] == net and z['layers'][0] == layer and z.get('boxes')]
+    pads = [p for p in board.pads if p['net'] == net and layer in p['layers']]
+    n = len(items) + len(pads)
+    parent = list(range(n))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    def touch(a, b):
+        (ka, ia), (kb, ib) = a, b
+        if ka == 't' and kb == 't':
+            sa, sb = ia.shape, ib.shape
+            return cb_seg_seg(sa, sb) <= sa.r + sb.r + EPS
+        if ka == 'z' and kb == 'z':
+            return any(bg.rects_overlap(x, y, EPS) for x in ia['boxes'] for y in ib['boxes'])
+        t, z = (ia, ib) if ka == 't' else (ib, ia)
+        s = t.shape
+        return any(cb.seg_box_gap(s.x1, s.y1, s.x2, s.y2, x) <= s.r + EPS for x in z['boxes'])
+    for i in range(len(items)):
+        for j in range(i + 1, len(items)):
+            if touch(items[i], items[j]):
+                parent[find(i)] = find(j)
+        for k, p in enumerate(pads):
+            kind, it = items[i]
+            hit = touches_pad(it, p) if kind == 't' else any(bg.rects_overlap(x, p['geo'].bbox, EPS) for x in it['boxes'])
+            if hit:
+                parent[find(i)] = find(len(items) + k)
+    idx = {(p['ref'], p['number']): len(items) + k for k, p in enumerate(pads)}
+    roots = {find(idx[q]) for q in pins if q in idx}
+    return len(roots) == 1 and all(q in idx for q in pins)
+
+
+def cb_seg_seg(a, b):
+    import make_board as mb
+    return mb.seg_seg_dist((a.x1, a.y1), (a.x2, a.y2), (b.x1, b.y1), (b.x2, b.y2))
 
 
 def audit(folder):
@@ -216,7 +382,7 @@ def audit(folder):
     def resistance(net, sources, sinks):
         rows = {}
         for tk, tc in (('20C', 20.0), ('50C', 50.0)):
-            network, info = lb.pwr_b_network(board, tc, t_outer, plating, thick, net_name=net)
+            network, info = lb.pwr_b_network(board, tc, t_outer, plating, thick, net_name=net, t_inner=t_inner, zone_joints=zj)
             try:
                 src = [('pad', r, n) for r, n in sources]
                 sub, seen = component(network, src[0])
@@ -229,6 +395,8 @@ def audit(folder):
         return {'net': net, 'from': [f'{r}.{n}' for r, n in sources], 'to': [f'{r}.{n}' for r, n in sinks],
                 'mohm': rows, 'joined': rows['20C'] is not None, 'network': info}
     vout = sorted(str(p['number']) for p in graph['U108']['pins'] if str(p.get('name', '')).startswith('VOUT'))
+    zj = planned  # W2 PWR-L6-SCRIPT: on the planned board the pin-entry pours are ideal joints (lab5_budget.pwr_b_network)
+    t_inner = read(BASE / 'pcb/generated/stackup-6l.json')['copper_options'][option]['inner_copper_mm'] if option else None
     copper = {
         'A_L101_to_L205': resistance('LAB5', [('L101', '2')], [('L205', '1')]),
         'B_L101_to_J208': resistance('LAB5', [('L101', '2')], [('J208', c) for c in contacts]),
@@ -245,6 +413,43 @@ def audit(folder):
             b_rows[pad] = {'pwr_a_mohm': copper['B_L101_to_J208']['mohm']['20C'], 'b2b_delta_max_mohm': b2b_delta,
                            'pwr_b_mohm': mohm, 'total_mohm': total, 'within_10_mohm': total <= 10.0}
     copper['B_total_20C'] = b_rows
+    # E1-05 (W2 PWR-L6-SCRIPT, synthesis e105_decision; MODEL, 20 degC): path A against 10 mOhm, path B per destination against 32 mV
+    pbw = lab5.get('path_b_current_weighted') or {}
+    a20 = copper['A_L101_to_L205']['mohm']['20C']
+    e105 = {'label': 'MODEL: copper of the drawn (planned or routed) board, IACS copper at 20 degC; E1-05 and its bench stay OPEN',
+            'A': {'what': 'L101.2 -> L205.1 (the LT3045 pair feed)', 'mohm_20c': a20, 'limit_mohm': lb.BUDGET * 1e3,
+                  'met': a20 is not None and a20 <= lb.BUDGET * 1e3 + EPS}}
+    if pbw and copper['B_L101_to_J208']['joined']:
+        i_tot = pbw['total_current_a']
+        pa_mv = r4(copper['B_L101_to_J208']['mohm']['20C'] * i_tot)
+        rows_b = {}
+        for d in pbw['destinations']:
+            pb_mv = pbw['pwr_b_drop_mv']['20C'][d['pad']]
+            total = r4(pa_mv + pbw['b2b']['drop_mv_max'] + pb_mv)
+            rows_b[d['pad']] = {'current_a': d['current_a'], 'pwr_a_mv': pa_mv, 'b2b_mv_max': pbw['b2b']['drop_mv_max'],
+                                'pwr_b_mv': pb_mv, 'total_mv': total, 'limit_mv': pbw['drop_budget_mv'],
+                                'met': total <= pbw['drop_budget_mv'] + EPS}
+        e105['B'] = {'what': 'L101.2 -> J208 / J209 -> each TPS2553 input on PWR-B at the worst-case concurrent currents (NET_CURRENT '
+                             'protective column), segment by segment',
+                     'total_current_a': i_tot, 'pwr_a_mohm_20c': copper['B_L101_to_J208']['mohm']['20C'], 'per_destination': rows_b,
+                     'met': all(r['met'] for r in rows_b.values()),
+                     'b2b_initial_resistance': 'TBD (the Samtec specification states only the delta)'}
+    else:
+        e105['B'] = {'joined': copper['B_L101_to_J208']['joined'], 'met': None}
+    conv_rows, conv_findings = converter_checks(board, spec) if spec.get('converter_zones') else ([], [])
+    findings += conv_findings
+    class_doc = None
+    if planned:  # W2 PWR-L6-SCRIPT: pcb/check_boards.py check_classes on the scripted copper (2 oz widths, exemption policy)
+        nspec = cb.normalize_spec(spec)
+        ncls = cb.board_netclasses(read(NETCLASSES), nspec)
+        views = cb.expected_views(nspec, graph)
+        cw_f, cw_u, cw_i = cb.check_classes(board, nspec, ncls, views, graph)
+        class_doc = {'label': 'MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to '
+                              'their outlines)', 'findings': cw_f, 'tracks_checked': cw_i['tracks_checked'],
+                     'exemption_policy': cw_i.get('exemption_policy'), 'branch_rows': len(spec.get('branch_exempt', {})),
+                     'neck_rows': len(spec.get('neck_exempt', {})),
+                     'widths_mm': {c: ncls['classes'][c]['outer_min_width_mm'] for c in ('BATT', 'PWR3A', 'PWR2A', 'PWR1A')}}
+        findings += [{'check': 'class_widths', 'item': f['item'], 'detail': f['detail']} for f in cw_f]
     # fill (MODEL, courtyards)
     usable = contract['area_mm2'] - len(contract['holes_mm']) * math.pi * (contract['hole_keepout_d'] / 2) ** 2
     top = [fp for fp in fps.values() if fp['side'] == 'top' and fp['courtyard'] and not fp['ref'].startswith('H')]
@@ -267,6 +472,9 @@ def audit(folder):
         'holes': {'mounting_holes': len(holes), 'netted': netted},
         'cell_nets_on_board': cell,
         'copper': copper,
+        'e1_05': e105,
+        'converters': {'rows': conv_rows, 'source': SCRIPT_SOURCE} if conv_rows else None,
+        'class_widths': class_doc,
         'fill': {'label': 'MODEL: KiCad courtyard boxes of the top footprints over the outline less the 7 hole keep-outs',
                  'top_courtyards_mm2': r4(demand), 'usable_mm2': r4(usable), 'fill': r4(demand / usable)},
         'findings': findings,

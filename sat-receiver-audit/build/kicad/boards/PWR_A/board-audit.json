@@ -7,9 +7,9 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "34855f3576675b76e00e67ba07f7bb812fde5d048600e065d9d1d80261ede114",
+    "spec_sha256": "4e907b920684375f91a17d2ef03a6b2d070bda21d62300b36f70e1fe7788a0aa",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
-    "lab5_budget_sha256": "e96624b88574dc23ff3b7b6ac0c96da2df7cd5e4e99669fd47dca8e0ada5cc47"
+    "lab5_budget_sha256": "3795e9c969342b74a98a0229cc5405cc3cb8fac5808640ebc047a9829aebbe74"
   },
   "drc": null,
   "zones": [
@@ -248,13 +248,13 @@
         "L205.1"
       ],
       "mohm": {
-        "20C": 11.6134,
-        "50C": 12.9827
+        "20C": 9.0577,
+        "50C": 10.1256
       },
       "joined": true,
       "network": {
-        "tracks": 19,
-        "vias": 24,
+        "tracks": 31,
+        "vias": 27,
         "pads": 19,
         "zones_not_modelled": []
       }
@@ -271,13 +271,13 @@
         "J208.14"
       ],
       "mohm": {
-        "20C": 19.0734,
-        "50C": 21.3222
+        "20C": 16.5177,
+        "50C": 18.4652
       },
       "joined": true,
       "network": {
-        "tracks": 19,
-        "vias": 24,
+        "tracks": 31,
+        "vias": 27,
         "pads": 19,
         "zones_not_modelled": []
       }
@@ -292,15 +292,18 @@
         "F102.1"
       ],
       "mohm": {
-        "20C": 0.1079,
-        "50C": 0.1206
+        "20C": 0.6158,
+        "50C": 0.6884
       },
       "joined": true,
       "network": {
-        "tracks": 9,
-        "vias": 0,
+        "tracks": 8,
+        "vias": 3,
         "pads": 9,
-        "zones_not_modelled": []
+        "zones_not_modelled": [],
+        "zones_as_ideal_joints": [
+          "SC-U108-VOUT-IN4"
+        ]
       }
     },
     "fused_F102_to_L101": {
@@ -325,19 +328,243 @@
     },
     "B_total_20C": {
       "U210.1": {
-        "pwr_a_mohm": 19.0734,
+        "pwr_a_mohm": 16.5177,
         "b2b_delta_max_mohm": 3.75,
-        "pwr_b_mohm": 6.1942,
-        "total_mohm": 29.0176,
+        "pwr_b_mohm": 3.3152,
+        "total_mohm": 23.5829,
         "within_10_mohm": false
       },
       "U221.1": {
-        "pwr_a_mohm": 19.0734,
+        "pwr_a_mohm": 16.5177,
         "b2b_delta_max_mohm": 3.75,
-        "pwr_b_mohm": 8.1646,
-        "total_mohm": 30.988,
+        "pwr_b_mohm": 4.3004,
+        "total_mohm": 24.5681,
         "within_10_mohm": false
       }
+    }
+  },
+  "e1_05": {
+    "label": "MODEL: copper of the drawn (planned or routed) board, IACS copper at 20 degC; E1-05 and its bench stay OPEN",
+    "A": {
+      "what": "L101.2 -> L205.1 (the LT3045 pair feed)",
+      "mohm_20c": 9.0577,
+      "limit_mohm": 10.0,
+      "met": true
+    },
+    "B": {
+      "what": "L101.2 -> J208 / J209 -> each TPS2553 input on PWR-B at the worst-case concurrent currents (NET_CURRENT protective column), segment by segment",
+      "total_current_a": 2.363,
+      "pwr_a_mohm_20c": 16.5177,
+      "per_destination": {
+        "U210.1": {
+          "current_a": 0.673,
+          "pwr_a_mv": 39.0313,
+          "b2b_mv_max": 8.8613,
+          "pwr_b_mv": 5.1207,
+          "total_mv": 53.0133,
+          "limit_mv": 32.0,
+          "met": false
+        },
+        "U221.1": {
+          "current_a": 0.192,
+          "pwr_a_mv": 39.0313,
+          "b2b_mv_max": 8.8613,
+          "pwr_b_mv": 6.0135,
+          "total_mv": 53.9061,
+          "limit_mv": 32.0,
+          "met": false
+        },
+        "U501.1": {
+          "current_a": 0.673,
+          "pwr_a_mv": 39.0313,
+          "b2b_mv_max": 8.8613,
+          "pwr_b_mv": 11.4422,
+          "total_mv": 59.3348,
+          "limit_mv": 32.0,
+          "met": false
+        },
+        "U502.1": {
+          "current_a": 0.825,
+          "pwr_a_mv": 39.0313,
+          "b2b_mv_max": 8.8613,
+          "pwr_b_mv": 8.5056,
+          "total_mv": 56.3982,
+          "limit_mv": 32.0,
+          "met": false
+        }
+      },
+      "met": false,
+      "b2b_initial_resistance": "TBD (the Samtec specification states only the delta)"
+    }
+  },
+  "converters": {
+    "rows": [
+      {
+        "check": "C128 within 2.0 mm",
+        "ok": true,
+        "detail": "pad centre to pin centre {'C128.1-U107.2': 1.5524, 'C128.2-U107.3': 1.625} (limit 2.0 mm)",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "R125 within 5.0 mm",
+        "ok": true,
+        "detail": "pad centre to pin centre {'R125.1-U107.4': 3.3284} (limit 5.0 mm)",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "R128 within 5.0 mm",
+        "ok": true,
+        "detail": "pad centre to pin centre {'R128.2-U107.4': 3.182} (limit 5.0 mm)",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "R124 within 5.0 mm",
+        "ok": true,
+        "detail": "pad centre to pin centre {'R124.2-U107.4': 4.9189} (limit 5.0 mm)",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "C129 within 5.0 mm",
+        "ok": true,
+        "detail": "pad centre to pin centre {'C129.1-U107.4': 4.826} (limit 5.0 mm)",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "C127 within 5.0 mm",
+        "ok": true,
+        "detail": "pad centre to pin centre {'C127.1-U107.14': 3.7152} (limit 5.0 mm)",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "R127 within 5.0 mm",
+        "ok": true,
+        "detail": "pad centre to pin centre {'R127.1-U107.14': 2.5466, 'R127.2-U107.13': 1.8848} (limit 5.0 mm)",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "R130 within 5.0 mm",
+        "ok": true,
+        "detail": "pad centre to pin centre {'R130.1-U108.10': 1.625} (limit 5.0 mm)",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "R129 within 5.0 mm",
+        "ok": true,
+        "detail": "pad centre to pin centre {'R129.2-U108.10': 3.7015} (limit 5.0 mm)",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "no via on E1_SYS12_SW",
+        "ok": true,
+        "detail": "0 via(s) of E1_SYS12_SW",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "SW-CBOOT link on F.Cu through the VIN2-RBOOT gap",
+        "ok": true,
+        "detail": "gap [14.05, 46.0, 14.75, 46.75]: 1 F.Cu E1_SYS12_SW piece(s) through it; U107.10 and C127.2 joined on F.Cu: True; E1_SYS12_SW copper off F.Cu: 0",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "E1_SYS12_FB node on F.Cu only",
+        "ok": true,
+        "detail": "0 piece(s) or via(s) off F.Cu; pads 4 joined on F.Cu: True",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "E1_LAB5_FB node on F.Cu only",
+        "ok": true,
+        "detail": "0 piece(s) or via(s) off F.Cu; pads 3 joined on F.Cu: True",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "U108 VOUT pins joined by an In4.Cu or B.Cu polygon",
+        "ok": true,
+        "detail": "E1_LAB5_RAW polygons ['SC-U108-VOUT-IN4']: vias within 2 mm of VOUT1/VOUT2 {'SC-U108-VOUT-IN4': [1, 1]}",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "U108.6 AGND to PGND pin 19 under the module",
+        "ok": true,
+        "detail": "1 F.Cu GND track(s) from U108.6 to U108.19",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "U108.11 AGND to PGND pin 19 under the module",
+        "ok": true,
+        "detail": "1 F.Cu GND track(s) from U108.11 to U108.19",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "no foreign net on F.Cu / In1.Cu over converter zone 3",
+        "ok": true,
+        "detail": "zone [7, 39, 24, 63]: foreign nets []",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "no foreign net on F.Cu / In1.Cu over converter zone 4",
+        "ok": true,
+        "detail": "zone [7, 73, 21, 87]: foreign nets []",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "In1.Cu solid GND plane",
+        "ok": true,
+        "detail": "In1.Cu zones [('GND-In1', 'GND')], tracks 0",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      }
+    ],
+    "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+  },
+  "class_widths": {
+    "label": "MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to their outlines)",
+    "findings": [],
+    "tracks_checked": 311,
+    "exemption_policy": {
+      "branch_roles": [
+        "test_point",
+        "resistor_ge_100",
+        "sense_logic_pin"
+      ],
+      "neck_forbidden_roles": [
+        "tvs",
+        "connector",
+        "shunt",
+        "fuse",
+        "power_switch",
+        "efuse_in_out",
+        "converter_capacitor"
+      ],
+      "neck_rule": "at least the narrow side of its pad wide, no longer than its long side",
+      "branch_exempt": 3,
+      "neck_exempt": 1
+    },
+    "branch_rows": 3,
+    "neck_rows": 1,
+    "widths_mm": {
+      "BATT": 1.6,
+      "PWR3A": 0.95,
+      "PWR2A": 0.4,
+      "PWR1A": 0.2
     }
   },
   "fill": {

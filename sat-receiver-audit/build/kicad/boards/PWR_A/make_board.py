@@ -34,6 +34,7 @@ Every value is a CI/MODEL input: no fabrication release, bench gates stay OPEN.
 from __future__ import annotations
 
 import argparse
+import collections
 import copy
 import hashlib
 import json
@@ -79,7 +80,12 @@ JOINT_OVERLAP = 0.05  # mm, two scripted tracks of one net count as joined when 
 # Placement changes of W2 PCB-PWRA-4 (design choices; ref -> (x, y, rotation, side, reason)), applied after the
 # positions of board-placement.json (place_board.py, net-aware re-placement; route iteration 2). Route iteration 1 used
 # neither: the board was placed exactly as placement-study-shrink2.json.
-MOVES: dict = {}
+MOVES: dict = {
+    # W2 PWR-L6-SCRIPT (design choice): CIN_HF2 0.375 mm up, pad 1 still at the VIN2 level and pad 2 at the PGND2 level, so that
+    # the SW link to the CBOOT capacitor passes under it from the gap between VIN2 and RBOOT (TI SNVSBD5D 11.1 / figure 11-2:
+    # "route the SW connection under the device through the gap between VIN2 and RBOOT pins"); a 0603, no H-TRIM field
+    'C122': (13.07, 47.9, 90, 'F', 'W2 PWR-L6-SCRIPT: C122 (CIN_HF2) 0.375 mm up for the SW-CBOOT link under it (SNVSBD5D 11.1)'),
+}
 PLACEMENT = HERE / 'board-placement.json'
 
 
@@ -530,14 +536,246 @@ def stem_exemptions(inp, tracks, netclasses):
             for ref, row in sorted(out.items(), key=lambda kv: bg.sort_ref(kv[0]))}
 
 
+# ------------------------------------------------------------------ W2 PWR-L6-SCRIPT: converter stages and 2 oz rework
+# Sources, re-read 2026-11-14 (curl default User-Agent, HTTP 200; fetch-only, not committed):
+#   TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 Layout Guidelines and figure 11-2, https://www.ti.com/lit/ds/symlink/lm61460.pdf
+#   (sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d): input capacitors at VIN1/PGND1 and VIN2/PGND2;
+#   CVCC close to VCC and AGND "with short, wide traces"; "route the SW connection under the device through the gap between VIN2
+#   and RBOOT pins"; RBOOT "as close as possible to CBOOT and RBOOT pins"; the feedback divider close to FB ("The connection to
+#   VOUT can be somewhat longer", away from SW); "Layer of the PCB beneath the top layer with the IC must be a ground plane";
+#   figure 11-2 "VIAS to BIAS"; 11.1.1 two-ounce outer copper.
+#   TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, https://www.ti.com/lit/ds/symlink/tpsm63606.pdf (sha256
+#   d1c157ff51c0e24bec9749dc434c3f8cdb8e980a7d1295d3a51c7d13f8ab4147): "use a wide polygon plane on a lower PCB layer to connect
+#   these [VOUT] pins together and to the load"; feedback resistors close to FB; "Connect AGND pins 6 and 11 directly to PGND
+#   pin 19 under the module"; solid ground plane on the layer below; figure 11-2 "Place thermal vias at the VOUT pins".
+SCRIPT_SOURCE = ('TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2, https://www.ti.com/lit/ds/symlink/lm61460.pdf, '
+                 'and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1 and figure 11-2, '
+                 'https://www.ti.com/lit/ds/symlink/tpsm63606.pdf, both re-read 2026-11-14 (curl default User-Agent, HTTP 200, sha256 '
+                 '2c8a0bf3... and d1c157ff...; fetch-only, not committed)')
+
+
+def sc_track(tid, net, width, path, why, layer='F.Cu'):
+    return {'id': tid, 'net': net, 'layer': layer, 'width_mm': width, 'path': [[r4(x), r4(y)] for x, y in path], 'locked': True,
+            'why': why + ' (W2 PWR-L6-SCRIPT, make_board.py)'}
+
+
+# The pin-entry stems of the SHRINK-2 pours (W2 PCB-PWRA-3, sized for 1 oz) that the 2 oz class widths and the exemption policy
+# (no neck on power-switch nodes, converter capacitors or connector lands; no pin stems) replace: board_copper ids -> why.
+SCRIPT_DROP = {
+    'CU-E1SW-Q102': 'Q102 source stem 1.45 mm < BATT 1.6 (power switch): a 1.6 mm pin-group bar instead',
+    'CU-E1SW-BAR-J-E1SW-Q102': 'joint of the old Q102 stem',
+    'CU-SYS12-Q201': 'Q201 source stem 1.4 mm < BATT 1.6 (power switch): a 1.6 mm entry instead',
+    'CU-SYS12SW-PIN': 'U107 SW stem 0.7 mm: the SW entry pour instead (within half the class width of the pin)',
+    'CU-SYS12SW-PIN-J-SYS12SW-L102': 'joint of the old SW stem',
+    'CU-CONVIN-U107-L-BAR': 'VIN2 bar re-scripted above the SW-CBOOT link (C122 moved up)',
+    'CU-CONVIN-U107-L-J-CONVIN-U107-L-BAR': 'joint of the old VIN2 bar (it crossed the SW-CBOOT link)',
+    'CU-GND-U107-L': 'PGND2 bar re-scripted clear of the moved C122.1',
+    'CU-LAB5RAW-VOUT1': 'U108 VOUT1 stem 1.3 mm < BATT 1.6: a 1.6 mm entry instead',
+    'CU-LAB5RAW-VOUT2': 'U108 VOUT2 stem 1.3 mm < BATT 1.6: a 1.6 mm entry instead',
+    'CU-LAB5RAW-BAR-J-LAB5RAW-VOUT1': 'joint of the old VOUT1 stem',
+    'CU-LAB5RAW-BAR-J-LAB5RAW-VOUT2': 'joint of the old VOUT2 stem',
+    'CU-LAB5RAW-BAR-1': 'R129.1 stub 0.8 mm < BATT 1.6: a 1.6 mm track to the regulation point instead',
+    'CU-LAB5-B-SPINE': 'B.Cu LAB5 spine 2.2 mm: wider (2.5 mm) where the bond zone 3 keep-out and the E1_CONV_IN via column allow, with '
+                       'parallel strips (E1-05 path A)',
+    'CU-LAB5-B-TOP': 'B.Cu LAB5 top run 2.2 mm: 2.4 / 2.3 mm (E1-05 path A)',
+}
+U107_WHY = 'LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2'
+E105_WHY = 'PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu'
+U108_WHY = 'TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2'
+# Converter-stage and rework copper (board mm, y up): tracks, vias, zones. Widths: signal pieces 0.2-0.25 mm (SIG class 0.15);
+# power-class pieces at the 2 oz class width or wider; the three low-current power-net pieces narrower than their class are
+# branch_exempt rows of SCRIPT_BRANCHES (exemption policy: sense or logic pins only).
+SCRIPT_TRACKS = [
+    # --- U107 LM61460 (zone 3') ---
+    sc_track('SC-U107-SWLINK', 'E1_SYS12_SW', 0.25, [(16.0, 46.375), (11.15, 46.375), (11.15, 45.3)],
+             f'{U107_WHY}: SW to the CBOOT capacitor C127.2 under the device through the gap between VIN2 (pin 12) and RBOOT (pin 13), '
+             'then under C122.1 and above R127.2; F.Cu only, no via (gate-drive charge only: branch of C127)'),
+    sc_track('SC-U107-CBOOT', 'E1_SYS12_CBOOT', 0.25, [(14.3, 45.375), (13.5, 45.375), (13.5, 43.525), (12.65, 43.525)],
+             f'{U107_WHY}: CBOOT pin 14 to RBOOT R127.1 (short)'),
+    sc_track('SC-U107-CBOOT-C127', 'E1_SYS12_CBOOT', 0.25, [(12.65, 43.55), (11.15, 43.575)], f'{U107_WHY}: R127.1 to CBOOT C127.1'),
+    sc_track('SC-U107-RBOOT', 'E1_SYS12_RBOOT', 0.2, [(14.3, 45.875), (12.65, 45.875), (12.65, 45.3)],
+             f'{U107_WHY}: RBOOT pin 13 to R127.2, between the CBOOT track and the SW link'),
+    sc_track('SC-U107-VCC', 'E1_SYS12_VCC', 0.25, [(15.475, 44.5), (15.475, 43.3)], f'{U107_WHY}: VCC pin 2 to CVCC C128.1, short'),
+    sc_track('SC-U107-AGND', 'GND', 0.2, [(16.0, 44.5), (16.0, 43.7), (16.4, 43.3)], f'{U107_WHY}: AGND pin 3 to CVCC C128.2, short'),
+    sc_track('SC-U107-FB', 'E1_SYS12_FB', 0.2, [(16.525, 44.5), (16.525, 44.0), (17.4, 44.0), (17.4, 41.6)],
+             f'{U107_WHY}: FB pin 4 round C128.2 to RFBB R125.1; FB node on F.Cu only'),
+    sc_track('SC-U107-FB-R128', 'E1_SYS12_FB', 0.2, [(16.075, 41.5), (17.6, 41.5)], f'{U107_WHY}: RFF R128.2 to RFBB R125.1 (FB node)'),
+    sc_track('SC-U107-FB-R124', 'E1_SYS12_FB', 0.2, [(17.6, 41.5), (17.6, 39.85)], f'{U107_WHY}: RFBB R125.1 to RFBT R124.2 (FB node)'),
+    sc_track('SC-U107-FF', 'E1_SYS12_FF', 0.2, [(14.425, 41.5), (14.475, 39.85)], f'{U107_WHY}: RFF R128.1 to CFF C129.2'),
+    sc_track('SC-U107-BIAS', 'SYS12', 0.25, [(14.4, 44.825), (13.95, 42.55)],
+             f'{U107_WHY}: BIAS pin 1 down to the output sense line (sense/bias pin, milliamperes: branch of U107 pad 1)'),
+    sc_track('SC-U107-SENSE', 'SYS12', 0.25, [(19.25, 39.85), (19.25, 38.9), (16.025, 38.9), (13.65, 38.9), (13.65, 42.2), (13.95, 42.55)],
+             f'{U107_WHY}: the output sense of RFBT R124.1 and CFF C129.1 to the BIAS via, below the divider and away from SW'),
+    sc_track('SC-U107-SENSE-C129', 'SYS12', 0.25, [(16.025, 39.85), (16.025, 38.9)], f'{U107_WHY}: CFF C129.1 to the output sense'),
+    sc_track('SC-U107-SENSE-V1S', 'SYS12', 0.25, [(13.65, 38.9), (12.9, 38.3)],
+             f'{U107_WHY}: the output sense line to its via below zone 3\' ("VIAS to BIAS"; the via outside the bond zone)'),
+    sc_track('SC-U107-SENSE-IN2', 'SYS12', 0.25, [(12.9, 38.3), (12.9, 55.0), (6.2, 61.7), (6.2, 62.0)],
+             f'{U107_WHY}: the BIAS / RFBT output sense on In2.Cu (In1.Cu GND between it and the F.Cu SW copper) to the SYS12 bar '
+             'left of zone 3\'', layer='In2.Cu'),
+    sc_track('SC-U107-VINBAR', 'E1_CONV_IN', 0.5, [(9.15, 46.725), (10.2, 47.05), (13.07, 47.05)],
+             f'{U107_WHY}: CIN2 C119.1 to CIN_HF2 C122.1 along the VIN2 level, above the SW-CBOOT link'),
+    # --- E1-05 path A (L101.2 -> L205.1): the B.Cu LAB5 trunk at the free width (MODEL scan of freeze/plan6.py at 0.20 mm) ---
+    sc_track('SC-LAB5-B-TOP-1', 'LAB5', 2.4, [(2.0, 91.5), (13.0, 91.5)], E105_WHY + ': top run from the L101 vias, 2.4 mm', 'B.Cu'),
+    sc_track('SC-LAB5-B-TOP-2', 'LAB5', 2.3, [(13.0, 91.5), (25.4, 91.5)], E105_WHY + ': top run to the spine, 2.3 mm', 'B.Cu'),
+    sc_track('SC-LAB5-B-SPINE-1', 'LAB5', 2.5, [(25.6, 28.6), (25.6, 66.0)],
+             E105_WHY + ': spine 2.5 mm (x 24.35-26.85: 0.3 mm off thermal_bond zone 3, 0.2 mm off the E1_CONV_IN vias at x 27.5)', 'B.Cu'),
+    sc_track('SC-LAB5-B-SPINE-2', 'LAB5', 2.2, [(25.4, 66.0), (25.4, 91.5)], E105_WHY + ': spine 2.2 mm above y 66', 'B.Cu'),
+    sc_track('SC-LAB5-B-PAR1', 'LAB5', 2.15, [(26.0, 37.0), (28.05, 37.0), (28.05, 41.0), (26.0, 41.0)],
+             E105_WHY + ': parallel strip beside the spine at y 37-41', 'B.Cu'),
+    sc_track('SC-LAB5-B-PAR2', 'LAB5', 2.5, [(26.0, 48.3), (28.05, 48.3), (28.05, 51.7), (26.0, 51.7)],
+             E105_WHY + ': parallel strip beside the spine at y 48-52', 'B.Cu'),
+    sc_track('SC-LAB5-B-PAR3', 'LAB5', 2.2, [(25.4, 72.5), (27.75, 72.5)], E105_WHY + ': join of the strip at y 72.5', 'B.Cu'),
+    sc_track('SC-LAB5-B-PAR3-S', 'LAB5', 2.5, [(27.75, 72.5), (27.75, 84.0)], E105_WHY + ': parallel strip beside the spine at y 72-84',
+             'B.Cu'),
+    sc_track('SC-LAB5-B-PAR3-T', 'LAB5', 2.2, [(27.75, 84.0), (25.4, 84.0)], E105_WHY + ': join of the strip at y 84', 'B.Cu'),
+    sc_track('SC-LAB5-F-BAND', 'LAB5', 2.0, [(26.2, 27.8), (39.6, 27.8)],
+             E105_WHY.replace('B.Cu', 'F.Cu') + ': F.Cu strip over the B.Cu band (y 26.8-28.8, free at 0.20 mm) into the RISE-L copper; '
+             'three vias to the band at its left end'),
+    sc_track('SC-U107-PGND2', 'GND', 1.2, [(8.3, 48.4), (14.3, 48.4)], f'{U107_WHY}: PGND2 to C122.2 and C119.2 (clear of C122.1)'),
+    sc_track('SC-Q102-S', 'E1_SW', 1.6, [(26.175, 35.0), (26.175, 36.9)],
+             'BATT 1.6 mm pin-group bar over the Q102 sources S1-S3 from the E1_SW bar (power switch: no neck, no stem)'),
+    sc_track('SC-Q201-S', 'SYS12', 1.6, [(31.468, 58.05), (31.468, 59.5)],
+             'BATT 1.6 mm from the SYS12 crossing onto the Q201 source (power switch: no neck, no stem)'),
+    # --- U108 TPSM63606 (zone 4') ---
+    sc_track('SC-U108-VOUT1', 'E1_LAB5_RAW', 1.6, [(12.0, 76.2), (12.0, 77.3)], f'{U108_WHY}: BATT 1.6 mm onto VOUT1 (pin 8) from its via'),
+    sc_track('SC-U108-VOUT2', 'E1_LAB5_RAW', 1.6, [(16.0, 76.2), (16.0, 77.3)], f'{U108_WHY}: BATT 1.6 mm onto VOUT2 (pin 9) from its via'),
+    sc_track('SC-U108-R129', 'E1_LAB5_RAW', 1.6, [(16.0, 77.0), (17.875, 77.0)],
+             f'{U108_WHY}: the regulation point RFBT R129.1 at the VOUT2 copper, at the class width'),
+    sc_track('SC-U108-VLDOIN', 'E1_LAB5_RAW', 0.25, [(11.75, 79.725), (11.0, 79.725), (11.0, 78.35), (11.45, 77.9)],
+             f'{U108_WHY}: VLDOIN pin 5 (LDO bias input, milliamperes: branch of U108 pad 5) to VOUT1'),
+    sc_track('SC-U108-AGND6', 'GND', 0.25, [(11.75, 79.225), (13.4, 79.225)], f'{U108_WHY}: AGND pin 6 to PGND pin 19 under the module'),
+    sc_track('SC-U108-AGND11', 'GND', 0.25, [(16.25, 79.225), (14.6, 79.225)], f'{U108_WHY}: AGND pin 11 to PGND pin 19 under the module'),
+    sc_track('SC-U108-FB', 'E1_LAB5_FB', 0.2, [(16.25, 78.725), (17.875, 78.725), (18.7, 78.1), (19.525, 77.0)],
+             f'{U108_WHY}: FB pin 10 to RFBB R130.1 and RFBT R129.2 (feedback resistors at FB), F.Cu only'),
+    sc_track('SC-U108-RT', 'E1_LAB5_RT', 0.2, [(16.25, 79.725), (22.15, 79.725)], f'{U108_WHY}: RT pin 12 to R131.1'),
+]
+SCRIPT_VIAS = [  # (id, net, (x, y), why): 0.6 / 0.3 like the other scripted vias
+    ('SC-U107-SENSE-V1', 'SYS12', (12.9, 38.3), f'{U107_WHY}: BIAS / output-sense via ("VIAS to BIAS"), below thermal_bond zone 3\''),
+    ('SC-U107-SENSE-V2', 'SYS12', (6.2, 62.0), f'{U107_WHY}: the output sense up into the SYS12 bar left of thermal_bond zone 3\''),
+    ('SC-LAB5-F-BAND-V1', 'LAB5', (26.2, 27.8), 'E1-05 path A: F.Cu band strip to the B.Cu band and spine'),
+    ('SC-LAB5-F-BAND-V2', 'LAB5', (27.0, 28.4), 'E1-05 path A: F.Cu band strip to the B.Cu band'),
+    ('SC-LAB5-F-BAND-V3', 'LAB5', (27.9, 28.4), 'E1-05 path A: F.Cu band strip to the B.Cu band'),
+    ('SC-U108-VOUT-V1', 'E1_LAB5_RAW', (12.0, 76.2), f'{U108_WHY}: thermal via at VOUT1 to the In4.Cu VOUT polygon'),
+    ('SC-U108-VOUT-V2', 'E1_LAB5_RAW', (16.0, 76.2), f'{U108_WHY}: thermal via at VOUT2 to the In4.Cu VOUT polygon'),
+    ('SC-U108-VOUT-V3', 'E1_LAB5_RAW', (14.0, 76.2), f'{U108_WHY}: thermal via between the VOUT pins to the In4.Cu VOUT polygon'),
+]
+
+
+def sc_zone(zid, net, layer, outline, why, priority=3):
+    return {'id': zid, 'net': net, 'layer': layer, 'outline': [[r4(x), r4(y)] for x, y in outline], 'priority': priority,
+            'pad_connection': 'solid', 'why': why + ' (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than '
+            'its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)'}
+
+
+SCRIPT_ZONES = [
+    sc_zone('SC-U107-SW-ENTRY', 'E1_SYS12_SW', 'F.Cu', [(15.25, 46.5), (16.75, 46.5), (16.75, 49.6), (15.25, 49.6)],
+            f'{U107_WHY}: SW pin 10 (0.4 x 2.4 mm between the PGND/VIN pins) up to the L102.1 trunk: 1.5 mm wide inside the pin rows '
+            '(0.2 mm to the PGND/VIN pins), the BATT trunk 0.8 mm beyond the pin end'),
+    sc_zone('SC-U108-VOUT-IN4', 'E1_LAB5_RAW', 'In4.Cu', [(11.2, 75.5), (16.8, 75.5), (16.8, 76.9), (11.2, 76.9)],
+            f'{U108_WHY}: VOUT pins 8/9 joined by a polygon on a lower layer (In4.Cu, over the GND fill) through the three VOUT vias',
+            priority=2),
+]
+# branch_exempt rows of the scripted converter copper (exemption policy: sense or logic pins only): ref -> row
+SCRIPT_BRANCHES = {
+    'C127': {'max_mm': 7.0, 'min_width_mm': 0.25,
+             'reason': 'SW-CBOOT link (SNVSBD5D 11.1: through the VIN2-RBOOT gap) to the bootstrap capacitor; gate-drive charge only'},
+    'U107': {'pads': ['1'], 'max_mm': 40.0, 'min_width_mm': 0.25,
+             'reason': 'BIAS pin 1 and the RFBT / CFF output sense: bias and sense current (milliamperes), In2.Cu under the In1.Cu GND'},
+    'U108': {'pads': ['5'], 'max_mm': 3.5, 'min_width_mm': 0.25,
+             'reason': 'VLDOIN pin 5 (internal LDO input, milliamperes) to VOUT1 between the module pins'},
+}
+EXEMPTION_POLICY = {
+    'why': ('W2 PWR-L6-SCRIPT (synthesis PWR-L6-SCRIPT, judge 1 power rating): class-width exemptions follow the pad they serve. '
+            'branch_exempt only for test points, resistors of 100 ohm or more and sense or logic pins; no neck on TVS, connector or '
+            'harness lands, shunts, fuses, power-switch nodes, eFuse IN/OUT or converter capacitors; a neck at least as wide as its '
+            'pad and no longer than it (no pin stems); pin entries are pours within half the class width of the pad'),
+}
+
+
+def script_copper(pre):
+    """W2 PWR-L6-SCRIPT: the converter-stage copper of U107/U108 and the 2 oz rework of the SHRINK-2 pin-entry stems (SCRIPT_DROP
+    out, SCRIPT_TRACKS / SCRIPT_VIAS / SCRIPT_ZONES in). Returns (pre_route, notes)."""
+    have = {t['id'] for t in pre['tracks']}
+    missing = sorted(set(SCRIPT_DROP) - have)
+    if missing:
+        raise SystemExit(f'make_board: the scripted pieces {missing} that W2 PWR-L6-SCRIPT replaces are gone (board_copper changed)')
+    tracks = [t for t in pre['tracks'] if t['id'] not in SCRIPT_DROP] + [dict(t) for t in SCRIPT_TRACKS]
+    vias = list(pre['vias']) + [{'id': vid, 'net': net, 'at': [r4(at[0]), r4(at[1])], 'diameter_mm': 0.6, 'drill_mm': 0.3,
+                                 'locked': True, 'why': why + ' (W2 PWR-L6-SCRIPT, make_board.py; the project via 0.6/0.3)'}
+                                for vid, net, at, why in SCRIPT_VIAS]
+    zones = list(pre['zones']) + [dict(z) for z in SCRIPT_ZONES]
+    notes = [f'dropped {k}: {v}' for k, v in sorted(SCRIPT_DROP.items())]
+    return {'tracks': tracks, 'vias': vias, 'zones': zones}, notes
+
+
+def script_clearance(inp, pre, ids):
+    """Clearance of the W2 PWR-L6-SCRIPT copper (ids) against the pads of other nets and every other scripted item (pad copper
+    boxes, capsules, pour boxes; MODEL, conservative for round and custom pads): problems below CLEAR."""
+    problems = []
+    pads = [(pa.ref, q) for pa in inp.parts.values() for q in pa.pads if q['type'] != 'np_thru_hole']
+    segs = []
+    for t in pre['tracks']:
+        for a, b in zip(t['path'], t['path'][1:]):
+            segs.append((t['id'], t['net'], t['layer'], tuple(a), tuple(b), t['width_mm'] / 2))
+    for v in pre['vias']:
+        segs.append((v['id'], v['net'], '*', tuple(v['at']), tuple(v['at']), v['diameter_mm'] / 2))
+    boxes = [(z['id'], z['net'], z['layer'], zb) for z in pre['zones'] if z['outline'] != 'board' for zb in outline_boxes(z['outline'])]
+
+    def on(layer_a, layer_b):
+        return layer_a == '*' or layer_b == '*' or layer_a == layer_b
+    for sid, net, layer, a, b, r in segs:
+        if sid not in ids:
+            continue
+        for ref, q in pads:
+            lays = ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu'] if q['type'] == 'thru_hole' else [f'{q["layers"][0]}.Cu']
+            if q['net'] == net or not any(on(layer, l) for l in lays):
+                continue
+            d = seg_box_dist(a, b, q['box']) - r
+            if d < CLEAR - EPS:
+                problems.append(f'{sid} ({net}) {r4(d)} mm from pad {ref}.{q["number"]} ({q["net"]})')
+        for oid, onet, olayer, c, d_, orr in segs:
+            if oid == sid or onet == net or not on(layer, olayer):
+                continue
+            d = seg_seg_dist(a, b, c, d_) - r - orr
+            if d < CLEAR - EPS:
+                problems.append(f'{sid} ({net}) {r4(d)} mm from {oid} ({onet})')
+        for zid, znet, zlayer, zb in boxes:
+            if znet == net or not on(layer, zlayer):
+                continue
+            d = seg_box_dist(a, b, zb) - r
+            if d < CLEAR - EPS:
+                problems.append(f'{sid} ({net}) {r4(d)} mm from pour {zid} ({znet})')
+    for zid, znet, zlayer, zb in boxes:
+        if zid not in ids:
+            continue
+        for ref, q in pads:
+            if q['net'] == znet or zlayer[0] not in q['layers']:
+                continue
+            d = box_dist(zb, q['box'])
+            if d < CLEAR - EPS:
+                problems.append(f'{zid} ({znet}) {r4(d)} mm from pad {ref}.{q["number"]} ({q["net"]})')
+        for oid, onet, olayer, c, d_, orr in segs:
+            if onet == znet or not on(zlayer, olayer):
+                continue
+            d = seg_box_dist(c, d_, zb) - orr
+            if d < CLEAR - EPS:
+                problems.append(f'{zid} ({znet}) {r4(d)} mm from {oid} ({onet})')
+    return sorted(set(problems))
+
+
 def scripted_joined(inp, pre):
     """Per net with converted pours: the scripted tracks (CU-*) and the pads they reach, joined by geometric overlap of
     at least JOINT_OVERLAP (tracks) or contact (pads, vias), must form one piece. Returns problems."""
     problems = []
-    tracks = [t for t in pre['tracks'] if t['id'].startswith('CU-')]
+    # W2 PWR-L6-SCRIPT: the SC- copper (converter stages, 2 oz rework) counts too, and its F.Cu/B.Cu pin-entry pours join what they
+    # overlap (as KiCad fills them: a zone joins its net's pads and tracks inside it)
+    tracks = [t for t in pre['tracks'] if t['id'].startswith('CU-') or (t['id'].startswith('SC-') and t['net'] != 'GND')]
     for net in sorted({t['net'] for t in tracks}):
         mine = [t for t in tracks if t['net'] == net]
         segs = [(tuple(a), tuple(b), t['width_mm'] / 2, t['layer'][0], t['id']) for t in mine for a, b in zip(t['path'], t['path'][1:])]
+        segs += [((zb[0], zb[1]), (zb[2], zb[3]), 0.0, z['layer'][0], z['id'], zb) for z in pre['zones']
+                 if z['net'] == net and z['outline'] != 'board' and z['layer'] in ('F.Cu', 'B.Cu') for zb in [poly_box(z['outline'])]]
+        segs = [s if len(s) == 6 else s + (None,) for s in segs]
         vias = [(tuple(v['at']), v['diameter_mm'] / 2) for v in pre['vias'] if v['net'] == net]
         pads = [(pa.ref, q) for pa in inp.parts.values() for q in pa.pads if q['net'] == net]
         nodes = [('s', k) for k in range(len(segs))] + [('v', k) for k in range(len(vias))] + [('p', k) for k in range(len(pads))]
@@ -551,17 +789,28 @@ def scripted_joined(inp, pre):
 
         def union(a, b):
             parent[find(a)] = find(b)
-        for i, (a, b, r, lay, _id) in enumerate(segs):
+        def touch(si, sj, overlap):
+            (a, b, r, _l, _i, za), (c, d, r2, _l2, _i2, zb) = si, sj
+            if za and zb:
+                return bg.rects_overlap(za, zb, -overlap)
+            if za or zb:
+                box, (p, q, rr) = (za, (c, d, r2)) if za else (zb, (a, b, r))
+                return seg_box_dist(p, q, box) <= rr - overlap
+            return seg_seg_dist(a, b, c, d) <= r + r2 - overlap
+        for i, (a, b, r, lay, _id, za) in enumerate(segs):
             for j in range(i + 1, len(segs)):
-                c, d, r2, lay2, _id2 = segs[j]
-                if lay == lay2 and seg_seg_dist(a, b, c, d) <= r + r2 - JOINT_OVERLAP:
+                if lay == segs[j][3] and touch(segs[i], segs[j], JOINT_OVERLAP):
                     union(('s', i), ('s', j))
             for k, (c, rv) in enumerate(vias):
-                if seg_seg_dist(a, b, c, c) <= r + rv - JOINT_OVERLAP:
+                if (seg_box_dist(c, c, za) <= rv - JOINT_OVERLAP) if za else seg_seg_dist(a, b, c, c) <= r + rv - JOINT_OVERLAP:
                     union(('s', i), ('v', k))
             for k, (_ref, q) in enumerate(pads):
-                if lay in q['layers'] and capsule_hits_box(a, b, r, q['box']):
+                if lay in q['layers'] and (bg.rects_overlap(za, q['box'], EPS) if za else capsule_hits_box(a, b, r, q['box'])):
                     union(('s', i), ('p', k))
+        for k, (c, _rv) in enumerate(vias):  # a via in a pad of its net joins it
+            for kp, (_ref, q) in enumerate(pads):
+                if q['box'][0] - EPS <= c[0] <= q['box'][2] + EPS and q['box'][1] - EPS <= c[1] <= q['box'][3] + EPS:
+                    union(('v', k), ('p', kp))
         # inner zones and planes of the net join the vias inside them (E1_CONV_IN strap and bridge on In2, GND planes)
         for z in pre['zones']:
             if z['net'] != net or z['layer'] in ('F.Cu', 'B.Cu'):
@@ -573,7 +822,7 @@ def scripted_joined(inp, pre):
         if len(reached) > 1:
             groups = {}
             for i, s in enumerate(segs):
-                groups.setdefault(find(('s', i)), set()).add(s[4][3:])
+                groups.setdefault(find(('s', i)), set()).add(s[4][3:] if s[4][:3] in ('CU-', 'SC-') else s[4])
             problems.append(f'scripted {net} copper falls into {len(reached)} pieces: '
                             + ' | '.join(', '.join(sorted(g)) for g in groups.values()))
     return problems
@@ -933,16 +1182,28 @@ def height_zones(inp):
 SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND'}
 
 
-def project_json(inp, nets):
+def scripted_classes(inp, scripted_nets):
+    """GND plus every net whose copper is all scripted (W2 PWR-L6-SCRIPT: the converter-stage nets and the 'power' nets of
+    script-planned-6l.json): net -> SCRIPTED_<class>, a class with the widths of the net's class that the router never routes."""
+    cls = {n: v['class'] for n, v in inp.netclasses['nets'].items()}
+    out = dict(SCRIPTED_CLASSES)
+    for net in sorted(scripted_nets):
+        out[net] = 'SCRIPTED_' + cls.get(net, 'SIG')
+    return out
+
+
+def project_json(inp, nets, scripted=None):
+    scripted = scripted or SCRIPTED_CLASSES
     proj = read(ENC_PROJECT)
     proj['meta']['filename'] = 'PWR_A.kicad_pro'
     nc = inp.netclasses
     default = proj['net_settings']['classes'][0]
     pd = nc['project_defaults']['values_mm']
     classes = []
+    extra = [(c, nc['classes'][c[len('SCRIPTED_'):]]) for c in sorted(set(scripted.values()) - {'SCRIPTED_GND'})]
     for name, cls in (('Default', nc['classes']['SIG']), ('BATT', nc['classes']['BATT']), ('PWR1A', nc['classes']['PWR1A']),
                       ('PWR2A', nc['classes']['PWR2A']), ('PWR3A', nc['classes']['PWR3A']),
-                      ('SCRIPTED_GND', nc['classes']['SIG'])):
+                      ('SCRIPTED_GND', nc['classes']['SIG']), *extra):
         row = copy.deepcopy(default)
         row['name'] = name
         row['track_width'] = cls['outer_min_width_mm']
@@ -953,8 +1214,8 @@ def project_json(inp, nets):
             row['priority'] = len(classes) - 1
         classes.append(row)
     proj['net_settings']['classes'] = classes
-    patterns = [p for p in nc['kicad']['netclass_patterns'] if p['pattern'] in nets and p['pattern'] not in SCRIPTED_CLASSES]
-    patterns += [{'netclass': cls, 'pattern': net} for net, cls in SCRIPTED_CLASSES.items()]
+    patterns = [p for p in nc['kicad']['netclass_patterns'] if p['pattern'] in nets and p['pattern'] not in scripted]
+    patterns += [{'netclass': cls, 'pattern': net} for net, cls in scripted.items()]
     proj['net_settings']['netclass_patterns'] = sorted(patterns, key=lambda p: p['pattern'])
     rules = proj['board']['design_settings']['rules']
     rules['min_track_width'] = pd['track_width']
@@ -1049,6 +1310,115 @@ def neck_rows(necks):
     return out
 
 
+# ------------------------------------------------------------------ planned power copper (W2 PWR-L6-SCRIPT, freeze/plan6.py)
+SCRIPT6 = HERE / 'script-planned-6l.json'
+# the converter-stage nets that the SC- copper joins whole (checked by net_pieces): scripted, never routed
+CONVERTER_NETS = ('E1_SYS12_SW', 'E1_SYS12_CBOOT', 'E1_SYS12_RBOOT', 'E1_SYS12_VCC', 'E1_SYS12_FB', 'E1_SYS12_FF', 'E1_LAB5_FB',
+                  'E1_LAB5_RT')
+
+
+def script_guard(inp, pre):
+    """SHA256 of what the planned copper depends on: the pads, the scripted tracks and vias (frozen_guard) and the pours."""
+    g = frozen_guard(inp, pre['tracks'], pre['vias'])
+    zones = sorted(json.dumps({k: v for k, v in z.items() if k != 'why'}, sort_keys=True) for z in pre['zones'])
+    g['zones_sha256'] = hashlib.sha256('\n'.join(zones).encode()).hexdigest()
+    return g
+
+
+def planned_copper(inp, pre):
+    """The locked copper of script-planned-6l.json (PL-/PLV- tracks and vias, PE- pin-entry pours) when present; the guard stops
+    make_board when a pad or the scripted copper changed. Returns (tracks, vias, zones, branch rows, scripted nets, doc)."""
+    if not SCRIPT6.is_file():
+        return [], [], [], {}, set(), None
+    doc = read(SCRIPT6)
+    have = script_guard(inp, pre)
+    for key, value in have.items():
+        if doc['guard'].get(key) != value:
+            raise SystemExit(f'make_board: {SCRIPT6.name} was planned on another {key} ({str(doc["guard"].get(key))[:12]}... != '
+                             f'{value[:12]}...): rerun build/kicad/boards/PWR_A/freeze/plan6.py')
+    tracks, vias, zones, branches, whole = [], [], [], {}, set()
+    for net, d in sorted(doc['nets'].items()):
+        why = (f'W2 PWR-L6-SCRIPT planned {d["class"]} copper of {net} ({SCRIPT6.name}, freeze/plan6.py: grid A* at the 2 oz class '
+               f'width {d["width_mm"]} mm on F.Cu/B.Cu, clearance 0.20 mm; kind {d["kind"]})')
+        for k, (layer, w, a, b) in enumerate(d['tracks'], 1):
+            tracks.append({'id': f'PL-{net}-{k:03d}', 'net': net, 'layer': layer, 'width_mm': w, 'path': [list(a), list(b)],
+                           'locked': True, 'why': why})
+        for k, (x, y, size, drill) in enumerate(d['vias'], 1):
+            vias.append({'id': f'PLV-{net}-{k:02d}', 'net': net, 'at': [x, y], 'drill_mm': drill, 'diameter_mm': size, 'locked': True,
+                         'why': why})
+        for z in d['zones']:
+            outline = rect_union_outline([tuple(r) for r in z['rects']])
+            if outline is None:
+                raise SystemExit(f'make_board: the pin-entry pour {z["id"]} of {SCRIPT6.name} is not one rectilinear piece')
+            zones.append({'id': z['id'], 'net': net, 'layer': z['layer'], 'outline': outline, 'priority': 3, 'pad_connection': 'solid',
+                          'why': f'W2 PWR-L6-SCRIPT pin-entry pour of {z["pad"]} ({SCRIPT6.name}): the pad, its cross-section at most '
+                                 'half the class width beyond it, then a class-width landing for the planned track'})
+        for b in d['branches']:
+            for ref in b['refs']:
+                row = branches.setdefault(ref, {'max_mm': 0.0, 'min_width_mm': 9.9, 'links': []})
+                row['max_mm'] = max(row['max_mm'], math.ceil(float(b['length_mm']) * 2) / 2 + 0.5)
+                row['min_width_mm'] = min(row['min_width_mm'], float(b['width_mm']))
+                row['links'].append(f'{net} {b["width_mm"]} mm x {b["length_mm"]} mm')
+        if d['kind'] == 'power':
+            whole.add(net)
+    return tracks, vias, zones, branches, whole, doc
+
+
+def net_pieces(inp, pre, net):
+    """(pieces, pads not on the largest piece): the pads of a net joined by its scripted copper (tracks, vias, pours by their
+    rectangles; inner pours join their vias; a via in a pad joins it), MODEL geometry as scripted_joined."""
+    segs = [(tuple(a), tuple(b), t['width_mm'] / 2, t['layer'], None) for t in pre['tracks'] if t['net'] == net
+            for a, b in zip(t['path'], t['path'][1:])]
+    segs += [(None, None, 0.0, z['layer'], zb) for z in pre['zones'] if z['net'] == net and z['outline'] != 'board'
+             for zb in outline_boxes(z['outline'])]
+    vias = [(tuple(v['at']), v['diameter_mm'] / 2) for v in pre['vias'] if v['net'] == net]
+    pads = [(pa.ref, q) for pa in inp.parts.values() for q in pa.pads if q['net'] == net and q['type'] != 'np_thru_hole']
+    parent = list(range(len(segs) + len(vias) + len(pads)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    def union(i, j):
+        parent[find(i)] = find(j)
+    nv, npad = len(segs), len(segs) + len(vias)
+    for i, (a, b, r, lay, zb) in enumerate(segs):
+        for j in range(i + 1, len(segs)):
+            c, d, r2, lay2, zb2 = segs[j]
+            if lay != lay2:
+                continue
+            if zb and zb2:
+                hit = bg.rects_overlap(zb, zb2, EPS)
+            elif zb or zb2:
+                box, (p, q, rr) = (zb, (c, d, r2)) if zb else (zb2, (a, b, r))
+                hit = seg_box_dist(p, q, box) <= rr + EPS
+            else:
+                hit = seg_seg_dist(a, b, c, d) <= r + r2 + EPS
+            if hit:
+                union(i, j)
+        for k, (c, rv) in enumerate(vias):
+            if (box_dist(zb, (c[0], c[1], c[0], c[1])) <= rv + EPS) if zb else seg_seg_dist(a, b, c, c) <= r + rv + EPS:
+                union(i, nv + k)
+        for k, (_ref, q) in enumerate(pads):
+            if lay[0] in q['layers'] and (bg.rects_overlap(zb, q['box'], EPS) if zb else capsule_hits_box(a, b, r + EPS, q['box'])):
+                union(i, npad + k)
+    for k, (c, _rv) in enumerate(vias):
+        for kp, (_ref, q) in enumerate(pads):
+            if q['box'][0] - EPS <= c[0] <= q['box'][2] + EPS and q['box'][1] - EPS <= c[1] <= q['box'][3] + EPS:
+                union(nv + k, npad + kp)
+    for z in pre['zones']:  # an inner pour (or a board plane) joins the vias inside it
+        if z['net'] != net or z['layer'] in ('F.Cu', 'B.Cu'):
+            continue
+        inside = [nv + k for k, (c, _rv) in enumerate(vias) if z['outline'] == 'board' or bg.point_in_outline(c, z['outline'])]
+        for k in inside[1:]:
+            union(inside[0], k)
+    roots = collections.Counter(find(npad + k) for k in range(len(pads)))
+    main = roots.most_common(1)[0][0] if roots else None
+    return len(roots), sorted(f'{ref}.{q["number"]}' for k, (ref, q) in enumerate(pads) if find(npad + k) != main)
+
+
 # ------------------------------------------------------------------ the spec
 def layers6():
     """The 6-layer plan of W2 PWRJ-LAYERS6."""
@@ -1079,7 +1449,7 @@ def layers6():
     }
 
 
-def build(frozen=True):
+def build(frozen=True, planned=True):
     spec = mps.build_placement()
     for k in ('probe_left_out', 'probe_post_route_zones_left_out'):
         spec.pop(k, None)
@@ -1089,9 +1459,19 @@ def build(frozen=True):
     inp = Inputs(spec)
     problems = check_placement(inp)
     pre, copper_notes = board_copper(spec['pre_route'], inp)
+    pre, script_notes = script_copper(pre)
+    problems += script_clearance(inp, pre, {t['id'] for t in SCRIPT_TRACKS} | {v[0] for v in SCRIPT_VIAS} | {z['id'] for z in SCRIPT_ZONES})
     problems += scripted_joined(inp, pre)
     gt, gv, skipped = gnd_fanout(inp, pre, first=fixed_refs(study))
-    ft, fv, frozen_note, necks, branches = (frozen_copper(inp, pre['tracks'] + gt, pre['vias'] + gv) if frozen
+    base = {'tracks': pre['tracks'] + gt, 'vias': pre['vias'] + gv, 'zones': pre['zones']}
+    for net in CONVERTER_NETS:
+        pieces, apart = net_pieces(inp, base, net)
+        if pieces != 1:
+            problems.append(f'converter net {net}: the scripted copper leaves {apart} apart')
+    pt, pv, pz, pbranch, whole, plan_doc = planned_copper(inp, base) if planned else ([], [], [], {}, set(), None)
+    scripted = scripted_classes(inp, set(CONVERTER_NETS) | whole)
+    inp.scripted = scripted
+    ft, fv, frozen_note, necks, branches = (frozen_copper(inp, base['tracks'] + pt, base['vias'] + pv) if frozen
                                             else ([], [], None, [], []))
     heights, sources, unread = heights_block(inp)
     nets = set(spec['instances']['template_nets'])
@@ -1107,7 +1487,7 @@ def build(frozen=True):
                  'of make_board.py MOVES, a GND plane via for every SMD GND pad, heights and height zones (hA, PWR-B windows, '
                  'H-TRIM) and the router budget of a board of record. CI/MODEL only: no fabrication release, bench gates OPEN.')
         elif k == 'pre_route':
-            v = {'tracks': pre['tracks'] + gt + ft, 'vias': pre['vias'] + gv + fv, 'zones': pre['zones']}
+            v = {'tracks': base['tracks'] + pt + ft, 'vias': base['vias'] + pv + fv, 'zones': base['zones'] + pz}
             if frozen_note:
                 v['frozen_route_note'] = frozen_note
         elif k == 'layers':
@@ -1126,7 +1506,7 @@ def build(frozen=True):
                  'ThermalVias drills 0.2 mm (JLC multilayer floor 0.15)')
         elif k == 'router':
             v = {'tool': 'freerouting', 'max_passes': 100, 'threads': 1, 'job_timeout': '00:32:00', 'timeout_s': 2040,
-                 'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())), 'class_layers': CLASS_LAYERS,
+                 'fanout': False, 'ignore_net_classes': sorted(set(scripted.values())), 'class_layers': CLASS_LAYERS,
                  'why': 'fanout false as on PWR_B: the Freerouting 2.5.0 fan-out pre-pass escaped SMD pins with 0.1124 mm '
                         'stubs (PWR_A probe run 42413833702); GND (class SCRIPTED_GND) is not autorouted: every SMD GND pad '
                         'has a scripted plane via (make_board.py gnd_fanout; placement probe 7, run 43148929963, left 140 GND '
@@ -1150,13 +1530,42 @@ def build(frozen=True):
                                    'reason': (old['reason'] + '; ' + why) if old else why}
     out['neck_exempt'] = dict(sorted(out['neck_exempt'].items(), key=lambda kv: bg.sort_ref(kv[0])))
     rows = branch_rows(branches)
-    if rows:
-        out['branch_exempt'] = {
-            ref: {'max_mm': r4(row['max_mm']), 'min_width_mm': r4(row['min_width_mm']),
-                  'reason': ('W2 PWRJ-LAYERS6: low-current branch of a power net from the frozen-route completion (a test point: '
-                             'no current; a capacitor: ripple only, at 0.4 mm on 2 oz outer copper, IPC-2221 about 2 A at +10 degC; '
-                             'a resistor of 100 ohm or more: milliamperes; MODEL, bench gates OPEN): ' + ', '.join(row['links']))}
-            for ref, row in sorted(rows.items(), key=lambda kv: bg.sort_ref(kv[0]))}
+    exempt = {ref: {**row, 'reason': 'W2 PWR-L6-SCRIPT converter stage (' + SCRIPT_SOURCE.split(',')[0] + '): ' + row['reason']}
+              for ref, row in SCRIPT_BRANCHES.items()}
+    for ref, row in pbranch.items():
+        exempt[ref] = {'max_mm': r4(row['max_mm']), 'min_width_mm': r4(row['min_width_mm']),
+                       'reason': ('W2 PWR-L6-SCRIPT planned low-current branch (freeze/plan6.py; exemption policy: a test point, a '
+                                  'resistor of 100 ohm or more or a sense or logic pin; MODEL, bench gates OPEN): ' + ', '.join(row['links']))}
+    for ref, row in rows.items():
+        exempt[ref] = {'max_mm': r4(row['max_mm']), 'min_width_mm': r4(row['min_width_mm']),
+                       'reason': ('W2 PWRJ-LAYERS6: low-current branch of a power net from the frozen-route completion (a test point: '
+                                  'no current; a capacitor: ripple only, at 0.4 mm on 2 oz outer copper, IPC-2221 about 2 A at +10 degC; '
+                                  'a resistor of 100 ohm or more: milliamperes; MODEL, bench gates OPEN): ' + ', '.join(row['links']))}
+    if exempt:
+        out['branch_exempt'] = dict(sorted(exempt.items(), key=lambda kv: bg.sort_ref(kv[0])))
+    out['exemption_policy'] = EXEMPTION_POLICY
+    zones = inp.contract['thermal_bond_mm']
+    conv = {}
+    for zi in (3, 4):
+        x, y, w, h = zones[zi - 1]
+        box = [x, y, x + w, y + h]
+        own = sorted({q['net'] for pa in inp.parts.values() for q in pa.pads if q['net']
+                      and box[0] <= q['at'][0] <= box[2] and box[1] <= q['at'][1] <= box[3]} | {'GND'})
+        conv[str(zi)] = {'rect': box, 'own_nets': own}
+    out['converter_zones'] = {
+        'zones': conv, 'layers': ['F.Cu', 'In1.Cu'], 'scripted_nets': sorted(n for n in scripted if n != 'GND'),
+        'rule': ("W2 PWR-L6-SCRIPT: on F.Cu and In1.Cu over the converter zones 3'/4' (contract thermal_bond zones 3 and 4) only "
+                 'the nets with a pad inside the zone (own_nets) carry copper; In1.Cu is the solid GND plane under the converters. '
+                 'The scripted nets are not autorouted (scripted classes); freeze/plan6.py keeps the zones as F.Cu keep-outs for the '
+                 'other nets, freeze/freeze6.py drops router copper of other nets there; board_audit.py checks it (MODEL)'),
+        'source': SCRIPT_SOURCE}
+    out['script'] = {'notes': script_notes, 'converter_nets': list(CONVERTER_NETS),
+                     'planned_file': (SCRIPT6.relative_to(BASE).as_posix() + ' sha256 ' + bg.sha256_file(SCRIPT6)) if plan_doc else None,
+                     'planned_result': plan_doc['result'] if plan_doc else None,
+                     'planned_nets': {n: {'kind': d['kind'], 'open': d['open']} for n, d in sorted(plan_doc['nets'].items())}
+                     if plan_doc else {},
+                     'rule': 'make_board.py script_copper (SC- converter stages, 2 oz rework of the SHRINK-2 stems) and planned_copper '
+                             '(PL-/PLV-/PE- from script-planned-6l.json, freeze/plan6.py)'}
     out['edge_keepout'] = {'width_mm': 0.2, 'layers': list(ROUTING6), 'blocks': ['tracks', 'vias'],
                            'why': 'rule-area strips (half-width 0.2) on every outline edge, as PWR_B: the router keeps its '
                                   'copper 0.35 mm off the edge, above the project copper-to-edge 0.3'}
@@ -1177,7 +1586,7 @@ def build(frozen=True):
                     'manual': [{'ref': ref, 'to': [x, y], 'rotation': rot, 'side': side, 'why': why}
                                for ref, (x, y, rot, side, why) in sorted(MOVES.items(), key=lambda kv: bg.sort_ref(kv[0]))]}
     if FREEZE_ONLY and frozen_note:
-        out['router']['ignore_net_classes'] = sorted(set(SCRIPTED_CLASSES.values()) | {'kicad_default', 'BATT', 'PWR1A', 'PWR2A', 'PWR3A'})
+        out['router']['ignore_net_classes'] = sorted(set(scripted.values()) | {'kicad_default', 'BATT', 'PWR1A', 'PWR2A', 'PWR3A'})
         out['router']['freeze_only'] = 'W2 PWRJ-LAYERS6 freeze-only: with the frozen route in pre_route no class is autorouted (all DSN classes in -inc), so the CI run measures exactly the frozen router copper plus the grid A* completion; in route run 43349395168 Freerouting on top of the frozen copper joined no further connection (model open = KiCad open) and left KiCad clearance errors against the locked copper'
     out['generator'] = 'build/kicad/boards/PWR_A/make_board.py'
     bg.validate_spec(out, BOARD)
@@ -1221,7 +1630,7 @@ def main(argv=None):
     if problems:
         return 1
     text = json.dumps(spec, ensure_ascii=False, indent=2) + '\n'
-    proj = project_json(inp, nets)
+    proj = project_json(inp, nets, inp.scripted)
     if args.svg:
         svg(inp, spec, args.svg)
     status = 0
