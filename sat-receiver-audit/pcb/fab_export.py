@@ -860,6 +860,15 @@ def coupon_lines(pieces):
     return lines
 
 
+def h_trim_mark(spec):
+    """W2 PWR-L6-ROUTE: the H-TRIM flush-trim mark of a board whose spec carries h_trim (PWR_B: rule text and THT pin fields
+    of build/kicad/boards/PWR_B/make_spec.py), for the fab notes and README; None for every other board."""
+    rec = spec.get('h_trim') or {}
+    if not rec.get('rule'):
+        return None
+    return {'rule': rec['rule'].rstrip('.'), 'refs': ', '.join(f['ref'] for f in rec.get('pin_fields', [])) or 'none'}
+
+
 def notes_lines(inputs, stack, cov, bom_rows):
     spec, report, parsed, board = inputs['spec'], inputs['report'], inputs['parsed'], inputs['board']
     pieces = coupon_pieces(inputs)
@@ -926,6 +935,10 @@ def notes_lines(inputs, stack, cov, bom_rows):
                     'centroid offsets per footprint are TBD '
                     f'(assembly/{board}-cpl-rotation-offsets.csv): check every part in the JLC viewer at order time; '
                     'nothing here verifies them.')]
+    trim = h_trim_mark(spec)
+    if trim:  # W2 PWR-L6-ROUTE: the H-TRIM flush-trim mark (only a spec with h_trim, PWR_B; every other board's notes unchanged)
+        lines.append(('b', f'H-TRIM flush-trim mark: trim every THT pin of this board flush after soldering (pin fields '
+                           f'{trim["refs"]}). {trim["rule"]}.'))
     tbd = [r for r in bom_rows if r['LCSC Part #'] == 'TBD']
     for r in tbd:
         lines.append(('t', f'BOM TBD: {r["Designator"]} ({r["Comment"]}): {r["Note"]}'))
@@ -1040,6 +1053,10 @@ def readme(inputs, cov, bom_rows, files):
               'посадкового місця — TBD, у CI не перевіряються: кожну деталь перевіряє той, хто замовляє, у переглядачі '
               'JLC перед оплатою (крок збирання; у build/21 його додає власник STEPS).',
               f'- Позиції BOM з TBD: {", ".join(cov["bom"]["tbd"]) or "немає"}.']
+    trim = h_trim_mark(spec)
+    if trim:  # W2 PWR-L6-ROUTE: the H-TRIM mark (spec h_trim only, PWR_B)
+        lines.append(f'- **H-TRIM — обрізати врівень:** після пайки всі THT-виводи цієї плати обрізати врівень (поля виводів '
+                     f'{trim["refs"]}); правило зі специфікації: {trim["rule"]}.')
     for r in bom_rows:
         if r['LCSC Part #'] == 'TBD':
             lines.append(f'  - {r["Designator"]} ({r["Comment"]}): {r["Note"]}.')

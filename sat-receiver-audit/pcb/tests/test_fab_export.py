@@ -451,5 +451,33 @@ class CouponPiecesTests(unittest.TestCase):
         self.assertEqual(fx.coupon_lines([]), [])
 
 
+class HTrimMarkTests(unittest.TestCase):
+    """W2 PWR-L6-ROUTE: a spec with h_trim (PWR_B) carries the H-TRIM flush-trim mark in the fab notes and README; every
+    other board's notes stay unchanged."""
+
+    def test_pwr_b_notes_carry_the_flush_trim_mark(self):
+        if 'PWR_B' not in fx.boards_with_outputs():
+            self.skipTest('no committed PWR_B board')
+        inputs = fx.load_inputs('PWR_B')
+        mark = fx.h_trim_mark(inputs['spec'])
+        self.assertIsNotNone(mark)
+        refs = [f['ref'] for f in inputs['spec']['h_trim']['pin_fields']]
+        self.assertTrue(refs)
+        files, cov, _problems = fx.build_set(inputs, synthetic_raw(inputs), [])
+        text = ' '.join(s for _k, s in fx.notes_lines(inputs, fx.stackup_record(inputs), cov, fx.bom(inputs)[0]))
+        self.assertIn('H-TRIM flush-trim mark', text)
+        for ref in refs:
+            self.assertIn(ref, mark['refs'])
+        self.assertIn('H-TRIM', files['README.md'].decode())
+
+    def test_board_without_h_trim_has_no_mark(self):
+        inputs = fx.load_inputs('ENC')
+        self.assertIsNone(fx.h_trim_mark(inputs['spec']))
+        files, cov, _problems = fx.build_set(inputs, synthetic_raw(inputs), [])
+        text = ' '.join(s for _k, s in fx.notes_lines(inputs, fx.stackup_record(inputs), cov, fx.bom(inputs)[0]))
+        self.assertNotIn('H-TRIM', text)
+        self.assertNotIn('H-TRIM', files['README.md'].decode())
+
+
 if __name__ == '__main__':
     unittest.main()
