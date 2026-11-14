@@ -5,7 +5,7 @@
   "generator": "build/kicad/boards/PWR_A/lab5_budget.py",
   "inputs": {
     "spec_sha256": "d974b9c0283abd7faf4dc9659fc82891bcbe1ef84b075ffc70078009765ba44d",
-    "pwr_b_board_sha256": "15e2cead48ddc382e6e9127786745027d12e3268a045ed8d96a2a963f98675af",
+    "pwr_b_board_sha256": "e8ec2078c07195cee8553242bc1f61fdcdc5e4e06ed7822c9272481f66d374b3",
     "pwr_b_mate_pins_sha256": "c51ae55d74315c27b42b21856a571014f1c239cfcc833ba1e75e4a4ba40f9bd0",
     "netclasses_sha256": "b16722e79aa740e50b034f82a38f8f640e6aac7c374a2ea06f4a490c1c9bf590",
     "e1_05": "Відкрито: MPN F102 з холодним опором ≤10 mΩ і опір з'єднання LAB5 E1→E2 ≤10 mΩ (кожні 10 mΩ — 32 mV при 3.2 A)."
