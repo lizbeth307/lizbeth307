@@ -801,7 +801,7 @@ VIA_IN_PAD = {'VIP-U215-6': ('U215', '6', 'I2C2_SCL', (21.175, 56.35)), 'VIP-U21
 # (tented, no part there; corridor_check allows ESC-J209- vias). Offsets from the pad centre: (knee dy, via dx, via dy);
 # the search kept CLEAR + MARGIN 0.20 to every pad and scripted item, the 0.9 mm via centre rule and EN_BONI's escape.
 FAN_NETS = ('EN_HFP', 'EN_LIME3V3', 'EN_LNB', 'FAULT_HFP')
-FAN_OFFSETS = ((-1.05, -1.15, -5.65), (-1.05, -0.85, -5.15), (-1.05, -0.55, -4.65), (-1.05, -0.05, -4.95))
+FAN_OFFSETS = None   # probe A, variant (ii): the escapes are planned links of route-planned-6l.json (route push 1 used ((-1.05, -1.15, -5.65), (-1.05, -0.85, -5.15), (-1.05, -0.55, -4.65), (-1.05, -0.05, -4.95)))
 W_FAN = 0.15
 # J209 escape copper (W2 B2B). The LSHM pads are 0.30 mm wide at 0.50 mm pitch (0.20 mm gaps), and every rail contact has a
 # GND neighbour in its row (b2b-nets.json guard_rule), so: GND contacts join a B.Cu spine between the rows (inwards), rail
