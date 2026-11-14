@@ -58,7 +58,7 @@
       },
       {
         "file": "design/E2.json",
-        "sha256": "847441b3249771d63c3e6429c3869445ebc9873d0d600da46edff93b1266b5ce"
+        "sha256": "f65b08f23e88d25864ddb1fa1016f3eeb1bbc23629d7f4d1cdfd0cddb7d4e640"
       },
       {
         "file": "design/E3.json",
@@ -78,7 +78,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "dcf1aa8cd06d8193133c91fc50c804330d5aea5f02966551eb6fdb24b2b46096"
+        "sha256": "187b7d0cd0b1aba9d5e2a632cb883389cdd2d97f8bd3b0e8d7b281a0bda09fec"
       }
     ],
     "source_documents": [
@@ -195,7 +195,7 @@
     },
     "partition": {
       "file": "pcb/partition-spec.json",
-      "sha256": "1b6e163ae54ff4e351dc7eb4fc72c282aaefa886dbc8228a44d6319eabc4348e",
+      "sha256": "e918cba34d98e077f762f11808a5f31b28f7bad4a3241c945abc38d7232e2d09",
       "b2b_currents": "tools/assembly_data.py NET_CURRENT"
     }
   },

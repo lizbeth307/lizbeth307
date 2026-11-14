@@ -196,12 +196,12 @@
       },
       {
         "ref": "J208",
-        "pin": "28",
+        "pin": "26",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "27",
+        "pin": "25",
         "type": "passive"
       },
       {
@@ -420,12 +420,12 @@
       },
       {
         "ref": "J208",
-        "pin": "30",
+        "pin": "86",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "29",
+        "pin": "85",
         "type": "passive"
       },
       {
@@ -575,12 +575,12 @@
       },
       {
         "ref": "J208",
-        "pin": "26",
+        "pin": "28",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "25",
+        "pin": "27",
         "type": "passive"
       },
       {
