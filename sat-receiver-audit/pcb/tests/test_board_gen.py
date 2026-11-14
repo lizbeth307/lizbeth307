@@ -977,5 +977,61 @@ class PwrL6Place3ExitPair(unittest.TestCase):
         self.assertEqual(order, ['B', 'A', 'I2C2_SCL', 'I2C2_SDA', 'C'])     # J209-to-J203 right to left, I2C2, the rest
 
 
+class PwrL6Place4ProbeA(unittest.TestCase):
+    """W2 PWR-L6-PLACE fourth pass, probe A: the probe-A copper of PWR_B is locked pre-route copper of
+    build/kicad/boards/PWR_B/route-planned-6l.json, kind 'link' (the nets keep their routing classes, freeze6 may complete
+    them): the escapes of the J209 lower-row contacts 25-31 to J202, the I2C0_SDA link J209.41 - J203.9 and the outer-layer
+    links of the power nets LNA4V5, VBUS_LABPORT and BIAS_CH3_PORT at the PWR1A width of the 2 oz outer copper. MODEL / CI
+    inputs only; the CI route run is the check."""
+
+    PLAN = bg.BASE / 'build/kicad/boards/PWR_B/route-planned-6l.json'
+
+    def plan(self):
+        if not self.PLAN.is_file():
+            self.skipTest('no planned PWR_B copper on this branch')
+        return bg.read_json(self.PLAN)
+
+    def test_links_keep_their_classes(self):
+        plan = self.plan()
+        pro = bg.read_json(bg.BASE / 'build/kicad/boards/PWR_B/PWR_B.kicad_pro')['net_settings']
+        cls = {p['pattern']: p['netclass'] for p in pro['netclass_patterns']}
+        for net, d in plan['nets'].items():
+            self.assertEqual(d['kind'], 'link', net)
+            self.assertFalse(cls.get(net, '').startswith('SCRIPTED'), net)
+        for net in ('LNA4V5', 'VBUS_LABPORT', 'BIAS_CH3_PORT'):
+            if net in plan['nets']:
+                self.assertEqual(cls.get(net), 'PWR1A', net)
+        src = (bg.BASE / 'build/kicad/boards/PWR_B/freeze/freeze6.py').read_text(encoding='utf-8')
+        self.assertIn("d.get('kind') != 'link'", src)          # freeze6 completes a net with a planned link
+
+    def test_power_links_outer_layers_at_ipc_width(self):
+        plan = self.plan()
+        pro = bg.read_json(bg.BASE / 'build/kicad/boards/PWR_B/PWR_B.kicad_pro')['net_settings']
+        width = {c['name']: c['track_width'] for c in pro['classes']}['PWR1A']
+        self.assertAlmostEqual(width, 0.2, places=6)
+        # IPC-2221 external (k 0.048, I = k dT^0.44 A^0.725, A in mil2), 2 oz finished outer foil 0.070 mm: MODEL
+        area = (width / 0.0254) * (0.070 / 0.0254)
+        i10 = 0.048 * 10 ** 0.44 * area ** 0.725
+        i20 = 0.048 * 20 ** 0.44 * area ** 0.725
+        for net, amps in (('LNA4V5', 1.209), ('VBUS_LABPORT', 0.825), ('BIAS_CH3_PORT', 0.339)):
+            if net not in plan['nets']:
+                continue
+            self.assertGreaterEqual(i10, amps, net)
+            self.assertGreaterEqual(i20, amps, net)
+            for layer, w, a, b in plan['nets'][net]['tracks']:
+                self.assertIn(layer, ('F.Cu', 'B.Cu'), net)
+                self.assertGreaterEqual(w, width - 1e-9, net)
+
+    def test_planned_vias_and_escape_band(self):
+        plan = self.plan()
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        self.assertTrue(spec['j209_escape']['passed'])
+        vias = [v for v in spec['pre_route']['vias'] if v['id'].startswith('PLV-')]
+        self.assertEqual(len(vias), sum(len(d['vias']) for d in plan['nets'].values()))
+        for v in vias:
+            self.assertTrue(v['locked'])
+            self.assertGreaterEqual(v['diameter_mm'] - v['drill_mm'], 0.3, v['id'])
+
+
 if __name__ == '__main__':
     unittest.main()
