@@ -7,10 +7,10 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "1577a5085c61057c421750bcea08c3e5be5fe62a7a68cf2f53e566c978000ae4"
+      "sha256": "29903d838c416b406929ba32eebc5cb13f48ed263a9369f59b9a94424966f50e"
     },
     "projection_sha256": {
-      "graph_refs_pins_nets": "b483f0fb2abe8abd025661b086b0b19d8b8d8f979ac22f4224295b0cb8ba5110",
+      "graph_refs_pins_nets": "604425b3761208ee73d31f5ae0549e3ab64616aa7782f0b1170c3d1bec084652",
       "footprints": "92e42020e0190146fadf2920d9ca6dd75364f034fa9d3aaefba5ca16b10c741d",
       "contract_board": "4b1616d88e13a8f31341ab1884adee4e9faa87dee279b0ef10490a2dc3e7c0eb",
       "netclasses": "56a092817eb75cec9f0faef5c6658be0a6284f935a69f8f767a1b6740307b180",
@@ -29,8 +29,8 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1795,
-    "vias": 315,
+    "tracks": 1806,
+    "vias": 319,
     "zones": 352,
     "holes": 9,
     "copper_layers": [
@@ -403,7 +403,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1775,
+      "tracks_checked": 1786,
       "pour_necks": [],
       "split_nets": {}
     },
