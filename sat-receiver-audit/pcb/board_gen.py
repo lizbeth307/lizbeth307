@@ -770,6 +770,9 @@ def validate_spec(spec, board):
             raise SpecError(f'{board}: zone {zone.get("id")} on unknown net {zone["net"]}')
         if zone.get('pad_connection', 'thermal') not in ZONE_PAD_CONNECTIONS:
             raise SpecError(f'{board}: zone {zone.get("id")} pad_connection must be one of {sorted(ZONE_PAD_CONNECTIONS)}')
+        if 'clearance_mm' in zone and not (isinstance(zone['clearance_mm'], (int, float))
+                                           and float(zone['clearance_mm']) >= float(spec['fab_floor']['min_clearance'])):
+            raise SpecError(f'{board}: zone {zone.get("id")} clearance_mm must be a number at or above fab_floor min_clearance')
     for via in spec['pre_route'].get('vias', []):
         at = via.get('at', [])
         if via.get('net') not in nets or len(at) != 2 or not all(isinstance(v, (int, float)) for v in at) or \
@@ -1623,6 +1626,8 @@ def add_copper_zone(pcb, board, frame, spec, contract, zone, nets):
     item.SetAssignedPriority(int(zone.get('priority', 0)))
     if 'pad_connection' in zone:
         item.SetPadConnection(getattr(pcb, ZONE_PAD_CONNECTIONS[zone['pad_connection']]))
+    if 'clearance_mm' in zone:  # W2 PWR-L6-ROUTE: opt-in local zone clearance (zones without the key keep the KiCad default)
+        item.SetLocalClearance(pcb.FromMM(float(zone['clearance_mm'])))
     board.Add(item)
     return item
 

@@ -230,9 +230,11 @@ def converter_checks(board, spec):
                      'label': 'MODEL', 'source': SCRIPT_SOURCE, **({'deviation': dev} if not top and dev in devs else {})})
         if not ok:
             findings.append({'check': 'converters', 'item': f'U108 {"/".join(caps)} ground return', 'detail': 'no top-side PGND copper'})
-    in1 = [z for z in board.zones if z['layers'][0] == 'In1.Cu']
+    # W2 PWR-L6-ROUTE: on a routed board the hole keep-outs (rule areas KO_H*, no net) are In1.Cu zones too, and the KiCad zones
+    # carry no 'plane' key (the spec layer type makes In1.Cu a plane): only copper zones count, each must be GND
+    in1 = [z for z in board.zones if z['layers'][0] == 'In1.Cu' and not z.get('keepout')]
     in1_tracks = [t for t in board.tracks if t.layer == 'In1.Cu']
-    row('In1.Cu solid GND plane', bool(in1) and all(z['net'] == 'GND' and z.get('plane') for z in in1) and not in1_tracks,
+    row('In1.Cu solid GND plane', bool(in1) and all(z['net'] == 'GND' and z.get('plane', True) for z in in1) and not in1_tracks,
         f'In1.Cu zones {[(z["name"], z["net"]) for z in in1]}, tracks {len(in1_tracks)}')
     return rows, findings
 
