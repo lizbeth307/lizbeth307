@@ -5617,78 +5617,6 @@
           ],
           [
             19.15,
-            51.775
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-006",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            19.15,
-            51.775
-          ],
-          [
-            19.15,
-            51.725
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-007",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            19.15,
-            51.725
-          ],
-          [
-            19.15,
-            51.675
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-008",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            19.15,
-            51.675
-          ],
-          [
-            19.15,
-            51.625
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-009",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            19.15,
-            51.625
-          ],
-          [
-            19.15,
             51.525
           ]
         ],
@@ -5696,7 +5624,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-010",
+        "id": "PL-LNA4V5-006",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5714,7 +5642,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-011",
+        "id": "PL-LNA4V5-007",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5732,7 +5660,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-012",
+        "id": "PL-LNA4V5-008",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5750,7 +5678,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-013",
+        "id": "PL-LNA4V5-009",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5768,7 +5696,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-014",
+        "id": "PL-LNA4V5-010",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5786,7 +5714,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-015",
+        "id": "PL-LNA4V5-011",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5804,7 +5732,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-016",
+        "id": "PL-LNA4V5-012",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5822,7 +5750,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-017",
+        "id": "PL-LNA4V5-013",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5840,7 +5768,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-018",
+        "id": "PL-LNA4V5-014",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5858,7 +5786,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-019",
+        "id": "PL-LNA4V5-015",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5876,7 +5804,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-020",
+        "id": "PL-LNA4V5-016",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5894,7 +5822,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-021",
+        "id": "PL-LNA4V5-017",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5912,7 +5840,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-022",
+        "id": "PL-LNA4V5-018",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5930,7 +5858,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-023",
+        "id": "PL-LNA4V5-019",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5948,7 +5876,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-024",
+        "id": "PL-LNA4V5-020",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5966,7 +5894,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-025",
+        "id": "PL-LNA4V5-021",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -5984,7 +5912,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-026",
+        "id": "PL-LNA4V5-022",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6002,7 +5930,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-027",
+        "id": "PL-LNA4V5-023",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6010,78 +5938,6 @@
           [
             56.0,
             19.175
-          ],
-          [
-            56.05,
-            19.225
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-028",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            56.05,
-            19.225
-          ],
-          [
-            56.1,
-            19.275
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-029",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            56.1,
-            19.275
-          ],
-          [
-            56.15,
-            19.325
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-030",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            56.15,
-            19.325
-          ],
-          [
-            56.2,
-            19.375
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-031",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            56.2,
-            19.375
           ],
           [
             56.25,
@@ -6092,7 +5948,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-032",
+        "id": "PL-LNA4V5-024",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6110,7 +5966,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-033",
+        "id": "PL-LNA4V5-025",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6128,7 +5984,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-034",
+        "id": "PL-LNA4V5-026",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6146,7 +6002,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-035",
+        "id": "PL-LNA4V5-027",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6164,7 +6020,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-036",
+        "id": "PL-LNA4V5-028",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6182,7 +6038,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-037",
+        "id": "PL-LNA4V5-029",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6200,7 +6056,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-038",
+        "id": "PL-LNA4V5-030",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6218,7 +6074,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-039",
+        "id": "PL-LNA4V5-031",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6236,7 +6092,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-040",
+        "id": "PL-LNA4V5-032",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6244,96 +6100,6 @@
           [
             93.75,
             28.025
-          ],
-          [
-            93.8,
-            27.975
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-041",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            93.8,
-            27.975
-          ],
-          [
-            93.85,
-            27.925
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-042",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            93.85,
-            27.925
-          ],
-          [
-            93.9,
-            27.875
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-043",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            93.9,
-            27.875
-          ],
-          [
-            93.95,
-            27.825
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-044",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            93.95,
-            27.825
-          ],
-          [
-            94.0,
-            27.775
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-045",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            94.0,
-            27.775
           ],
           [
             94.0667,
@@ -6344,7 +6110,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-046",
+        "id": "PL-LNA4V5-033",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6362,7 +6128,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-047",
+        "id": "PL-LNA4V5-034",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6380,7 +6146,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-048",
+        "id": "PL-LNA4V5-035",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6398,7 +6164,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-049",
+        "id": "PL-LNA4V5-036",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6416,7 +6182,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-050",
+        "id": "PL-LNA4V5-037",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6434,7 +6200,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-051",
+        "id": "PL-LNA4V5-038",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6442,24 +6208,6 @@
           [
             88.25,
             21.9
-          ],
-          [
-            88.2136,
-            21.572
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-052",
-        "net": "LNA4V5",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            88.2136,
-            21.572
           ],
           [
             88.2,
@@ -6470,7 +6218,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-053",
+        "id": "PL-LNA4V5-039",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6488,7 +6236,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-054",
+        "id": "PL-LNA4V5-040",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6506,7 +6254,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-055",
+        "id": "PL-LNA4V5-041",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6524,7 +6272,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-056",
+        "id": "PL-LNA4V5-042",
         "net": "LNA4V5",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -6542,7 +6290,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-057",
+        "id": "PL-LNA4V5-043",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -6560,7 +6308,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-058",
+        "id": "PL-LNA4V5-044",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -6578,7 +6326,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-059",
+        "id": "PL-LNA4V5-045",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -6596,7 +6344,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-060",
+        "id": "PL-LNA4V5-046",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -6614,7 +6362,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-061",
+        "id": "PL-LNA4V5-047",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -6632,7 +6380,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-062",
+        "id": "PL-LNA4V5-048",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -6650,7 +6398,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-063",
+        "id": "PL-LNA4V5-049",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -6668,7 +6416,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-064",
+        "id": "PL-LNA4V5-050",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -6678,24 +6426,6 @@
             29.375
           ],
           [
-            34.1,
-            29.075
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-065",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.1,
-            29.075
-          ],
-          [
             34.15,
             29.025
           ]
@@ -6704,7 +6434,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-066",
+        "id": "PL-LNA4V5-051",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -6715,1284 +6445,6 @@
           ],
           [
             34.15,
-            28.975
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-067",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.975
-          ],
-          [
-            34.15,
-            28.925
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-068",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.925
-          ],
-          [
-            34.15,
-            28.875
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-069",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.875
-          ],
-          [
-            34.15,
-            28.825
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-070",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.825
-          ],
-          [
-            34.15,
-            28.775
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-071",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.775
-          ],
-          [
-            34.15,
-            28.725
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-072",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.725
-          ],
-          [
-            34.15,
-            28.675
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-073",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.675
-          ],
-          [
-            34.15,
-            28.625
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-074",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.625
-          ],
-          [
-            34.15,
-            28.575
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-075",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.575
-          ],
-          [
-            34.15,
-            28.525
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-076",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.525
-          ],
-          [
-            34.15,
-            28.475
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-077",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.475
-          ],
-          [
-            34.15,
-            28.425
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-078",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.425
-          ],
-          [
-            34.15,
-            28.375
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-079",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.375
-          ],
-          [
-            34.15,
-            28.325
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-080",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.325
-          ],
-          [
-            34.15,
-            28.275
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-081",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.275
-          ],
-          [
-            34.15,
-            28.225
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-082",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.225
-          ],
-          [
-            34.15,
-            28.175
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-083",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.175
-          ],
-          [
-            34.15,
-            28.125
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-084",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.125
-          ],
-          [
-            34.15,
-            28.075
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-085",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.075
-          ],
-          [
-            34.15,
-            28.025
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-086",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            28.025
-          ],
-          [
-            34.15,
-            27.975
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-087",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.975
-          ],
-          [
-            34.15,
-            27.925
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-088",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.925
-          ],
-          [
-            34.15,
-            27.875
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-089",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.875
-          ],
-          [
-            34.15,
-            27.825
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-090",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.825
-          ],
-          [
-            34.15,
-            27.775
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-091",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.775
-          ],
-          [
-            34.15,
-            27.725
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-092",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.725
-          ],
-          [
-            34.15,
-            27.675
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-093",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.675
-          ],
-          [
-            34.15,
-            27.625
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-094",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.625
-          ],
-          [
-            34.15,
-            27.575
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-095",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.575
-          ],
-          [
-            34.15,
-            27.525
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-096",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.525
-          ],
-          [
-            34.15,
-            27.475
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-097",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.475
-          ],
-          [
-            34.15,
-            27.425
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-098",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.425
-          ],
-          [
-            34.15,
-            27.375
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-099",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.375
-          ],
-          [
-            34.15,
-            27.325
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-100",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.325
-          ],
-          [
-            34.15,
-            27.275
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-101",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.275
-          ],
-          [
-            34.15,
-            27.225
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-102",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.225
-          ],
-          [
-            34.15,
-            27.175
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-103",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.175
-          ],
-          [
-            34.15,
-            27.125
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-104",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.125
-          ],
-          [
-            34.15,
-            27.075
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-105",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.075
-          ],
-          [
-            34.15,
-            27.025
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-106",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            27.025
-          ],
-          [
-            34.15,
-            26.975
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-107",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.975
-          ],
-          [
-            34.15,
-            26.925
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-108",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.925
-          ],
-          [
-            34.15,
-            26.875
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-109",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.875
-          ],
-          [
-            34.15,
-            26.825
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-110",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.825
-          ],
-          [
-            34.15,
-            26.775
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-111",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.775
-          ],
-          [
-            34.15,
-            26.725
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-112",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.725
-          ],
-          [
-            34.15,
-            26.675
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-113",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.675
-          ],
-          [
-            34.15,
-            26.625
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-114",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.625
-          ],
-          [
-            34.15,
-            26.575
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-115",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.575
-          ],
-          [
-            34.15,
-            26.525
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-116",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.525
-          ],
-          [
-            34.15,
-            26.475
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-117",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.475
-          ],
-          [
-            34.15,
-            26.425
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-118",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.425
-          ],
-          [
-            34.15,
-            26.375
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-119",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.375
-          ],
-          [
-            34.15,
-            26.325
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-120",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.325
-          ],
-          [
-            34.15,
-            26.275
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-121",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.275
-          ],
-          [
-            34.15,
-            26.225
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-122",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.225
-          ],
-          [
-            34.15,
-            26.175
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-123",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.175
-          ],
-          [
-            34.15,
-            26.125
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-124",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.125
-          ],
-          [
-            34.15,
-            26.075
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-125",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.075
-          ],
-          [
-            34.15,
-            26.025
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-126",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            26.025
-          ],
-          [
-            34.15,
-            25.975
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-127",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.975
-          ],
-          [
-            34.15,
-            25.925
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-128",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.925
-          ],
-          [
-            34.15,
-            25.875
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-129",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.875
-          ],
-          [
-            34.15,
-            25.825
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-130",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.825
-          ],
-          [
-            34.15,
-            25.775
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-131",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.775
-          ],
-          [
-            34.15,
-            25.725
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-132",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.725
-          ],
-          [
-            34.15,
-            25.675
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-133",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.675
-          ],
-          [
-            34.15,
-            25.625
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-134",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.625
-          ],
-          [
-            34.15,
-            25.575
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-135",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.575
-          ],
-          [
-            34.15,
-            25.525
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-136",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.525
-          ],
-          [
-            34.15,
-            25.475
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-137",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.15,
-            25.475
-          ],
-          [
-            34.15,
             25.425
           ]
         ],
@@ -8000,7 +6452,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-138",
+        "id": "PL-LNA4V5-052",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8008,24 +6460,6 @@
           [
             34.15,
             25.425
-          ],
-          [
-            34.1333,
-            25.4083
-          ]
-        ],
-        "locked": true,
-        "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
-      },
-      {
-        "id": "PL-LNA4V5-139",
-        "net": "LNA4V5",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            34.1333,
-            25.4083
           ],
           [
             33.9,
@@ -8036,7 +6470,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-140",
+        "id": "PL-LNA4V5-053",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8054,7 +6488,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-141",
+        "id": "PL-LNA4V5-054",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8072,7 +6506,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-142",
+        "id": "PL-LNA4V5-055",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8090,7 +6524,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-143",
+        "id": "PL-LNA4V5-056",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8108,7 +6542,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-144",
+        "id": "PL-LNA4V5-057",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8126,7 +6560,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-145",
+        "id": "PL-LNA4V5-058",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8144,7 +6578,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-146",
+        "id": "PL-LNA4V5-059",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8162,7 +6596,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-147",
+        "id": "PL-LNA4V5-060",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8180,7 +6614,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-148",
+        "id": "PL-LNA4V5-061",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8198,7 +6632,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-149",
+        "id": "PL-LNA4V5-062",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8216,7 +6650,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-150",
+        "id": "PL-LNA4V5-063",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8234,7 +6668,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-151",
+        "id": "PL-LNA4V5-064",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8252,7 +6686,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-152",
+        "id": "PL-LNA4V5-065",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8270,7 +6704,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-153",
+        "id": "PL-LNA4V5-066",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8288,7 +6722,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-154",
+        "id": "PL-LNA4V5-067",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8306,7 +6740,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-155",
+        "id": "PL-LNA4V5-068",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8324,7 +6758,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-156",
+        "id": "PL-LNA4V5-069",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8342,7 +6776,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-157",
+        "id": "PL-LNA4V5-070",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8360,7 +6794,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-158",
+        "id": "PL-LNA4V5-071",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8378,7 +6812,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-159",
+        "id": "PL-LNA4V5-072",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8396,7 +6830,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-160",
+        "id": "PL-LNA4V5-073",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8414,7 +6848,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-161",
+        "id": "PL-LNA4V5-074",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8432,7 +6866,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-162",
+        "id": "PL-LNA4V5-075",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -8450,7 +6884,7 @@
         "why": "planned link copper of LNA4V5 (W2 PWR-L6-PLACE fourth pass, probe A): locked link of the ratchet on the board of record (route run 43491820451), CLEAR + MARGIN 0.20 to pads and scripted copper; route-planned-6l.json"
       },
       {
-        "id": "PL-LNA4V5-163",
+        "id": "PL-LNA4V5-076",
         "net": "LNA4V5",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -9502,10 +7936,6 @@
             104.1
           ],
           [
-            12.4833,
-            104.3333
-          ],
-          [
             12.55,
             104.4
           ]
@@ -9536,16 +7966,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            13.625,
-            85.7
-          ],
-          [
-            13.6917,
-            85.7667
-          ],
-          [
             13.925,
             86.0
+          ],
+          [
+            13.625,
+            85.7
           ]
         ],
         "locked": true
@@ -9579,15 +8005,11 @@
         "path": [
           [
             16.748,
-            94.141
-          ],
-          [
-            16.748,
-            94.211
-          ],
-          [
-            16.748,
             94.541
+          ],
+          [
+            16.748,
+            94.141
           ]
         ],
         "locked": true
@@ -9600,10 +8022,6 @@
         "path": [
           [
             22.175,
-            86.15
-          ],
-          [
-            22.505,
             86.15
           ],
           [
@@ -10903,10 +9321,6 @@
             98.565
           ],
           [
-            3.4225,
-            98.6059
-          ],
-          [
             3.35,
             98.615
           ]
@@ -10943,10 +9357,6 @@
           [
             4.5,
             97.615
-          ],
-          [
-            4.5,
-            97.285
           ],
           [
             4.5,
@@ -10989,10 +9399,6 @@
           [
             9.8,
             101.65
-          ],
-          [
-            9.5667,
-            101.8833
           ],
           [
             9.5,
@@ -11149,15 +9555,11 @@
         "width_mm": 0.15,
         "path": [
           [
-            7.6,
-            103.2
-          ],
-          [
-            7.48,
-            103.2
-          ],
-          [
             7.15,
+            103.2
+          ],
+          [
+            7.6,
             103.2
           ]
         ],
@@ -11172,10 +9574,6 @@
           [
             9.7,
             105.35
-          ],
-          [
-            9.4887,
-            105.6035
           ],
           [
             9.45,
@@ -11307,10 +9705,6 @@
           ],
           [
             3.15,
-            101.17
-          ],
-          [
-            3.15,
             101.29
           ]
         ],
@@ -11325,10 +9719,6 @@
           [
             10.85,
             66.79
-          ],
-          [
-            10.85,
-            66.46
           ],
           [
             10.85,
@@ -13061,16 +11451,12 @@
         "width_mm": 0.15,
         "path": [
           [
-            24.15,
-            20.213
-          ],
-          [
-            24.2082,
-            20.1315
-          ],
-          [
             24.4,
             19.863
+          ],
+          [
+            24.15,
+            20.213
           ]
         ],
         "locked": true
@@ -13406,10 +11792,6 @@
           [
             91.55,
             15.656
-          ],
-          [
-            91.55,
-            15.6733
           ],
           [
             91.55,
@@ -15491,10 +13873,6 @@
             16.9379
           ],
           [
-            87.9593,
-            21.4
-          ],
-          [
             87.8954,
             21.4639
           ]
@@ -16646,15 +15024,11 @@
         "path": [
           [
             90.55,
-            21.3517
-          ],
-          [
-            90.55,
-            21.2634
-          ],
-          [
-            90.55,
             20.35
+          ],
+          [
+            90.55,
+            21.3517
           ]
         ],
         "locked": true
@@ -16790,15 +15164,11 @@
         "width_mm": 0.2,
         "path": [
           [
-            3.6,
-            58.75
-          ],
-          [
-            3.72,
-            58.75
-          ],
-          [
             4.05,
+            58.75
+          ],
+          [
+            3.6,
             58.75
           ]
         ],
@@ -16942,10 +15312,6 @@
           [
             89.6983,
             24.24
-          ],
-          [
-            89.6983,
-            24.015
           ],
           [
             89.6983,
@@ -17837,10 +16203,6 @@
         "path": [
           [
             58.11,
-            17.1419
-          ],
-          [
-            58.44,
             17.1419
           ],
           [
