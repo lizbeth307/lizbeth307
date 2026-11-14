@@ -1696,9 +1696,24 @@ def branch_exemptions(board, spec, netclasses, views, graph=None, policy_out=Non
                             if q['net'] == bnet and id(q) not in start_ids and it.layer in q['layers'] and q['geo'].contains(x, y):
                                 touched[f"{q['ref']}.{q['number']}"] = q
                 wrong = []
+                chain_ids = {id(it) for it in items}
+
+                def on_trunk(q):
+                    # class-width copper of the net (a track at least the class width, or a pour) also covers the pad: the branch
+                    # taps that trunk there and feeds nothing
+                    for it in board.copper:
+                        if it.net != bnet or it.layer not in q['layers'] or id(it) in chain_ids:
+                            continue
+                        if (it.kind in ('track', 'arc') and it.width + 1e-9 >= need) or it.kind == 'zone':
+                            if it.shape.dist(q['x'], q['y']) <= max(q['w'], q['h']) / 2 + 1e-6 and any(
+                                    it.shape.dist(px, py) <= 1e-6 for px, py in
+                                    ((q['x'], q['y']), (q['x'] - q['w'] / 2, q['y']), (q['x'] + q['w'] / 2, q['y']),
+                                     (q['x'], q['y'] - q['h'] / 2), (q['x'], q['y'] + q['h'] / 2))):
+                                return True
+                    return False
                 for name, q in sorted(touched.items()):
                     r, why = exemption_role(board, spec, graph, q['ref'], q['number'], lookup, classes)
-                    if r not in EXEMPT_BRANCH_ROLES and name not in reach_ok:
+                    if r not in EXEMPT_BRANCH_ROLES and name not in reach_ok and not on_trunk(q):
                         wrong.append((name, r, why, q))
                 if wrong:
                     if policy_out is not None:
