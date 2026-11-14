@@ -143,14 +143,18 @@ SMALL_SIGNAL_ANCHORS = {
 # (pcb/boards/PWR_B.json) is placed around exactly that cut-out list; without the pin the planner re-packs these parts
 # whenever a group changes (the zone-2 swap of W2 GR-ZONE2-SMD and the small-signal anchors above moved 11 probe windows,
 # three of them onto PWR-B parts). The three zone-2 parts C265/C511/C512 left the list with W2 GR-ZONE2-SMD (no window).
+# W2 PWR-L6-PLACE fifth pass, combined (probe X lever, set R2a): the probe windows of TP201/TP213, TP202/TP214 and TP503 left
+# the PWR-B bar-to-arm junction (x 38-49), where they narrowed the routing passage (free bar height at x 40: 16.6 -> 27.0 mm,
+# MODEL); TP201/TP503/TP202/TP214 stand in the dead column x 126-128.5 between the J206/J104 strips and the hole (132, 31),
+# TP213 at the left edge (2.0, 13.0). Their PWR-A traces get longer (PWR-L6-ROUTE, OPEN); build/15.
 CUTOUT_KEEP = {
     'C206': (37.8, 97.65, 90), 'C207': (31.1, 82.55, 0), 'C210': (9.95, 97.0, 0), 'C222': (30.75, 48.9, 0),
     'C254': (29.05, 22.15, 90), 'C262': (23.15, 13.2, 90), 'C273': (2.45, 31.4, 0), 'L501': (24.9, 93.9, 0),
     'TP101': (11.65, 40.95, 0), 'TP102': (5.5, 100.95, 90), 'TP103': (4.95, 12.15, 0), 'TP104': (22.75, 54.15, 90),
     'TP105': (19.45, 44.6, 90), 'TP106': (40.01, 37.49, 0), 'TP107': (18.85, 74.93, 0), 'TP108': (21.85, 74.93, 0),
-    'TP201': (40.75, 15.27, 90), 'TP202': (44.25, 23.75, 0), 'TP203': (11.51, 69.35, 90), 'TP204': (40.05, 43.75, 0),
-    'TP205': (61.85, 11.45, 0), 'TP211': (4.01, 16.05, 90), 'TP212': (90.25, 33.55, 0), 'TP213': (40.75, 12.27, 90),
-    'TP214': (47.25, 23.75, 0), 'TP215': (7.01, 16.05, 90), 'TP503': (40.75, 31.25, 90), 'TP2903': (93.25, 33.55, 0),
+    'TP201': (127.25, 24.0, 0), 'TP202': (127.25, 30.0, 0), 'TP203': (11.51, 69.35, 90), 'TP204': (40.05, 43.75, 0),
+    'TP205': (61.85, 11.45, 0), 'TP211': (4.01, 16.05, 90), 'TP212': (90.25, 33.55, 0), 'TP213': (2.0, 13.0, 0),
+    'TP214': (127.25, 33.0, 0), 'TP215': (7.01, 16.05, 90), 'TP503': (127.25, 27.0, 0), 'TP2903': (93.25, 33.55, 0),
 }
 # W2 PWR-L6-PLACE third pass: the zone-2 exit pair of PWR-B (J203 / J506, top entry) puts THT pin fields over the PWR-A
 # area x 91.4-112.4, y 2.2-10.9 (pin field + window_margin), where rule H-TRIM allows PWR-A parts of 2.7 mm at most. C512

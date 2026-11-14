@@ -1093,6 +1093,12 @@ def q6a_plane_copper(inp, parts, tracks, vias, pins):
 W_GND = 0.25
 GND_DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
 GND_GAPS = (0.55, 0.9, 1.3, 1.8)
+# W2 PWR-L6-PLACE fifth pass, combined (lever 2 of the PWR_B closure): plane fan-outs pinned at their places on the board of
+# record (route run 43553756303). They are tried before the candidate list, so the PWR-A test-point windows that left the
+# bar-to-arm junction (PWR_A make_spec CUTOUT_KEEP) do not draw these two vias into the freed area, under the frozen copper
+# (frozen guard scripted_sha256). A pin is taken only when it clears everything, like any other candidate.
+FANOUT_PINS = {('GND', 'R287', '2'): ([(45.821, 26.692), (46.5458, 25.9672)], (46.5458, 25.9672)),
+               ('3V3_Q6A', 'U217', '6'): ([(43.55, 21.1375), (42.85, 21.1375), (42.85, 20.5375)], (42.85, 20.5375))}
 
 
 def gnd_fanout(inp, parts, tracks, vias, net='GND', prefix='GND'):
@@ -1202,6 +1208,9 @@ def gnd_fanout(inp, parts, tracks, vias, net='GND', prefix='GND'):
             for sv in sorted(spine_vias, key=lambda v: (math.hypot(v[0] - cx, v[1] - cy), v)):
                 if math.hypot(sv[0] - cx, sv[1] - cy) < 4.0:
                     cands.append(([(cx, cy), (sv[0], cy), sv], sv, False))
+            pin = FANOUT_PINS.get((net, ref, p['number']))
+            if pin:
+                cands.insert(0, (pin[0], pin[1], True))
             chosen = None
             for path, at, new_via in cands:
                 if clear(path, at, layer, new_via):

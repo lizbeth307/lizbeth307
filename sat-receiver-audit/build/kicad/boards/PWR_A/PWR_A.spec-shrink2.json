@@ -2347,11 +2347,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.75,
-          15.27
+          127.25,
+          24.0
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 0,
         "side": "F"
       },
       "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
@@ -2361,8 +2361,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          44.25,
-          23.75
+          127.25,
+          30.0
         ],
         "align": "origin",
         "rotation": 0,
@@ -2445,11 +2445,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.75,
-          12.27
+          2.0,
+          13.0
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 0,
         "side": "F"
       },
       "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
@@ -2459,8 +2459,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          47.25,
-          23.75
+          127.25,
+          33.0
         ],
         "align": "origin",
         "rotation": 0,
@@ -2487,11 +2487,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.75,
-          31.25
+          127.25,
+          27.0
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 0,
         "side": "F"
       },
       "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
@@ -2799,7 +2799,8 @@
       ],
       "region_name": "BAND_LNA",
       "alt_regions": [
-        "BAND_LT_LOW"
+        "BAND_LT_LOW",
+        "BAND_LT_HIGH"
       ],
       "side": "F",
       "gap_mm": 0.5,
@@ -3334,8 +3335,8 @@
     {
       "id": "E1_USBPD",
       "region": [
-        0.3,
-        9.8,
+        0.75,
+        14.25,
         2.76,
         26.8
       ],
@@ -4127,9 +4128,9 @@
         "PB3b",
         "PB6",
         "PB7b",
-        "PB4b",
         "PB8",
         "PB7",
+        "PB4b",
         "PB9c",
         "PB9b",
         "PB9",
@@ -4170,8 +4171,8 @@
     "note": "free rectangles of the SHRINK-2 layout (make_spec.py TOP_REGIONS, design choice) and the plate pockets PB1-PB13 of the contract (bottom_side.keep_in_mm) as bottom regions; a group names its preferred region and alt_regions (bottom: the nearest pocket first); board_gen reads only group.region; placement_study.py uses rects for top groups and bottom_rects for bottom groups",
     "rects": {
       "BAND_LEFT": [
-        0.3,
-        9.8,
+        0.75,
+        14.25,
         2.76,
         26.8
       ],
@@ -4214,13 +4215,7 @@
       "BAND_LNBb": [
         39.5,
         7.5,
-        42.0,
-        11.02
-      ],
-      "BAND_LNBbb": [
-        39.5,
-        16.52,
-        42.0,
+        42.2,
         20.42
       ],
       "BAND_LNBc": [
@@ -4234,6 +4229,12 @@
         7.5,
         49.4,
         11.4
+      ],
+      "BAND_LT_HIGH": [
+        43.0,
+        22.4,
+        49.4,
+        25.0
       ],
       "BAND_LNA": [
         50.4,
@@ -4322,7 +4323,7 @@
       "BAND_COL2_TOP": [
         121.53,
         22.6,
-        128.3,
+        126.0,
         24.5
       ],
       "BAND_TOP_LEFT": [
@@ -4335,6 +4336,12 @@
         19.75,
         27.0,
         39.5,
+        32.5
+      ],
+      "BAND_TOP_LEFT_Rb": [
+        39.5,
+        29.5,
+        42.2,
         32.5
       ],
       "BAND_TOP_LEFT_R2": [

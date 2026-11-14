@@ -7,9 +7,9 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "eed213ad3dbeea3a949c6f4f46663c0d79fd6e87b0cd49eed517185f4489525a",
+    "spec_sha256": "34855f3576675b76e00e67ba07f7bb812fde5d048600e065d9d1d80261ede114",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
-    "lab5_budget_sha256": "88d8c491fa092e88254d197176b9a2d64b0897c669421a1b4737a803d5efb96c"
+    "lab5_budget_sha256": "581539955a1cf8b509a47c1af773bc2707f6ecaf7ed753fd96289a3e2691f88c"
   },
   "drc": null,
   "zones": [
@@ -112,19 +112,13 @@
         "ok": true
       },
       {
-        "ref": "C132",
-        "under": "J201",
-        "h_mm": 2.7,
-        "ok": true
-      },
-      {
         "ref": "U109",
         "under": "J201",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "C257",
+        "ref": "C253",
         "under": "J202",
         "h_mm": 2.7,
         "ok": true
@@ -136,13 +130,7 @@
         "ok": true
       },
       {
-        "ref": "C205",
-        "under": "J203",
-        "h_mm": 2.7,
-        "ok": true
-      },
-      {
-        "ref": "C227",
+        "ref": "C267",
         "under": "J203",
         "h_mm": 2.7,
         "ok": true
@@ -160,7 +148,13 @@
         "ok": true
       },
       {
-        "ref": "D102",
+        "ref": "U551",
+        "under": "J203",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "C294",
         "under": "J204",
         "h_mm": 2.7,
         "ok": true
@@ -172,37 +166,37 @@
         "ok": true
       },
       {
-        "ref": "U551",
+        "ref": "U553",
         "under": "J204",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "C220",
+        "ref": "C266",
         "under": "J207",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "C260",
+        "ref": "C268",
         "under": "J207",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "L204",
+        "ref": "C292",
         "under": "J207",
-        "h_mm": 1.0,
+        "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "L212",
+        "ref": "C2903",
         "under": "J207",
-        "h_mm": 1.0,
+        "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "U103",
+        "ref": "Q2913",
         "under": "J207",
         "h_mm": 2.7,
         "ok": true
@@ -214,8 +208,8 @@
         "ok": true
       },
       {
-        "ref": "C267",
-        "under": "J506",
+        "ref": "U216",
+        "under": "J207",
         "h_mm": 2.7,
         "ok": true
       },
