@@ -653,7 +653,7 @@
       "anchor": {
         "at": [
           10.3,
-          66.3
+          66.5
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -666,12 +666,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          35.05,
-          34.8
+          39.5,
+          40.55
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "F"
+        "rotation": 180.0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            39.5,
+            40.55
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -680,16 +687,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.1,
-          89.75
+          39.2,
+          89.9
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            40.1,
-            89.75
+            39.2,
+            89.9
           ],
           "angle": 90
         }
@@ -701,12 +708,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.1,
-          83.1
+          3.5,
+          82.4
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B"
+        "rotation": 0.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            3.5,
+            82.4
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -729,11 +743,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.6,
-          25.55
+          35.0,
+          25.0
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -743,8 +757,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.7,
-          18.2
+          38.55,
+          18.45
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -806,8 +820,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.35,
-          97.85
+          30.45,
+          100.8
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -820,16 +834,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.35,
-          38.2
+          3.4,
+          38.25
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            3.35,
-            38.2
+            3.4,
+            38.25
           ],
           "angle": 90
         }
@@ -841,11 +855,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          37.85,
-          28.9
+          38.0,
+          28.85
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 270.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -855,8 +869,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          45.1,
-          9.8
+          45.55,
+          9.15
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -1058,8 +1072,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          8.7,
-          36.8
+          9.45,
+          36.85
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -1115,10 +1129,10 @@
       "anchor": {
         "at": [
           18.75,
-          37.0
+          37.1
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 180.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1128,7 +1142,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          31.4,
+          30.55,
           89.8
         ],
         "align": "origin",
@@ -1142,8 +1156,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          31.6,
-          40.1
+          34.5,
+          44.1
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1157,7 +1171,7 @@
       "anchor": {
         "at": [
           23.8,
-          78.5
+          79.95
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1170,11 +1184,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          33.85,
-          75.55
+          33.95,
+          74.8
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 270.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1184,11 +1198,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          111.7,
-          9.6
+          112.5,
+          10.5
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1233,7 +1247,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          29.25,
+          29.5,
           102.4
         ],
         "align": "origin",
@@ -1247,16 +1261,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          39.15,
-          84.5
+          39.2,
+          84.4
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 270.0,
         "side": "F",
         "ref_text": {
           "at": [
-            39.15,
-            84.5
+            39.2,
+            84.4
           ],
           "angle": 90
         }
@@ -1282,16 +1296,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          11.95,
-          107.75
+          12.6,
+          107.85
         ],
         "align": "origin",
         "rotation": 180.0,
         "side": "B",
         "ref_text": {
           "at": [
-            11.95,
-            107.75
+            12.6,
+            107.85
           ],
           "angle": 0
         }
@@ -1303,11 +1317,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          16.5,
-          96.95
+          16.95,
+          95.65
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1317,19 +1331,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          14.0,
-          107.35
+          13.9,
+          103.8
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            14.0,
-            107.35
-          ],
-          "angle": 0
-        }
+        "rotation": 270.0,
+        "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -1338,8 +1345,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          20.15,
-          93.35
+          20.1,
+          93.4
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -1352,8 +1359,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          14.25,
-          37.1
+          14.6,
+          37.3
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -1366,19 +1373,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.65,
-          50.85
+          8.2,
+          63.55
         ],
         "align": "origin",
-        "rotation": 270.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            1.65,
-            50.85
-          ],
-          "angle": 90
-        }
+        "rotation": 0.0,
+        "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -1387,12 +1387,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.3,
-          51.75
+          3.4,
+          52.45
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "F"
+        "rotation": 270.0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            3.4,
+            52.45
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -1401,19 +1408,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.2,
-          48.6
+          35.55,
+          39.1
         ],
         "align": "origin",
-        "rotation": 270.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            38.2,
-            48.6
-          ],
-          "angle": 90
-        }
+        "rotation": 90.0,
+        "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -1422,8 +1422,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          10.65,
-          24.95
+          10.45,
+          25.6
         ],
         "align": "origin",
         "rotation": 270.0,
@@ -1436,11 +1436,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          70.55,
-          24.0
+          70.5,
+          24.2
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 270.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1450,11 +1450,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          64.6,
-          15.95
+          66.1,
+          15.9
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1478,8 +1478,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          118.3,
-          22.0
+          119.45,
+          21.85
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1492,8 +1492,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          56.5,
-          11.15
+          56.45,
+          11.3
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1506,11 +1506,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          53.35,
-          22.5
+          53.7,
+          22.55
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 270.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1520,11 +1520,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          36.65,
-          14.4
+          36.55,
+          14.6
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1534,11 +1534,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          97.0,
-          8.9
+          97.25,
+          9.1
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 270.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1548,8 +1548,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          51.3,
-          9.5
+          51.55,
+          9.45
         ],
         "align": "origin",
         "rotation": 270.0,
@@ -1562,11 +1562,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          55.15,
-          15.2
+          54.35,
+          16.05
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1576,11 +1576,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.25,
-          17.9
+          30.65,
+          15.65
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1590,8 +1590,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          97.25,
-          13.35
+          92.2,
+          13.3
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -1604,11 +1604,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.3,
-          23.95
+          29.5,
+          10.3
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1619,7 +1619,7 @@
       "anchor": {
         "at": [
           11.15,
-          9.8
+          10.05
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -1646,11 +1646,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.0,
-          11.55
+          22.85,
+          20.75
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 270.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1660,8 +1660,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          92.2,
-          13.35
+          97.35,
+          13.4
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -1688,8 +1688,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          64.45,
-          30.4
+          64.3,
+          30.25
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1702,8 +1702,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          37.7,
-          32.8
+          38.05,
+          33.25
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1716,11 +1716,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          60.8,
-          25.4
+          61.65,
+          24.65
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 270.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1730,11 +1730,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          74.4,
+          76.55,
           21.2
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1758,11 +1758,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          61.55,
+          64.0,
           8.0
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1772,8 +1772,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          56.8,
-          28.7
+          56.85,
+          28.65
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -1800,11 +1800,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          59.2,
-          21.95
+          59.45,
+          19.45
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1814,16 +1814,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          102.3,
-          3.05
+          101.75,
+          3.95
         ],
         "align": "origin",
         "rotation": 270.0,
         "side": "F",
         "ref_text": {
           "at": [
-            102.3,
-            3.05
+            101.75,
+            3.95
           ],
           "angle": 0
         }
@@ -1835,11 +1835,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          88.9,
-          23.5
+          88.25,
+          24.2
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1849,11 +1849,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          97.7,
-          29.9
+          102.0,
+          30.6
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -1863,8 +1863,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          93.55,
-          29.35
+          95.9,
+          29.95
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1877,8 +1877,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          69.6,
-          28.3
+          70.3,
+          28.25
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -1891,8 +1891,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          95.95,
-          30.55
+          93.5,
+          29.6
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1926,8 +1926,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          72.45,
-          30.6
+          71.65,
+          30.65
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1941,15 +1941,15 @@
       "anchor": {
         "at": [
           38.4,
-          34.5
+          35.05
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 180.0,
         "side": "B",
         "ref_text": {
           "at": [
             38.4,
-            34.5
+            35.05
           ],
           "angle": 90
         }
@@ -1961,8 +1961,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          68.5,
-          30.65
+          67.9,
+          30.6
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1975,12 +1975,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.35,
-          95.85
+          40.9,
+          92.7
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
+        "rotation": 270.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            40.9,
+            92.7
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -1989,11 +1996,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          18.55,
-          35.3
+          19.5,
+          35.45
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 270.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2004,7 +2011,7 @@
       "anchor": {
         "at": [
           34.8,
-          20.25
+          19.55
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2017,11 +2024,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          59.9,
-          15.85
+          60.4,
+          15.4
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2031,11 +2038,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.9,
-          9.6
+          34.45,
+          10.75
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 180.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2045,11 +2052,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          69.55,
-          14.85
+          70.5,
+          16.6
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2059,8 +2066,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          31.9,
-          35.05
+          30.45,
+          35.9
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2073,7 +2080,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          102.4,
+          102.55,
           13.4
         ],
         "align": "origin",
@@ -2087,16 +2094,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.0,
-          96.8
+          1.95,
+          96.65
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            2.0,
-            96.8
+            1.95,
+            96.65
           ],
           "angle": 90
         }
@@ -2108,11 +2115,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          20.9,
+          21.3,
           81.7
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2122,11 +2129,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          28.3,
-          91.9
+          24.55,
+          95.75
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2136,16 +2143,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          108.75,
-          3.9
+          108.3,
+          3.8
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "F",
         "ref_text": {
           "at": [
-            108.75,
-            3.9
+            108.3,
+            3.8
           ],
           "angle": 0
         }
@@ -2178,19 +2185,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          39.4,
-          92.95
+          36.7,
+          93.55
         ],
         "align": "origin",
-        "rotation": 270.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            39.4,
-            92.95
-          ],
-          "angle": 90
-        }
+        "rotation": 180.0,
+        "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -2199,19 +2199,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.85,
-          87.65
+          3.8,
+          86.75
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            2.85,
-            87.65
-          ],
-          "angle": 90
-        }
+        "rotation": 90.0,
+        "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -2220,8 +2213,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          54.95,
-          30.65
+          56.1,
+          30.55
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -2234,8 +2227,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          73.5,
-          27.8
+          74.45,
+          28.1
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -2248,11 +2241,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.75,
-          33.2
+          12.15,
+          33.35
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 180.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2262,12 +2255,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          35.85,
-          43.1
+          37.8,
+          49.0
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            37.8,
+            49.0
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -2276,8 +2276,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          93.05,
-          24.2
+          99.3,
+          23.7
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -2290,16 +2290,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          98.3,
-          4.25
+          97.9,
+          4.4
         ],
         "align": "origin",
         "rotation": 90.0,
         "side": "F",
         "ref_text": {
           "at": [
-            98.3,
-            4.25
+            97.9,
+            4.4
           ],
           "angle": 0
         }
@@ -2311,8 +2311,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          32.65,
-          30.0
+          32.9,
+          29.95
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2325,7 +2325,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          75.15,
+          75.1,
           32.2
         ],
         "align": "origin",
@@ -2333,7 +2333,7 @@
         "side": "F",
         "ref_text": {
           "at": [
-            75.15,
+            75.1,
             32.2
           ],
           "angle": 0
@@ -2346,8 +2346,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          105.35,
-          9.05
+          105.5,
+          9.15
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2360,11 +2360,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          65.4,
-          11.7
+          66.45,
+          12.8
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2375,7 +2375,7 @@
       "anchor": {
         "at": [
           107.5,
-          13.75
+          13.65
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2388,11 +2388,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.3,
-          43.3
+          30.5,
+          41.05
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 270.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2424,7 +2424,7 @@
       "anchor": {
         "at": [
           30.75,
-          106.3
+          106.35
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2432,7 +2432,7 @@
         "ref_text": {
           "at": [
             30.75,
-            106.3
+            106.35
           ],
           "angle": 0
         }
@@ -2479,7 +2479,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          62.6,
+          62.5,
           28.75
         ],
         "align": "origin",
@@ -2841,11 +2841,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          35.05,
-          90.6
+          35.2,
+          90.2
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2855,8 +2855,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          12.7,
-          91.7
+          12.65,
+          91.75
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2869,16 +2869,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.3,
-          44.7
+          3.35,
+          44.25
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "F",
         "ref_text": {
           "at": [
-            3.3,
-            44.7
+            3.35,
+            44.25
           ],
           "angle": 90
         }
@@ -2891,7 +2891,7 @@
       "anchor": {
         "at": [
           84.75,
-          23.85
+          24.95
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2918,11 +2918,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.95,
-          9.25
+          39.1,
+          9.1
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 180.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -2932,8 +2932,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          78.45,
-          26.55
+          78.35,
+          26.7
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2946,16 +2946,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          57.0,
-          32.75
+          56.35,
+          32.65
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "F",
         "ref_text": {
           "at": [
-            57.0,
-            32.75
+            56.35,
+            32.65
           ],
           "angle": 0
         }
@@ -2967,16 +2967,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          81.75,
-          32.15
+          82.0,
+          32.9
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 180.0,
         "side": "F",
         "ref_text": {
           "at": [
-            81.75,
-            32.15
+            82.0,
+            32.9
           ],
           "angle": 0
         }
@@ -3002,8 +3002,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          12.65,
-          102.55
+          10.5,
+          102.65
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3044,12 +3044,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.8,
-          20.4
+          4.05,
+          21.7
         ],
         "align": "origin",
         "rotation": 90.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            4.05,
+            21.7
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -3059,7 +3066,7 @@
       "anchor": {
         "at": [
           12.1,
-          32.25
+          33.0
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3072,11 +3079,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          85.5,
-          30.35
+          85.0,
+          29.1
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3086,11 +3093,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          13.25,
-          35.8
+          11.65,
+          35.75
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3100,8 +3107,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.1,
-          42.65
+          4.2,
+          41.3
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -3114,16 +3121,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.3,
-          45.3
+          3.4,
+          44.1
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            3.3,
-            45.3
+            3.4,
+            44.1
           ],
           "angle": 90
         }
@@ -3135,11 +3142,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          33.0,
-          69.2
+          29.4,
+          69.65
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3149,8 +3156,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.1,
-          67.3
+          36.25,
+          69.75
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3177,8 +3184,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          8.1,
-          65.85
+          8.05,
+          65.9
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3212,8 +3219,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.4,
-          35.2
+          34.55,
+          35.9
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -3226,8 +3233,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.75,
-          97.85
+          31.35,
+          96.55
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3240,8 +3247,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.35,
-          35.35
+          4.5,
+          35.4
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -3254,8 +3261,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          7.0,
-          34.0
+          7.15,
+          34.15
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3268,8 +3275,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          7.1,
-          36.0
+          7.2,
+          36.25
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -3282,16 +3289,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.3,
-          35.3
+          2.5,
+          35.45
         ],
         "align": "origin",
         "rotation": 270.0,
         "side": "B",
         "ref_text": {
           "at": [
-            2.3,
-            35.3
+            2.5,
+            35.45
           ],
           "angle": 90
         }
@@ -3304,7 +3311,7 @@
       "anchor": {
         "at": [
           38.45,
-          30.7
+          30.5
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3317,11 +3324,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          25.05,
-          97.75
+          25.4,
+          100.75
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3331,8 +3338,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          24.65,
-          103.25
+          24.85,
+          103.05
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -3373,7 +3380,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.6,
+          9.4,
           52.4
         ],
         "align": "origin",
@@ -3443,11 +3450,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          16.5,
-          100.1
+          16.3,
+          99.45
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3457,8 +3464,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          12.2,
-          63.85
+          12.4,
+          64.1
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -3471,8 +3478,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          18.2,
-          81.6
+          18.1,
+          81.35
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -3485,11 +3492,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.7,
-          66.5
+          32.85,
+          69.65
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3499,11 +3506,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.75,
+          32.95,
           92.5
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 180.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3513,8 +3520,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          29.85,
-          95.75
+          29.55,
+          91.9
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3527,11 +3534,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          29.6,
-          69.2
+          31.5,
+          67.6
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 180.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3541,11 +3548,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          36.4,
-          69.3
+          34.9,
+          67.65
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 180.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3555,16 +3562,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.7,
-          66.65
+          40.1,
+          67.25
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 180.0,
         "side": "B",
         "ref_text": {
           "at": [
-            40.7,
-            66.65
+            40.1,
+            67.25
           ],
           "angle": 90
         }
@@ -3576,11 +3583,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          37.0,
-          92.05
+          34.75,
+          90.15
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3590,7 +3597,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.3,
+          5.4,
           93.85
         ],
         "align": "origin",
@@ -3619,7 +3626,7 @@
       "anchor": {
         "at": [
           5.4,
-          97.0
+          96.75
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3632,16 +3639,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.2,
-          98.95
+          3.25,
+          99.0
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            3.2,
-            98.95
+            3.25,
+            99.0
           ],
           "angle": 90
         }
@@ -3653,16 +3660,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.75,
-          96.55
+          40.85,
+          96.6
         ],
         "align": "origin",
         "rotation": 270.0,
         "side": "B",
         "ref_text": {
           "at": [
-            40.75,
-            96.55
+            40.85,
+            96.6
           ],
           "angle": 90
         }
@@ -3674,11 +3681,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.75,
-          103.25
+          25.75,
+          98.1
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 180.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3689,7 +3696,7 @@
       "anchor": {
         "at": [
           16.7,
-          93.45
+          93.35
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3702,7 +3709,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          13.3,
+          13.2,
           93.35
         ],
         "align": "origin",
@@ -3716,8 +3723,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.9,
-          93.4
+          9.65,
+          93.75
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3730,11 +3737,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          25.4,
-          93.4
+          27.55,
+          93.8
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3744,19 +3751,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.7,
-          27.25
+          5.85,
+          26.4
         ],
         "align": "origin",
-        "rotation": 180.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            4.7,
-            27.25
-          ],
-          "angle": 90
-        }
+        "rotation": 90.0,
+        "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -3765,16 +3765,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.2,
-          16.95
+          2.35,
+          19.85
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "B",
         "ref_text": {
           "at": [
-            3.2,
-            16.95
+            2.35,
+            19.85
           ],
           "angle": 90
         }
@@ -3786,19 +3786,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.7,
-          50.1
+          4.15,
+          50.95
         ],
         "align": "origin",
-        "rotation": 270.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            2.7,
-            50.1
-          ],
-          "angle": 90
-        }
+        "rotation": 90.0,
+        "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -3807,19 +3800,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.4,
-          47.2
+          4.1,
+          46.9
         ],
         "align": "origin",
-        "rotation": 180.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            3.4,
-            47.2
-          ],
-          "angle": 90
-        }
+        "rotation": 270.0,
+        "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -3828,8 +3814,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.95,
-          67.3
+          23.1,
+          67.4
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -3863,16 +3849,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          95.3,
-          32.4
+          94.5,
+          32.2
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            95.3,
-            32.4
+            94.5,
+            32.2
           ],
           "angle": 0
         }
@@ -3884,7 +3870,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          86.25,
+          86.35,
           30.25
         ],
         "align": "origin",
@@ -3898,8 +3884,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.8,
-          35.05
+          28.75,
+          30.25
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3926,11 +3912,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.4,
-          14.8
+          4.3,
+          15.9
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 270.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -3940,8 +3926,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.55,
-          30.5
+          23.5,
+          30.7
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -3955,7 +3941,7 @@
       "anchor": {
         "at": [
           6.15,
-          23.9
+          22.2
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -3968,12 +3954,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.2,
-          23.9
+          2.6,
+          25.1
         ],
         "align": "origin",
-        "rotation": 270.0,
-        "side": "B"
+        "rotation": 0.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            2.6,
+            25.1
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -3983,7 +3976,7 @@
       "anchor": {
         "at": [
           64.4,
-          32.95
+          32.9
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3991,7 +3984,7 @@
         "ref_text": {
           "at": [
             64.4,
-            32.95
+            32.9
           ],
           "angle": 0
         }
@@ -4003,8 +3996,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          19.85,
-          32.95
+          19.9,
+          32.4
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4017,16 +4010,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          59.35,
-          32.7
+          59.3,
+          32.95
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            59.35,
-            32.7
+            59.3,
+            32.95
           ],
           "angle": 0
         }
@@ -4038,16 +4031,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          101.8,
-          33.3
+          101.7,
+          33.35
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            101.8,
-            33.3
+            101.7,
+            33.35
           ],
           "angle": 0
         }
@@ -4059,11 +4052,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          94.2,
-          29.85
+          94.25,
+          29.75
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -4073,8 +4066,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          81.85,
-          30.55
+          81.8,
+          30.6
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -4087,16 +4080,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          80.25,
-          32.6
+          80.35,
+          32.7
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            80.25,
-            32.6
+            80.35,
+            32.7
           ],
           "angle": 0
         }
@@ -4108,7 +4101,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          84.45,
+          84.6,
           32.95
         ],
         "align": "origin",
@@ -4116,7 +4109,7 @@
         "side": "B",
         "ref_text": {
           "at": [
-            84.45,
+            84.6,
             32.95
           ],
           "angle": 0
@@ -4150,19 +4143,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          106.1,
-          31.85
+          106.0,
+          31.75
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            106.1,
-            31.85
-          ],
-          "angle": 0
-        }
+        "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -4171,7 +4157,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          106.35,
+          106.2,
           29.8
         ],
         "align": "origin",
@@ -4185,8 +4171,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.45,
-          32.6
+          38.5,
+          32.95
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -4200,7 +4186,7 @@
       "anchor": {
         "at": [
           60.85,
-          30.3
+          30.5
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4213,8 +4199,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          77.4,
-          30.7
+          76.15,
+          30.6
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4227,16 +4213,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          68.65,
-          32.55
+          68.6,
+          32.6
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            68.65,
-            32.55
+            68.6,
+            32.6
           ],
           "angle": 0
         }
@@ -4248,11 +4234,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          28.35,
-          32.85
+          30.05,
+          35.45
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -4262,8 +4248,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          28.35,
-          30.55
+          28.3,
+          33.1
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4276,8 +4262,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          20.55,
-          30.4
+          22.5,
+          34.9
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4290,8 +4276,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          6.1,
-          17.5
+          6.2,
+          16.6
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -4304,19 +4290,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.45,
-          19.2
+          4.25,
+          20.2
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            3.45,
-            19.2
-          ],
-          "angle": 90
-        }
+        "rotation": 270.0,
+        "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -4325,8 +4304,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          90.55,
-          31.65
+          90.65,
+          29.85
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4339,11 +4318,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          90.55,
-          29.75
+          97.7,
+          29.9
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 180.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -4353,11 +4332,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          105.3,
-          26.75
+          104.8,
+          26.3
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -4367,11 +4346,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.35,
-          91.55
+          34.95,
+          96.5
         ],
         "align": "origin",
-        "rotation": 270.0,
+        "rotation": 90.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -4381,8 +4360,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.85,
-          33.0
+          35.05,
+          33.1
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4395,11 +4374,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          15.05,
-          33.25
+          15.9,
+          35.9
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 180.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -4409,11 +4388,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          16.6,
-          30.5
+          20.7,
+          30.1
         ],
         "align": "origin",
-        "rotation": 180.0,
+        "rotation": 0.0,
         "side": "B"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -4423,12 +4402,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          102.1,
-          30.6
+          90.55,
+          32.6
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B"
+        "rotation": 270.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            90.55,
+            32.6
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
     },
@@ -4745,8 +4731,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          74.65,
-          24.35
+          74.55,
+          24.7
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4759,8 +4745,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.1,
-          74.4
+          29.9,
+          74.45
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -4801,11 +4787,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.35,
+          5.0,
           36.65
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 180.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -4815,8 +4801,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.5,
-          38.15
+          22.35,
+          38.05
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -4829,7 +4815,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.9,
+          32.45,
           70.45
         ],
         "align": "origin",
@@ -4843,16 +4829,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          11.15,
-          106.15
+          10.85,
+          106.3
         ],
         "align": "origin",
         "rotation": 90.0,
         "side": "F",
         "ref_text": {
           "at": [
-            11.15,
-            106.15
+            10.85,
+            106.3
           ],
           "angle": 0
         }
@@ -4864,8 +4850,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          16.55,
-          91.7
+          16.5,
+          91.9
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4948,8 +4934,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          92.25,
-          7.05
+          92.4,
+          7.0
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -4962,7 +4948,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          68.6,
+          68.55,
           32.15
         ],
         "align": "origin",
@@ -4970,7 +4956,7 @@
         "side": "F",
         "ref_text": {
           "at": [
-            68.6,
+            68.55,
             32.15
           ],
           "angle": 0
@@ -4983,7 +4969,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          61.45,
+          60.75,
           32.9
         ],
         "align": "origin",
@@ -4991,7 +4977,7 @@
         "side": "F",
         "ref_text": {
           "at": [
-            61.45,
+            60.75,
             32.9
           ],
           "angle": 0
@@ -5004,8 +4990,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          90.45,
-          29.7
+          90.35,
+          29.3
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -5018,11 +5004,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          100.8,
-          24.1
+          95.2,
+          24.65
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 270.0,
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-4: board-placement.json (place_board.py net-aware re-placement)"
@@ -5033,7 +5019,7 @@
       "anchor": {
         "at": [
           51.6,
-          31.6
+          31.5
         ],
         "align": "origin",
         "rotation": 180.0,
@@ -5041,7 +5027,7 @@
         "ref_text": {
           "at": [
             51.6,
-            31.6
+            31.5
           ],
           "angle": 0
         }
@@ -7531,11 +7517,11 @@
         "path": [
           [
             8.825,
-            66.3
+            66.5
           ],
           [
             9.95,
-            66.3
+            66.5
           ]
         ],
         "locked": true,
@@ -7548,12 +7534,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            35.05,
-            35.75
+            38.55,
+            40.55
           ],
           [
-            36.325,
-            35.75
+            37.5,
+            40.55
           ]
         ],
         "locked": true,
@@ -7566,12 +7552,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            39.325,
-            89.75
+            38.425,
+            89.9
           ],
           [
-            39.325,
-            90.775
+            37.425,
+            89.9
           ]
         ],
         "locked": true,
@@ -7584,16 +7570,188 @@
         "width_mm": 0.25,
         "path": [
           [
-            4.1,
-            83.875
+            2.725,
+            82.4
           ],
           [
-            6.075,
-            83.875
+            2.725,
+            82.6
           ],
           [
-            8.275,
-            83.875
+            2.725,
+            82.7
+          ],
+          [
+            2.725,
+            82.8
+          ],
+          [
+            2.725,
+            82.9
+          ],
+          [
+            2.725,
+            83.1
+          ],
+          [
+            2.725,
+            83.2
+          ],
+          [
+            2.725,
+            83.3
+          ],
+          [
+            2.725,
+            83.4
+          ],
+          [
+            2.725,
+            83.6
+          ],
+          [
+            2.725,
+            83.7
+          ],
+          [
+            2.725,
+            83.8
+          ],
+          [
+            2.725,
+            83.9
+          ],
+          [
+            2.725,
+            84.1
+          ],
+          [
+            2.725,
+            84.2
+          ],
+          [
+            2.725,
+            84.3
+          ],
+          [
+            2.725,
+            84.4
+          ],
+          [
+            2.725,
+            84.6
+          ],
+          [
+            2.725,
+            84.7
+          ],
+          [
+            2.725,
+            84.8
+          ],
+          [
+            2.725,
+            84.9
+          ],
+          [
+            2.725,
+            85.1
+          ],
+          [
+            2.725,
+            85.2
+          ],
+          [
+            2.725,
+            85.3
+          ],
+          [
+            2.725,
+            85.4
+          ],
+          [
+            2.725,
+            85.6
+          ],
+          [
+            2.725,
+            85.7
+          ],
+          [
+            2.725,
+            85.8
+          ],
+          [
+            2.725,
+            85.9
+          ],
+          [
+            2.725,
+            86.1
+          ],
+          [
+            2.725,
+            86.2
+          ],
+          [
+            2.725,
+            86.3
+          ],
+          [
+            2.725,
+            86.4
+          ],
+          [
+            2.725,
+            86.6
+          ],
+          [
+            2.725,
+            86.7
+          ],
+          [
+            2.725,
+            86.8
+          ],
+          [
+            2.725,
+            86.9
+          ],
+          [
+            2.725,
+            87.1
+          ],
+          [
+            2.725,
+            87.2
+          ],
+          [
+            2.725,
+            87.3
+          ],
+          [
+            2.725,
+            87.4
+          ],
+          [
+            2.725,
+            87.6
+          ],
+          [
+            2.725,
+            87.7
+          ],
+          [
+            2.725,
+            87.8
+          ],
+          [
+            2.725,
+            87.9
+          ],
+          [
+            2.725,
+            88.0
           ]
         ],
         "locked": true,
@@ -7606,12 +7764,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            34.6,
-            24.6
+            35.0,
+            25.95
           ],
           [
-            35.875,
-            24.6
+            36.275,
+            25.95
           ]
         ],
         "locked": true,
@@ -7624,12 +7782,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            39.65,
-            18.2
+            39.5,
+            18.45
           ],
           [
-            40.7,
-            18.2
+            40.55,
+            18.45
           ]
         ],
         "locked": true,
@@ -7642,12 +7800,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            33.575,
-            97.85
+            29.675,
+            100.8
           ],
           [
-            32.575,
-            97.85
+            28.675,
+            100.8
           ]
         ],
         "locked": true,
@@ -7660,12 +7818,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.575,
-            38.2
+            2.625,
+            38.25
           ],
           [
-            1.575,
-            38.2
+            1.625,
+            38.25
           ]
         ],
         "locked": true,
@@ -7678,12 +7836,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            37.85,
-            29.85
+            38.0,
+            27.9
           ],
           [
-            36.4181,
-            31.2819
+            38.0,
+            26.5
           ]
         ],
         "locked": true,
@@ -7696,12 +7854,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            44.15,
-            9.8
+            44.6,
+            9.15
           ],
           [
-            43.1,
-            9.8
+            43.55,
+            9.15
           ]
         ],
         "locked": true,
@@ -7714,12 +7872,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            7.925,
-            36.8
+            8.675,
+            36.85
           ],
           [
-            7.925,
-            35.775
+            7.675,
+            36.85
           ]
         ],
         "locked": true,
@@ -7732,11 +7890,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            30.625,
+            29.775,
             89.8
           ],
           [
-            29.625,
+            28.775,
             89.8
           ]
         ],
@@ -7750,12 +7908,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            32.55,
-            40.1
+            35.45,
+            44.1
           ],
           [
-            33.6,
-            40.1
+            36.5,
+            44.1
           ]
         ],
         "locked": true,
@@ -7769,11 +7927,11 @@
         "path": [
           [
             23.8,
-            79.45
+            80.9
           ],
           [
-            22.525,
-            79.45
+            22.8984,
+            81.8016
           ]
         ],
         "locked": true,
@@ -7786,12 +7944,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            33.85,
-            77.025
+            33.95,
+            73.325
           ],
           [
-            31.95,
-            77.025
+            35.85,
+            73.325
           ]
         ],
         "locked": true,
@@ -7804,12 +7962,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            111.7,
-            8.125
+            113.975,
+            10.5
           ],
           [
-            113.6,
-            8.125
+            115.1,
+            10.5
           ]
         ],
         "locked": true,
@@ -7822,11 +7980,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            27.775,
+            28.025,
             102.4
           ],
           [
-            28.9,
+            29.15,
             102.4
           ]
         ],
@@ -7840,12 +7998,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            39.15,
-            85.975
+            39.2,
+            82.925
           ],
           [
-            41.05,
-            85.975
+            41.1,
+            82.925
           ]
         ],
         "locked": true,
@@ -7858,12 +8016,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            12.725,
-            107.75
+            13.375,
+            107.85
           ],
           [
-            13.725,
-            107.75
+            14.375,
+            107.85
           ]
         ],
         "locked": true,
@@ -7876,12 +8034,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            16.5,
-            96.0
+            16.95,
+            96.6
           ],
           [
-            17.775,
-            96.0
+            15.675,
+            96.6
           ]
         ],
         "locked": true,
@@ -7894,12 +8052,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            14.0,
-            108.3
+            13.9,
+            102.85
           ],
           [
-            12.725,
-            108.3
+            15.175,
+            102.85
           ]
         ],
         "locked": true,
@@ -7912,12 +8070,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            20.925,
-            93.35
+            20.875,
+            93.4
           ],
           [
-            22.275,
-            93.35
+            22.225,
+            93.4
           ]
         ],
         "locked": true,
@@ -7930,12 +8088,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            13.3,
-            37.1
+            13.65,
+            37.3
           ],
           [
-            13.3,
-            38.375
+            12.6,
+            37.3
           ]
         ],
         "locked": true,
@@ -7948,12 +8106,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            1.65,
-            49.9
+            9.15,
+            63.55
           ],
           [
-            1.65,
-            48.85
+            10.2,
+            63.55
           ]
         ],
         "locked": true,
@@ -7966,12 +8124,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            5.3,
-            53.225
+            3.4,
+            50.975
           ],
           [
-            7.2,
-            53.225
+            5.3,
+            50.975
           ]
         ],
         "locked": true,
@@ -7984,12 +8142,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            38.2,
-            47.125
+            35.55,
+            40.575
           ],
           [
-            40.1,
-            47.125
+            33.65,
+            40.575
           ]
         ],
         "locked": true,
@@ -8002,12 +8160,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            10.65,
-            22.75
+            10.45,
+            23.4
           ],
           [
-            12.0,
-            22.75
+            11.8,
+            23.4
           ]
         ],
         "locked": true,
@@ -8020,12 +8178,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            70.55,
-            25.475
+            70.5,
+            22.725
           ],
           [
-            68.65,
-            25.475
+            72.4,
+            22.725
           ]
         ],
         "locked": true,
@@ -8038,12 +8196,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            63.125,
-            15.95
+            67.575,
+            15.9
           ],
           [
-            64.25,
-            15.95
+            66.45,
+            15.9
           ]
         ],
         "locked": true,
@@ -8056,12 +8214,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            118.3,
-            23.475
+            119.45,
+            23.325
           ],
           [
-            120.2,
-            23.475
+            121.35,
+            23.325
           ]
         ],
         "locked": true,
@@ -8074,12 +8232,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            57.975,
-            11.15
+            57.925,
+            11.3
           ],
           [
-            59.1,
-            11.15
+            59.05,
+            11.3
           ]
         ],
         "locked": true,
@@ -8092,12 +8250,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            53.35,
-            24.7
+            53.7,
+            20.35
           ],
           [
-            54.7,
-            24.7
+            55.05,
+            20.35
           ]
         ],
         "locked": true,
@@ -8110,12 +8268,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            35.175,
-            14.4
+            38.025,
+            14.6
           ],
           [
-            36.3,
-            14.4
+            39.15,
+            14.6
           ]
         ],
         "locked": true,
@@ -8128,12 +8286,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            97.0,
-            10.375
+            97.25,
+            7.625
           ],
           [
-            98.9,
-            10.375
+            99.15,
+            7.625
           ]
         ],
         "locked": true,
@@ -8146,12 +8304,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            51.3,
-            8.025
+            51.55,
+            7.975
           ],
           [
-            53.2,
-            8.025
+            53.45,
+            7.975
           ]
         ],
         "locked": true,
@@ -8164,12 +8322,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            53.675,
-            15.2
+            55.825,
+            16.05
           ],
           [
-            54.8,
-            15.2
+            56.95,
+            16.05
           ]
         ],
         "locked": true,
@@ -8182,12 +8340,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            28.775,
-            17.9
+            30.65,
+            17.125
           ],
           [
-            29.9,
-            17.9
+            32.55,
+            17.125
           ]
         ],
         "locked": true,
@@ -8200,12 +8358,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            95.775,
-            13.35
+            90.725,
+            13.3
           ],
           [
-            96.9,
-            13.35
+            91.85,
+            13.3
           ]
         ],
         "locked": true,
@@ -8218,12 +8376,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            22.3,
-            22.475
+            29.5,
+            11.775
           ],
           [
-            24.2,
-            22.475
+            31.4,
+            11.775
           ]
         ],
         "locked": true,
@@ -8237,11 +8395,11 @@
         "path": [
           [
             9.675,
-            9.8
+            10.05
           ],
           [
             10.8,
-            9.8
+            10.05
           ]
         ],
         "locked": true,
@@ -8254,12 +8412,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            31.475,
-            11.55
+            22.85,
+            19.275
           ],
           [
-            32.6,
-            11.55
+            24.75,
+            19.275
           ]
         ],
         "locked": true,
@@ -8272,12 +8430,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            90.725,
-            13.35
+            95.875,
+            13.4
           ],
           [
-            91.85,
-            13.35
+            97.0,
+            13.4
           ]
         ],
         "locked": true,
@@ -8308,12 +8466,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            63.675,
-            30.4
+            63.525,
+            30.25
           ],
           [
-            62.675,
-            30.4
+            63.525,
+            31.275
           ]
         ],
         "locked": true,
@@ -8326,12 +8484,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            37.7,
-            33.75
+            38.05,
+            34.2
           ],
           [
-            36.551,
-            34.899
+            36.425,
+            34.2
           ]
         ],
         "locked": true,
@@ -8344,12 +8502,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            59.85,
-            25.4
+            61.65,
+            23.7
           ],
           [
-            58.8,
-            25.4
+            62.925,
+            23.7
           ]
         ],
         "locked": true,
@@ -8362,11 +8520,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            73.45,
+            77.5,
             21.2
           ],
           [
-            72.4,
+            78.55,
             21.2
           ]
         ],
@@ -8380,11 +8538,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            60.075,
+            65.475,
             8.0
           ],
           [
-            61.2,
+            66.6,
             8.0
           ]
         ],
@@ -8398,12 +8556,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            55.325,
-            28.7
+            55.375,
+            28.65
           ],
           [
-            55.325,
-            30.6
+            55.375,
+            26.75
           ]
         ],
         "locked": true,
@@ -8434,12 +8592,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            57.725,
-            21.95
+            60.925,
+            19.45
           ],
           [
-            58.85,
-            21.95
+            62.05,
+            19.45
           ]
         ],
         "locked": true,
@@ -8452,12 +8610,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            102.3,
-            1.575
+            101.75,
+            2.475
           ],
           [
-            104.2,
-            1.575
+            99.85,
+            2.475
           ]
         ],
         "locked": true,
@@ -8470,12 +8628,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            89.85,
-            23.5
+            88.25,
+            25.15
           ],
           [
-            90.9,
-            23.5
+            89.525,
+            25.15
           ]
         ],
         "locked": true,
@@ -8488,12 +8646,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            96.925,
-            29.9
+            102.0,
+            31.375
           ],
           [
-            96.925,
-            30.925
+            103.025,
+            31.375
           ]
         ],
         "locked": true,
@@ -8506,12 +8664,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            93.55,
-            30.3
+            95.9,
+            30.9
           ],
           [
-            92.6484,
-            31.2016
+            94.625,
+            30.9
           ]
         ],
         "locked": true,
@@ -8524,12 +8682,16 @@
         "width_mm": 0.25,
         "path": [
           [
-            68.65,
-            28.3
+            69.35,
+            28.25
           ],
           [
-            68.65,
-            26.675
+            70.25,
+            28.25
+          ],
+          [
+            68.6944,
+            26.6944
           ]
         ],
         "locked": true,
@@ -8542,12 +8704,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            95.95,
-            31.5
+            93.5,
+            30.55
           ],
           [
-            95.0484,
-            32.4016
+            91.7146,
+            32.3354
           ]
         ],
         "locked": true,
@@ -8560,12 +8722,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            33.575,
-            95.85
+            40.9,
+            91.925
           ],
           [
-            32.575,
-            95.85
+            39.875,
+            91.925
           ]
         ],
         "locked": true,
@@ -8578,12 +8740,16 @@
         "width_mm": 0.25,
         "path": [
           [
-            17.775,
-            35.3
+            19.5,
+            34.675
           ],
           [
-            16.5199,
-            36.5551
+            19.5,
+            32.725
+          ],
+          [
+            20.2071,
+            32.0179
           ]
         ],
         "locked": true,
@@ -8597,11 +8763,11 @@
         "path": [
           [
             34.8,
-            21.725
+            21.025
           ],
           [
             36.7,
-            21.725
+            21.025
           ]
         ],
         "locked": true,
@@ -8614,12 +8780,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            59.9,
-            14.375
+            61.875,
+            15.4
           ],
           [
-            61.8,
-            14.375
+            63.0,
+            15.4
           ]
         ],
         "locked": true,
@@ -8632,12 +8798,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            34.9,
-            8.125
+            32.975,
+            10.75
           ],
           [
-            33.0,
-            8.125
+            34.1,
+            10.75
           ]
         ],
         "locked": true,
@@ -8650,12 +8816,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            69.55,
-            13.375
+            70.5,
+            18.075
           ],
           [
-            71.45,
-            13.375
+            68.6,
+            18.075
           ]
         ],
         "locked": true,
@@ -8668,12 +8834,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            31.9,
-            36.525
+            30.45,
+            37.375
           ],
           [
-            33.8,
-            36.525
+            32.35,
+            37.375
           ]
         ],
         "locked": true,
@@ -8686,11 +8852,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            103.875,
+            104.025,
             13.4
           ],
           [
-            102.75,
+            102.9,
             13.4
           ]
         ],
@@ -8704,12 +8870,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            1.225,
-            96.8
+            1.175,
+            96.65
           ],
           [
-            1.225,
-            98.575
+            1.175,
+            98.425
           ]
         ],
         "locked": true,
@@ -8722,12 +8888,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            20.9,
-            80.75
+            21.3,
+            82.65
           ],
           [
-            22.175,
-            80.75
+            22.575,
+            82.65
           ]
         ],
         "locked": true,
@@ -8740,12 +8906,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            28.3,
-            92.675
+            23.775,
+            95.75
           ],
           [
-            27.275,
-            92.675
+            22.775,
+            95.75
           ]
         ],
         "locked": true,
@@ -8758,12 +8924,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            111.87,
-            3.9
+            111.42,
+            3.8
           ],
           [
-            113.455,
-            3.9
+            113.005,
+            3.8
           ]
         ],
         "locked": true,
@@ -8776,12 +8942,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            39.4,
-            92.175
+            37.475,
+            93.55
           ],
           [
-            40.425,
-            92.175
+            38.475,
+            93.55
           ]
         ],
         "locked": true,
@@ -8794,12 +8960,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.075,
-            87.65
+            3.8,
+            87.525
           ],
           [
-            1.075,
-            87.65
+            4.5248,
+            88.2498
           ]
         ],
         "locked": true,
@@ -8812,12 +8978,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            55.725,
-            30.65
+            56.875,
+            30.55
           ],
           [
-            56.725,
-            30.65
+            57.875,
+            30.55
           ]
         ],
         "locked": true,
@@ -8830,12 +8996,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            72.55,
-            27.8
+            73.5,
+            28.1
           ],
           [
-            72.55,
-            26.525
+            73.5,
+            30.125
           ]
         ],
         "locked": true,
@@ -8848,12 +9014,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            34.8,
-            30.0
+            35.05,
+            29.95
           ],
           [
-            33.2797,
-            31.5203
+            36.3228,
+            31.2228
           ]
         ],
         "locked": true,
@@ -8866,11 +9032,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            77.3,
+            77.25,
             32.2
           ],
           [
-            79.1,
+            79.05,
             32.2
           ]
         ],
@@ -8884,12 +9050,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            107.5,
-            9.05
+            107.65,
+            9.15
           ],
           [
-            109.3,
-            9.05
+            109.45,
+            9.15
           ]
         ],
         "locked": true,
@@ -8902,12 +9068,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            65.4,
-            10.3
+            67.85,
+            12.8
           ],
           [
-            66.55,
-            10.3
+            69.0,
+            12.8
           ]
         ],
         "locked": true,
@@ -8921,11 +9087,11 @@
         "path": [
           [
             108.9,
-            13.75
+            13.65
           ],
           [
             110.05,
-            13.75
+            13.65
           ]
         ],
         "locked": true,
@@ -8938,12 +9104,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            11.7125,
-            101.6
+            9.5625,
+            101.7
           ],
           [
-            13.0,
-            101.6
+            10.85,
+            101.7
           ]
         ],
         "locked": true,
@@ -8956,12 +9122,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            5.75,
-            19.4625
+            5.0,
+            20.7625
           ],
           [
-            6.6,
-            19.4625
+            5.0,
+            22.05
           ]
         ],
         "locked": true,
@@ -8974,12 +9140,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            86.4375,
-            31.3
+            85.95,
+            28.1625
           ],
           [
-            86.4375,
-            30.45
+            86.8,
+            28.1625
           ]
         ],
         "locked": true,
@@ -8992,12 +9158,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.475,
-            45.3
+            2.575,
+            44.1
           ],
           [
-            3.1998,
-            46.0248
+            3.2998,
+            44.8248
           ]
         ],
         "locked": true,
@@ -9010,12 +9176,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            7.275,
-            65.85
+            7.225,
+            65.9
           ],
           [
-            6.325,
-            65.85
+            6.275,
+            65.9
           ]
         ],
         "locked": true,
@@ -9028,12 +9194,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            29.925,
-            97.85
+            30.525,
+            96.55
           ],
           [
-            28.975,
-            97.85
+            30.525,
+            97.575
           ]
         ],
         "locked": true,
@@ -9046,12 +9212,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            7.925,
-            36.0
+            8.025,
+            36.25
           ],
           [
-            7.925,
-            37.025
+            8.975,
+            36.25
           ]
         ],
         "locked": true,
@@ -9064,12 +9230,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.3,
-            34.475
+            2.5,
+            34.625
           ],
           [
-            3.325,
-            34.475
+            1.475,
+            34.625
           ]
         ],
         "locked": true,
@@ -9082,12 +9248,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            25.475,
-            103.25
+            25.675,
+            103.05
           ],
           [
-            26.425,
-            103.25
+            26.625,
+            103.05
           ]
         ],
         "locked": true,
@@ -9100,11 +9266,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            9.6,
+            9.4,
             53.225
           ],
           [
-            10.625,
+            10.425,
             53.225
           ]
         ],
@@ -9118,12 +9284,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            17.325,
-            100.1
+            16.3,
+            100.275
           ],
           [
-            18.275,
-            100.1
+            17.325,
+            100.275
           ]
         ],
         "locked": true,
@@ -9136,12 +9302,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            18.2,
-            82.425
+            18.1,
+            82.175
           ],
           [
-            19.225,
-            82.425
+            19.125,
+            82.175
           ]
         ],
         "locked": true,
@@ -9154,12 +9320,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            30.75,
-            93.325
+            33.775,
+            92.5
           ],
           [
-            31.775,
-            93.325
+            33.775,
+            93.525
           ]
         ],
         "locked": true,
@@ -9172,12 +9338,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            29.025,
-            95.75
+            28.725,
+            91.9
           ],
           [
-            27.725,
-            95.75
+            27.425,
+            91.9
           ]
         ],
         "locked": true,
@@ -9190,12 +9356,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            35.575,
-            69.3
+            35.725,
+            67.65
           ],
           [
-            35.575,
-            70.325
+            35.725,
+            68.675
           ]
         ],
         "locked": true,
@@ -9226,12 +9392,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.375,
-            98.95
+            2.425,
+            99.0
           ],
           [
-            2.375,
-            99.975
+            2.425,
+            100.025
           ]
         ],
         "locked": true,
@@ -9244,12 +9410,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            30.75,
-            102.425
+            26.575,
+            98.1
           ],
           [
-            32.125,
-            102.425
+            27.525,
+            98.1
           ]
         ],
         "locked": true,
@@ -9263,11 +9429,11 @@
         "path": [
           [
             15.875,
-            93.45
+            93.35
           ],
           [
-            15.875,
-            94.475
+            15.1502,
+            94.0748
           ]
         ],
         "locked": true,
@@ -9280,12 +9446,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            9.075,
-            93.4
+            8.825,
+            93.75
           ],
           [
-            8.125,
-            93.4
+            8.825,
+            94.775
           ]
         ],
         "locked": true,
@@ -9298,12 +9464,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            26.225,
-            93.4
+            26.725,
+            93.8
           ],
           [
-            26.225,
-            94.425
+            25.775,
+            93.8
           ]
         ],
         "locked": true,
@@ -9316,12 +9482,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.375,
-            16.95
+            2.35,
+            20.675
           ],
           [
-            1.425,
-            16.95
+            1.325,
+            20.675
           ]
         ],
         "locked": true,
@@ -9334,12 +9500,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            29.975,
-            35.05
+            27.925,
+            30.25
           ],
           [
-            29.025,
-            35.05
+            28.8973,
+            31.2223
           ]
         ],
         "locked": true,
@@ -9352,12 +9518,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            4.575,
-            14.8
+            4.3,
+            15.075
           ],
           [
-            4.575,
-            13.775
+            4.3,
+            14.125
           ]
         ],
         "locked": true,
@@ -9370,12 +9536,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            23.55,
-            31.325
+            23.5,
+            31.525
           ],
           [
-            22.525,
-            31.325
+            22.475,
+            31.525
           ]
         ],
         "locked": true,
@@ -9388,12 +9554,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            4.2,
-            23.075
+            1.775,
+            25.1
           ],
           [
-            3.175,
-            23.075
+            0.825,
+            25.1
           ]
         ],
         "locked": true,
@@ -9406,12 +9572,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            100.975,
-            33.3
+            100.875,
+            33.35
           ],
           [
-            100.025,
-            33.3
+            99.925,
+            33.35
           ]
         ],
         "locked": true,
@@ -9424,12 +9590,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            95.025,
-            29.85
+            93.425,
+            29.75
           ],
           [
-            95.025,
-            30.875
+            92.475,
+            29.75
           ]
         ],
         "locked": true,
@@ -9442,12 +9608,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            79.425,
-            32.6
+            79.525,
+            32.7
           ],
           [
-            79.425,
-            33.625
+            79.525,
+            33.725
           ]
         ],
         "locked": true,
@@ -9460,16 +9626,16 @@
         "width_mm": 0.25,
         "path": [
           [
-            19.6375,
-            30.4
+            21.5875,
+            34.9
           ],
           [
-            20.55,
-            30.4
+            21.5875,
+            36.0
           ],
           [
-            20.1257,
-            30.8243
+            22.2946,
+            36.7071
           ]
         ],
         "locked": true,
@@ -9482,12 +9648,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.625,
-            19.2
+            4.25,
+            19.375
           ],
           [
-            1.675,
-            19.2
+            5.275,
+            19.375
           ]
         ],
         "locked": true,
@@ -9500,12 +9666,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            89.725,
-            31.65
+            89.825,
+            29.85
           ],
           [
-            89.0002,
-            32.3748
+            89.825,
+            32.125
           ]
         ],
         "locked": true,
@@ -9518,12 +9684,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            89.725,
-            29.75
+            98.525,
+            29.9
           ],
           [
-            90.4498,
-            29.0252
+            99.475,
+            29.9
           ]
         ],
         "locked": true,
@@ -9536,12 +9702,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            34.35,
-            90.725
+            34.95,
+            97.325
           ],
           [
-            35.375,
-            90.725
+            35.975,
+            97.325
           ]
         ],
         "locked": true,
@@ -9554,12 +9720,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            34.025,
-            33.0
+            34.225,
+            33.1
           ],
           [
-            34.7498,
-            32.2752
+            33.275,
+            33.1
           ]
         ],
         "locked": true,
@@ -9572,12 +9738,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            102.1,
-            31.425
+            90.55,
+            31.775
           ],
           [
-            103.125,
-            31.425
+            88.775,
+            31.775
           ]
         ],
         "locked": true,
@@ -9590,12 +9756,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            73.5125,
-            24.35
+            73.4125,
+            24.7
           ],
           [
-            74.725,
-            24.35
+            74.625,
+            24.7
           ]
         ],
         "locked": true,
@@ -9608,16 +9774,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            30.1,
-            73.2625
+            29.9,
+            73.3125
           ],
           [
-            30.1,
-            72.2
-          ],
-          [
-            32.3,
-            72.2
+            29.9,
+            72.1
           ]
         ],
         "locked": true,
@@ -9630,12 +9792,16 @@
         "width_mm": 0.25,
         "path": [
           [
-            5.575,
-            37.55
+            4.1,
+            36.875
           ],
           [
-            5.575,
-            38.4
+            3.4,
+            36.875
+          ],
+          [
+            2.9757,
+            37.2993
           ]
         ],
         "locked": true,
@@ -9648,20 +9814,16 @@
         "width_mm": 0.25,
         "path": [
           [
-            22.5,
-            37.0125
+            22.35,
+            36.9125
           ],
           [
-            22.5,
-            38.075
-          ],
-          [
-            20.3,
-            38.075
+            22.2946,
+            36.7071
           ]
         ],
         "locked": true,
-        "why": "GND fan-out of U111.2 to its plane via"
+        "why": "GND fan-out of U111.2 to the GND via at [22.2946, 36.7071]"
       },
       {
         "id": "GND-U201-8-S",
@@ -9670,16 +9832,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            31.125,
+            32.675,
             71.35
           ],
           [
-            31.125,
-            72.05
-          ],
-          [
-            33.325,
-            72.05
+            32.675,
+            72.2
           ]
         ],
         "locked": true,
@@ -9692,12 +9850,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            11.375,
-            107.05
+            11.075,
+            107.2
           ],
           [
-            11.375,
-            109.15
+            11.075,
+            108.8
           ]
         ],
         "locked": true,
@@ -9710,16 +9868,16 @@
         "width_mm": 0.25,
         "path": [
           [
-            17.45,
-            91.475
+            17.4,
+            91.675
           ],
           [
-            18.15,
-            91.475
+            18.1,
+            91.675
           ],
           [
-            18.15,
-            89.275
+            18.1,
+            89.475
           ]
         ],
         "locked": true,
@@ -9768,12 +9926,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            90.345,
-            4.175
+            90.495,
+            4.125
           ],
           [
-            89.545,
-            4.175
+            89.695,
+            4.125
           ]
         ],
         "locked": true,
@@ -9786,12 +9944,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            92.25,
-            7.05
+            92.4,
+            7.0
           ],
           [
-            94.35,
-            7.05
+            94.5,
+            7.0
           ]
         ],
         "locked": true,
@@ -9804,11 +9962,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            66.775,
+            66.725,
             31.825
           ],
           [
-            64.6,
+            64.55,
             31.825
           ]
         ],
@@ -9822,19 +9980,19 @@
         "width_mm": 0.25,
         "path": [
           [
-            68.6,
+            68.55,
             32.15
           ],
           [
-            68.6,
+            68.55,
             32.05
           ],
           [
-            68.6,
+            68.55,
             31.85
           ],
           [
-            68.6,
+            68.55,
             31.65
           ]
         ],
@@ -9848,12 +10006,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            62.5875,
+            61.8875,
             32.9
           ],
           [
-            64.15,
-            32.9
+            61.8875,
+            34.1
           ]
         ],
         "locked": true,
@@ -9866,11 +10024,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            62.5875,
+            61.8875,
             33.85
           ],
           [
-            64.15,
+            64.35,
             33.85
           ]
         ],
@@ -9884,12 +10042,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            90.45,
-            28.5625
+            90.35,
+            28.1625
           ],
           [
-            90.45,
-            27.35
+            90.35,
+            26.95
           ]
         ],
         "locked": true,
@@ -9902,12 +10060,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            100.8,
-            22.9625
+            95.2,
+            25.7875
           ],
           [
-            100.8,
-            21.75
+            95.2,
+            27.0
           ]
         ],
         "locked": true,
@@ -9921,15 +10079,11 @@
         "path": [
           [
             52.7375,
-            31.6
+            31.5
           ],
           [
-            53.8,
-            31.6
-          ],
-          [
-            54.2243,
-            32.0243
+            53.95,
+            31.5
           ]
         ],
         "locked": true,
@@ -11526,7 +11680,7 @@
         "net": "GND",
         "at": [
           9.95,
-          66.3
+          66.5
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11537,8 +11691,8 @@
         "id": "GND-C104-2-V",
         "net": "GND",
         "at": [
-          36.325,
-          35.75
+          37.5,
+          40.55
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11549,8 +11703,8 @@
         "id": "GND-C105-2-V",
         "net": "GND",
         "at": [
-          39.325,
-          90.775
+          37.425,
+          89.9
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11561,8 +11715,8 @@
         "id": "GND-C106-2-V",
         "net": "GND",
         "at": [
-          8.275,
-          83.875
+          2.725,
+          88.0
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11573,8 +11727,8 @@
         "id": "GND-C108-2-V",
         "net": "GND",
         "at": [
-          35.875,
-          24.6
+          36.275,
+          25.95
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11585,8 +11739,8 @@
         "id": "GND-C110-2-V",
         "net": "GND",
         "at": [
-          40.7,
-          18.2
+          40.55,
+          18.45
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11597,8 +11751,8 @@
         "id": "GND-C114-2-V",
         "net": "GND",
         "at": [
-          32.575,
-          97.85
+          28.675,
+          100.8
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11609,8 +11763,8 @@
         "id": "GND-C115-2-V",
         "net": "GND",
         "at": [
-          1.575,
-          38.2
+          1.625,
+          38.25
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11621,8 +11775,8 @@
         "id": "GND-C116-2-V",
         "net": "GND",
         "at": [
-          36.4181,
-          31.2819
+          38.0,
+          26.5
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11633,8 +11787,8 @@
         "id": "GND-C117-2-V",
         "net": "GND",
         "at": [
-          43.1,
-          9.8
+          43.55,
+          9.15
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11645,8 +11799,8 @@
         "id": "GND-C132-2-V",
         "net": "GND",
         "at": [
-          7.925,
-          35.775
+          7.675,
+          36.85
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11657,7 +11811,7 @@
         "id": "GND-C201-2-V",
         "net": "GND",
         "at": [
-          29.625,
+          28.775,
           89.8
         ],
         "drill_mm": 0.3,
@@ -11669,8 +11823,8 @@
         "id": "GND-C202-2-V",
         "net": "GND",
         "at": [
-          33.6,
-          40.1
+          36.5,
+          44.1
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11681,8 +11835,8 @@
         "id": "GND-C203-2-V",
         "net": "GND",
         "at": [
-          22.525,
-          79.45
+          22.8984,
+          81.8016
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11693,8 +11847,8 @@
         "id": "GND-C204-2-V",
         "net": "GND",
         "at": [
-          31.95,
-          77.025
+          35.85,
+          73.325
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11705,8 +11859,8 @@
         "id": "GND-C205-2-V",
         "net": "GND",
         "at": [
-          113.6,
-          8.125
+          115.1,
+          10.5
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11717,7 +11871,7 @@
         "id": "GND-C208-2-V",
         "net": "GND",
         "at": [
-          28.9,
+          29.15,
           102.4
         ],
         "drill_mm": 0.3,
@@ -11729,8 +11883,8 @@
         "id": "GND-C209-2-V",
         "net": "GND",
         "at": [
-          41.05,
-          85.975
+          41.1,
+          82.925
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11741,8 +11895,8 @@
         "id": "GND-C211-2-V",
         "net": "GND",
         "at": [
-          13.725,
-          107.75
+          14.375,
+          107.85
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11753,8 +11907,8 @@
         "id": "GND-C212-2-V",
         "net": "GND",
         "at": [
-          17.775,
-          96.0
+          15.675,
+          96.6
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11765,8 +11919,8 @@
         "id": "GND-C213-2-V",
         "net": "GND",
         "at": [
-          12.725,
-          108.3
+          15.175,
+          102.85
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11777,8 +11931,8 @@
         "id": "GND-C214-2-V",
         "net": "GND",
         "at": [
-          22.275,
-          93.35
+          22.225,
+          93.4
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11789,8 +11943,8 @@
         "id": "GND-C215-2-V",
         "net": "GND",
         "at": [
-          13.3,
-          38.375
+          12.6,
+          37.3
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11801,8 +11955,8 @@
         "id": "GND-C216-2-V",
         "net": "GND",
         "at": [
-          1.65,
-          48.85
+          10.2,
+          63.55
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11813,8 +11967,8 @@
         "id": "GND-C217-2-V",
         "net": "GND",
         "at": [
-          7.2,
-          53.225
+          5.3,
+          50.975
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11825,8 +11979,8 @@
         "id": "GND-C218-2-V",
         "net": "GND",
         "at": [
-          40.1,
-          47.125
+          33.65,
+          40.575
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11837,8 +11991,8 @@
         "id": "GND-C219-2-V",
         "net": "GND",
         "at": [
-          12.0,
-          22.75
+          11.8,
+          23.4
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11849,8 +12003,8 @@
         "id": "GND-C220-2-V",
         "net": "GND",
         "at": [
-          68.65,
-          25.475
+          72.4,
+          22.725
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11861,8 +12015,8 @@
         "id": "GND-C221-2-V",
         "net": "GND",
         "at": [
-          64.25,
-          15.95
+          66.45,
+          15.9
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11873,8 +12027,8 @@
         "id": "GND-C223-2-V",
         "net": "GND",
         "at": [
-          120.2,
-          23.475
+          121.35,
+          23.325
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11885,8 +12039,8 @@
         "id": "GND-C224-2-V",
         "net": "GND",
         "at": [
-          59.1,
-          11.15
+          59.05,
+          11.3
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11897,8 +12051,8 @@
         "id": "GND-C225-2-V",
         "net": "GND",
         "at": [
-          54.7,
-          24.7
+          55.05,
+          20.35
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11909,8 +12063,8 @@
         "id": "GND-C226-2-V",
         "net": "GND",
         "at": [
-          36.3,
-          14.4
+          39.15,
+          14.6
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11921,8 +12075,8 @@
         "id": "GND-C227-2-V",
         "net": "GND",
         "at": [
-          98.9,
-          10.375
+          99.15,
+          7.625
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11933,8 +12087,8 @@
         "id": "GND-C228-2-V",
         "net": "GND",
         "at": [
-          53.2,
-          8.025
+          53.45,
+          7.975
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11945,8 +12099,8 @@
         "id": "GND-C229-2-V",
         "net": "GND",
         "at": [
-          54.8,
-          15.2
+          56.95,
+          16.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11957,8 +12111,8 @@
         "id": "GND-C230-2-V",
         "net": "GND",
         "at": [
-          29.9,
-          17.9
+          32.55,
+          17.125
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11969,8 +12123,8 @@
         "id": "GND-C231-2-V",
         "net": "GND",
         "at": [
-          96.9,
-          13.35
+          91.85,
+          13.3
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11981,8 +12135,8 @@
         "id": "GND-C252-2-V",
         "net": "GND",
         "at": [
-          24.2,
-          22.475
+          31.4,
+          11.775
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11994,7 +12148,7 @@
         "net": "GND",
         "at": [
           10.8,
-          9.8
+          10.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12005,8 +12159,8 @@
         "id": "GND-C255-2-V",
         "net": "GND",
         "at": [
-          32.6,
-          11.55
+          24.75,
+          19.275
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12017,8 +12171,8 @@
         "id": "GND-C256-2-V",
         "net": "GND",
         "at": [
-          91.85,
-          13.35
+          97.0,
+          13.4
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12041,8 +12195,8 @@
         "id": "GND-C258-2-V",
         "net": "GND",
         "at": [
-          62.675,
-          30.4
+          63.525,
+          31.275
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12053,8 +12207,8 @@
         "id": "GND-C259-2-V",
         "net": "GND",
         "at": [
-          36.551,
-          34.899
+          36.425,
+          34.2
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12065,8 +12219,8 @@
         "id": "GND-C260-2-V",
         "net": "GND",
         "at": [
-          58.8,
-          25.4
+          62.925,
+          23.7
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12077,7 +12231,7 @@
         "id": "GND-C261-2-V",
         "net": "GND",
         "at": [
-          72.4,
+          78.55,
           21.2
         ],
         "drill_mm": 0.3,
@@ -12089,7 +12243,7 @@
         "id": "GND-C263-2-V",
         "net": "GND",
         "at": [
-          61.2,
+          66.6,
           8.0
         ],
         "drill_mm": 0.3,
@@ -12101,8 +12255,8 @@
         "id": "GND-C264-2-V",
         "net": "GND",
         "at": [
-          55.325,
-          30.6
+          55.375,
+          26.75
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12125,8 +12279,8 @@
         "id": "GND-C266-2-V",
         "net": "GND",
         "at": [
-          58.85,
-          21.95
+          62.05,
+          19.45
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12137,8 +12291,8 @@
         "id": "GND-C267-2-V",
         "net": "GND",
         "at": [
-          104.2,
-          1.575
+          99.85,
+          2.475
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12149,8 +12303,8 @@
         "id": "GND-C268-2-V",
         "net": "GND",
         "at": [
-          90.9,
-          23.5
+          89.525,
+          25.15
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12161,8 +12315,8 @@
         "id": "GND-C269-2-V",
         "net": "GND",
         "at": [
-          96.925,
-          30.925
+          103.025,
+          31.375
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12173,8 +12327,8 @@
         "id": "GND-C270-2-V",
         "net": "GND",
         "at": [
-          92.6484,
-          31.2016
+          94.625,
+          30.9
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12185,8 +12339,8 @@
         "id": "GND-C271-2-V",
         "net": "GND",
         "at": [
-          68.65,
-          26.675
+          68.6944,
+          26.6944
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12197,8 +12351,8 @@
         "id": "GND-C272-2-V",
         "net": "GND",
         "at": [
-          95.0484,
-          32.4016
+          91.7146,
+          32.3354
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12209,8 +12363,8 @@
         "id": "GND-C281-2-V",
         "net": "GND",
         "at": [
-          32.575,
-          95.85
+          39.875,
+          91.925
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12221,8 +12375,8 @@
         "id": "GND-C288-2-V",
         "net": "GND",
         "at": [
-          16.5199,
-          36.5551
+          20.2071,
+          32.0179
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12234,7 +12388,7 @@
         "net": "GND",
         "at": [
           36.7,
-          21.725
+          21.025
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12245,8 +12399,8 @@
         "id": "GND-C290-2-V",
         "net": "GND",
         "at": [
-          61.8,
-          14.375
+          63.0,
+          15.4
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12257,8 +12411,8 @@
         "id": "GND-C291-2-V",
         "net": "GND",
         "at": [
-          33.0,
-          8.125
+          34.1,
+          10.75
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12269,8 +12423,8 @@
         "id": "GND-C292-2-V",
         "net": "GND",
         "at": [
-          71.45,
-          13.375
+          68.6,
+          18.075
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12281,8 +12435,8 @@
         "id": "GND-C293-2-V",
         "net": "GND",
         "at": [
-          33.8,
-          36.525
+          32.35,
+          37.375
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12293,7 +12447,7 @@
         "id": "GND-C294-2-V",
         "net": "GND",
         "at": [
-          102.75,
+          102.9,
           13.4
         ],
         "drill_mm": 0.3,
@@ -12305,8 +12459,8 @@
         "id": "GND-C508-2-V",
         "net": "GND",
         "at": [
-          1.225,
-          98.575
+          1.175,
+          98.425
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12317,8 +12471,8 @@
         "id": "GND-C509-2-V",
         "net": "GND",
         "at": [
-          22.175,
-          80.75
+          22.575,
+          82.65
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12329,8 +12483,8 @@
         "id": "GND-C510-2-V",
         "net": "GND",
         "at": [
-          27.275,
-          92.675
+          22.775,
+          95.75
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12341,8 +12495,8 @@
         "id": "GND-C511-2-V",
         "net": "GND",
         "at": [
-          113.455,
-          3.9
+          113.005,
+          3.8
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12353,8 +12507,8 @@
         "id": "GND-C513-2-V",
         "net": "GND",
         "at": [
-          40.425,
-          92.175
+          38.475,
+          93.55
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12365,8 +12519,8 @@
         "id": "GND-C552-2-V",
         "net": "GND",
         "at": [
-          1.075,
-          87.65
+          4.5248,
+          88.2498
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12377,8 +12531,8 @@
         "id": "GND-C553-2-V",
         "net": "GND",
         "at": [
-          56.725,
-          30.65
+          57.875,
+          30.55
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12389,8 +12543,8 @@
         "id": "GND-C2903-2-V",
         "net": "GND",
         "at": [
-          72.55,
-          26.525
+          73.5,
+          30.125
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12401,8 +12555,8 @@
         "id": "GND-D104-A-V",
         "net": "GND",
         "at": [
-          33.2797,
-          31.5203
+          36.3228,
+          31.2228
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12413,7 +12567,7 @@
         "id": "GND-D105-A-V",
         "net": "GND",
         "at": [
-          79.1,
+          79.05,
           32.2
         ],
         "drill_mm": 0.3,
@@ -12425,8 +12579,8 @@
         "id": "GND-D201-A-V",
         "net": "GND",
         "at": [
-          109.3,
-          9.05
+          109.45,
+          9.15
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12437,8 +12591,8 @@
         "id": "GND-D202-2-V",
         "net": "GND",
         "at": [
-          66.55,
-          10.3
+          69.0,
+          12.8
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12450,7 +12604,7 @@
         "net": "GND",
         "at": [
           110.05,
-          13.75
+          13.65
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12461,8 +12615,8 @@
         "id": "GND-Q101-2-V",
         "net": "GND",
         "at": [
-          13.0,
-          101.6
+          10.85,
+          101.7
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12473,8 +12627,8 @@
         "id": "GND-Q202-2-V",
         "net": "GND",
         "at": [
-          6.6,
-          19.4625
+          5.0,
+          22.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12485,8 +12639,8 @@
         "id": "GND-Q2913-2-V",
         "net": "GND",
         "at": [
-          86.4375,
-          30.45
+          86.8,
+          28.1625
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12497,8 +12651,8 @@
         "id": "GND-R105-2-V",
         "net": "GND",
         "at": [
-          3.1998,
-          46.0248
+          3.2998,
+          44.8248
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12509,8 +12663,8 @@
         "id": "GND-R109-2-V",
         "net": "GND",
         "at": [
-          6.325,
-          65.85
+          6.275,
+          65.9
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12521,8 +12675,8 @@
         "id": "GND-R112-2-V",
         "net": "GND",
         "at": [
-          28.975,
-          97.85
+          30.525,
+          97.575
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12533,8 +12687,8 @@
         "id": "GND-R115-2-V",
         "net": "GND",
         "at": [
-          7.925,
-          37.025
+          8.975,
+          36.25
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12545,8 +12699,8 @@
         "id": "GND-R116-2-V",
         "net": "GND",
         "at": [
-          3.325,
-          34.475
+          1.475,
+          34.625
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12557,8 +12711,8 @@
         "id": "GND-R123-2-V",
         "net": "GND",
         "at": [
-          26.425,
-          103.25
+          26.625,
+          103.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12569,7 +12723,7 @@
         "id": "GND-R126-2-V",
         "net": "GND",
         "at": [
-          10.625,
+          10.425,
           53.225
         ],
         "drill_mm": 0.3,
@@ -12581,8 +12735,8 @@
         "id": "GND-R131-2-V",
         "net": "GND",
         "at": [
-          18.275,
-          100.1
+          17.325,
+          100.275
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12593,8 +12747,8 @@
         "id": "GND-R133-2-V",
         "net": "GND",
         "at": [
-          19.225,
-          82.425
+          19.125,
+          82.175
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12605,8 +12759,8 @@
         "id": "GND-R202-2-V",
         "net": "GND",
         "at": [
-          31.775,
-          93.325
+          33.775,
+          93.525
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12617,8 +12771,8 @@
         "id": "GND-R203-2-V",
         "net": "GND",
         "at": [
-          27.725,
-          95.75
+          27.425,
+          91.9
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12629,8 +12783,8 @@
         "id": "GND-R205-2-V",
         "net": "GND",
         "at": [
-          35.575,
-          70.325
+          35.725,
+          68.675
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12653,8 +12807,8 @@
         "id": "GND-R211-2-V",
         "net": "GND",
         "at": [
-          2.375,
-          99.975
+          2.425,
+          100.025
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12665,8 +12819,8 @@
         "id": "GND-R213-2-V",
         "net": "GND",
         "at": [
-          32.125,
-          102.425
+          27.525,
+          98.1
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12677,8 +12831,8 @@
         "id": "GND-R214-2-V",
         "net": "GND",
         "at": [
-          15.875,
-          94.475
+          15.1502,
+          94.0748
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12689,8 +12843,8 @@
         "id": "GND-R216-2-V",
         "net": "GND",
         "at": [
-          8.125,
-          93.4
+          8.825,
+          94.775
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12701,8 +12855,8 @@
         "id": "GND-R218-2-V",
         "net": "GND",
         "at": [
-          26.225,
-          94.425
+          25.775,
+          93.8
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12713,8 +12867,8 @@
         "id": "GND-R220-2-V",
         "net": "GND",
         "at": [
-          1.425,
-          16.95
+          1.325,
+          20.675
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12725,8 +12879,8 @@
         "id": "GND-R227-2-V",
         "net": "GND",
         "at": [
-          29.025,
-          35.05
+          28.8973,
+          31.2223
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12737,8 +12891,8 @@
         "id": "GND-R253-2-V",
         "net": "GND",
         "at": [
-          4.575,
-          13.775
+          4.3,
+          14.125
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12749,8 +12903,8 @@
         "id": "GND-R254-2-V",
         "net": "GND",
         "at": [
-          22.525,
-          31.325
+          22.475,
+          31.525
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12761,8 +12915,8 @@
         "id": "GND-R256-2-V",
         "net": "GND",
         "at": [
-          3.175,
-          23.075
+          0.825,
+          25.1
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12773,8 +12927,8 @@
         "id": "GND-R261-2-V",
         "net": "GND",
         "at": [
-          100.025,
-          33.3
+          99.925,
+          33.35
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12785,8 +12939,8 @@
         "id": "GND-R262-2-V",
         "net": "GND",
         "at": [
-          95.025,
-          30.875
+          92.475,
+          29.75
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12797,8 +12951,8 @@
         "id": "GND-R264-2-V",
         "net": "GND",
         "at": [
-          79.425,
-          33.625
+          79.525,
+          33.725
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12809,8 +12963,8 @@
         "id": "GND-R290-2-V",
         "net": "GND",
         "at": [
-          20.1257,
-          30.8243
+          22.2946,
+          36.7071
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12821,8 +12975,8 @@
         "id": "GND-R292-2-V",
         "net": "GND",
         "at": [
-          1.675,
-          19.2
+          5.275,
+          19.375
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12833,8 +12987,8 @@
         "id": "GND-R509-2-V",
         "net": "GND",
         "at": [
-          89.0002,
-          32.3748
+          89.825,
+          32.125
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12845,8 +12999,8 @@
         "id": "GND-R510-2-V",
         "net": "GND",
         "at": [
-          90.4498,
-          29.0252
+          99.475,
+          29.9
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12857,8 +13011,8 @@
         "id": "GND-R513-2-V",
         "net": "GND",
         "at": [
-          35.375,
-          90.725
+          35.975,
+          97.325
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12869,8 +13023,8 @@
         "id": "GND-R553-2-V",
         "net": "GND",
         "at": [
-          34.7498,
-          32.2752
+          33.275,
+          33.1
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12881,8 +13035,8 @@
         "id": "GND-R2923-2-V",
         "net": "GND",
         "at": [
-          103.125,
-          31.425
+          88.775,
+          31.775
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12893,8 +13047,8 @@
         "id": "GND-U103-2-V",
         "net": "GND",
         "at": [
-          74.725,
-          24.35
+          74.625,
+          24.7
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12905,8 +13059,8 @@
         "id": "GND-U104-2-V",
         "net": "GND",
         "at": [
-          32.3,
-          72.2
+          29.9,
+          72.1
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12917,8 +13071,8 @@
         "id": "GND-U109-8-V",
         "net": "GND",
         "at": [
-          5.575,
-          38.4
+          2.9757,
+          37.2993
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12926,23 +13080,11 @@
         "why": "GND plane via of U109.8"
       },
       {
-        "id": "GND-U111-2-V",
-        "net": "GND",
-        "at": [
-          20.3,
-          38.075
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "GND plane via of U111.2"
-      },
-      {
         "id": "GND-U201-8-V",
         "net": "GND",
         "at": [
-          33.325,
-          72.05
+          32.675,
+          72.2
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12953,8 +13095,8 @@
         "id": "GND-U202-8-V",
         "net": "GND",
         "at": [
-          11.375,
-          109.15
+          11.075,
+          108.8
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12965,8 +13107,8 @@
         "id": "GND-U203-8-V",
         "net": "GND",
         "at": [
-          18.15,
-          89.275
+          18.1,
+          89.475
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -13001,8 +13143,8 @@
         "id": "GND-U214-1-V",
         "net": "GND",
         "at": [
-          89.545,
-          4.175
+          89.695,
+          4.125
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -13013,8 +13155,8 @@
         "id": "GND-U214-EP-V",
         "net": "GND",
         "at": [
-          94.35,
-          7.05
+          94.5,
+          7.0
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -13025,7 +13167,7 @@
         "id": "GND-U216-3-V",
         "net": "GND",
         "at": [
-          64.6,
+          64.55,
           31.825
         ],
         "drill_mm": 0.3,
@@ -13037,7 +13179,7 @@
         "id": "GND-U216-EP-V",
         "net": "GND",
         "at": [
-          68.6,
+          68.55,
           31.65
         ],
         "drill_mm": 0.3,
@@ -13049,8 +13191,8 @@
         "id": "GND-U220-2-V",
         "net": "GND",
         "at": [
-          64.15,
-          32.9
+          61.8875,
+          34.1
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -13061,7 +13203,7 @@
         "id": "GND-U220-3-V",
         "net": "GND",
         "at": [
-          64.15,
+          64.35,
           33.85
         ],
         "drill_mm": 0.3,
@@ -13073,8 +13215,8 @@
         "id": "GND-U503-2-V",
         "net": "GND",
         "at": [
-          90.45,
-          27.35
+          90.35,
+          26.95
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -13085,8 +13227,8 @@
         "id": "GND-U551-2-V",
         "net": "GND",
         "at": [
-          100.8,
-          21.75
+          95.2,
+          27.0
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -13097,8 +13239,8 @@
         "id": "GND-U553-2-V",
         "net": "GND",
         "at": [
-          54.2243,
-          32.0243
+          53.95,
+          31.5
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -14740,13 +14882,13 @@
     "rule": "make_board.py board_copper: F.Cu/B.Cu pours of PWR_A.spec-shrink2.json as locked tracks (ids CU-<pour>); same-net overlapping In2.Cu pours merged"
   },
   "gnd_fanout": {
-    "vias": 200,
+    "vias": 199,
     "stubs": 200,
     "pads_joined_by_scripted_gnd_pours": [],
     "rule": "make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to a 0.7 / 0.3 via, or to a GND via within 3 mm"
   },
   "moves": {
-    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 6cd8894bf4df015677d98d0ba36dab232f2f5f5bb9533f327549b73c5deb185f",
+    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 07f35121666f1cf6b728c41836ff6135d4ddf67fdca8536a2f7850b79427a3ab",
     "moved_refs": 193,
     "manual": []
   },
