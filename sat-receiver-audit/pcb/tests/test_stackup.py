@@ -324,5 +324,53 @@ class ReviewFixRuleTests(unittest.TestCase):
             self.assertIn('advisory', classes[name]['vias_per_transition_status'])
 
 
+class PwrL6CombinedInnerClass(unittest.TestCase):
+    """W2 PWR-L6-PLACE fourth pass, combined (lever 1 of the PWR_B closure): the PWR1A sub-class PWR05A of the copper option
+    outer_2oz (pcb/generated/stackup-6l.json inner_classes). Its members are the PWR1A nets of netclasses.json within its
+    capacity; on In2/In3 it takes the IPC-2221 internal width of that capacity on 0.5 oz copper (0.0152 mm), on F.Cu/B.Cu
+    the PWR1A 2 oz width; netclasses.json itself is unchanged (MODEL widths, bench gates OPEN)."""
+
+    def option(self):
+        doc = json.loads((PCB / 'generated/stackup-6l.json').read_text(encoding='utf-8'))
+        return doc['copper_options']['outer_2oz']
+
+    def test_members_and_widths(self):
+        nets = load_doc()['nets']
+        opt = self.option()
+        cls = opt['inner_classes']['PWR05A']
+        cont, prot = cls['capacity']['continuous_a'], cls['capacity']['protective_a']
+        self.assertEqual(cls['parent_class'], 'PWR1A')
+        self.assertEqual(cls['outer_min_width_mm'], opt['power_classes']['PWR1A']['outer_min_width_mm'])
+        want = sorted(n for n, e in nets.items() if e['class'] == 'PWR1A' and e['inputs']['continuous_a'] <= cont + 1e-9
+                      and e['inputs']['protective_a'] <= prot + 1e-9)
+        self.assertEqual(cls['nets'], want)
+        for n in ('BIAS_CH1', 'BIAS_CH2_PORT', 'BIAS_CH3_PORT', 'BIAS_CH4', 'BIAS_SB_LNA', 'BONI13V8_PORT', 'LNB13V2'):
+            self.assertIn(n, cls['nets'])
+        for n in ('AUX12', 'VBUS_HFP', 'VBUS_LABPORT', 'VBUS_RTLA', 'VBUS_RTLB', 'E2_RTLB_SW', 'LAB5_RLY'):
+            self.assertNotIn(n, cls['nets'])
+        # IPC-2221 internal, k 0.024, 0.5 oz 0.0152 mm: every member at its own currents fits the class inner width
+        for n in cls['nets']:
+            c, p = nets[n]['inputs']['continuous_a'], nets[n]['inputs']['protective_a']
+            need = stackup.required_width(c, p, stackup.INNER_CU, 'internal')
+            self.assertLessEqual(need, cls['inner_min_width_mm'] + 1e-9, n)
+        self.assertAlmostEqual(cls['inner_ipc_width_mm'], round(stackup.required_width(cont, prot, stackup.INNER_CU, 'internal'), 4))
+        self.assertGreaterEqual(cls['inner_min_width_mm'], cls['inner_ipc_width_mm'])
+        self.assertLess(cls['inner_min_width_mm'], opt['power_classes']['PWR1A']['inner_min_width_mm'])
+
+    def test_check_boards_maps_the_members_on_the_option_boards_only(self):
+        spec = importlib.util.spec_from_file_location('srrx_check_boards', PCB / 'check_boards.py')
+        cb = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cb)
+        nc = load_doc()
+        on = cb.board_netclasses(nc, {'board_id': 'PWR_B', 'copper_option': 'outer_2oz'})
+        off = cb.board_netclasses(nc, {'board_id': 'CTRL'})
+        self.assertEqual(on['nets']['BIAS_CH3_PORT']['class'], 'PWR05A')
+        self.assertEqual(on['nets']['VBUS_LABPORT']['class'], 'PWR1A')
+        self.assertEqual(on['classes']['PWR05A']['inner_min_width_mm'], 0.5)
+        self.assertEqual(off['nets']['BIAS_CH3_PORT']['class'], 'PWR1A')
+        self.assertEqual(nc['nets']['BIAS_CH3_PORT']['class'], 'PWR1A')     # netclasses.json is not changed in place
+        self.assertNotIn('PWR05A', nc['classes'])
+
+
 if __name__ == '__main__':
     unittest.main()

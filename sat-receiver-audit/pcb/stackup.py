@@ -150,6 +150,48 @@ def power_widths_2oz():
                       'continuous, +10 degC; at protective, +20 degC)')}
     return out
 
+
+# --- W2 PWR-L6-PLACE fourth pass, combined (lever 1 of the PWR_B closure): on the 2 oz outer / 0.5 oz inner boards PWR1A
+# keeps its outer width, but its inner width (1.8 mm for 1 A) shuts In2/In3 to every PWR1A net, also to the rails whose
+# own protection limits them far below 1 A (TPS2553 bias switches, eFuse ports). A sub-class of PWR1A for the PWR1A nets of
+# netclasses.json whose continuous and protective currents stay within its capacity takes the same IPC-2221 rule (max of
+# the continuous current at +10 degC and the protective current at +20 degC; internal k 0.024 on 0.5 oz, 0.0152 mm) on
+# In2/In3 and the PWR1A 2 oz outer width on F.Cu/B.Cu, so the router may move them off the outer layers, which the
+# high-current PWR1A nets of PWR_B need (MODEL; build/15 W2 PWR-L6-PLACE combined pass). netclasses.json is unchanged:
+# only the boards of the copper option (check_boards board_netclasses, the board generators) take the sub-class.
+INNER_CLASSES_2OZ = collections.OrderedDict([
+    # class: (continuous A at DT_CONT, protective A at DT_PROT, why, parent class)
+    ('PWR05A', (0.339, 0.499, 'TPS2553 bias switches limited at <=0.339 A (RILIM 88.7k, U206-U208) and the eFuse U212 at '
+                              '<=0.499 A (RILM 2.05k, LNB13V2); tools/assembly_data.py NET_CURRENT', 'PWR1A')),
+])
+
+
+def inner_classes_2oz(nets):
+    """The PWR1A sub-classes of the 2 oz outer / 0.5 oz inner copper option with their member nets (MODEL widths)."""
+    pw = power_widths_2oz()
+    plating = CAPS['hole_wall_plating_mm'][0]
+    i10, i20 = via_current(PROJECT['via_hole'], plating, DT_CONT), via_current(PROJECT['via_hole'], plating, DT_PROT)
+    out = collections.OrderedDict()
+    for name, (cont, prot, why, parent) in INNER_CLASSES_2OZ.items():
+        members = sorted(n for n, e in nets.items() if e['class'] == parent and e['inputs']['continuous_a'] <= cont + 1e-9
+                         and e['inputs']['protective_a'] <= prot + 1e-9)
+        out[name] = {
+            'kind': 'power', 'parent_class': parent,
+            'capacity': {'continuous_a': cont, 'continuous_dt_c': DT_CONT, 'protective_a': prot, 'protective_dt_c': DT_PROT, 'why': why},
+            'outer_min_width_mm': pw[parent]['outer_min_width_mm'],
+            'outer_ipc_width_mm': round(required_width(cont, prot, OUTER_CU_2OZ), 4),
+            'split_outer_per_layer_mm': None,
+            'inner_min_width_mm': up(required_width(cont, prot, INNER_CU, 'internal')),
+            'inner_ipc_width_mm': round(required_width(cont, prot, INNER_CU, 'internal'), 4),
+            'clearance_mm': PROJECT['clearance'],
+            'vias_per_transition': max(math.ceil(round(cont / i10, 6)), math.ceil(round(prot / i20, 6))),
+            'vias_per_transition_status': VIA_ADVISORY,
+            'nets': members,
+            'basis': (f'IPC-2221 internal k 0.024 on 0.5 oz ({INNER_CU} mm) for In2/In3, width = max(at {cont} A, +{DT_CONT} degC; at '
+                      f'{prot} A, +{DT_PROT} degC); outer: the {parent} width on 2 oz ({OUTER_CU_2OZ} mm); members: the {parent} '
+                      'nets of netclasses.json within the capacity (MODEL)')}
+    return out
+
 # --- JLC rigid PCB capabilities (jlcpcb.com/capabilities/pcb-capabilities, read 2026-11-07). Hard floors.
 # key: (multilayer 1 oz value, 2-layer 1 oz value, quoted row)
 CAPS = {
@@ -732,7 +774,8 @@ def stackup_6l(doc):
         'rules_file': rel(OUT_6L['rules']),
         # W2 PWRJ-LAYERS6: a board that names copper_option in its spec layers takes these power-class widths
         # (pcb/check_boards.py, the board generators' .kicad_pro classes); boards without it keep netclasses.json
-        'copper_options': {k: {**v, 'power_classes': power_widths_2oz()} for k, v in COPPER_OPTIONS_6L.items()},
+        'copper_options': {k: {**v, 'power_classes': power_widths_2oz(), 'inner_classes': inner_classes_2oz(doc['nets'])}
+                           for k, v in COPPER_OPTIONS_6L.items()},
     }
 
 

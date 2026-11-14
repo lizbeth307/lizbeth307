@@ -2141,6 +2141,17 @@ def board_netclasses(netclasses, spec):
         out['classes'][name].update({k: widths[k] for k in ('outer_min_width_mm', 'outer_ipc_width_mm',
                                                            'split_outer_per_layer_mm', 'inner_min_width_mm')})
         out['classes'][name]['basis'] = widths['basis'] + f' (copper_option {option}, {STACKUP_6L.name})'
+    # W2 PWR-L6-PLACE fourth pass, combined: the PWR1A sub-classes of the option (inner_classes, e.g. PWR05A: the PWR1A nets
+    # limited to <=0.339 A / <=0.499 A at their own IPC-2221 inner width) take their member nets on this board
+    inner = opt.get('inner_classes') or {}
+    if inner:
+        out['nets'] = dict(out.get('nets', {}))
+        for name, cls in inner.items():
+            out['classes'][name] = {k: v for k, v in cls.items() if k != 'nets'}
+            out['classes'][name]['basis'] = cls['basis'] + f' (copper_option {option}, {STACKUP_6L.name})'
+            for net in cls['nets']:
+                if net in out['nets']:
+                    out['nets'][net] = {**out['nets'][net], 'class': name}
     return out
 
 

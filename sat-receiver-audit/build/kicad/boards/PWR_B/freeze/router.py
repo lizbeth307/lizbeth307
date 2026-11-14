@@ -9,6 +9,16 @@ from model import cb
 VIA_D, VIA_DRILL = 0.65, 0.3
 
 
+def wof(width, layer):
+    """Track width on a layer: a number, or {layer: width} (W2 PWR-L6-PLACE fourth pass, combined: the PWR05A power sub-class
+    is 0.2 mm on the 2 oz outer layers and 0.5 mm on the 0.5 oz inner layers)."""
+    return width[layer] if isinstance(width, dict) else width
+
+
+def wmax(width):
+    return max(width.values()) if isinstance(width, dict) else width
+
+
 def cap_dist(X, Y, x1, y1, x2, y2, r):
     dx, dy = x2 - x1, y2 - y1
     L2 = dx * dx + dy * dy
@@ -324,7 +334,7 @@ def route_link(m, net, isl_a, isl_b, box, width=0.15, g=0.05, via_cost=1.5, laye
     grid = Grid(m, box, g)
     soft = {l: np.zeros(grid.X.shape, dtype=bool) for l in layers} if soft_src else None
     vsoft = np.zeros(grid.X.shape, dtype=bool) if soft_src else None
-    blk = {l: grid.blocked_track(net, l, width, ignore=ignore, soft=soft[l] if soft else None, soft_src=soft_src) for l in layers}
+    blk = {l: grid.blocked_track(net, l, wof(width, l), ignore=ignore, soft=soft[l] if soft else None, soft_src=soft_src) for l in layers}
     vblk = grid.blocked_via(net, ignore=ignore, soft=vsoft, soft_src=soft_src)
     src = {l: grid.covered(isl_a, l) for l in layers}
     dst = {l: grid.covered(isl_b, l) for l in layers}
@@ -341,7 +351,7 @@ def route_link(m, net, isl_a, isl_b, box, width=0.15, g=0.05, via_cost=1.5, laye
     for lay, pts in runs:
         if len(pts) == 1:
             continue
-        out_runs.append((lay, simplify(m, net, lay, width, pts, ignore=sign)))
+        out_runs.append((lay, simplify(m, net, lay, wof(width, lay), pts, ignore=sign)))
     return {'runs': out_runs, 'vias': vias, 'width': width}
 
 
@@ -457,13 +467,14 @@ def commit(m, net, res, tag, log):
         m.add_via(net, v, VIA_D, VIA_DRILL, src='new')
         recs.append({'kind': 'via', 'net': net, 'at': v, 'id': f'{tag}-V{k}', 'margin': mg})
     for k, (lay, pts) in enumerate(res['runs']):
+        w = wof(res['width'], lay)
         for a, b in zip(pts, pts[1:]):
-            mg, why = m.track_margin(net, lay, res['width'], a, b)
+            mg, why = m.track_margin(net, lay, w, a, b)
             if mg < 0:
                 raise RuntimeError(f'{tag}: track {a}-{b} on {lay} margin {mg:.3f} {why}')
         for a, b in zip(pts, pts[1:]):
-            m.add_track(net, lay, res['width'], a, b, src='new')
-        recs.append({'kind': 'track', 'net': net, 'layer': lay, 'width': res['width'], 'path': pts, 'id': f'{tag}-{k}'})
-    via_joints(m, net, res['vias'], res['width'])
+            m.add_track(net, lay, w, a, b, src='new')
+        recs.append({'kind': 'track', 'net': net, 'layer': lay, 'width': w, 'path': pts, 'id': f'{tag}-{k}'})
+    via_joints(m, net, res['vias'], wmax(res['width']))
     log(f'  committed {tag}: {len(res["runs"])} runs, {len(res["vias"])} vias')
     return recs

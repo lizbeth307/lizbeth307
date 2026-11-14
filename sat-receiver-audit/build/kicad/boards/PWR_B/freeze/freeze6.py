@@ -3,6 +3,7 @@
 
   python build/kicad/boards/PWR_B/freeze/freeze6.py --artifact <unzipped pcb-regenerated-PWR_B> [--out FILE] [--no-guard]
          [--no-rip] [--order class|short|fanout] [--prev route-frozen-6l.json] [--renet] [--first NET,NET,...]
+         [--inner-bias X]
 
 The PWR_B counterpart of build/kicad/boards/CTRL/freeze/freeze6.py (W2 CTRL-4, origin/wip/w2-ctrl4-layers6); model.py,
 router.py and fin.py here are copies of the CTRL tools. The artifact holds board/PWR_B.kicad_pcb, board/report.json and
@@ -13,6 +14,9 @@ board/drc.json of a route run whose inputs equal the spec made by make_spec.py w
   3. joins every open connection of KiCad's DRC by grid A* (exact clearance check, rip-up of router copper only when no
      free path exists, ripped nets joined again): power-class nets (PWR1A) on F.Cu/B.Cu only at their class width (the
      0.5 oz inner layers would need 1.8 mm), signal nets on the four routing layers; nothing goes on a plane layer;
+     W2 PWR-L6-PLACE fourth pass, combined: the PWR1A sub-classes of the copper option (pcb/generated/stackup-6l.json
+     inner_classes, PWR05A) on the four routing layers at the outer width on F.Cu/B.Cu and the inner width on In2/In3,
+     with an extra cost per mm on the outer layers (--inner-bias), so they leave the outer copper to the PWR1A nets;
   4. removes dangling router/completion copper, checks every item again and writes route-frozen-6l.json (router copper
      as routed, completion copper, a guard: SHA256 of the pads and of the scripted copper, which make_spec.py compares).
 With --no-guard it writes no guard (a trial; make_spec refuses such a file).
@@ -54,10 +58,25 @@ B = lambda p: [round(p[0] - 100.0, 4), round(210.0 - p[1], 4)]
 
 
 def classes():
-    """Net -> (class, track width) from the committed PWR_B.kicad_pro (net class patterns; Default 0.15 mm)."""
+    """Net -> (class, track width) from the committed PWR_B.kicad_pro (net class patterns; Default 0.15 mm). A PWR1A
+    sub-class of the copper option (inner_classes) has the width {layer: width} of its four routing layers."""
     pro = json.loads((HERE.parent / 'PWR_B.kicad_pro').read_text(encoding='utf-8'))['net_settings']
     width = {c['name']: c['track_width'] for c in pro['classes']}
+    width.update(inner_widths())
     return {p['pattern']: (p['netclass'], width[p['netclass']]) for p in pro['netclass_patterns']}, width['Default']
+
+
+COPPER_OPTION = 'outer_2oz'  # make_spec.py COPPER_OPTION
+
+
+def inner_widths():
+    """W2 PWR-L6-PLACE fourth pass, combined: {class: {layer: width}} of the PWR1A sub-classes of the copper option
+    (pcb/generated/stackup-6l.json inner_classes): outer width on F.Cu/B.Cu, inner width on In2.Cu/In3.Cu."""
+    doc = json.loads((HERE.parents[4] / 'pcb/generated/stackup-6l.json').read_text(encoding='utf-8'))
+    out = {}
+    for name, c in (doc['copper_options'][COPPER_OPTION].get('inner_classes') or {}).items():
+        out[name] = {l: (c['outer_min_width_mm'] if l in ('F.Cu', 'B.Cu') else c['inner_min_width_mm']) for l in ROUTING}
+    return out
 
 
 B2B, B2B_Y, ESCAPE_W = 'J209', 191.5, 0.25  # J209 strip axis (KiCad y = 210 - 18.5); escape width of the J209 branch_exempt
@@ -295,6 +314,8 @@ def main(argv=None):
     ap.add_argument('--renet', action='store_true', help='W2 PWR-L6-PLACE fourth pass: pads take the nets of the design graph '
                                                            '(a pin swap since the run); their old and new nets are joined again')
     ap.add_argument('--first', default='', help='comma-separated nets joined first, in this order (then --order)')
+    ap.add_argument('--inner-bias', type=float, default=1.0, help='W2 PWR-L6-PLACE fourth pass, combined: extra cost per mm on '
+                                                                   'F.Cu/B.Cu for the inner-routed power sub-classes (PWR05A)')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     art = Path(args.artifact)
@@ -331,7 +352,9 @@ def main(argv=None):
     print(f'via-centre stubs of the route log held fixed: {stubs_hit} of {stubs_all}')
     cls, default_w = classes()
     width = lambda n: cls.get(n, ('Default', default_w))[1]
-    layers = lambda n: OUTER if 'PWR' in cls.get(n, ('Default',))[0] else ROUTING
+    inner = inner_widths()
+    layers = lambda n: ROUTING if cls.get(n, ('Default',))[0] in inner else OUTER if 'PWR' in cls.get(n, ('Default',))[0] else ROUTING
+    bias = lambda n: [args.inner_bias if l in OUTER else 0.0 for l in ROUTING]         if cls.get(n, ('Default',))[0] in inner and args.inner_bias else None
     drc = json.loads((art / 'board/drc.json').read_text(encoding='utf-8'))
     drops = drc_drops(m, drc)
     print('router copper named in a KiCad DRC error:', drops)
@@ -386,7 +409,7 @@ def main(argv=None):
             for pad, e in j209_escape(m, net):
                 print(f'  {net}: J209.{pad} escape stub {ESCAPE_W} mm to {e}')
         # W2 PWRJ-LAYERS6: pair by pair (a walled-in pair is skipped, the rest of the net is joined)
-        ok, ripped, nk = fz.connect_all(net, width=width(net), layers=layers(net), allow_rip=not args.no_rip)
+        ok, ripped, nk = fz.connect_all(net, width=width(net), layers=layers(net), allow_rip=not args.no_rip, bias=bias(net))
         necks += nk
         print(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if not ok:
@@ -427,7 +450,8 @@ def main(argv=None):
                    'harvest': 'every unlocked track and via of that run, board mm (y up), coordinates as routed'},
         'completion': ('grid A* completion on the frozen copper (0.05 mm grid, exact clearance check 0.15 mm, 0.3 mm to edges, '
                        '0.5 mm hole to hole, keepouts incl. the PWR-A cut-out rule areas; through vias 0.65/0.3 mm; PWR1A on '
-                       'F.Cu/B.Cu, signals on F.Cu, In2.Cu, In3.Cu, B.Cu, no plane layer) by '
+                       'F.Cu/B.Cu, PWR05A on all four at 0.2 mm outer / 0.5 mm inner, signals on F.Cu, In2.Cu, In3.Cu, B.Cu, no '
+                       'plane layer) by '
                        'build/kicad/boards/PWR_B/freeze/freeze6.py'),
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed))},
         'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops, **({'renet': renetted, 'first': head} if args.renet or head else {})},

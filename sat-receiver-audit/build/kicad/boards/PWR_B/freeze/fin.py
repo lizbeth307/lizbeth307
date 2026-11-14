@@ -14,7 +14,7 @@ def conflicts(m, net, res, soft_src=('router',)):
     w = res['width']
     for lay, pts in res['runs']:
         for a, b in zip(pts, pts[1:]):
-            r = w / 2
+            r = R.wof(w, lay) / 2
             bb = (min(a[0], b[0]) - r - 1, min(a[1], b[1]) - r - 1, max(a[0], b[0]) + r + 1, max(a[1], b[1]) + r + 1)
             for it in m.near(lay, bb):
                 if it.net == net or it.kind == 'npth':
@@ -338,7 +338,7 @@ def neck_link(m, net, A, B, layers, class_w, neck_max, neck_min=0.25):
 
 
 def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu', 'B.Cu'), g=0.05, via_cost=1.5, neck=None,
-                max_links=80):
+                max_links=80, bias=None):
     """Join the islands of a net pair by pair (W2 PWRJ-LAYERS6): as Finisher.connect, but a pair without a path is skipped
     and the next pair is tried, so one walled-in pad does not leave the rest of the net open; neck = (class width, max mm)
     allows neck_link for a pair that has no class-width path. Returns (all joined, ripped nets, neck records)."""
@@ -358,17 +358,17 @@ def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu',
                     continue
                 res, how, rec = None, 'free', None
                 res = R.route_link(self.m, net, A, B, island_box([A, B], 6.0), width=width, g=g, via_cost=via_cost, verbose=False,
-                                   layers=layers, max_nodes=2_000_000)
+                                   layers=layers, max_nodes=2_000_000, bias=bias)
                 if res is None and nb == 0:
                     res = R.route_link(self.m, net, A, B, island_box([A, B], 25.0), width=width, g=g, via_cost=via_cost,
-                                       verbose=False, layers=layers, max_nodes=3_000_000)
+                                       verbose=False, layers=layers, max_nodes=3_000_000, bias=bias)
                     how = 'free-wide'
                 if res is None and neck:
                     res, rec = neck_link(self.m, net, A, B, [l for l in layers if l in ('F.Cu', 'B.Cu')], neck[0], neck[1])
                     how = 'neck'
                 if res is None and allow_rip:
                     res = R.route_link(self.m, net, A, B, island_box([A, B], 8.0), width=width, g=g, via_cost=via_cost,
-                                       verbose=False, layers=layers, soft_src=('router',), soft_cost=2.0)
+                                       verbose=False, layers=layers, soft_src=('router',), soft_cost=2.0, bias=bias)
                     how = 'rip'
                     if res is not None:
                         hits, bad = conflicts(self.m, net, res)
