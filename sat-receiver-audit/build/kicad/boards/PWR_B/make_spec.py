@@ -1564,7 +1564,8 @@ def project_json(inp, pins):
         classes.append(row)
     proj['net_settings']['classes'] = classes
     nets = set(template_nets(inp, pins))
-    patterns = [{**p, 'netclass': nc['nets'][p['pattern']]['class']} for p in nc['kicad']['netclass_patterns']
+    # the class of netclasses.json with the copper option (PWR05A members), unless BOARD_CLASSES keeps a damper link on PWR1A
+    patterns = [{**p, 'netclass': BOARD_CLASSES.get(p['pattern'], nc['nets'][p['pattern']]['class'])} for p in nc['kicad']['netclass_patterns']
                 if p['pattern'] in nets and p['netclass'] in ('PWR1A', 'PWR2A', 'PWR3A') and p['pattern'] not in SCRIPTED_CLASSES]
     patterns += [{'netclass': cls, 'pattern': net} for net, cls in SCRIPTED_CLASSES.items()]
     have = {p['pattern'] for p in patterns}
@@ -1585,14 +1586,19 @@ def project_json(inp, pins):
 # width 0.35 mm (IPC-2221 external 1 oz about 1.1 A at +10 degC per track, MODEL): a wider track does not leave a 0.30 mm
 # J209 pad between its GND neighbours at 0.50 mm pitch (route run 42415437982 on the FX8 placeholder: 0.8 mm could not
 # reach its contacts either).
+DAMPER_LINKS = ('BIAS_CH1_DAMP', 'BIAS_CH2_DAMP', 'BIAS_CH3_DAMP', 'BIAS_CH4_DAMP', 'E2_SB_DAMP')
 BOARD_CLASSES = {'LNA4V5': 'PWR1A',
                  # W2 PWRJ-LAYERS6 (PWRB-R layers6 finding): the LNA bias rails ch2/ch3 and their damper links are SIG by default
                  # (netclasses.json unclassified_supply_candidates) and drifted onto the 0.5 oz inner layers (damper copper 158 and
                  # 96 mOhm, MODEL); as BIAS_CH2_PORT / BIAS_CH3_PORT they take PWR1A, so they stay on the 2 oz outer copper.
-                 # W2 PWR-L6-PLACE fourth pass, combined (lever 1): they take the class of BIAS_CH2_PORT / BIAS_CH3_PORT, PWR05A
-                 # (U207 / U208 TPS2553 limit <=0.339 A): 0.2 mm on 2 oz outer copper or 0.5 mm on 0.5 oz inner copper, 3.3 times
-                 # the copper of the 0.15 mm inner SIG tracks of that finding
-                 **{n: 'PWR05A' for n in ('BIAS_CH2', 'BIAS_CH3', 'BIAS_CH2_DAMP', 'BIAS_CH3_DAMP')}}
+                 # W2 PWR-L6-PLACE fourth pass, combined (lever 1): the rails take the class of BIAS_CH2_PORT / BIAS_CH3_PORT,
+                 # PWR05A (U207 / U208 TPS2553 limit <=0.339 A): 0.2 mm on 2 oz outer copper or 0.5 mm on 0.5 oz inner copper.
+                 # The damper links of every LNA / SB bias filter (0.15 ohm R + 47 uF) stay PWR1A, F.Cu/B.Cu only, although
+                 # netclasses.json puts BIAS_CH1_DAMP, BIAS_CH4_DAMP and E2_SB_DAMP in PWR05A: the copper of a damper link
+                 # adds to its 0.15 ohm (E2_SB_DAMP R295 -> C298: 74 mOhm on 2 oz outer in route run 43519497062, 138 mOhm
+                 # with 49.8 mm on 0.5 oz In3 in run 43545826563, MODEL, 20 degC), so it stays on the 2 oz copper
+                 **{n: 'PWR05A' for n in ('BIAS_CH2', 'BIAS_CH3')},
+                 **{n: 'PWR1A' for n in DAMPER_LINKS}}
 # Nets whose copper is all scripted and locked: widths of their netclasses.json class, not autorouted (router -inc).
 SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
                     **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')},

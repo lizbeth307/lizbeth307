@@ -1114,6 +1114,8 @@ class PwrL6CombinedFreezeTools(unittest.TestCase):
             self.assertEqual(pats.get(net), 'PWR05A', net)
         for net in ('LNA4V5', 'VBUS_LABPORT', 'E2_RTLB_SW', 'AUX12'):
             self.assertEqual(pats.get(net), 'PWR1A', net)
+        for net in ('BIAS_CH1_DAMP', 'BIAS_CH2_DAMP', 'BIAS_CH3_DAMP', 'BIAS_CH4_DAMP', 'E2_SB_DAMP'):  # damper links: 2 oz only
+            self.assertEqual(pats.get(net), 'PWR1A', net)
         spec = bg.read_json(bg.spec_path('PWR_B'))
         self.assertNotIn('PWR05A', spec['router'].get('class_layers', {}))
 
