@@ -222,14 +222,14 @@ class GuardRuleTests(unittest.TestCase):
         # (sense pair at the end of the strip since 11.11.2026, for the PWR-B board of record)
         # (W2 GR-5B: 10 rail contacts instead of 17 once the six damper nodes and VBUS_LABPORT stopped crossing)
         self.assertIn('odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the '
-                      '4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets',
+                      '4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets in name order, then signal_moves',
                       SPEC['pin_map_rule'])
         self.assertTrue({role[p] for p in range(1, 38, 4)} <= set(prepare.B2B_RAIL_KINDS))
         self.assertEqual({role[p] for p in range(3, 40, 4)} | {role[p] for p in range(4, 17, 4)}, {'gnd'})
         self.assertEqual(role[41], 'guard')
         self.assertEqual({role[p] for p in range(2, 15, 4)}, {'power'})
-        self.assertEqual({role[p] for p in range(18, 61, 2)}, {'signal'})
-        self.assertEqual({role[p] for p in list(range(62, 97, 2)) + list(range(43, 97, 2))}, {'spare'})
+        self.assertEqual({role[p] for p in set(range(18, 61, 2)) - {30, 42} | {66, 86}}, {'signal'})  # probe Y: 30 -> 86, 42 -> 66
+        self.assertEqual({role[p] for p in set(range(62, 97, 2)) - {66, 86} | {30, 42} | set(range(43, 97, 2))}, {'spare'})
         self.assertEqual([role[p] for p in (97, 98, 99, 100)], ['guard', 'guard', 'sense pair', 'sense pair'])
 
 
@@ -246,6 +246,46 @@ class GraphWriterTests(unittest.TestCase):
         self.assertEqual(res['totals'], NETS['totals'])
         for half, ref in (('pwr_a', A), ('pwr_b', B)):
             self.assertEqual(writer.pins(res['contacts'], half), E2[ref]['pins'], ref)
+
+
+
+class PwrL6Place5ProbeYSignalMoves(unittest.TestCase):
+    """W2 PWR-L6-PLACE fifth pass, probe Y (b2b.signal_moves): EN_HFP and EN_LIME3V3 swap (J209 .27 / .25), EN_LNB moves to the
+    spare J209.85 over its J203.15 and I2C0_SDA to the spare J209.65 beside its J203.9, so the three leave the J209 lower-row
+    pocket of the PWR-B board of record. Signals only, never onto a rail, GND, guard or sense contact. MODEL/CI inputs only."""
+
+    WANT_B = {'25': 'EN_LIME3V3', '27': 'EN_HFP', '29': None, '41': None, '65': 'I2C0_SDA', '85': 'EN_LNB', '19': 'E1_BAT_ADC'}
+
+    def test_moves_in_the_spec(self):
+        self.assertEqual([(m['net'], m['to_pwr_a'], m['pwr_b']['to']) for m in SPEC['signal_moves']],
+                         [('EN_HFP', 28, 27), ('EN_LNB', 86, 85), ('I2C0_SDA', 66, 65)])
+        for m in SPEC['signal_moves']:
+            self.assertEqual(prepare.b2b_mate(m['to_pwr_a']), m['pwr_b']['to'], m['net'])
+
+    def test_graph_and_map_carry_the_moves(self):
+        b = {p['number']: p.get('net') for p in E2[B]['pins']}
+        a = {p['number']: p.get('net') for p in E2[A]['pins']}
+        for pin, net in self.WANT_B.items():
+            self.assertEqual(b[pin], net, f'{B}.{pin}')
+            self.assertEqual(a[str(prepare.b2b_mate(int(pin)))], net, f'{A}.{prepare.b2b_mate(int(pin))}')
+        by_b = {c['pwr_b_pin']: c for c in NETS['contacts']}
+        for pin, net in self.WANT_B.items():
+            self.assertEqual(by_b[pin]['net'] or None, net, pin)
+            self.assertEqual(by_b[pin]['role'], 'signal' if net else 'spare', pin)
+
+    def test_moved_contacts_have_no_rail_neighbour(self):
+        hot = prepare.B2B_RAIL_KINDS + ('sense pair',)
+        by_a = {int(c['pwr_a_pin']): c for c in NETS['contacts']}
+        for m in SPEC['signal_moves']:
+            for q in (m['to_pwr_a'] - 2, m['to_pwr_a'] + 2):
+                if q in by_a:
+                    self.assertNotIn(by_a[q]['role'], hot, (m['net'], q))
+
+    def test_bad_move_is_refused(self):
+        bb = dict(SPEC, signal_moves=[{'net': 'EN_LNB', 'to_pwr_a': 1}])   # contact 1 is the 3V3_Q6A rail contact
+        out = [{'net': n['net'], 'kind': n['kind'], 'pins': n['pins']} for n in NETS['nets']]
+        with self.assertRaises(SystemExit):
+            prepare.b2b_contacts(out, bb)
 
 
 if __name__ == '__main__':

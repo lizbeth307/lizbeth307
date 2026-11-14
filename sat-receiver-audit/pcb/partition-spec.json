@@ -640,7 +640,37 @@
    "derivation": "both halves are the same footprint (odd pads in one row, even pads in the other, pads 2k-1 and 2k at the same x); pin 01 meeting contact 02 means the upper half is turned over about the strip axis, so every column k pairs 2k-1 with 2k; pcb/tests/test_b2b_map.py checks it on the vendored footprint",
    "placement": "J209 on the PWR-B bottom over J208 (same centre in the shared PWR-A/PWR-B frame), so that its pad m lies over J208 pad b2b_mate(m): seen from the PWR-A top, J209 is J208 mirrored about the strip axis (y -> -y in the J208 frame); its pin-1 row lies over the even row of J208 and its alignment holes at (+/-13.5, +0.85) against (+/-13.5, -0.85) of J208. A bottom-side footprint flipped top/bottom, or flipped left/right and turned 180 degrees, is that mirror; pcb/check_boards.py b2b with pin_map from b2b-nets.json contacts checks it"
   },
-  "pin_map_rule": "pcb/prepare.py b2b_contacts (W2 B2B, review R2; sense pairs at the end since 11.11.2026): J208 column c = contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last column, a further pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail block of guard_rule in the order rail_order, which lists the rail contacts one by one (a net listed once keeps its contacts together; unlisted rails after it, by name), each rail contact followed by its GND return on the same row; one GND guard after the rail block, in that row; the rails of rail_row_even the same way from contact 2 on the even row; the other crossing nets in name order on the free contacts of the even row, one per column, one contact each; the rest spare (nc in the graph). For (a) (since W2 GR-5B, when the six damper rail nodes and VBUS_LABPORT stopped crossing): odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the 4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets, the other contacts up to 96 spare, 97-98 guard, 99-100 the LNA4 sense pair (until W2 GR-5B: odd 1-65 the 17 rail contacts with their returns to 67, 69 guard). J209 contact m carries the net of J208 contact b2b_mate(m). python -I pcb/write_b2b_graph.py writes the map into the graph refs (--check compares). Design value. Why the rails take one row and the sense pair the end: on the PWR-B board of record (build/kicad/boards/PWR_B/make_spec.py) J209 lies on the bottom side turned so that column 50 is under the ch4 shunt R246 and column 1 next to the end of the LAB5 trunk; the rail row faces the top-edge headers and the LNA channels, the signal row the harness headers J202/J203 below the strip, the LAB5 contacts sit next to the end of the trunk and the Kelvin pair reaches its shunt, as on the FX8 placeholder map that routed (rails mostly in one row, signals in the other). The checkerboard maps of 07-11.11.2026 (rails in both rows) left 3 to 15 connections open in route runs 43103920112, 43106418931, 43109754670, 43112965018 and 43115627813. PWR-A places J208 under J209 (b2b.mating_map)",
+  "pin_map_rule": "pcb/prepare.py b2b_contacts (W2 B2B, review R2; sense pairs at the end since 11.11.2026): J208 column c = contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last column, a further pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail block of guard_rule in the order rail_order, which lists the rail contacts one by one (a net listed once keeps its contacts together; unlisted rails after it, by name), each rail contact followed by its GND return on the same row; one GND guard after the rail block, in that row; the rails of rail_row_even the same way from contact 2 on the even row; the other crossing nets in name order on the free contacts of the even row, one per column, one contact each; then the moves of signal_moves, in order (a signal net moves to a spare contact, or swaps with the signal net on its target); the rest spare (nc in the graph). For (a) (since W2 GR-5B, when the six damper rail nodes and VBUS_LABPORT stopped crossing): odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the 4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets in name order, then signal_moves (since W2 PWR-L6-PLACE fifth pass, probe Y): 26 <-> 28, 30 -> 86, 42 -> 66, so 30 and 42 spare, the other contacts up to 96 spare, 97-98 guard, 99-100 the LNA4 sense pair (until W2 GR-5B: odd 1-65 the 17 rail contacts with their returns to 67, 69 guard). J209 contact m carries the net of J208 contact b2b_mate(m). python -I pcb/write_b2b_graph.py writes the map into the graph refs (--check compares). Design value. Why the rails take one row and the sense pair the end: on the PWR-B board of record (build/kicad/boards/PWR_B/make_spec.py) J209 lies on the bottom side turned so that column 50 is under the ch4 shunt R246 and column 1 next to the end of the LAB5 trunk; the rail row faces the top-edge headers and the LNA channels, the signal row the harness headers J202/J203 below the strip, the LAB5 contacts sit next to the end of the trunk and the Kelvin pair reaches its shunt, as on the FX8 placeholder map that routed (rails mostly in one row, signals in the other). The checkerboard maps of 07-11.11.2026 (rails in both rows) left 3 to 15 connections open in route runs 43103920112, 43106418931, 43109754670, 43112965018 and 43115627813. PWR-A places J208 under J209 (b2b.mating_map)",
+  "signal_moves": [
+   {
+    "net": "EN_HFP",
+    "to_pwr_a": 28,
+    "pwr_b": {
+     "from": 25,
+     "to": 27
+    },
+    "why": "swap with EN_LIME3V3 (J208 26 <-> 28, J209 .25 <-> .27): EN_HFP leaves J209.25, whose escape to J203.2 the EN_BONI escape via, the FLT_BONI stubs and the LNA4V5 F.Cu link wall in, for J209.27 straight over J203.1/J203.2 (x 93.05 against 93.3); EN_LIME3V3 (to J203.14) takes .25"
+   },
+   {
+    "net": "EN_LNB",
+    "to_pwr_a": 86,
+    "pwr_b": {
+     "from": 29,
+     "to": 85
+    },
+    "why": "to the spare J209.85 (x 107.55) over its J203.15 (x 107.3), clear of the J209.33-59 fan-out; J209.29 turns spare"
+   },
+   {
+    "net": "I2C0_SDA",
+    "to_pwr_a": 66,
+    "pwr_b": {
+     "from": 41,
+     "to": 65
+    },
+    "why": "to the spare J209.65 (x 102.55) beside its J203.9 (x 101.3), clear of the J209.33-59 fan-out; J209.41 turns spare; J209.61 and .63 left it open (MODEL), .65-.71 closed it"
+   }
+  ],
+  "signal_moves_why": "W2 PWR-L6-PLACE fifth pass, probe Y (14.11.2026), design value for the PWR-B board of record: the round-4 board of record (CI run 43548106710, 0 errors / 5 unconnected / ignored []) left EN_HFP (J209.25 to J203.2), EN_LNB (J209.29 to J203.15) and I2C0_SDA (J209.41 to J203.9) open in the J209 lower-row pocket that the fan-outs of contacts 33-59 to J203 fill; the moves put them on contacts that escape to their J203 pins. MODEL (transactional ratchet on the board of record, scratch): 5 -> 2 open (E1_BAT_ADC, VBUS_LABPORT). E1_BAT_ADC keeps J209.19: on J209.17/.23/.44/.48/.52/.60/.61/.72/.96 it stays open too (its block is the bar-to-arm crossing, not the contact). Signals only: a move never targets a rail, GND, guard or sense contact (pcb/prepare.py b2b_contacts), so guard_rule holds. PWR-A follows through the graph (J208 is unrouted).",
   "superseded": {
    "what": "W2 AREA choice Samtec QSH-060-01-L-D-A (PWR-A, LCSC C5199901) with QTH-060-01-L-D-A (PWR-B, LCSC C116054), 120 contacts plus a ground plane, 5.00 mm",
    "by": "W2 B2B, 07.11.2026",

@@ -224,7 +224,7 @@ def b2b_contacts(out,bb):
     one by one (a net listed once keeps all its contacts together; unlisted rails after it, by name), each rail contact followed
     by its GND return on the same row (rail, GND, rail, GND, ...: every in-row neighbour of a rail contact is GND), then one GND
     guard; the rails of b2b.rail_row_even the same way from contact 2 on the even row; the other nets in name order on the free
-    contacts of the even row, one per column, then on any free contact; the rest spare (nc). The PWR-B half carries on contact m the net of PWR-A contact b2b_mate(m). Returns (map, fits)."""
+    contacts of the even row, one per column, then on any free contact; then the moves of b2b.signal_moves; the rest spare (nc). The PWR-B half carries on contact m the net of PWR-A contact b2b_mate(m). Returns (map, fits)."""
     n_all=bb['contacts'];slots={};over=[]
     def put(pin,net,role):
         if 1<=pin<=n_all and pin not in slots:slots[pin]=(net,role)
@@ -250,6 +250,15 @@ def b2b_contacts(out,bb):
     free=[p for p in range(2,n_all+1,2) if p not in slots]+[p for p in range(1,n_all+1,2) if p not in slots]
     fits=not over and len(rest)<=len(free)
     slots.update(zip(free,rest))
+    # W2 PWR-L6-PLACE fifth pass, probe Y: b2b.signal_moves, in order, after the name-order fill. A signal net moves to the
+    # contact to_pwr_a: a spare contact (its old contact turns spare) or the contact of another signal net (the two swap).
+    for mv in bb.get('signal_moves',[]):
+        src=next((p for p,(n,r) in slots.items() if n==mv['net'] and r=='signal'),None);dst=mv['to_pwr_a']
+        if src is None or not 1<=dst<=n_all or slots.get(dst,('','spare'))[1] not in ('signal','spare'):
+            raise SystemExit(f"b2b.signal_moves: {mv['net']} -> {dst}: the net must be a signal on the map and the target a signal or spare contact")
+        if dst in slots:slots[src]=slots[dst]
+        else:del slots[src]
+        slots[dst]=(mv['net'],'signal')
     return [{'pwr_a_pin':str(i),'pwr_b_pin':str(b2b_mate(i)),'net':slots.get(i,('','spare'))[0],'role':slots.get(i,('','spare'))[1]} for i in range(1,n_all+1)],fits
 
 def b2b_nets(components,rows,currents):

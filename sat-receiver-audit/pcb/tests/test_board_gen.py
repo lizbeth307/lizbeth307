@@ -992,8 +992,8 @@ class PwrL6ProbeCPinSwap(unittest.TestCase):
             got = next(p for p in graph[ref]['pins'] if str(p['number']) == pin)
             self.assertEqual((got['net'], got['name']), (net, net), (ref, pin))
         b2b = {p['number']: p.get('net') for p in graph['J209']['pins']}
-        for contact, net in (('25', 'EN_HFP'), ('27', 'EN_LIME3V3'), ('29', 'EN_LNB'), ('31', 'FAULT_HFP')):
-            self.assertEqual(b2b[contact], net)            # the J209 / J208 pin map does not change
+        for contact, net in (('27', 'EN_HFP'), ('25', 'EN_LIME3V3'), ('85', 'EN_LNB'), ('31', 'FAULT_HFP')):
+            self.assertEqual(b2b[contact], net)            # probe C kept the J209 map; probe Y (b2b.signal_moves) moved three
 
     def test_freeze6_renet(self):
         import ast

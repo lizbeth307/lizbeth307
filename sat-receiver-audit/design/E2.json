@@ -9916,9 +9916,9 @@
         },
         {
           "number": "26",
-          "name": "EN_HFP",
+          "name": "EN_LIME3V3",
           "type": "passive",
-          "net": "EN_HFP"
+          "net": "EN_LIME3V3"
         },
         {
           "number": "27",
@@ -9928,9 +9928,9 @@
         },
         {
           "number": "28",
-          "name": "EN_LIME3V3",
+          "name": "EN_HFP",
           "type": "passive",
-          "net": "EN_LIME3V3"
+          "net": "EN_HFP"
         },
         {
           "number": "29",
@@ -9940,9 +9940,9 @@
         },
         {
           "number": "30",
-          "name": "EN_LNB",
+          "name": "NC",
           "type": "passive",
-          "net": "EN_LNB"
+          "nc": true
         },
         {
           "number": "31",
@@ -10012,9 +10012,9 @@
         },
         {
           "number": "42",
-          "name": "I2C0_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "nc": true
         },
         {
           "number": "43",
@@ -10156,9 +10156,9 @@
         },
         {
           "number": "66",
-          "name": "NC",
+          "name": "I2C0_SDA",
           "type": "passive",
-          "nc": true
+          "net": "I2C0_SDA"
         },
         {
           "number": "67",
@@ -10276,9 +10276,9 @@
         },
         {
           "number": "86",
-          "name": "NC",
+          "name": "EN_LNB",
           "type": "passive",
-          "nc": true
+          "net": "EN_LNB"
         },
         {
           "number": "87",
@@ -10527,9 +10527,9 @@
         },
         {
           "number": "25",
-          "name": "EN_HFP",
+          "name": "EN_LIME3V3",
           "type": "passive",
-          "net": "EN_HFP"
+          "net": "EN_LIME3V3"
         },
         {
           "number": "26",
@@ -10539,9 +10539,9 @@
         },
         {
           "number": "27",
-          "name": "EN_LIME3V3",
+          "name": "EN_HFP",
           "type": "passive",
-          "net": "EN_LIME3V3"
+          "net": "EN_HFP"
         },
         {
           "number": "28",
@@ -10551,9 +10551,9 @@
         },
         {
           "number": "29",
-          "name": "EN_LNB",
+          "name": "NC",
           "type": "passive",
-          "net": "EN_LNB"
+          "nc": true
         },
         {
           "number": "30",
@@ -10623,9 +10623,9 @@
         },
         {
           "number": "41",
-          "name": "I2C0_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "nc": true
         },
         {
           "number": "42",
@@ -10767,9 +10767,9 @@
         },
         {
           "number": "65",
-          "name": "NC",
+          "name": "I2C0_SDA",
           "type": "passive",
-          "nc": true
+          "net": "I2C0_SDA"
         },
         {
           "number": "66",
@@ -10887,9 +10887,9 @@
         },
         {
           "number": "85",
-          "name": "NC",
+          "name": "EN_LNB",
           "type": "passive",
-          "nc": true
+          "net": "EN_LNB"
         },
         {
           "number": "86",
