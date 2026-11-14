@@ -27,12 +27,12 @@ stream
 1.00 w 426.00 180.37 m 156.44 180.37 l S
 1.00 w 426.00 80.00 m 426.00 180.37 l S
 0.60 w 172.50 168.90 m 172.50 171.43 170.45 173.49 167.91 173.49 c 165.38 173.49 163.32 171.43 163.32 168.90 c 163.32 166.36 165.38 164.31 167.91 164.31 c 170.45 164.31 172.50 166.36 172.50 168.90 c S
+0.60 w 149.56 383.97 m 149.56 386.50 147.50 388.56 144.97 388.56 c 142.44 388.56 140.38 386.50 140.38 383.97 c 140.38 381.44 142.44 379.38 144.97 379.38 c 147.50 379.38 149.56 381.44 149.56 383.97 c S
+0.60 w 52.06 383.97 m 52.06 386.50 50.00 388.56 47.47 388.56 c 44.94 388.56 42.88 386.50 42.88 383.97 c 42.88 381.44 44.94 379.38 47.47 379.38 c 50.00 379.38 52.06 381.44 52.06 383.97 c S
 0.60 w 52.06 97.21 m 52.06 99.74 50.00 101.79 47.47 101.79 c 44.94 101.79 42.88 99.74 42.88 97.21 c 42.88 94.67 44.94 92.62 47.47 92.62 c 50.00 92.62 52.06 94.67 52.06 97.21 c S
 0.60 w 419.12 168.90 m 419.12 171.43 417.06 173.49 414.53 173.49 c 412.00 173.49 409.94 171.43 409.94 168.90 c 409.94 166.36 412.00 164.31 414.53 164.31 c 417.06 164.31 419.12 166.36 419.12 168.90 c S
-0.60 w 52.06 383.97 m 52.06 386.50 50.00 388.56 47.47 388.56 c 44.94 388.56 42.88 386.50 42.88 383.97 c 42.88 381.44 44.94 379.38 47.47 379.38 c 50.00 379.38 52.06 381.44 52.06 383.97 c S
-0.60 w 149.56 383.97 m 149.56 386.50 147.50 388.56 144.97 388.56 c 142.44 388.56 140.38 386.50 140.38 383.97 c 140.38 381.44 142.44 379.38 144.97 379.38 c 147.50 379.38 149.56 381.44 149.56 383.97 c S
-0.60 w 419.12 97.21 m 419.12 99.74 417.06 101.79 414.53 101.79 c 412.00 101.79 409.94 99.74 409.94 97.21 c 409.94 94.67 412.00 92.62 414.53 92.62 c 417.06 92.62 419.12 94.67 419.12 97.21 c S
 0.60 w 149.56 240.59 m 149.56 243.12 147.50 245.18 144.97 245.18 c 142.44 245.18 140.38 243.12 140.38 240.59 c 140.38 238.05 142.44 236.00 144.97 236.00 c 147.50 236.00 149.56 238.05 149.56 240.59 c S
+0.60 w 419.12 97.21 m 419.12 99.74 417.06 101.79 414.53 101.79 c 412.00 101.79 409.94 99.74 409.94 97.21 c 409.94 94.67 412.00 92.62 414.53 92.62 c 417.06 92.62 419.12 94.67 419.12 97.21 c S
 0.60 w 282.69 130.61 m 282.69 131.76 281.76 132.69 280.61 132.69 c 279.46 132.69 278.53 131.76 278.53 130.61 c 278.53 129.47 279.46 128.53 280.61 128.53 c 281.76 128.53 282.69 129.47 282.69 130.61 c S
 0.60 w 360.12 130.61 m 360.12 131.76 359.19 132.69 358.04 132.69 c 356.89 132.69 355.96 131.76 355.96 130.61 c 355.96 129.47 356.89 128.53 358.04 128.53 c 359.19 128.53 360.12 129.47 360.12 130.61 c S
 0.40 w 38.02 254.35 m 46.02 254.35 l S
@@ -476,7 +476,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
 endobj
 9 0 obj
-<< /Length 3915 >>
+<< /Length 4474 >>
 stream
 BT /F1 8.00 Tf 36.00 560.00 Td (2026-11-13\) offers HASL \(leaded / lead-free\), ENIG and OSP, and "FR-4/HDI) Tj ET
 BT /F1 8.00 Tf 36.00 549.00 Td (boards with 6 or more layers" do not support HASL; order without impedance) Tj ET
@@ -497,19 +497,22 @@ BT /F1 8.00 Tf 36.00 377.00 Td (Sides with parts: Bottom \(SMD 1\), Top \(SMD 12
 BT /F1 8.00 Tf 36.00 366.00 Td (CPL: Mid X / Mid Y are the KiCad footprint origins \(JLC defines them as the component centroid\) and Rotation the raw KiCad rotation \(degrees, counter-) Tj ET
 BT /F1 8.00 Tf 36.00 355.00 Td (clockwise as the JLC CPL column\). JLC rotation and centroid offsets per footprint are TBD \(assembly/PWR_B-cpl-rotation-offsets.csv\): check every part) Tj ET
 BT /F1 8.00 Tf 36.00 344.00 Td (in the JLC viewer at order time; nothing here verifies them.) Tj ET
-BT /F1 8.00 Tf 36.00 333.00 Td (BOM TBD: C274,C275,C276,C277,C283,C285,C287,C2911,C2912 \(C1608X7R1H104K080AA\): TBD: build/10-jlc-bom.csv row has no LCSC code) Tj ET
-BT /F2 11.00 Tf 36.00 316.00 Td (Not proved here \(OPEN\)) Tj ET
-BT /F1 8.00 Tf 36.00 302.00 Td (- that the schematic is right) Tj ET
-BT /F1 8.00 Tf 36.00 291.00 Td (- current capacity or temperature rise beyond the chosen class widths) Tj ET
-BT /F1 8.00 Tf 36.00 280.00 Td (- impedance, RF loss or isolation, EMC or signal integrity) Tj ET
-BT /F1 8.00 Tf 36.00 269.00 Td (- creepage beyond the encoded clearances) Tj ET
-BT /F1 8.00 Tf 36.00 258.00 Td (- that the enclosure fits \(only outline and hole checks; heights are not checked here\)) Tj ET
-BT /F1 8.00 Tf 36.00 247.00 Td (- that the fab's DFM accepts the board, or that CPL rotations are right) Tj ET
-BT /F1 8.00 Tf 36.00 236.00 Td (- that the land patterns match the purchased MPNs) Tj ET
-BT /F1 8.00 Tf 36.00 225.00 Td (- any function: hardware and bench gates stay OPEN) Tj ET
-BT /F1 8.00 Tf 36.00 214.00 Td (Sources \(read 2026-11-07\): https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly; https://jlcpcb.com/help/article/pick-place-file-for-) Tj ET
-BT /F1 8.00 Tf 36.00 203.00 Td (pcb-assembly; https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad; https://jlcpcb.com/help/article/how-to-generate-) Tj ET
-BT /F1 8.00 Tf 36.00 192.00 Td (gerber-and-drill-files-in-kicad-8; https://jlcpcb.com/capabilities/pcb-capabilities) Tj ET
+BT /F2 8.00 Tf 36.00 333.00 Td (H-TRIM flush-trim mark: trim every THT pin of this board flush after soldering \(pin fields J201, J202, J203, J204, J207, J506\). H-TRIM \(pcb/partition-) Tj ET
+BT /F2 8.00 Tf 36.00 322.00 Td (spec.json keepouts.h_trim, W2 AREA-2\): after soldering, every THT pin of this board is trimmed flush, protrusion at most 1.0 mm below the PWR-B bottom) Tj ET
+BT /F2 8.00 Tf 36.00 311.00 Td (face; PWR-A parts up to 2.7 mm stand under these pin fields \(1.3 mm clearance in the 5.0 mm stack\). Gate OPEN: measured at proof-fit.) Tj ET
+BT /F1 8.00 Tf 36.00 300.00 Td (BOM TBD: C274,C275,C276,C277,C283,C285,C287,C2911,C2912 \(C1608X7R1H104K080AA\): TBD: build/10-jlc-bom.csv row has no LCSC code) Tj ET
+BT /F2 11.00 Tf 36.00 283.00 Td (Not proved here \(OPEN\)) Tj ET
+BT /F1 8.00 Tf 36.00 269.00 Td (- that the schematic is right) Tj ET
+BT /F1 8.00 Tf 36.00 258.00 Td (- current capacity or temperature rise beyond the chosen class widths) Tj ET
+BT /F1 8.00 Tf 36.00 247.00 Td (- impedance, RF loss or isolation, EMC or signal integrity) Tj ET
+BT /F1 8.00 Tf 36.00 236.00 Td (- creepage beyond the encoded clearances) Tj ET
+BT /F1 8.00 Tf 36.00 225.00 Td (- that the enclosure fits \(only outline and hole checks; heights are not checked here\)) Tj ET
+BT /F1 8.00 Tf 36.00 214.00 Td (- that the fab's DFM accepts the board, or that CPL rotations are right) Tj ET
+BT /F1 8.00 Tf 36.00 203.00 Td (- that the land patterns match the purchased MPNs) Tj ET
+BT /F1 8.00 Tf 36.00 192.00 Td (- any function: hardware and bench gates stay OPEN) Tj ET
+BT /F1 8.00 Tf 36.00 181.00 Td (Sources \(read 2026-11-07\): https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly; https://jlcpcb.com/help/article/pick-place-file-for-) Tj ET
+BT /F1 8.00 Tf 36.00 170.00 Td (pcb-assembly; https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad; https://jlcpcb.com/help/article/how-to-generate-) Tj ET
+BT /F1 8.00 Tf 36.00 159.00 Td (gerber-and-drill-files-in-kicad-8; https://jlcpcb.com/capabilities/pcb-capabilities) Tj ET
 endstream
 endobj
 xref
@@ -527,5 +530,5 @@ xref
 trailer
 << /Size 10 /Root 1 0 R /Info 5 0 R >>
 startxref
-28601
+29160
 %%EOF

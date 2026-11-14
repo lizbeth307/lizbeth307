@@ -47,7 +47,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "15e2cead48ddc382e6e9127786745027d12e3268a045ed8d96a2a963f98675af",
+  "board_sha256": "e8ec2078c07195cee8553242bc1f61fdcdc5e4e06ed7822c9272481f66d374b3",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -878,8 +878,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43567474226",
-    "sha": "7b5460965708d0570c02cd77b2469d29c4d88454",
-    "ref": "refs/heads/wip/w2-pwrl6-p5y"
+    "run_id": "43591929140",
+    "sha": "bd445e55faa157e951f97065562f710a7ff94722",
+    "ref": "refs/heads/wip/w2-pwrl6"
   }
 }

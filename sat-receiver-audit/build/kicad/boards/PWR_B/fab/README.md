@@ -24,6 +24,7 @@
 - Gerber і свердління: заархівувати `gerber/` і `drill/` разом під час замовлення (архів не комітиться, бо zip має мітки часу).
 - Mid X / Mid Y у CPL — початок посадкового місця KiCad, тоді як JLC визначає їх як центр компонента (сторінка CPL JLC, прочитано 2026-11-07); кут — сирий кут KiCad. Поправки кута й центру для кожного посадкового місця — TBD, у CI не перевіряються: кожну деталь перевіряє той, хто замовляє, у переглядачі JLC перед оплатою (крок збирання; у build/21 його додає власник STEPS).
 - Позиції BOM з TBD: C274,C275,C276,C277,C283,C285,C287,C2911,C2912.
+- **H-TRIM — обрізати врівень:** після пайки всі THT-виводи цієї плати обрізати врівень (поля виводів J201, J202, J203, J204, J207, J506); правило зі специфікації: H-TRIM (pcb/partition-spec.json keepouts.h_trim, W2 AREA-2): after soldering, every THT pin of this board is trimmed flush, protrusion at most 1.0 mm below the PWR-B bottom face; PWR-A parts up to 2.7 mm stand under these pin fields (1.3 mm clearance in the 5.0 mm stack). Gate OPEN: measured at proof-fit.
   - C274,C275,C276,C277,C283,C285,C287,C2911,C2912 (C1608X7R1H104K080AA): TBD: build/10-jlc-bom.csv row has no LCSC code.
 
 ## Що цей набір не доводить (OPEN)

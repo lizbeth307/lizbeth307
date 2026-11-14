@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "15e2cead48ddc382e6e9127786745027d12e3268a045ed8d96a2a963f98675af"
+      "sha256": "e8ec2078c07195cee8553242bc1f61fdcdc5e4e06ed7822c9272481f66d374b3"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "604425b3761208ee73d31f5ae0549e3ab64616aa7782f0b1170c3d1bec084652",
