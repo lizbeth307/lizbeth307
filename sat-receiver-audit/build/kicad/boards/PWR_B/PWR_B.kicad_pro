@@ -271,7 +271,7 @@
         "pattern": "BIAS_CH1"
       },
       {
-        "netclass": "PWR05A",
+        "netclass": "PWR1A",
         "pattern": "BIAS_CH1_DAMP"
       },
       {
@@ -279,7 +279,7 @@
         "pattern": "BIAS_CH2"
       },
       {
-        "netclass": "PWR05A",
+        "netclass": "PWR1A",
         "pattern": "BIAS_CH2_DAMP"
       },
       {
@@ -291,7 +291,7 @@
         "pattern": "BIAS_CH3"
       },
       {
-        "netclass": "PWR05A",
+        "netclass": "PWR1A",
         "pattern": "BIAS_CH3_DAMP"
       },
       {
@@ -303,7 +303,7 @@
         "pattern": "BIAS_CH4"
       },
       {
-        "netclass": "PWR05A",
+        "netclass": "PWR1A",
         "pattern": "BIAS_CH4_DAMP"
       },
       {
@@ -351,7 +351,7 @@
         "pattern": "E2_RTLB_SW"
       },
       {
-        "netclass": "PWR05A",
+        "netclass": "PWR1A",
         "pattern": "E2_SB_DAMP"
       },
       {
