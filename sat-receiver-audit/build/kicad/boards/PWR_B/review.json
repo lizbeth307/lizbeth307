@@ -7,14 +7,14 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "29903d838c416b406929ba32eebc5cb13f48ed263a9369f59b9a94424966f50e"
+      "sha256": "15e2cead48ddc382e6e9127786745027d12e3268a045ed8d96a2a963f98675af"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "604425b3761208ee73d31f5ae0549e3ab64616aa7782f0b1170c3d1bec084652",
       "footprints": "92e42020e0190146fadf2920d9ca6dd75364f034fa9d3aaefba5ca16b10c741d",
       "contract_board": "4b1616d88e13a8f31341ab1884adee4e9faa87dee279b0ef10490a2dc3e7c0eb",
       "netclasses": "56a092817eb75cec9f0faef5c6658be0a6284f935a69f8f767a1b6740307b180",
-      "spec": "f5316f15e2f8a65b0f063355e8834f091a4baf704c6fee95df77305cf861ea89"
+      "spec": "f6e62d5566f00471c634fc639cf94ff1e371af9869ae1b7054db3a60603fc5b2"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },
@@ -29,8 +29,8 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1806,
-    "vias": 319,
+    "tracks": 1886,
+    "vias": 341,
     "zones": 352,
     "holes": 9,
     "copper_layers": [
@@ -77,7 +77,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.499
+          "closest_copper_mm": 0.477
         },
         {
           "id": "C206",
@@ -105,28 +105,28 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.43
+          "closest_copper_mm": 0.412
         },
         {
           "id": "C254",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.354
+          "closest_copper_mm": 0.46
         },
         {
           "id": "C262",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.376
+          "closest_copper_mm": 0.375
         },
         {
           "id": "C273",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 3.542
+          "closest_copper_mm": null
         },
         {
           "id": "F102",
@@ -168,7 +168,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 1.666
+          "closest_copper_mm": 0.33
         },
         {
           "id": "J109",
@@ -196,7 +196,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 3.124
+          "closest_copper_mm": 0.33
         },
         {
           "id": "J113",
@@ -259,7 +259,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.618
+          "closest_copper_mm": 0.623
         },
         {
           "id": "TP102",
@@ -287,14 +287,14 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.529
+          "closest_copper_mm": 0.361
         },
         {
           "id": "TP106",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 2.372
+          "closest_copper_mm": 0.659
         },
         {
           "id": "TP107",
@@ -315,14 +315,14 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.496
+          "closest_copper_mm": null
         },
         {
           "id": "TP202",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.451
+          "closest_copper_mm": null
         },
         {
           "id": "TP203",
@@ -336,7 +336,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 6.556
+          "closest_copper_mm": null
         },
         {
           "id": "TP205",
@@ -364,14 +364,14 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.629
+          "closest_copper_mm": null
         },
         {
           "id": "TP214",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.451
+          "closest_copper_mm": null
         },
         {
           "id": "TP215",
@@ -385,7 +385,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.483
+          "closest_copper_mm": null
         },
         {
           "id": "TP2903",
@@ -403,7 +403,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1786,
+      "tracks_checked": 1866,
       "pour_necks": [],
       "split_nets": {}
     },
@@ -519,22 +519,22 @@
     {
       "check": "class_widths",
       "item": "AUX12 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 5 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BIAS_CH1 vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 1 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 7 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BIAS_CH2_PORT vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 6 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 5 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BIAS_CH3_PORT vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 6 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 4 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -544,7 +544,7 @@
     {
       "check": "class_widths",
       "item": "BIAS_SB_LNA vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 4 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 8 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -563,13 +563,8 @@
     },
     {
       "check": "class_widths",
-      "item": "E2_RTLB_SW vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
       "item": "E2_SB_DAMP vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 6 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 8 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -584,12 +579,12 @@
     {
       "check": "class_widths",
       "item": "LNB13V2 vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 1 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "VBUS_LABPORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 9 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -599,7 +594,7 @@
     {
       "check": "class_widths",
       "item": "VBUS_RTLB vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",

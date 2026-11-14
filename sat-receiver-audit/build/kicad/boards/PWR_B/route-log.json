@@ -26,8 +26,8 @@
   "ses_sha256": null,
   "dsn_probe": null,
   "locked_segments": {
-    "before_ses_import": 2125,
-    "after_ses_import": 2125
+    "before_ses_import": 2227,
+    "after_ses_import": 2227
   },
   "freerouting_not_run": {
     "passes": 0,
@@ -47,7 +47,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "29903d838c416b406929ba32eebc5cb13f48ed263a9369f59b9a94424966f50e",
+  "board_sha256": "15e2cead48ddc382e6e9127786745027d12e3268a045ed8d96a2a963f98675af",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -878,8 +878,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43553756303",
-    "sha": "2b7e28fe2e1f7c0c08420311c5fba65e412220ad",
+    "run_id": "43567474226",
+    "sha": "7b5460965708d0570c02cd77b2469d29c4d88454",
     "ref": "refs/heads/wip/w2-pwrl6-p5y"
   }
 }
