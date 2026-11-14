@@ -334,6 +334,9 @@ DCTAP_NET = re.compile(r'^E4_DCS_(UHF|LBAND|HF)_(TAP|BLEED_\d+)$')
 GROUND_NETS = {'GND', 'CHASSIS'}
 SUPPLY_PINS = {'VSYS', 'VBUS', '5V', '5V_IN', '3V3_OUT', '+5V'}
 PATH_PINS = {'IN', 'VIN', 'OUT', 'OUTS', 'VOUT'}  # only on parts that have an IN/VIN pin (regulators, switches, eFuses)
+# W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-06: numbered path pins (VIN1/VIN2, VOUT1/VOUT2 of the LM61460 / TPSM63606) count as well
+PATH_PIN_RE = re.compile(r'(?:V?IN|OUTS?|VOUT)[0-9]*')
+IN_PIN_RE = re.compile(r'V?IN[0-9]*')
 
 
 def rel(path):
@@ -563,7 +566,8 @@ def build():
     # Review list for the NET_CURRENT owner: unclassified nets on a supply pin of an IC/module or on a series element.
     candidates = sorted({p['net'] for c in comps if c['kind'] in ('ic', 'module') for p in c['pins']
                          if p.get('net') and (p['name'] in SUPPLY_PINS
-                                              or (p['name'] in PATH_PINS and {q['name'] for q in c['pins']} & {'IN', 'VIN'}))}
+                                              or (PATH_PIN_RE.fullmatch(p['name'] or '')
+                                                  and any(IN_PIN_RE.fullmatch(q['name'] or '') for q in c['pins'])))}
                         | {n for a, b, *_rest in links for n in (a, b)})
     unclassified = [n for n in candidates if n not in all_nets and n not in GROUND_NETS]
     missing = sorted(n for n, e in all_nets.items() if not e['in_graph'])

@@ -851,30 +851,37 @@ class ExemptionPolicyTests(unittest.TestCase):
                     neck_exempt={ref: {'escape_mm': length + 0.2, 'reason': 'test'}})
         return review(t, spec, graph=self.graph(ref, value, 'FB'))
 
-    def entry(self, declare=None):
-        t = tree('power_neck.kicad_pcb')  # U8: a 0.3 mm pad on E1_N (BATT 3.2), an entry pour (0.75 mm strip, 3.2 mm landing), a track on
+    def entry(self, declare=None, value='TPS259470', pin='IN', strip=1.05, carve=None):
+        t = tree('power_neck.kicad_pcb')  # U8: a 0.3 mm pad on E1_N (BATT 3.2), an entry pour (strip of `strip` mm, 3.2 mm landing), a track on
         smd_footprint(t, 'U8', (20, 5), 'E1_N', size=0.3)
-        outline = [(19.85, 4.85), (20.15, 4.85), (20.15, 5.9), (21.6, 5.9), (21.6, 9.1), (18.4, 9.1), (18.4, 5.9), (19.85, 5.9)]
+        y1 = 4.85 + strip
+        outline = [(19.85, 4.85), (20.15, 4.85), (20.15, y1), (21.6, y1), (21.6, y1 + 3.2), (18.4, y1 + 3.2), (18.4, y1), (19.85, y1)]
         t.append(['zone', ['net', cb.Q('E1_N')], ['layer', cb.Q('F.Cu')], ['name', cb.Q('PE-U8')], ['polygon', pts_node(outline)],
                   ['filled_polygon', ['layer', cb.Q('F.Cu')], pts_node(outline)]])
-        seg(t, (20, 7.5), (20, 17), 3.2, 'F.Cu', 'E1_N')
-        spec = dict(PWR_SPEC, board_only_refs={'U8': 'policy fixture'}, exemption_policy=self.POLICY)
+        seg(t, (20, y1 + 1.6), (20, 17), 3.2, 'F.Cu', 'E1_N')
+        spec = dict(PWR_SPEC, board_only_refs={'U8': 'policy fixture'}, exemption_policy=dict(self.POLICY))
+        if carve is not None:
+            spec['exemption_policy']['carve_outs'] = carve
         if declare is not None:
             spec['pin_entry_pours'] = declare
-        return review(t, spec, graph=self.graph('U8', 'TPS259470', 'IN'))
+        return review(t, spec, graph=self.graph('U8', value, pin))
 
     def test_pin_entry_pour(self):
-        doc = self.entry()
+        # W2 PWR-L6-SCRIPT review fix (RV-PWRL6-PRE-P-01): the role policy holds for pin entries, and the strip is measured on the zone
+        doc = self.entry(value='LM61460', pin='FB')
         self.assertEqual(checks_failed(doc), ['class_widths'])  # the raster sees the strip end as a neck
         self.assertTrue(any(f['item'] == 'pour E1_N' for f in doc['findings']), doc['findings'])
         ok = {'PE-U8': {'pad': 'U8.1', 'strip_mm': 0.75, 'landing_mm': [3.2, 3.2]}}
-        doc = self.entry(ok)
+        doc = self.entry(ok, value='LM61460', pin='FB')
         self.assertEqual(doc['findings'], [])
         self.assertEqual(doc['checks']['class_widths']['exemption_policy']['pin_entry_pours'], {'declared': 1, 'accepted': 1})
-        for bad in ({'PE-U8': {'pad': 'U8.1', 'strip_mm': 1.7, 'landing_mm': [3.2, 3.2]}},
-                    {'PE-U8': {'pad': 'U8.1', 'strip_mm': 0.75, 'landing_mm': [3.2, 2.0]}},
-                    {'PE-XX': {'pad': 'U8.1', 'strip_mm': 0.75, 'landing_mm': [3.2, 3.2]}}):
-            doc = self.entry(bad)
+        # an eFuse IN entry is refused without a carve-out, and accepted through one
+        doc = self.entry(ok)
+        self.assertTrue(any('efuse_in_out' in f['detail'] and 'carve-out' in f['detail'] for f in doc['findings']), doc['findings'])
+        carve = [{'id': 'CO-TEST', 'scope': 'pin_entry', 'pads': ['U8.1'], 'role': 'efuse_in_out', 'why': 'unit test'}]
+        self.assertEqual(self.entry(ok, carve=carve)['findings'], [])
+        for bad in ({'PE-XX': {'pad': 'U8.1', 'strip_mm': 0.75, 'landing_mm': [3.2, 3.2]}},):
+            doc = self.entry(bad, value='LM61460', pin='FB')
             self.assertTrue(any(f['item'].startswith('pin entry') for f in doc['findings']), (bad, doc['findings']))
 
     def test_neck_rule(self):
@@ -1054,6 +1061,117 @@ class RfNodeChecks(unittest.TestCase):
         self.assertEqual(doc['checks']['rf_nodes']['findings'], 0)
         self.assertEqual(doc['checks']['gnd_chassis_ties']['ties_on_bond_hole'], ['NT401'])
         self.assertEqual(len(doc['checks']['rf_nodes']['taps']), 3)
+
+
+
+class ExemptionPolicyReviewTests(unittest.TestCase):
+    """W2 PWR-L6-SCRIPT review fixes RV-PWRL6-PRE-P-01/-02/-05: pin entries measured on the zone and held to the role policy; necks
+    refused on converter VIN/VOUT/SW pins and converter capacitors; a branch may not feed a power pad; carve-outs only by spec row."""
+    POLICY = {'why': 'W2 PWR-L6-SCRIPT review unit test'}
+
+    def graph(self, ref, value='', pin_name='', other=None, extra=None):
+        g = dict(GRAPH)
+        pins = [{'number': '1', 'name': pin_name, 'net': 'E1_N'}]
+        if other:
+            pins.append({'number': '2', 'name': '', 'net': other})
+        g[ref] = {'ref': ref, 'value': value, 'footprint': 'Fixture:PAD_SMD', 'pins': pins}
+        # a converter: U90 SW drives L90, whose far pad is E1_N (so a capacitor from E1_N to GND is an output capacitor)
+        g['U90'] = {'ref': 'U90', 'value': 'LM61460', 'footprint': '', 'pins': [{'number': '1', 'name': 'SW', 'net': 'E1_SWX'},
+                                                                                 {'number': '2', 'name': 'CBOOT', 'net': 'E1_CB'}]}
+        g['L90'] = {'ref': 'L90', 'value': '4.7uH', 'footprint': '', 'pins': [{'number': '1', 'name': '', 'net': 'E1_SWX'},
+                                                                               {'number': '2', 'name': '', 'net': 'E1_N'}]}
+        g.update(extra or {})
+        return g
+
+    def entry(self, ref, value, pin, strip, carve=None):
+        t = tree('power_neck.kicad_pcb')
+        smd_footprint(t, ref, (20, 5), 'E1_N', size=0.3)
+        y1 = 4.85 + strip
+        outline = [(19.85, 4.85), (20.15, 4.85), (20.15, y1), (21.6, y1), (21.6, y1 + 3.2), (18.4, y1 + 3.2), (18.4, y1), (19.85, y1)]
+        t.append(['zone', ['net', cb.Q('E1_N')], ['layer', cb.Q('F.Cu')], ['name', cb.Q('PE-X')], ['polygon', pts_node(outline)],
+                  ['filled_polygon', ['layer', cb.Q('F.Cu')], pts_node(outline)]])
+        seg(t, (20, y1 + 1.6), (20, 17), 3.2, 'F.Cu', 'E1_N')
+        spec = dict(PWR_SPEC, board_only_refs={ref: 'policy fixture'}, exemption_policy=dict(self.POLICY),
+                    pin_entry_pours={'PE-X': {'pad': f'{ref}.1', 'strip_mm': 0.1, 'landing_mm': [3.2, 3.2]}})
+        if carve:
+            spec['exemption_policy']['carve_outs'] = carve
+        return review(t, spec, graph=self.graph(ref, value, pin))
+
+    def test_tvs_pin_entry_refused(self):  # review probe D
+        doc = self.entry('D9', 'SMBJ17A', '', 0.5)
+        self.assertTrue(any(f['item'] == 'pin entry PE-X' and 'tvs' in f['detail'] for f in doc['findings']), doc['findings'])
+
+    def test_declared_strip_is_measured(self):  # review probe E: declared 0.1 mm, drawn 3.0 mm
+        doc = self.entry('U9', 'LM61460', 'FB', 3.0)
+        hits = [f for f in doc['findings'] if f['item'] == 'pin entry PE-X']
+        self.assertEqual(len(hits), 1, doc['findings'])
+        self.assertIn('longer than half the class width', hits[0]['detail'])
+        ok = self.entry('U9', 'LM61460', 'FB', 1.2)  # outline top 1.2 mm above the pad's far edge: a 0.9 mm strip beyond the pad
+        self.assertEqual(ok['findings'], [])
+        row = ok['checks']['class_widths']['exemption_policy']['pin_entry_measured'][0]
+        self.assertAlmostEqual(row['measured']['strip_mm'], 0.9, delta=0.05)
+        carve = [{'id': 'CO-T', 'scope': 'pin_entry', 'pads': ['U9.1'], 'max_strip_mm': 0.5, 'why': 'unit test'}]
+        self.assertTrue(any('carve-out' in f['detail'] for f in self.entry('U9', 'LM61460', 'FB', 1.2, carve)['findings']))
+
+    def neck(self, ref, value, pin, other=None, carve=None):
+        t = tree('power_neck.kicad_pcb')
+        smd_footprint(t, ref, (20, 5), 'E1_N', size=0.4)
+        seg(t, (20, 5), (20, 5.3), 0.4, 'F.Cu', 'E1_N')
+        spec = dict(PWR_SPEC, board_only_refs={ref: 'policy fixture'}, exemption_policy=dict(self.POLICY),
+                    neck_exempt={ref: {'escape_mm': 0.5, 'reason': 'test'}})
+        if carve:
+            spec['exemption_policy']['carve_outs'] = carve
+        return review(t, spec, graph=self.graph(ref, value, pin, other))
+
+    def test_neck_on_converter_parts_refused(self):  # review probes F and G
+        for ref, value, pin, other, role in (('C9', '22uF', '', 'GND', 'converter_capacitor'),
+                                             ('U9', 'TPSM63606', 'VOUT1', None, 'converter_power_pin')):
+            doc = self.neck(ref, value, pin, other)
+            self.assertEqual(checks_failed(doc), ['class_widths'], ref)
+            self.assertTrue(any(f'no neck on a {role.replace("_", " ")}' in f['detail'] for f in doc['findings']), (ref, doc['findings']))
+        carve = [{'id': 'CO-N', 'scope': 'neck', 'pads': ['U9.1'], 'why': 'unit test'}]
+        self.assertEqual(self.neck('U9', 'TPSM63606', 'VOUT1', carve=carve)['findings'], [])
+
+    def test_capacitor_roles(self):
+        board = cb.Board(tree('power_neck.kicad_pcb'), 'fixture')
+        lookup = cb.class_map(NETCLASSES, {})
+        for value, other, net, role in (('100nF', 'E1_CB', 'E1_N', 'converter_capacitor'), ('22uF', 'GND', 'E1_N', 'converter_capacitor'),
+                                         ('4.7pF', 'E1_FFX', 'E1_N', 'sense_logic_pin')):
+            g = self.graph('C9', value, '', other)
+            r, _why = cb.exemption_role(board, {}, g, 'C9', '1', lookup, NETCLASSES['classes'])
+            self.assertEqual(r, role, (value, other))
+
+    def test_branch_may_not_feed_a_power_pad(self):  # RV-PWRL6-PRE-P-02: a 0.25 mm branch from a 100k resistor to a TVS pad
+        t = tree('power_neck.kicad_pcb')
+        smd_footprint(t, 'R9', (12, 5), 'E1_N')
+        smd_footprint(t, 'D9', (12, 9), 'E1_N')
+        seg(t, (12, 5), (12, 9), 0.25, 'F.Cu', 'E1_N')
+        g = self.graph('R9', '100k 1%', '', 'E1_SENSE', extra={'D9': {'ref': 'D9', 'value': 'SMBJ17A', 'footprint': '',
+                                                                       'pins': [{'number': '1', 'name': 'K', 'net': 'E1_N'}]}})
+        spec = dict(PWR_SPEC, board_only_refs={'R9': 'policy fixture', 'D9': 'policy fixture'}, exemption_policy=dict(self.POLICY),
+                    branch_exempt={'R9': {'max_mm': 6.0, 'min_width_mm': 0.25, 'reason': 'test'}})
+        doc = review(t, spec, graph=g)
+        hits = [f for f in doc['findings'] if 'reaches pad D9.1' in f['detail']]
+        self.assertEqual(len(hits), 1, doc['findings'])
+        self.assertIn('tvs', hits[0]['detail'])
+        spec['exemption_policy'] = None
+        spec.pop('exemption_policy')
+        self.assertFalse(any('reaches pad' in f['detail'] for f in review(t, spec, graph=g)['findings']))
+
+    def test_branch_carve_out(self):  # RV-PWRL6-PRE-P-05: the bootstrap capacitor branch only through a recorded carve-out
+        t = tree('power_neck.kicad_pcb')
+        smd_footprint(t, 'C9', (12, 5), 'E1_N')
+        seg(t, (12, 5), (12, 9), 0.45, 'F.Cu', 'E1_N')
+        g = self.graph('C9', '100nF', '', 'E1_CB')
+        spec = dict(PWR_SPEC, board_only_refs={'C9': 'policy fixture'}, exemption_policy=dict(self.POLICY),
+                    branch_exempt={'C9': {'max_mm': 6.0, 'min_width_mm': 0.45, 'reason': 'test'}})
+        doc = review(t, spec, graph=g)
+        self.assertTrue(any('converter_capacitor' in f['detail'] for f in doc['findings']), doc['findings'])
+        spec['exemption_policy'] = dict(self.POLICY, carve_outs=[{'id': 'CO-B', 'scope': 'branch', 'pads': ['C9.1'],
+                                                                   'min_width_mm': 0.45, 'max_mm': 8.0, 'why': 'unit test'}])
+        self.assertEqual(review(t, spec, graph=g)['findings'], [])
+        spec['branch_exempt']['C9']['min_width_mm'] = 0.25  # below the carve-out floor: refused again
+        self.assertTrue(any('converter_capacitor' in f['detail'] for f in review(t, spec, graph=g)['findings']))
 
 
 if __name__ == '__main__':

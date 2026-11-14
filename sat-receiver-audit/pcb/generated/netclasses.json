@@ -2105,6 +2105,7 @@
       "BIAS_CH3_DAMP",
       "BONI13V8",
       "BONI13V8_DAMP",
+      "E1_CONV_IN",
       "E2_BONI_EF",
       "E2_BONI_LDO",
       "E2_BONI_MON",

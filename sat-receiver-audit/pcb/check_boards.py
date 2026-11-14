@@ -1485,7 +1485,10 @@ def track_chain(board, net, start_pads, max_len, width_ok):
 # the power-path parts below. Sense or logic pins of an IC (pin names, upper case); a capacitor between a power net and a
 # signal net (not GND, not power class: a bootstrap, feed-forward or filter capacitor) counts as a sense or logic part too.
 EXEMPT_BRANCH_ROLES = ('test_point', 'resistor_ge_100', 'sense_logic_pin')
-EXEMPT_NECK_FORBIDDEN = ('tvs', 'connector', 'shunt', 'fuse', 'power_switch', 'efuse_in_out', 'converter_capacitor')
+# W2 PWR-L6-SCRIPT review fix (RV-PWRL6-PRE-P-01): converter VIN/VOUT/SW pins take no neck either; a forbidden role passes only
+# through an explicit carve-out row of the spec (exemption_policy.carve_outs: scope, pads, limits, source), as b2b_contact does by role
+EXEMPT_NECK_FORBIDDEN = ('tvs', 'connector', 'shunt', 'fuse', 'power_switch', 'efuse_in_out', 'converter_capacitor',
+                         'converter_power_pin')
 SENSE_LOGIC_PINS = frozenset((
     'FB', 'SENSE/FB', 'SENSE', 'VSENSE', 'BIAS', 'VCC', 'VDD', 'VS', 'VLDOIN', 'VCAP', 'EN', 'EN/UV', 'EN/UVLO', 'EN/SYNC',
     'UVLO', 'OVLO', 'PG', 'PGOOD', 'PGFB', 'RT', 'SS', 'TR', 'ILM', 'ILIM', 'DVDT', 'SET', 'OUTS', 'ANODE', 'CATHODE', 'INA', 'INB',
@@ -1494,6 +1497,46 @@ TVS_MARKERS = ('SMBJ', 'SMAJ', 'SMCJ', 'SMF', 'TVS', 'ESD', 'PESD', 'TPD')
 EFUSE_MARKERS = ('TPS259', 'TPS2596', 'TPS2594')        # TI eFuses (TPS259470, TPS259630, ...)
 LOAD_SWITCH_MARKERS = ('TPS2553', 'TPS2051', 'TPS22')     # TI current-limited power switches
 CONVERTER_POWER_PINS = ('VIN', 'VIN1', 'VIN2', 'PVIN', 'VOUT', 'VOUT1', 'VOUT2', 'SW', 'LX', 'PH')
+# W2 PWR-L6-SCRIPT review fix (RV-PWRL6-PRE-P-01, -P-05): a converter is an IC with a switch-node pin; a capacitor on its switch,
+# bootstrap or VCC net, or between GND and a net that its inductor feeds (the output after the inductor), is a converter capacitor
+CONVERTER_SWITCH_PINS = ('SW', 'LX', 'PH')
+CONVERTER_DRIVE_PINS = ('SW', 'LX', 'PH', 'CBOOT', 'BOOT', 'BST', 'VCC')
+
+
+def converter_nets(graph):
+    """(drive nets, output nets) of the converters of the graph (MODEL classification, cached per graph): drive nets are the nets of
+    the SW/LX/PH, CBOOT/BOOT/BST and VCC pins of an IC that has a switch-node pin; output nets are the nets on the far pad of an
+    inductor whose other pad is on such a switch net."""
+    if _CONV_CACHE.get('graph') is graph and graph is not None:
+        return _CONV_CACHE['value']
+    drive, switch, out = set(), set(), set()
+    for c in (graph or {}).values():
+        if not re.match(r'U\d', c.get('ref', '')):
+            continue
+        pins = [(str(p.get('name', '')).upper(), p.get('net')) for p in c.get('pins', [])]
+        if not any(n in CONVERTER_SWITCH_PINS and net for n, net in pins):
+            continue
+        drive |= {net for n, net in pins if n in CONVERTER_DRIVE_PINS and net and net != 'GND'}
+        switch |= {net for n, net in pins if n in CONVERTER_SWITCH_PINS and net and net != 'GND'}
+    for c in (graph or {}).values():
+        if re.match(r'L\d', c.get('ref', '')):
+            nets = [p.get('net') for p in c.get('pins', []) if p.get('net')]
+            if any(n in switch for n in nets):
+                out |= {n for n in nets if n not in switch and n != 'GND'}
+    _CONV_CACHE.update(graph=graph, value=(drive, out))
+    return drive, out
+
+
+_CONV_CACHE = {}
+
+
+def carve_out(spec, scope, ref, number):
+    """The exemption_policy.carve_outs row of scope ('pin_entry', 'branch', 'neck') that names pad ref.number, or None (W2 PWR-L6-SCRIPT
+    review fix: the only way a forbidden role takes an exemption; each row carries its limits, reason and source, and build/15 records it)."""
+    for row in ((spec.get('exemption_policy') or {}).get('carve_outs') or []):
+        if row.get('scope') == scope and f'{ref}.{number}' in (row.get('pads') or []):
+            return row
+    return None
 
 
 def ohms_of(value):
@@ -1526,7 +1569,9 @@ def exemption_role(board, spec, graph, ref, number, lookup, classes):
     pads = [p for p in board.pads if p['ref'] == ref]
     mine = [p for p in pads if p['number'] == str(number)]
     net = mine[0]['net'] if mine else (pins.get(str(number)) or {}).get('net')
-    other_nets = sorted({p['net'] for p in pads if p['number'] != str(number) and p['net']})
+    # the part's other nets from the board pads and, for pads the board lacks, from the graph pins (W2 PWR-L6-SCRIPT review fix)
+    other_nets = sorted({p['net'] for p in pads if p['number'] != str(number) and p['net']}
+                        | {q.get('net') for n, q in pins.items() if n != str(number) and q.get('net')})
 
     def power(n):
         return n and classes.get(lookup(n)[1], {}).get('kind') == 'power'
@@ -1556,8 +1601,15 @@ def exemption_role(board, spec, graph, ref, number, lookup, classes):
         return ('resistor_ge_100', f'resistor {r:g} ohm (milliamperes)') if r >= 100.0 else \
             ('resistor_lt_100', f'resistor {r:g} ohm (below 100 ohm)')
     if re.match(r'C\d', ref):
+        drive, conv_out = converter_nets(graph)
+        mine_nets = {n for n in (net, *other_nets) if n}
+        if mine_nets & drive:  # W2 PWR-L6-SCRIPT review fix (RV-PWRL6-PRE-P-05): bootstrap, VCC and switch-node capacitors
+            return 'converter_capacitor', (f'capacitor on the converter drive net(s) {", ".join(sorted(mine_nets & drive))} '
+                                           '(switch node, bootstrap or VCC)')
         if other_nets and all(n != 'GND' and not power(n) for n in other_nets):
-            return 'sense_logic_pin', f'capacitor from the power net to the signal net(s) {", ".join(other_nets)} (bootstrap, feed-forward, filter)'
+            return 'sense_logic_pin', f'capacitor from the power net to the signal net(s) {", ".join(other_nets)} (feed-forward, filter)'
+        if 'GND' in other_nets and net in conv_out:  # RV-PWRL6-PRE-P-01: output capacitor after the converter inductor
+            return 'converter_capacitor', f'output capacitor of a converter ({net} after its inductor)'
         conv = any(p.get('net') in {net, *other_nets} and str(p.get('name', '')).upper() in CONVERTER_POWER_PINS
                    for c in (graph or {}).values() if re.match(r'U\d', c.get('ref', ''))
                    for p in c.get('pins', []) if p.get('net') and p.get('net') != 'GND')
@@ -1608,9 +1660,16 @@ def branch_exemptions(board, spec, netclasses, views, graph=None, policy_out=Non
             if classes.get(cname, {}).get('kind') != 'power':
                 continue
             start = [p for p in mine if p['net'] == bnet]
+            cos = {}
             if policy is not None:
                 roles = {p['number']: exemption_role(board, spec, graph, ref, p['number'], lookup, classes) for p in start}
-                bad = {n: r for n, r in roles.items() if r[0] not in EXEMPT_BRANCH_ROLES}
+                # W2 PWR-L6-SCRIPT review fix: a forbidden start role passes only through a 'branch' carve-out row whose limits the
+                # row keeps (min_width_mm at least the carve-out's, max_mm at most the carve-out's)
+                for n in roles:
+                    co = carve_out(spec, 'branch', ref, n)
+                    if co and float(rule['min_width_mm']) + 1e-9 >= float(co.get('min_width_mm', 0))                             and float(rule['max_mm']) <= float(co.get('max_mm', math.inf)) + 1e-9:
+                        cos[n] = co
+                bad = {n: r for n, r in roles.items() if r[0] not in EXEMPT_BRANCH_ROLES and n not in cos}
                 if bad:
                     if policy_out is not None:
                         n, (role, why) = sorted(bad.items())[0]
@@ -1618,13 +1677,111 @@ def branch_exemptions(board, spec, netclasses, views, graph=None, policy_out=Non
                                                   f'exemption_policy: branch_exempt not allowed on {ref}.{n} ({role}: {why}); only '
                                                   f'{", ".join(EXEMPT_BRANCH_ROLES)}', at=(start[0]['x'], start[0]['y'])))
                     continue
-            items, longest = track_chain(board, bnet, start, float(rule['max_mm']), lambda it: it.width + 1e-9 >= float(rule['min_width_mm']))
+            if policy is None:
+                items, longest = track_chain(board, bnet, start, float(rule['max_mm']), lambda it: it.width + 1e-9 >= float(rule['min_width_mm']))
+            else:
+                # W2 PWR-L6-SCRIPT review fix (RV-PWRL6-PRE-P-02): the branch is its copper narrower than the class only (class-width
+                # copper is the trunk it taps, checked as such), and it may reach no pad other than its start pads unless that pad's
+                # role is one a branch may serve (or a carve-out names it in 'reaches'): a narrow branch never feeds a power pad
+                need = float(classes.get(cname, {}).get('outer_min_width_mm') or math.inf)
+                lo = float(rule['min_width_mm'])
+                items, longest = track_chain(board, bnet, start, float(rule['max_mm']), lambda it: lo - 1e-9 <= it.width < need - 1e-9)
+                reach_ok = {r for co in cos.values() for r in (co.get('reaches') or [])}
+                start_ids = {id(p) for p in start}
+                touched = {}
+                for it in items:
+                    s = it.shape
+                    for x, y in ((s.x1, s.y1), (s.x2, s.y2)):
+                        for q in board.pads:
+                            if q['net'] == bnet and id(q) not in start_ids and it.layer in q['layers'] and q['geo'].contains(x, y):
+                                touched[f"{q['ref']}.{q['number']}"] = q
+                wrong = []
+                for name, q in sorted(touched.items()):
+                    r, why = exemption_role(board, spec, graph, q['ref'], q['number'], lookup, classes)
+                    if r not in EXEMPT_BRANCH_ROLES and name not in reach_ok:
+                        wrong.append((name, r, why, q))
+                if wrong:
+                    if policy_out is not None:
+                        name, r, why, q = wrong[0]
+                        policy_out.append(finding('class_widths', f'{ref} branch on {gnet}',
+                                                  f'exemption_policy: the branch of {ref} reaches pad {name} ({r}: {why}); a branch must tap '
+                                                  f'class-width copper, not feed a pad of that role ({len(wrong)} such pad(s))',
+                                                  at=(q['x'], q['y'])))
+                    continue
             tracks.update(id(it) for it in items)
             pads.update(id(p) for p in start)
             notes.append({'check': 'class_widths', 'item': f'{ref} branch on {gnet}',
                           'reason': f"branch_exempt: {len(items)} track piece(s), path {r3(longest)} mm <= {rule['max_mm']} mm, width >= {rule['min_width_mm']} mm "
-                                    f"left out of the {cname} width and neck checks: {rule.get('reason', '')}"})
+                                    f"left out of the {cname} width and neck checks"
+                                    + (f" (carve-out {', '.join(sorted({co.get('id', '?') for co in cos.values()}))})" if cos else '')
+                                    + f": {rule.get('reason', '')}"})
     return tracks, pads, notes
+
+
+ENTRY_GRID = 0.025  # mm, sampling step of measure_pin_entry
+
+
+def measure_pin_entry(pad, polys, need, grid=ENTRY_GRID):
+    """Strip and landing of a pin-entry pour, measured on its copper (W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01): for every side of
+    the pad's box where the pour leaves the pad, the cross-section of the pour is sampled every `grid` mm outward along the pad's
+    centre line. The strip runs until the cross-section first reaches the class width; it must be at most half the class width long
+    and nowhere narrower than the pad's side it leaves; the landing after it must keep the class width for a class width. MODEL
+    (raster of the zone polygon). Returns {'sides', 'strip_mm', 'problem'}."""
+    def inside(x, y):
+        return any(poly.contains(x, y) for poly in polys)
+    x0, y0, x1, y1 = pad['x'] - pad['w'] / 2, pad['y'] - pad['h'] / 2, pad['x'] + pad['w'] / 2, pad['y'] + pad['h'] / 2
+    cx, cy = pad['x'], pad['y']
+    sides, strip, problem = [], 0.0, None
+    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+        edge = (x1 if dx > 0 else x0) if dx else (y1 if dy > 0 else y0)
+        cross = (y1 - y0) if dx else (x1 - x0)
+
+        def width_at(s):
+            px, py = (edge + dx * s, cy) if dx else (cx, edge + dy * s)
+            if not inside(px, py):
+                return 0.0
+            n = 0
+            for sign in (1, -1):
+                k = 1
+                while k * grid <= 2 * need + 1.0:
+                    qx, qy = (px, py + sign * k * grid) if dx else (px + sign * k * grid, py)
+                    if not inside(qx, qy):
+                        break
+                    k += 1
+                n += k - 1
+            return (n + 1) * grid
+        if width_at(grid / 2) <= 0.0:
+            continue
+        s, length, narrow = grid / 2, None, math.inf
+        while s <= need / 2 + 4 * grid + need:
+            w = width_at(s)
+            if w <= 0.0:
+                break
+            if w + grid + 1e-9 >= need:
+                length = s - grid / 2
+                break
+            narrow = min(narrow, w)
+            s += grid
+        side = {'side': {(1, 0): '+x', (-1, 0): '-x', (0, 1): '+y', (0, -1): '-y'}[(dx, dy)], 'pad_side_mm': r3(cross)}
+        if length is None:
+            side['strip_mm'] = None
+            problem = problem or f'the pour leaving {side["side"]} never reaches the class width {need} mm (a strip, not an entry)'
+        else:
+            side['strip_mm'] = r3(length)
+            strip = max(strip, length)
+            if length > need / 2 + grid + 1e-9:
+                problem = problem or f'strip {r3(length)} mm on {side["side"]} longer than half the class width ({need / 2} mm)'
+            elif narrow < math.inf and narrow + grid + 1e-9 < cross:
+                problem = problem or f'strip {r3(narrow)} mm wide on {side["side"]}, narrower than the pad side it leaves ({r3(cross)} mm)'
+            else:
+                k = length + grid
+                while k <= length + need - grid:
+                    if width_at(k) + grid + 1e-9 < need:
+                        problem = problem or f'landing on {side["side"]} narrower than the class width {need} mm within {r3(need)} mm'
+                        break
+                    k += grid
+        sides.append(side)
+    return {'sides': sides, 'strip_mm': r3(strip), 'problem': problem}
 
 
 def check_classes(board, spec, netclasses, views, graph=None):
@@ -1680,7 +1837,8 @@ def check_classes(board, spec, netclasses, views, graph=None):
                 if policy is None:
                     return True
                 r, rwhy = role(p)
-                ok, why = policy_neck_ok(r, p, it)
+                co = carve_out(spec, 'neck', p['ref'], p['number'])  # a recorded carve-out lifts the role ban, never the geometry
+                ok, why = policy_neck_ok('' if co else r, p, it)
                 if ok:
                     return True
                 why_not = why_not or f'{p["ref"]}.{p["number"]} ({r}: {rwhy}): {why}'
@@ -1710,7 +1868,7 @@ def check_classes(board, spec, netclasses, views, graph=None):
             out.append(finding('class_widths', f'{it.kind} {gnet}', f'{cname} copper narrower than {need} mm ({why}) on {it.layer}{note}',
                                at=(it.shape.x1, it.shape.y1), value=it.width, limit=need, layer=it.layer))
         refused.clear()
-    entry_ok = set()
+    entry_ok, entry_rows = set(), []
     if policy is not None:
         for zname, row in sorted((spec.get('pin_entry_pours') or {}).items()):
             ref, _, num = str(row.get('pad', '')).partition('.')
@@ -1723,16 +1881,33 @@ def check_classes(board, spec, netclasses, views, graph=None):
                 why = f'pin_entry_pours.{zname}: no zone of that name on the net of {row.get("pad")}'
             elif need is None:
                 why = f'pin_entry_pours.{zname}: {row.get("pad")} is not on a power-class net'
-            elif float(row.get('strip_mm', 99)) > need / 2 + 1e-6:
-                why = f'pin_entry_pours.{zname}: strip {row.get("strip_mm")} mm longer than half the {cname} width ({need / 2} mm)'
-            elif min(float(v) for v in row.get('landing_mm', [0, 0])) + 1e-6 < need:
-                why = f'pin_entry_pours.{zname}: landing {row.get("landing_mm")} mm narrower than the {cname} width {need} mm'
+            else:
+                # W2 PWR-L6-SCRIPT review fix (RV-PWRL6-PRE-P-01): the role policy holds for pin entries too (a forbidden role only
+                # through a 'pin_entry' carve-out row), and the strip and landing are measured on the zone, not taken as declared
+                r, rwhy = role(pad)
+                co = carve_out(spec, 'pin_entry', ref, num)
+                polys = [poly for lay in zone['layers'] for poly in (zone['fills'].get(lay) or [])] or \
+                        ([Poly(zone['outline'])] if len(zone['outline']) >= 3 else [])
+                meas = measure_pin_entry(pad, polys, need)
+                entry_rows.append({'zone': zname, 'pad': row.get('pad'), 'role': r, 'carve_out': co.get('id') if co else None,
+                                   'measured': meas, 'declared': {k: row.get(k) for k in ('strip_mm', 'landing_mm')}})
+                if r in EXEMPT_NECK_FORBIDDEN and not co:
+                    why = f'pin_entry_pours.{zname}: no pin entry on {row.get("pad")} ({r}: {rwhy}) without a recorded carve-out'
+                elif meas['problem']:
+                    why = f'pin_entry_pours.{zname} on {row.get("pad")}: {meas["problem"]} (measured on the zone, {cname} {need} mm)'
+                elif co and co.get('max_strip_mm') is not None and meas['strip_mm'] > float(co['max_strip_mm']) + ENTRY_GRID:
+                    why = f'pin_entry_pours.{zname}: strip {meas["strip_mm"]} mm beyond the carve-out {co.get("id")} limit {co["max_strip_mm"]} mm'
             if why:
                 out.append(finding('class_widths', f'pin entry {zname}', 'exemption_policy: ' + why))
             else:
                 entry_ok.add(zname)
         info.setdefault('exemption_policy', {})['pin_entry_pours'] = {'declared': len(spec.get('pin_entry_pours') or {}),
                                                                       'accepted': len(entry_ok)}
+        if entry_rows:
+            info['exemption_policy']['pin_entry_measured'] = entry_rows
+        cos = (policy or {}).get('carve_outs') or []
+        if cos:
+            info['exemption_policy']['carve_outs'] = [{k: c.get(k) for k in ('id', 'scope', 'pads', 'role')} for c in cos]
     by_net_layer = collections.defaultdict(list)
     for it in board.copper:
         if it.net and it.kind in ('zone', 'track', 'arc', 'pad', 'via') and id(it) not in branch_tracks:
