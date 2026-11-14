@@ -234,8 +234,62 @@
         "schematic_color": "rgba(0, 0, 0, 0.000)"
       },
       {
-        "name": "SCRIPTED_SIG",
+        "name": "SCRIPTED_PWR1A",
         "priority": 6,
+        "clearance": 0.15,
+        "track_width": 0.2,
+        "via_diameter": 0.7,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)"
+      },
+      {
+        "name": "SCRIPTED_PWR2A",
+        "priority": 7,
+        "clearance": 0.15,
+        "track_width": 0.4,
+        "via_diameter": 0.7,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)"
+      },
+      {
+        "name": "SCRIPTED_PWR3A",
+        "priority": 8,
+        "clearance": 0.15,
+        "track_width": 0.95,
+        "via_diameter": 0.7,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)"
+      },
+      {
+        "name": "SCRIPTED_SIG",
+        "priority": 9,
         "clearance": 0.15,
         "track_width": 0.15,
         "via_diameter": 0.7,
@@ -303,7 +357,7 @@
         "pattern": "E1_SERVICE_P"
       },
       {
-        "netclass": "BATT",
+        "netclass": "SCRIPTED_BATT",
         "pattern": "E1_SHUNT_P"
       },
       {
@@ -347,7 +401,7 @@
         "pattern": "E2_AUX_PTC"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "E2_AUX_SWITCHED"
       },
       {
@@ -371,11 +425,11 @@
         "pattern": "E2_J21_EF"
       },
       {
-        "netclass": "BATT",
+        "netclass": "SCRIPTED_BATT",
         "pattern": "E2_J21_FUSED"
       },
       {
-        "netclass": "PWR2A",
+        "netclass": "SCRIPTED_PWR2A",
         "pattern": "E2_LIME_EF"
       },
       {
@@ -383,7 +437,7 @@
         "pattern": "E2_LNA4_SHUNT"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "E2_LNA4_SW"
       },
       {
@@ -395,7 +449,7 @@
         "pattern": "E2_LNA_IN_DAMP"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "E2_LNB_EF"
       },
       {
@@ -407,7 +461,7 @@
         "pattern": "E2_LNB_IN_DAMP"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "E2_LNB_MON"
       },
       {
@@ -415,7 +469,7 @@
         "pattern": "E5_IMU5V"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "E5_VBUS_HFP_SW"
       },
       {
@@ -427,7 +481,7 @@
         "pattern": "J21"
       },
       {
-        "netclass": "PWR3A",
+        "netclass": "SCRIPTED_PWR3A",
         "pattern": "J21_DAMP"
       },
       {

@@ -55,17 +55,43 @@ PLAN_CLR = 0.20     # mm: project clearance 0.15 + make_board MARGIN 0.05
 PLAN_EDGE = 0.35    # mm: copper to the outline (EDGE + MARGIN)
 BRANCH_W = 0.25     # mm, low-current branch width
 BRANCH_MAX = 15.0   # mm
+RASTER_MARGIN = 0.1  # mm wider links on nets with pin-entry pours (the neck raster of pcb/check_boards.py, grid 0.05)
 STRIP_CLR = 0.16    # mm: a pin-entry strip continues its own pad (which keeps its land-pattern gap); the project clearance + 0.01
 
 
-def planning_rules():
-    """The toolkit binds its clearance defaults at definition time (M.CLR 0.15): the planner uses PLAN_CLR and PLAN_EDGE."""
+def planning_rules(clr=None):
+    """The toolkit binds its clearance defaults at definition time (M.CLR 0.15): the planner uses PLAN_CLR and PLAN_EDGE
+    (the second pass the project clearance RELAXED_CLR)."""
+    clr = PLAN_CLR if clr is None else clr
     M.EDGE_CLR = PLAN_EDGE - 0.02
-    M.Model.track_margin.__defaults__ = (PLAN_CLR, ())
-    M.Model.via_margin.__defaults__ = (0.65, 0.3, PLAN_CLR, ())
-    R.Grid.blocked_track.__defaults__ = (PLAN_CLR, None, (), None, ())
-    R.Grid.blocked_via.__defaults__ = (R.VIA_D, R.VIA_DRILL, PLAN_CLR, None, (), None, ())
-    R.simplify.__defaults__ = (PLAN_CLR + 0.005, ())
+    M.Model.track_margin.__defaults__ = (clr, ())
+    M.Model.via_margin.__defaults__ = (0.65, 0.3, clr, ())
+    R.Grid.blocked_track.__defaults__ = (clr, None, (), None, ())
+    R.Grid.blocked_via.__defaults__ = (R.VIA_D, R.VIA_DRILL, clr, None, (), None, ())
+    R.simplify.__defaults__ = (clr + 0.005, ())
+
+
+_COVERED = R.Grid.covered
+
+
+def covered_inside(self, items, layer):
+    """Grid.covered with every pad of the footprints eroded by one cell: a planned track ends at least a grid step inside the
+    pad copper, never on its edge (W2 PWR-L6-SCRIPT)."""
+    pads = [it for it in items if it.kind == 'pad' and it.src == 'pad']
+    cov = _COVERED(self, [it for it in items if not (it.kind == 'pad' and it.src == 'pad')], layer)
+    for it in pads:
+        cp = _COVERED(self, [it], layer)
+        er = cp.copy()
+        er[1:, :] &= cp[:-1, :]
+        er[:-1, :] &= cp[1:, :]
+        er[:, 1:] &= cp[:, :-1]
+        er[:, :-1] &= cp[:, 1:]
+        cov |= er if er.any() else cp
+    return cov
+
+
+R.Grid.covered = covered_inside
+RELAXED_CLR = 0.155  # mm: second pass for the links the first pass left open, at the project clearance 0.15 (+5 um)
 
 
 def load_make_board():
@@ -79,10 +105,26 @@ def q(s):
     return '"' + str(s).replace('\\', '\\\\').replace('"', '\\"') + '"'
 
 
-def board_text(spec, inp):
-    """Minimal KiCad board text of the pre-route spec: pads (copper boxes), scripted tracks, vias and inner pours, hole
-    keep-outs and the outline (KiCad mm)."""
+def pad_shapes(mb, inp):
+    """ref -> [(shape, roundrect ratio)] of the copper pads in the order make_board.Inputs keeps them (pad_copper filter)."""
+    out = {}
+    for t in inp.template:
+        text = mb.bg.footprint_file(t).read_text(encoding='utf-8')
+        nodes = [n for n in mb.bg.sexpr(text)[1:] if isinstance(n, list) and n and n[0] == 'pad']
+        keep = []
+        for node, (cu, _box) in zip(nodes, mb.pad_copper(text)):
+            if cu or node[2] == 'np_thru_hole':
+                rr = next((float(k[1]) for k in node if isinstance(k, list) and k and k[0] == 'roundrect_rratio'), 0.25)
+                keep.append((str(node[3]) if len(node) > 3 else 'rect', rr))
+        out[t['ref']] = keep
+    return out
+
+
+def board_text(spec, inp, shapes=None):
+    """Minimal KiCad board text of the pre-route spec: pads (their footprint shape over their copper box: circle, oval,
+    roundrect, else the box), scripted tracks, vias and inner pours, hole keep-outs and the outline (KiCad mm)."""
     pre = spec['pre_route']
+    shapes = shapes or {}
     nets = sorted({p['net'] for pa in inp.parts.values() for p in pa.pads if p['net']} | {t['net'] for t in pre['tracks']}
                   | {v['net'] for v in pre['vias']} | {z['net'] for z in pre['zones']})
     nid = {n: i + 1 for i, n in enumerate(nets)}
@@ -91,7 +133,16 @@ def board_text(spec, inp):
          '(2 "B.Cu" signal) (25 "Edge.Cuts" user))', ' (net 0 "")'] + [f' (net {nid[n]} {q(n)})' for n in nets]
     for ref, pa in sorted(inp.parts.items()):
         L.append(f' (footprint "plan6:{ref}" (layer "{pa.side}.Cu") (at 0 0) (property "Reference" {q(ref)})')
-        for p in pa.pads:
+        sh = shapes.get(ref) or []
+        for k, p in enumerate(pa.pads):
+            kind, rr = sh[k] if k < len(sh) else ('rect', 0.25)
+            form = {'circle': 'circle', 'oval': 'oval', 'roundrect': 'roundrect'}.get(kind, 'rect')
+            extra = f' (roundrect_rratio {rr})' if form == 'roundrect' else ''
+            if form == 'circle':
+                x0, y0, x1, y1 = p['box']
+                if abs((x1 - x0) - (y1 - y0)) > 1e-6:
+                    form = 'oval'
+            p = dict(p)
             x0, y0, x1, y1 = p['box']
             k0, k1 = K(x0, y1), K(x1, y0)
             cx, cy, w, h = (k0[0] + k1[0]) / 2, (k0[1] + k1[1]) / 2, k1[0] - k0[0], k1[1] - k0[1]
@@ -101,10 +152,11 @@ def board_text(spec, inp):
                 L.append(f'  (pad "" np_thru_hole circle (at {cx:.4f} {cy:.4f}) (size {d:.4f} {d:.4f}) (drill {d:.4f}) (layers "*.Cu"))')
             elif p['type'] == 'thru_hole':
                 d = p['drill'][0] if p['drill'] else min(w, h) * 0.6
-                L.append(f'  (pad {q(p["number"])} thru_hole rect (at {cx:.4f} {cy:.4f}) (size {w:.4f} {h:.4f}) (drill {d:.4f}) '
-                         f'(layers "*.Cu"){net})')
+                L.append(f'  (pad {q(p["number"])} thru_hole {form} (at {cx:.4f} {cy:.4f}) (size {w:.4f} {h:.4f}) (drill {d:.4f}) '
+                         f'(layers "*.Cu"){extra}{net})')
             else:
-                L.append(f'  (pad {q(p["number"])} smd rect (at {cx:.4f} {cy:.4f}) (size {w:.4f} {h:.4f}) (layers "{pa.side}.Cu"){net})')
+                L.append(f'  (pad {q(p["number"])} smd {form} (at {cx:.4f} {cy:.4f}) (size {w:.4f} {h:.4f}) (layers "{pa.side}.Cu")'
+                         f'{extra}{net})')
         L.append(' )')
     for t in pre['tracks']:
         for a, b in zip(t['path'], t['path'][1:]):
@@ -161,7 +213,7 @@ class Planner:
         self.pre = self.spec['pre_route']
         self.tmp = Path(tempfile.mkdtemp(prefix='plan6-'))
         path = self.tmp / 'PWR_A-plan6.kicad_pcb'
-        path.write_text(board_text(self.spec, self.inp), encoding='utf-8')
+        path.write_text(board_text(self.spec, self.inp, pad_shapes(mb, self.inp)), encoding='utf-8')
         self.m = M.Model(str(path))
         self.base_keepouts = list(self.m.keepouts)
         nc = self.inp.netclasses
@@ -251,11 +303,11 @@ class Planner:
                         continue
                     if not self.rect_clear(net, lay, land):
                         continue
-                    cand = (e, lay, [r for r in ((x0, y0, x1, y1), strip, land) if r])
+                    cand = (e, lay, [r for r in ((x0, y0, x1, y1), strip, land) if r], (round(e, 4), [round(w, 4), round(w, 4)]))
                     if best is None or cand[0] < best[0]:
                         best = cand
                     break
-        return (best[1], best[2]) if best else None
+        return (best[1], best[2], best[3]) if best else None
 
     def rect_clear(self, net, lay, rect, clr=PLAN_CLR):
         """Exact clearance of an axis-aligned rectangle (KiCad mm) against other-net copper, keep-outs and the outline."""
@@ -325,13 +377,26 @@ class Planner:
                 if ep is None:
                     rec['log'].append(f'no entry pour for {pad.ref}.{pad.pad}')
                     continue
-                lay, rects = ep
+                lay, rects, (strip, landing) = ep
                 zid = f'PE-{net}-{pad.ref}.{pad.pad}'
                 self.add_zone(net, lay, rects, zid)
-                rec['zones'].append({'id': zid, 'pad': f'{pad.ref}.{pad.pad}', 'layer': lay, 'rects': [[*B((r[0], r[3])), *B((r[2], r[1]))] for r in rects]})
-            # 2. class-width links (no rip-up: only scripted copper exists)
-            ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width=w, layers=OUTER, via_cost=VIA_COST[cname], neck=None,
-                                                    max_links=60)
+                rec['zones'].append({'id': zid, 'pad': f'{pad.ref}.{pad.pad}', 'layer': lay, 'strip_mm': strip, 'landing_mm': landing,
+                                     'rects': [[*B((r[0], r[3])), *B((r[2], r[1]))] for r in rects]})
+            # 2. class-width links (no rip-up: only scripted copper exists); a net with pin-entry pours is checked by the 0.05 mm neck
+            # raster of pcb/check_boards.py over its pours, which reads a diagonal track of exactly the class width up to a cell
+            # narrower: its links take RASTER_MARGIN more
+            w_link = round(w + RASTER_MARGIN, 4) if rec['zones'] else w
+            rec['link_width_mm'] = w_link
+            ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width=w_link, layers=OUTER, via_cost=VIA_COST[cname],
+                                                    neck=None, max_links=60)
+            if not ok:  # second pass: the project clearance and a 0.1 mm grid (wider search boxes for the long links)
+                planning_rules(RELAXED_CLR)
+                try:
+                    ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width=w_link, layers=OUTER, via_cost=VIA_COST[cname],
+                                                            neck=None, max_links=60, g=0.1)
+                finally:
+                    planning_rules()
+                rec['log'].append(f'second pass (clearance {RELAXED_CLR} mm, grid 0.1 mm): {"joined" if ok else "still open"}')
             # 3. low-current branches of the allowed roles
             if not ok:
                 CB = self.CB
@@ -412,6 +477,31 @@ def verify(pl):
     return bad
 
 
+def drop_failing(pl):
+    """Remove planned items (src new) below the project clearance, then prune each touched net (dangling copper goes too)."""
+    out = []
+    saved = list(pl.m.keepouts)
+    pl.m.keepouts[:] = [k for k in pl.base_keepouts if not k['name'].startswith('BOND-')]
+    try:
+        for it in pl.m.items:
+            if not (it.alive and it.src == 'new'):
+                continue
+            if it.kind == 'track':
+                mg, _w = pl.m.track_margin(it.net, it.layers[0], it.width, it.a, it.b, clr=0.15, ignore={it.id})
+            elif it.kind == 'via':
+                mg, _w = pl.m.via_margin(it.net, it.at, it.size, it.drill, clr=0.15, ignore={it.id})
+            else:
+                continue
+            if mg < -0.0005:
+                pl.m.remove(it)
+                out.append((it.kind, it.net, B(it.a or it.at)))
+    finally:
+        pl.m.keepouts[:] = saved
+    for net in sorted({o[1] for o in out}):
+        F.prune(pl.m, net, srcs=('new',), log=lambda *a: None)
+    return out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--nets', help='comma-separated nets (default: every power-class net with pads on the board)')
@@ -449,6 +539,17 @@ def main(argv=None):
         for line in rec['log']:
             print('   ', line)
     bad = verify(pl)
+    if bad:  # drop planned copper that fails the exact final check at 0.15 mm (its joins stay open) and re-harvest
+        dropped = drop_failing(pl)
+        print('dropped planned items after the final check:', dropped)
+        for net in sorted({d[1] for d in dropped}):
+            rec = plan[net]
+            rec['tracks'], rec['vias'] = pl.harvest(net)
+            isl = [g for g in pl.m.islands(net) if any(i.kind == 'pad' for i in g) or len(g) > 1]
+            rec['open'] = max(0, len(isl) - 1)
+            rec['open_islands'] = [sorted(f'{i.ref}.{i.pad}' for i in g if i.kind == 'pad' and i.src == 'pad') for g in isl] if len(isl) > 1 else []
+            rec['kind'] = 'power' if rec['open'] == 0 else 'link'
+        bad = verify(pl)
     result = {'nets': len(plan), 'power': sorted(n for n, r in plan.items() if r['kind'] == 'power'),
               'link': {n: r['open'] for n, r in sorted(plan.items()) if r['kind'] == 'link'}, 'violations': len(bad)}
     print('result:', json.dumps(result))

@@ -1337,6 +1337,7 @@ def planned_copper(inp, pre):
             raise SystemExit(f'make_board: {SCRIPT6.name} was planned on another {key} ({str(doc["guard"].get(key))[:12]}... != '
                              f'{value[:12]}...): rerun build/kicad/boards/PWR_A/freeze/plan6.py')
     tracks, vias, zones, branches, whole = [], [], [], {}, set()
+    entries = {}
     for net, d in sorted(doc['nets'].items()):
         why = (f'W2 PWR-L6-SCRIPT planned {d["class"]} copper of {net} ({SCRIPT6.name}, freeze/plan6.py: grid A* at the 2 oz class '
                f'width {d["width_mm"]} mm on F.Cu/B.Cu, clearance 0.20 mm; kind {d["kind"]})')
@@ -1350,6 +1351,7 @@ def planned_copper(inp, pre):
             outline = rect_union_outline([tuple(r) for r in z['rects']])
             if outline is None:
                 raise SystemExit(f'make_board: the pin-entry pour {z["id"]} of {SCRIPT6.name} is not one rectilinear piece')
+            entries[z['id']] = {'pad': z['pad'], 'strip_mm': z['strip_mm'], 'landing_mm': z['landing_mm']}
             zones.append({'id': z['id'], 'net': net, 'layer': z['layer'], 'outline': outline, 'priority': 3, 'pad_connection': 'solid',
                           'why': f'W2 PWR-L6-SCRIPT pin-entry pour of {z["pad"]} ({SCRIPT6.name}): the pad, its cross-section at most '
                                  'half the class width beyond it, then a class-width landing for the planned track'})
@@ -1361,6 +1363,7 @@ def planned_copper(inp, pre):
                 row['links'].append(f'{net} {b["width_mm"]} mm x {b["length_mm"]} mm')
         if d['kind'] == 'power':
             whole.add(net)
+    doc['pin_entry_pours'] = entries
     return tracks, vias, zones, branches, whole, doc
 
 
@@ -1544,6 +1547,8 @@ def build(frozen=True, planned=True):
     if exempt:
         out['branch_exempt'] = dict(sorted(exempt.items(), key=lambda kv: bg.sort_ref(kv[0])))
     out['exemption_policy'] = EXEMPTION_POLICY
+    if plan_doc and plan_doc.get('pin_entry_pours'):
+        out['pin_entry_pours'] = dict(sorted(plan_doc['pin_entry_pours'].items()))
     zones = inp.contract['thermal_bond_mm']
     conv = {}
     for zi in (3, 4):

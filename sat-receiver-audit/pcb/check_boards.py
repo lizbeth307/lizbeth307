@@ -56,6 +56,10 @@ Checker keys (optional, in either form; contract frame mm, y up unless contract_
   for test points, resistors of 100 ohm or more and sense or logic pins; a neck (neck_exempt) is kept only at a pad that is
   not a TVS, connector or harness land, shunt, fuse, power-switch node, eFuse IN/OUT or converter capacitor, at least as wide
   as that pad's narrow side and no longer than its long side (no pin stems). Anything else is a class_widths finding.
+  pin_entry_pours {zone name: {pad 'REF.N', strip_mm, landing_mm [w, h]}} (with exemption_policy): a pour that enters a pad
+  narrower than its class is the pad's own entry when its strip (the pad's cross-section beyond the pad) is at most half the
+  class width long and its landing at least the class width both ways; the pour then counts as that pad in the neck raster.
+  A declaration that breaks either limit, names no zone of the pad's net or a pad that is not there is a finding.
 """
 from __future__ import annotations
 
@@ -692,9 +696,10 @@ class Frame:
 NATIVE_KEYS = ('board_id', 'board_file', 'contract_file', 'contract_board', 'refs', 'domains', 'board_only_refs', 'board_only_pins',
                'instances', 'hole_ref_prefixes', 'contract_transform', 'bond_hole', 'gnd_chassis_ties', 'split_nets', 'neck_exempt',
                'branch_exempt', 'rf50_exempt', 'rf50_taper', 'b2b', 'tht_pockets', 'tht_pocket_margin_mm', 'height_zones', 'heights',
-               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'planned_cutouts', 'copper_option', 'exemption_policy')
+               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'planned_cutouts', 'copper_option', 'exemption_policy',
+               'pin_entry_pours')
 DICT_KEYS = ('board_only_refs', 'board_only_pins', 'contract_transform', 'bond_hole', 'split_nets', 'neck_exempt', 'branch_exempt',
-             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks', 'planned_cutouts', 'exemption_policy')
+             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks', 'planned_cutouts', 'exemption_policy', 'pin_entry_pours')
 LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides', 'coupons')
 
 
@@ -1705,6 +1710,29 @@ def check_classes(board, spec, netclasses, views, graph=None):
             out.append(finding('class_widths', f'{it.kind} {gnet}', f'{cname} copper narrower than {need} mm ({why}) on {it.layer}{note}',
                                at=(it.shape.x1, it.shape.y1), value=it.width, limit=need, layer=it.layer))
         refused.clear()
+    entry_ok = set()
+    if policy is not None:
+        for zname, row in sorted((spec.get('pin_entry_pours') or {}).items()):
+            ref, _, num = str(row.get('pad', '')).partition('.')
+            pad = next((q for q in board.pads if q['ref'] == ref and q['number'] == num), None)
+            zone = next((z for z in board.zones if z.get('name') == zname and not z['keepout']), None)
+            gnet, cname = lookup(pad['net']) if pad and pad['net'] else (None, None)
+            need = (classes.get(cname) or {}).get('outer_min_width_mm')
+            why = None
+            if pad is None or zone is None or zone['net'] != pad['net']:
+                why = f'pin_entry_pours.{zname}: no zone of that name on the net of {row.get("pad")}'
+            elif need is None:
+                why = f'pin_entry_pours.{zname}: {row.get("pad")} is not on a power-class net'
+            elif float(row.get('strip_mm', 99)) > need / 2 + 1e-6:
+                why = f'pin_entry_pours.{zname}: strip {row.get("strip_mm")} mm longer than half the {cname} width ({need / 2} mm)'
+            elif min(float(v) for v in row.get('landing_mm', [0, 0])) + 1e-6 < need:
+                why = f'pin_entry_pours.{zname}: landing {row.get("landing_mm")} mm narrower than the {cname} width {need} mm'
+            if why:
+                out.append(finding('class_widths', f'pin entry {zname}', 'exemption_policy: ' + why))
+            else:
+                entry_ok.add(zname)
+        info.setdefault('exemption_policy', {})['pin_entry_pours'] = {'declared': len(spec.get('pin_entry_pours') or {}),
+                                                                      'accepted': len(entry_ok)}
     by_net_layer = collections.defaultdict(list)
     for it in board.copper:
         if it.net and it.kind in ('zone', 'track', 'arc', 'pad', 'via') and id(it) not in branch_tracks:
@@ -1730,6 +1758,8 @@ def check_classes(board, spec, netclasses, views, graph=None):
         copper = [it for it in items if it.kind in ('zone', 'track', 'arc')]
         terms = [it.shape for it in items if it.kind in ('pad', 'via') and not (it.kind == 'pad' and id(it.extra) in branch_pads)
                  and not (it.shape.bbox[2] < bx0 or it.shape.bbox[0] > bx1 or it.shape.bbox[3] < by0 or it.shape.bbox[1] > by1)]
+        # W2 PWR-L6-SCRIPT exemption policy: a declared pin-entry pour within its limits is the entry of its pad (pin_entry_pours)
+        terms += [z.shape for z in zones if (z.extra or {}).get('name') in entry_ok]
         # raster step: NECK_GRID, coarser for large pours so a region stays below NECK_MAX_CELLS (pure Python)
         grid = raster_grid((bx0, by0, bx1, by1))
         necks = raster_neck(copper, terms, (bx0, by0, bx1, by1), grid=grid, entry=need / 2)

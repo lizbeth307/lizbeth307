@@ -295,12 +295,14 @@ def _gap(A, B):
     return math.hypot(max(ax[0] - bx[2], bx[0] - ax[2], 0), max(ax[1] - bx[3], bx[1] - ax[3], 0))
 
 
-def neck_link(m, net, A, B, layers, class_w, neck_max, neck_min=0.25):
+def neck_link(m, net, A, B, layers, class_w, neck_max, neck_min=0.25, allow=None):
     """A short pin-entry joint narrower than the class (W2 PWRJ-LAYERS6): from a pad of one island to a pad or a track axis
     point of the other island at most neck_max away on a common outer layer, a straight or one-elbow track from the pad
     centre, as wide as the class, the pad or the target allow (never below neck_min). The board spec lists the first pad's ref in neck_exempt with the
     link length as escape_mm (pcb/check_boards.py: both ends of the piece within escape_mm + half the pad of that pad), so
-    the class-width check does not apply to this pin-entry piece. Returns (res, neck record) or (None, None)."""
+    the class-width check does not apply to this pin-entry piece. W2 PWR-L6-SCRIPT: allow(pad item, width, length) -> bool limits
+    the necks to the exemption policy of the board (pcb/check_boards.py: no neck on power-path parts, at least the pad's narrow
+    side wide, no longer than its long side). Returns (res, neck record) or (None, None)."""
     def short(p):
         b = p.shape.bbox
         return min(b[2] - b[0], b[3] - b[1])
@@ -336,6 +338,8 @@ def neck_link(m, net, A, B, layers, class_w, neck_max, neck_min=0.25):
                 continue
             if all(m.track_margin(net, lay, w, a, b)[0] >= 0.0 for a, b in zip(pts, pts[1:])):
                 length = sum(math.hypot(q[0] - p[0], q[1] - p[1]) for p, q in zip(pts, pts[1:]))
+                if allow is not None and not all(allow(pa, w, math.hypot(b[0] - a[0], b[1] - a[1])) for a, b in zip(pts, pts[1:])):
+                    continue
                 far = max(math.hypot(p[0] - pa.at[0], p[1] - pa.at[1]) for p in pts)
                 return ({'runs': [(lay, pts)], 'vias': [], 'width': w},
                         {'net': net, 'ref': pa.ref, 'pad': pa.pad, 'to': desc, 'layer': lay, 'width_mm': round(w, 4),
@@ -370,7 +374,8 @@ def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu',
                                        verbose=False, layers=layers, max_nodes=3_000_000)
                     how = 'free-wide'
                 if res is None and neck:
-                    res, rec = neck_link(self.m, net, A, B, [l for l in layers if l in ('F.Cu', 'B.Cu')], neck[0], neck[1])
+                    res, rec = neck_link(self.m, net, A, B, [l for l in layers if l in ('F.Cu', 'B.Cu')], neck[0], neck[1],
+                                         allow=neck[2] if len(neck) > 2 else None)
                     how = 'neck'
                 if res is None and allow_rip:
                     res = R.route_link(self.m, net, A, B, island_box([A, B], 8.0), width=width, g=g, via_cost=via_cost,

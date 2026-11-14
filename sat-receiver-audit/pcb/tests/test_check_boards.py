@@ -851,6 +851,32 @@ class ExemptionPolicyTests(unittest.TestCase):
                     neck_exempt={ref: {'escape_mm': length + 0.2, 'reason': 'test'}})
         return review(t, spec, graph=self.graph(ref, value, 'FB'))
 
+    def entry(self, declare=None):
+        t = tree('power_neck.kicad_pcb')  # U8: a 0.3 mm pad on E1_N (BATT 3.2), an entry pour (0.75 mm strip, 3.2 mm landing), a track on
+        smd_footprint(t, 'U8', (20, 5), 'E1_N', size=0.3)
+        outline = [(19.85, 4.85), (20.15, 4.85), (20.15, 5.9), (21.6, 5.9), (21.6, 9.1), (18.4, 9.1), (18.4, 5.9), (19.85, 5.9)]
+        t.append(['zone', ['net', cb.Q('E1_N')], ['layer', cb.Q('F.Cu')], ['name', cb.Q('PE-U8')], ['polygon', pts_node(outline)],
+                  ['filled_polygon', ['layer', cb.Q('F.Cu')], pts_node(outline)]])
+        seg(t, (20, 7.5), (20, 17), 3.2, 'F.Cu', 'E1_N')
+        spec = dict(PWR_SPEC, board_only_refs={'U8': 'policy fixture'}, exemption_policy=self.POLICY)
+        if declare is not None:
+            spec['pin_entry_pours'] = declare
+        return review(t, spec, graph=self.graph('U8', 'TPS259470', 'IN'))
+
+    def test_pin_entry_pour(self):
+        doc = self.entry()
+        self.assertEqual(checks_failed(doc), ['class_widths'])  # the raster sees the strip end as a neck
+        self.assertTrue(any(f['item'] == 'pour E1_N' for f in doc['findings']), doc['findings'])
+        ok = {'PE-U8': {'pad': 'U8.1', 'strip_mm': 0.75, 'landing_mm': [3.2, 3.2]}}
+        doc = self.entry(ok)
+        self.assertEqual(doc['findings'], [])
+        self.assertEqual(doc['checks']['class_widths']['exemption_policy']['pin_entry_pours'], {'declared': 1, 'accepted': 1})
+        for bad in ({'PE-U8': {'pad': 'U8.1', 'strip_mm': 1.7, 'landing_mm': [3.2, 3.2]}},
+                    {'PE-U8': {'pad': 'U8.1', 'strip_mm': 0.75, 'landing_mm': [3.2, 2.0]}},
+                    {'PE-XX': {'pad': 'U8.1', 'strip_mm': 0.75, 'landing_mm': [3.2, 3.2]}}):
+            doc = self.entry(bad)
+            self.assertTrue(any(f['item'].startswith('pin entry') for f in doc['findings']), (bad, doc['findings']))
+
     def test_neck_rule(self):
         self.assertEqual(self.neck('U7', 'LM61460', 0.3, 0.4)['findings'], [])            # at pad width, within the pad length
         for ref, value, length, width, why in (('U7', 'LM61460', 1.0, 0.4, 'pin stem'), ('U7', 'LM61460', 0.3, 0.3, 'narrower than the pad'),

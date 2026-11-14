@@ -19,6 +19,11 @@ With --no-guard it writes no guard (a trial; make_board refuses such a file).
 W2 PWR-TOOLS: the via-centre stubs that pcb/board_gen.py added in the run (route-log.json via_centre_stubs) are fixed copper
 (fix_stubs), router copper that KiCad's DRC of the run flags as an error is removed and its net joined again (drc_drops), and
 completion copper that fails the final exact check is dropped (port of W2 PWRJ F2ENV feb76b8f).
+W2 PWR-L6-SCRIPT: the scripted nets of the board (classes SCRIPTED_* of PWR_A.kicad_pro: the converter stages and the 'power'
+nets of script-planned-6l.json) are never routed here, like GND; the necks of neck_link and the branches of branch_pass follow
+the exemption policy of the board (pcb/check_boards.py exemption_role); router copper of a net without a pad in a converter zone
+3'/4' (board-spec.json converter_zones) on F.Cu or In1.Cu over that zone is removed and the net joined again, and the A* keeps
+such nets off F.Cu there.
 CI/model input only: the CI route run with '[pcb-route PWR_A]' is the check (KiCad 10.0.7 DRC); bench gates stay OPEN.
 """
 import argparse
@@ -59,6 +64,44 @@ ROUTING = tuple(M.RLAYERS)
 OUTER = ('F.Cu', 'B.Cu')
 K = lambda x, y: (round(x + 100.0, 4), round(210.0 - y, 4))  # board mm -> KiCad mm (frame of pcb/board_gen.py)
 B = lambda p: [round(p[0] - 100.0, 4), round(210.0 - p[1], 4)]
+
+
+def policy(m):
+    """(branch test, neck test) of the exemption policy on the routed board (W2 PWR-L6-SCRIPT; pcb/check_boards.py roles)."""
+    CB = M.cb
+    graph = BG.load_graph()
+    nc = json.loads((HERE.parents[4] / 'pcb/generated/netclasses.json').read_text(encoding='utf-8'))
+    lookup = lambda n: (n, nc['nets'].get(n, {}).get('class', 'SIG'))  # noqa: E731
+    spec = {'b2b': [{'ref': 'J208'}]}
+    cache = {}
+
+    def role(ref, num):
+        if (ref, num) not in cache:
+            cache[(ref, num)] = CB.exemption_role(m.b, spec, graph, ref, num, lookup, nc['classes'])[0]
+        return cache[(ref, num)]
+
+    def branch_ok(ref, net):
+        pads = [p for p in m.b.pads if p['ref'] == ref and p['net'] == net]
+        return bool(pads) and all(role(ref, p['number']) in CB.EXEMPT_BRANCH_ROLES for p in pads)
+
+    def neck_ok(pad, width, length):
+        rec = next((p for p in m.b.pads if p['ref'] == pad.ref and p['number'] == pad.pad), None)
+        if rec is None or role(pad.ref, pad.pad) in CB.EXEMPT_NECK_FORBIDDEN:
+            return False
+        return width + 1e-9 >= min(rec['w'], rec['h']) and length <= max(rec['w'], rec['h']) + 1e-9
+    return branch_ok, neck_ok
+
+
+def converter_zone_rule(m):
+    """[(poly KiCad mm, own nets)] of board-spec.json converter_zones (W2 PWR-L6-SCRIPT), F.Cu and In1.Cu."""
+    path = HERE.parent / 'board-spec.json'
+    cz = (json.loads(path.read_text(encoding='utf-8')).get('converter_zones') or {}) if path.is_file() else {}
+    out = []
+    for _zi, z in sorted((cz.get('zones') or {}).items()):
+        x0, y0, x1, y1 = z['rect']
+        a, b = K(x0, y1), K(x1, y0)
+        out.append((M.cb.Poly([(a[0], a[1]), (b[0], a[1]), (b[0], b[1]), (a[0], b[1])]), set(z['own_nets'])))
+    return out
 
 
 def classes():
@@ -326,6 +369,13 @@ def main(argv=None):
     cls, default_w = classes()
     width = lambda n: cls.get(n, ('Default', default_w))[1]
     layers = lambda n: OUTER if cls.get(n, ('Default',))[0] in POWER else ROUTING
+    NEVER.update(n for n, (c, _w) in cls.items() if c.startswith('SCRIPTED_'))  # W2 PWR-L6-SCRIPT: scripted nets, never routed
+    branch_ok, neck_ok = policy(m)
+    czones = converter_zone_rule(m)
+    base_keepouts = list(m.keepouts)
+
+    def zone_keepouts(net):
+        return [{'layers': ['F.Cu', 'In1.Cu'], 'poly': poly, 'name': 'converter zone'} for poly, own in czones if net not in own]
     drc = json.loads((art / 'board/drc.json').read_text(encoding='utf-8'))
     drops = drc_drops(m, drc)
     print('router copper named in a KiCad DRC error:', drops)
@@ -353,6 +403,15 @@ def main(argv=None):
             m.remove(it)
             viol.add(it.net)
     viol |= {d['net'] for d in drops if d['removed']}
+    for poly, own in czones:  # W2 PWR-L6-SCRIPT zone rule: no foreign router copper on F.Cu / In1.Cu over a converter zone
+        for it in m.items:
+            if not (it.alive and it.src == 'router') or it.net in own or it.net in NEVER:
+                continue
+            on = [l for l in it.layers if l in ('F.Cu', 'In1.Cu')]
+            if on and (M.shape_seg_dist(poly, it.a, it.b) <= it.width / 2 if it.kind == 'track' else poly.dist(*it.at) <= it.size / 2):
+                print(f'  router {it.kind} of {it.net} on {on} over a converter zone: removed')
+                m.remove(it)
+                viol.add(it.net)
     for n in sorted(viol):
         F.prune(m, n)
     # power-class nets first: they have only the outer layers (--order class); or the shortest nets first (--order short:
@@ -375,16 +434,18 @@ def main(argv=None):
             raise SystemExit(f'freeze6: {net} is a plane or scripted net; it is never routed here')
         # W2 PWRJ-LAYERS6: pair by pair (a walled-in pair is skipped, the rest of the net is joined); a power pair without
         # a class-width path may take a short pad-to-pad neck (fin.neck_link, NECK_MAX mm), listed in the spec neck_exempt
+        m.keepouts[:] = base_keepouts + zone_keepouts(net)
         ok, ripped, nk = fz.connect_all(net, width=width(net), layers=layers(net), allow_rip=not args.no_rip,
-                                        neck=(width(net), NECK_MAX) if layers(net) == OUTER else None)
+                                        neck=(width(net), NECK_MAX, neck_ok) if layers(net) == OUTER else None)
         necks += nk
-        if not ok and layers(net) == OUTER:  # low-current branches of a power net (test points, capacitors, dividers)
+        if not ok and layers(net) == OUTER:  # low-current branches of a power net (exemption policy: TP, R >= 100 ohm, sense pins)
             bk = branch_kind(GRAPH)
-            okb, br = fz.branch_pass(net, lambda r: bk(r) is not None,
+            okb, br = fz.branch_pass(net, lambda r: bk(r) is not None and branch_ok(r, net),
                                      lambda refs: max(BRANCH_W[bk(r)] for r in refs),
                                      lambda refs: ROUTING if all(bk(r) == 'TP' for r in refs) else OUTER, BRANCH_MAX)
             branches += br
             ok = ok or okb
+        m.keepouts[:] = base_keepouts
         print(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if not ok:
             failed.append(net)
