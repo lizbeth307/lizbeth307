@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "01043894d4f23999353f820084ef0eef9c6ac293d8f578f97450eea1c127df79"
+      "sha256": "0dad8cddf3b6bc02bb98f76fc1620af6b43dfd39dfd4c133dedfc46a3a016597"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "e8f58dc170c6ec5c719a4fe31516cbcbe5a2ca3950f562f2a33ff2c401fbcd5d",
@@ -29,8 +29,8 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1598,
-    "vias": 255,
+    "tracks": 1679,
+    "vias": 269,
     "zones": 352,
     "holes": 9,
     "copper_layers": [
@@ -112,7 +112,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.618
+          "closest_copper_mm": 0.485
         },
         {
           "id": "C262",
@@ -168,7 +168,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": null
+          "closest_copper_mm": 0.33
         },
         {
           "id": "J109",
@@ -315,7 +315,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.636
+          "closest_copper_mm": 0.477
         },
         {
           "id": "TP202",
@@ -343,7 +343,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.642
+          "closest_copper_mm": 0.444
         },
         {
           "id": "TP211",
@@ -403,7 +403,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1578,
+      "tracks_checked": 1659,
       "pour_necks": [],
       "split_nets": {}
     },
@@ -519,7 +519,7 @@
     {
       "check": "class_widths",
       "item": "AUX12 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 6 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -539,7 +539,7 @@
     {
       "check": "class_widths",
       "item": "BIAS_CH4 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -584,7 +584,7 @@
     {
       "check": "class_widths",
       "item": "VBUS_RTLB vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
