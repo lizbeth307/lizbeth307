@@ -147,6 +147,75 @@ def renet(m):
     return dict(sorted(changed.items())), nets, gone
 
 
+TINY = 0.15  # mm: a split remainder shorter than this is merged back (W2 PWR-L6-PLACE fourth pass, combined)
+
+
+def _at_point(m, net, lay, q, skip):
+    n = 0
+    for ot in m.near(lay, (q[0] - 0.01, q[1] - 0.01, q[0] + 0.01, q[1] + 0.01)):
+        if ot.id in skip or ot.net != net:
+            continue
+        if ot.kind == 'track' and min(math.dist(q, ot.a), math.dist(q, ot.b)) < 1e-6:
+            n += 1
+        elif ot.kind in ('via', 'pad') and ot.shape.dist(*q) <= 1e-6:
+            n += 1
+    return n
+
+
+def merge_remainders(m, srcs=('router', 'new', 'escape')):
+    """W2 PWR-L6-PLACE fourth pass (probe A push 2, route run 43537055803: KiCad 10.0.7 track_dangling on two split
+    remainders, FLT_SB_LNA In2.Cu 0.0904 mm and LNB13V2 F.Cu 0.0077 mm): a router / completion track shorter than TINY that
+    shares an end, collinear, with one other such track of the same net, layer and width, and no other item at that end, is
+    merged back into it (same copper). Returns [(net, layer, length)]."""
+    done, changed = [], True
+    while changed:
+        changed = False
+        for t in list(m.items):
+            if not (t.alive and t.kind == 'track' and t.src in srcs and math.dist(t.a, t.b) < TINY):
+                continue
+            lay = t.layers[0]
+            for q, far in ((t.a, t.b), (t.b, t.a)):
+                partner = None
+                for u in m.near(lay, (q[0] - 0.01, q[1] - 0.01, q[0] + 0.01, q[1] + 0.01)):
+                    if u.id == t.id or u.kind != 'track' or u.net != t.net or u.src not in srcs or abs(u.width - t.width) > 1e-9:
+                        continue
+                    ufar = u.b if math.dist(u.a, q) < 1e-6 else u.a if math.dist(u.b, q) < 1e-6 else None
+                    if ufar is None:
+                        continue
+                    v1, v2 = (q[0] - ufar[0], q[1] - ufar[1]), (far[0] - q[0], far[1] - q[1])
+                    cross = v1[0] * v2[1] - v1[1] * v2[0]
+                    if abs(cross) / (math.hypot(*v1) * math.hypot(*v2) + 1e-12) < 1e-3 and v1[0] * v2[0] + v1[1] * v2[1] > 0:
+                        partner = (u, ufar)
+                        break
+                if partner is None or _at_point(m, t.net, lay, q, {t.id, partner[0].id}) > 0:
+                    continue
+                u, ufar = partner
+                m.remove(t)
+                m.remove(u)
+                m.add_track(t.net, lay, t.width, ufar, far, src=u.src)
+                done.append((t.net, lay, round(math.dist(t.a, t.b), 4)))
+                changed = True
+                break
+    return done
+
+
+def short_pieces(m):
+    """Tracks shorter than their width with an end that meets no other item of the net exactly (a track end, a via or a
+    pad): the pattern KiCad 10.0.7 flags as track_dangling (route run 43537055803); the model's end test accepts such an
+    end inside another track's copper, so it is listed here."""
+    out = []
+    for t in m.items:
+        if not (t.alive and t.kind == 'track') or math.dist(t.a, t.b) >= t.width:
+            continue
+        for e in (t.a, t.b):
+            if not _at_point(m, t.net, t.layers[0], e, {t.id}) and not any(
+                    o.kind in ('via', 'pad') and o.shape.dist(*e) <= 1e-4 for o in
+                    m.near(t.layers[0], (e[0] - 0.01, e[1] - 0.01, e[0] + 0.01, e[1] + 0.01)) if o.net == t.net):
+                out.append(('short piece', t.net, B(e), t.layers[0], round(math.dist(t.a, t.b), 4), t.src))
+                break
+    return out
+
+
 def verify(m):
     """Open connections, dangling copper and clearance of every track and via (exact checks), as CTRL freeze_route.py."""
     nets = sorted({i.net for i in m.items if i.alive and i.net})
@@ -180,6 +249,7 @@ def verify(m):
             continue
         if mg < -0.0005:
             bad.append((round(mg, 4), it.src, it.kind, it.net, why))
+    bad += short_pieces(m)
     return open_, bad
 
 
@@ -418,6 +488,8 @@ def main(argv=None):
         touched |= set(ripped)
     for n in sorted({i.net for i in m.items if i.alive and i.net and i.net not in M.PLANES}):
         F.prune(m, n, srcs=('router', 'new', 'escape'))  # an escape stub whose link failed goes too
+    merged = merge_remainders(m)
+    print('split remainders merged back:', len(merged))
     open_, bad = verify(m)
     open_ = {n: k for n, k in open_.items() if n in touched}
     bad = [b for b in bad if not (b[0] == 'dangling' and (b[2] in NEVER or b[2] in model_only))]
@@ -454,7 +526,8 @@ def main(argv=None):
                        'plane layer) by '
                        'build/kicad/boards/PWR_B/freeze/freeze6.py'),
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed))},
-        'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops, **({'renet': renetted, 'first': head} if args.renet or head else {})},
+        'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops, 'merged_split_remainders': len(merged),
+                  **({'renet': renetted, 'first': head} if args.renet or head else {})},
         'necks': sorted(necks, key=lambda r: (r['ref'], r['pad'], r['to'])),
         'guard': None if args.no_guard else guard(),
         'segments': dict(nseg),
