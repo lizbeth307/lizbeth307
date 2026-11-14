@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "967375c90f2d1f959bd9fa2e98de8df990790e4c942387a4938799d3a3cabea6"
+      "sha256": "1577a5085c61057c421750bcea08c3e5be5fe62a7a68cf2f53e566c978000ae4"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "b483f0fb2abe8abd025661b086b0b19d8b8d8f979ac22f4224295b0cb8ba5110",
@@ -29,8 +29,8 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1692,
-    "vias": 286,
+    "tracks": 1795,
+    "vias": 315,
     "zones": 352,
     "holes": 9,
     "copper_layers": [
@@ -77,7 +77,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": null
+          "closest_copper_mm": 0.499
         },
         {
           "id": "C206",
@@ -105,28 +105,28 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.652
+          "closest_copper_mm": 0.43
         },
         {
           "id": "C254",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.381
+          "closest_copper_mm": 0.354
         },
         {
           "id": "C262",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.39
+          "closest_copper_mm": 0.376
         },
         {
           "id": "C273",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 2.063
+          "closest_copper_mm": 3.542
         },
         {
           "id": "F102",
@@ -168,7 +168,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": null
+          "closest_copper_mm": 1.666
         },
         {
           "id": "J109",
@@ -294,7 +294,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 1.602
+          "closest_copper_mm": 2.372
         },
         {
           "id": "TP107",
@@ -315,14 +315,14 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.542
+          "closest_copper_mm": 0.496
         },
         {
           "id": "TP202",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.418
+          "closest_copper_mm": 0.451
         },
         {
           "id": "TP203",
@@ -336,14 +336,14 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 6.056
+          "closest_copper_mm": 6.556
         },
         {
           "id": "TP205",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.642
+          "closest_copper_mm": 0.33
         },
         {
           "id": "TP211",
@@ -371,7 +371,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.618
+          "closest_copper_mm": 0.451
         },
         {
           "id": "TP215",
@@ -385,7 +385,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.662
+          "closest_copper_mm": 0.483
         },
         {
           "id": "TP2903",
@@ -403,7 +403,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1672,
+      "tracks_checked": 1775,
       "pour_necks": [],
       "split_nets": {}
     },
@@ -529,12 +529,12 @@
     {
       "check": "class_widths",
       "item": "BIAS_CH2_PORT vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 3 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 6 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BIAS_CH3_PORT vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 6 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -549,7 +549,7 @@
     {
       "check": "class_widths",
       "item": "BONI13V8_PORT vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 1 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -574,7 +574,7 @@
     {
       "check": "class_widths",
       "item": "E2_SB_SW vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 1 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 3 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
