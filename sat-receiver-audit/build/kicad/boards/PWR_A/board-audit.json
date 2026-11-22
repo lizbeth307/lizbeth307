@@ -7,7 +7,7 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "0c24df672cab8d0814abefc9ca98714cdc620d74aeb0d8140a82e21901f77b46",
+    "spec_sha256": "1ad751733f66059bbc1c445d9101a126c5566d4ae7b669889045c6458c62954c",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
     "lab5_budget_sha256": "d813a2892b7fdcb2d5bd78bbfe8c13c6bdf5809030db2c4e4528e1a114470974"
   },
@@ -278,7 +278,7 @@
       },
       "joined": true,
       "network": {
-        "tracks": 4,
+        "tracks": 5,
         "vias": 0,
         "pads": 4,
         "zones_not_modelled": []
@@ -521,7 +521,7 @@
       {
         "check": "TVS D201.K on J21 at class width within 5.0 mm",
         "ok": true,
-        "detail": "1 class-width (PWR3A 0.95 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 1.8962 mm from the cathode pad",
+        "detail": "3 class-width (PWR3A 0.95 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 1.8962 mm from the cathode pad",
         "label": "MODEL"
       }
     ],
@@ -530,7 +530,7 @@
   "class_widths": {
     "label": "MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to their outlines)",
     "findings": [],
-    "tracks_checked": 1202,
+    "tracks_checked": 2414,
     "exemption_policy": {
       "branch_roles": [
         "test_point",
