@@ -7,7 +7,7 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/HDMI_INSERT/HDMI_INSERT.kicad_pcb",
-    "board_sha256": "70d646061f4e1df3dc970c12afbc67577399e0a82bf0674915304f93f32d0d94",
+    "board_sha256": "b0d2fd047a626be08fd81a6ee5e893fedd446b4d16bb406228ce92d1674b23e7",
     "project_sha256": "9c6b51914209dcf6e402366b9cfd8abd3faf7fc8ad7464a313b8d3fec876a300",
     "spec_projection_sha256": "d03c0701ef143e4b9484a255906fe0288c3320e70508ac3449ec434c230c5bb9",
     "report_projection_sha256": "404cfd62373c0eb6a3bd3278b85ecfefb5b5ff5d86765cf35d711f4231e363eb",
@@ -267,7 +267,7 @@
     },
     {
       "path": "HDMI_INSERT.ipc356",
-      "sha256": "0d1a9c2899897b965f128a98fce1bc4d7b783516370af902d1b5356695d116b4",
+      "sha256": "f5f285962127a6289dc0775872824c745c512f1e6443a9657575b998173e724e",
       "bytes": 2127
     },
     {
@@ -317,22 +317,22 @@
     },
     {
       "path": "drill/HDMI_INSERT-PTH-drl_map.gbr",
-      "sha256": "c395217538ccb11b3655e839e3d43b8dad3659914d6dc11e1cd0d289ceac0878",
+      "sha256": "8199e5ff74279d677923decb412ac995396fd755489fbe9e9a6ee9ea74a2352d",
       "bytes": 31813
     },
     {
       "path": "drill/HDMI_INSERT-PTH.drl",
-      "sha256": "d35c70cf4df36c83d6e92f67c2182ea0de4129788abb01cab3b446ab09401f55",
+      "sha256": "972d8ba98c96332cf7c782623523b3ce63b828900561ad56def351f87e3992b9",
       "bytes": 393
     },
     {
       "path": "gerber/HDMI_INSERT-B_Cu.gbl",
-      "sha256": "04a6e878ee6aee3ba5cc41561fe09bc086f1877a8eb99d87d4bacf7e3f9a6617",
-      "bytes": 6170
+      "sha256": "2b414a5eb7d7cdafa2ac256cc035f8d79850da465f4b777f287edfed032ee311",
+      "bytes": 6092
     },
     {
       "path": "gerber/HDMI_INSERT-B_Mask.gbs",
-      "sha256": "d11addaae45ab6151c489e300bc568bba5bddae12a150a7b21ca940fc6ea124f",
+      "sha256": "24e9a0d1d78c4a6d389b788267a69788d64e95d86520ea08779b4f9c9cbf8ca6",
       "bytes": 596
     },
     {
@@ -342,7 +342,7 @@
     },
     {
       "path": "gerber/HDMI_INSERT-B_Silkscreen.gbo",
-      "sha256": "d3d3596e099a95524513ea110543dd92c7d410bbc03092874b176c25206d28ac",
+      "sha256": "39d0a8367ffcbf0fb6838037f77832cc98e0fa89d03ddbe4db6584aad64ba069",
       "bytes": 606
     },
     {
@@ -352,23 +352,23 @@
     },
     {
       "path": "gerber/HDMI_INSERT-F_Cu.gtl",
-      "sha256": "90868e43dd4b7f1f597183c3827920c3065221ff671d6bc169ad411e09e50ef2",
-      "bytes": 17383
+      "sha256": "08963d946a156b566f310591f42404834d4a74148af04f8737e252d34ee25035",
+      "bytes": 18912
     },
     {
       "path": "gerber/HDMI_INSERT-F_Mask.gts",
-      "sha256": "92d840d6abf1ab20f6f722adfe730a254b25f8e207e2a603750e6ccc21d6873b",
-      "bytes": 1934
+      "sha256": "92da81ca9b8b170eff4e47b2ca44338a907b511fe425d483b2ef32c4337bb2da",
+      "bytes": 1929
     },
     {
       "path": "gerber/HDMI_INSERT-F_Paste.gtp",
-      "sha256": "66762a6a2f0b2365ecb15c3053dc5951495c6dc1d35acdbbfacc6601e0e0bfdc",
-      "bytes": 1654
+      "sha256": "5a32608c53a4cbc23e4acc328410cdf3c89d87545a0c4b6944021cdd3968b8bd",
+      "bytes": 1649
     },
     {
       "path": "gerber/HDMI_INSERT-F_Silkscreen.gto",
-      "sha256": "0ad51b459d4e7550e054d915e068142b530e4ef4437dfb6ad5c40c8ec1bd2dc3",
-      "bytes": 19362
+      "sha256": "e2aa6d23883c362f63a9695cb0b35f9165bd1524b8391cccff024dfef3e7ec26",
+      "bytes": 19357
     },
     {
       "path": "gerber/HDMI_INSERT-job.gbrjob",

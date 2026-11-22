@@ -7,7 +7,7 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-    "board_sha256": "4c9a967a046022808cc05c48f71960876ce4433bb293a6949fd3a68ca26490b0",
+    "board_sha256": "c501a120296776a50281e3b5511876abcbc2d28d87e51aed0d893a196ea9b9a1",
     "project_sha256": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
     "spec_projection_sha256": "eadf57a56aacad689df1b3d72493530bfd317670ab7adbfccfc3261f0d7fb97c",
     "report_projection_sha256": "7f46597d4658a7936fc0d0c72210060c3f79d1a73c3dbbaa2fd1e96a901b3d88",
@@ -245,7 +245,7 @@
     },
     {
       "path": "ENC.ipc356",
-      "sha256": "a77ef1550bd477beccf5ced098c53e29e61188304da4cb45387fd1d024733cd5",
+      "sha256": "0f0751f3d2add7921038119723361a891e5641b776e7dc9e0a9eb597b3391e6c",
       "bytes": 1552
     },
     {
@@ -310,8 +310,8 @@
     },
     {
       "path": "gerber/ENC-B_Mask.gbs",
-      "sha256": "0debaae072deef7c6657ba96522cda48157765bf8ee921e6af0e56e4707608d8",
-      "bytes": 966
+      "sha256": "88124988f927a69215e358dd17620d9be953e550106bcce4e8046890ad6f83e5",
+      "bytes": 971
     },
     {
       "path": "gerber/ENC-B_Paste.gbp",
@@ -320,8 +320,8 @@
     },
     {
       "path": "gerber/ENC-B_Silkscreen.gbo",
-      "sha256": "3bc0b117977a4b866513fb0f780302c0c9c3048dafb3d91faa3e5fa34d52ea06",
-      "bytes": 976
+      "sha256": "3ac76f4b07d9182ae351208b07c0be253ccd07bac1eea6c4f6d8d62d14b73015",
+      "bytes": 981
     },
     {
       "path": "gerber/ENC-Edge_Cuts.gm1",
@@ -330,13 +330,13 @@
     },
     {
       "path": "gerber/ENC-F_Cu.gtl",
-      "sha256": "c04a0694e337a129212dfa855fe44d7c1fb7133bcaa8be2cd0766f8b9f139acc",
+      "sha256": "1f4352049a21e67e2a4f602aea3f14d46565d456ff43389512301093a7c9f8b2",
       "bytes": 22269
     },
     {
       "path": "gerber/ENC-F_Mask.gts",
-      "sha256": "797d5502facea3566079bb0173f2ecfff356ebc11c29310f5c9c0a51e93fdce6",
-      "bytes": 966
+      "sha256": "f528ee76982b0f9b16b178f68bd73afa3d8fc22ff93c81a9c2e5cc4644f06969",
+      "bytes": 971
     },
     {
       "path": "gerber/ENC-F_Paste.gtp",
@@ -345,8 +345,8 @@
     },
     {
       "path": "gerber/ENC-F_Silkscreen.gto",
-      "sha256": "751ba9cb5079a4ab52c45a6c723f464ce41b43d5e73200082845e2255c0ba255",
-      "bytes": 3159
+      "sha256": "aa5c11f1e15bba7be457b4ce9a3e5b421673076697c4d94ac7eaba53b8c19791",
+      "bytes": 3164
     },
     {
       "path": "gerber/ENC-job.gbrjob",
