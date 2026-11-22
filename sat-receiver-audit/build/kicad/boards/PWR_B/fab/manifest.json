@@ -7,10 +7,10 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-    "board_sha256": "e8ec2078c07195cee8553242bc1f61fdcdc5e4e06ed7822c9272481f66d374b3",
+    "board_sha256": "829d9a9042ea8df14cb96ca66990cbe0d569d82510e351d7198265983cda5a3e",
     "project_sha256": "93c48029d7d173255395f0894d792a7e876b0def01ec9dd5ef1eb499e43a9b0b",
-    "spec_projection_sha256": "feddb62b73bf86ef9445600cb6b1979f4ce984151c93301d555eede914b8e7ab",
-    "report_projection_sha256": "5858d75f46f577504350dca3777c423f04c69fcbf22e1a0e82eab7f1679d8892",
+    "spec_projection_sha256": "bebadb24486c95c3f3c884392aa91d4c3df048e59400043746ebe82a602291ea",
+    "report_projection_sha256": "b8d29b52c71b309877008ffcd5f5abf3b0aeb00340d3888f7c20c2d78507d197",
     "jlc_bom_rows": [
       {
         "Board": "PWR_B",
@@ -563,8 +563,6 @@
         "BIAS_SB_LNA",
         "BONI13V8",
         "BONI13V8_PORT",
-        "CHG_INHIBIT",
-        "E1_BAT_ADC",
         "E2_BLK2_G",
         "E2_BLK2_S",
         "E2_BLK2_SINK",
@@ -628,15 +626,10 @@
         "FLT_LNB",
         "FLT_SB_LNA",
         "GND",
-        "I2C0_SCL",
-        "I2C0_SDA",
         "I2C2_SCL",
         "I2C2_SDA",
         "I2CB_SCL",
         "I2CB_SDA",
-        "IMU_RX",
-        "IMU_TX",
-        "INA228_ALERT",
         "LAB5",
         "LAB5_RLY",
         "LNA4V5",
@@ -645,9 +638,7 @@
         "PG_BONI",
         "PG_LNB",
         "PICO_DISP_EN",
-        "PICO_OFF",
         "PTC_AUX",
-        "PWR_BUTTON",
         "SLED_DET",
         "VBUS_HFP",
         "VBUS_LABPORT",
@@ -671,8 +662,6 @@
         "BIAS_SB_LNA",
         "BONI13V8",
         "BONI13V8_PORT",
-        "CHG_INHIBIT",
-        "E1_BAT_ADC",
         "E2_BLK2_G",
         "E2_BLK2_S",
         "E2_BLK2_SINK",
@@ -736,15 +725,10 @@
         "FLT_LNB",
         "FLT_SB_LNA",
         "GND",
-        "I2C0_SCL",
-        "I2C0_SDA",
         "I2C2_SCL",
         "I2C2_SDA",
         "I2CB_SCL",
         "I2CB_SDA",
-        "IMU_RX",
-        "IMU_TX",
-        "INA228_ALERT",
         "LAB5",
         "LAB5_RLY",
         "LNA4V5",
@@ -753,9 +737,7 @@
         "PG_BONI",
         "PG_LNB",
         "PICO_DISP_EN",
-        "PICO_OFF",
         "PTC_AUX",
-        "PWR_BUTTON",
         "SLED_DET",
         "VBUS_HFP",
         "VBUS_LABPORT",
@@ -786,10 +768,10 @@
     "drill": {
       "pth_file": 1,
       "npth_file": 1,
-      "pth_hits": 415,
+      "pth_hits": 403,
       "npth_hits": 9,
       "board_pth_pads": 74,
-      "board_vias": 341,
+      "board_vias": 329,
       "board_npth_pads": 9,
       "maps": [
         "drill/PWR_B-NPTH-drl_map.gbr",
@@ -850,13 +832,13 @@
     },
     {
       "path": "PWR_B-fab-notes.pdf",
-      "sha256": "8ca465013d7ed0ecf3657d40731e7efccac94d28b99a9541f13de7153a7eb9d9",
+      "sha256": "0f3ff71bfeb4a1decfe4030585fdd0654db9479f8de963bef64e10156db3b017",
       "bytes": 29439
     },
     {
       "path": "PWR_B.ipc356",
-      "sha256": "0601bbd837ccbaea6d0db3ef42833aa3f6dd4efd27fbbf72f4280fac6a208cbd",
-      "bytes": 69918
+      "sha256": "9443741dfb713aee5f939f6a499432c9fbd8130bdfb3ba30b25e21ac45038511",
+      "bytes": 68946
     },
     {
       "path": "PWR_B.kicad_jobset",
@@ -905,22 +887,22 @@
     },
     {
       "path": "drill/PWR_B-PTH-drl_map.gbr",
-      "sha256": "47085f09a97632380d9ecb284d91f3939eda433da040525e830508b326bf04d3",
-      "bytes": 74073
+      "sha256": "e913901504934719874b1fec97b114d5c4a0ee1cd34b944fd963653c772d7133",
+      "bytes": 74025
     },
     {
       "path": "drill/PWR_B-PTH.drl",
-      "sha256": "12e46d628e7a1f61a1b9736a66a531e8acb9df0497f956dba4b3a84d2de0a3af",
-      "bytes": 7102
+      "sha256": "6e7a6afab57c1f3289f89b53b92f5e785301d0721281d7a26963bab1c3699e0e",
+      "bytes": 6921
     },
     {
       "path": "gerber/PWR_B-B_Cu.gbl",
-      "sha256": "4b03842d31a745ea28d841c7fef538357a76284bc2527fa07b50861896841a95",
-      "bytes": 377521
+      "sha256": "a5bb37686475697aefc0e6b36699618b89aaf4a2e7e97454f743552b5a993315",
+      "bytes": 402004
     },
     {
       "path": "gerber/PWR_B-B_Mask.gbs",
-      "sha256": "0f6e7cc052bea858a833e6265e0665e4598d7ff51300afb83e20a876006857e6",
+      "sha256": "f263366a711cf858c90a96ad5078fc9776ff1e24a8888de668fe372ff5258991",
       "bytes": 6696
     },
     {
@@ -930,7 +912,7 @@
     },
     {
       "path": "gerber/PWR_B-B_Silkscreen.gbo",
-      "sha256": "d5c8f4fc55f5b5d0dfb995728ae7cda192f14944a569632698fd38b2c1fddbed",
+      "sha256": "c01b27d7f98451cf122c18b933814c59b7e395e680158b7e2eed646fd96e079d",
       "bytes": 10361
     },
     {
@@ -940,43 +922,43 @@
     },
     {
       "path": "gerber/PWR_B-F_Cu.gtl",
-      "sha256": "0c857986e212af3ecffc693810c5ed4a4c8d6342601d8a6a8b091e0a184d78c4",
-      "bytes": 475451
+      "sha256": "e2fac7bd6b7767f36fce7b2221e1ad8439367f80c36f60fc1c305ec4ac53e10f",
+      "bytes": 482347
     },
     {
       "path": "gerber/PWR_B-F_Mask.gts",
-      "sha256": "d9650de39dee353a04998c06f5f36a74faba4c41338daaafb2e01a9fb758f567",
-      "bytes": 18724
+      "sha256": "27057c8d3a33f058d9fdd94f8f7743e4376bb21e16c77cd94eec09a08e7c468d",
+      "bytes": 18744
     },
     {
       "path": "gerber/PWR_B-F_Paste.gtp",
-      "sha256": "5d239487e6f685e9f70e2a1ac32ce09a447bef7baf8352466f6af983e8ae50cb",
-      "bytes": 15302
+      "sha256": "7ab2bb5f715041617b69c2779c907c429ad0f4c3d006619827bcac7906cdf955",
+      "bytes": 15312
     },
     {
       "path": "gerber/PWR_B-F_Silkscreen.gto",
-      "sha256": "b28997a02eeb3dcf5d8452574739369c41c7683cf1b5f423654a724ad688790e",
-      "bytes": 429103
+      "sha256": "6fa0c66f718e7f45a281c949d4d97a2ce0085295fca492d7fa93af97101f68d5",
+      "bytes": 429123
     },
     {
       "path": "gerber/PWR_B-In1_Cu.g1",
-      "sha256": "d9e84eca50bdec35dc5b02ab1329bfc2a00870608702f4371b7ceaeacc3e8365",
-      "bytes": 460719
+      "sha256": "74d8b6a719651a4a55a5623b2b556d9cb4b39b3b882fb212b019ac455c5fad98",
+      "bytes": 443432
     },
     {
       "path": "gerber/PWR_B-In2_Cu.g2",
-      "sha256": "52c30afc5bcbb7eaf75bb7a09670c1824b0a519798e8098e29f071f159b41875",
-      "bytes": 35688
+      "sha256": "c9dfdaf63692a743fc1f48ea7675f18137938cc868df9ef7295abe2ffed95a9d",
+      "bytes": 34486
     },
     {
       "path": "gerber/PWR_B-In3_Cu.g3",
-      "sha256": "4564bb7af8d22a0f24521b1f00546aeb400b8af81e605080ee09b1a35d4dc32c",
-      "bytes": 35667
+      "sha256": "ed94e308b5198ee95988017b2f23114d9ccffe57427b18d507f0dd759ad00c26",
+      "bytes": 33028
     },
     {
       "path": "gerber/PWR_B-In4_Cu.g4",
-      "sha256": "ff05b96db6a69b731c4d3c0a216829a8fe4ad4d60e0f9ad5bb96f2f19200fa0d",
-      "bytes": 576839
+      "sha256": "03ce582594a0737c0d7b9f87f55da346f25fda41c20e077ea68f00a2ff59343f",
+      "bytes": 563660
     },
     {
       "path": "gerber/PWR_B-job.gbrjob",

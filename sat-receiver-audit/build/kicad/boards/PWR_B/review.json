@@ -7,14 +7,14 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "e8ec2078c07195cee8553242bc1f61fdcdc5e4e06ed7822c9272481f66d374b3"
+      "sha256": "829d9a9042ea8df14cb96ca66990cbe0d569d82510e351d7198265983cda5a3e"
     },
     "projection_sha256": {
-      "graph_refs_pins_nets": "604425b3761208ee73d31f5ae0549e3ab64616aa7782f0b1170c3d1bec084652",
+      "graph_refs_pins_nets": "2ee0891c6fcd78eecf6c93a330f6c74d768542670ae9ca699d8d5ee87c9558d8",
       "footprints": "92e42020e0190146fadf2920d9ca6dd75364f034fa9d3aaefba5ca16b10c741d",
       "contract_board": "4b1616d88e13a8f31341ab1884adee4e9faa87dee279b0ef10490a2dc3e7c0eb",
-      "netclasses": "56a092817eb75cec9f0faef5c6658be0a6284f935a69f8f767a1b6740307b180",
-      "spec": "f6e62d5566f00471c634fc639cf94ff1e371af9869ae1b7054db3a60603fc5b2"
+      "netclasses": "4444198bc87d83d61b33d4e54cefd9fbdd0b93e1e64755b18bb8a1ee15f4814e",
+      "spec": "201bfafc8f045ffedba70326502b3eb9c02cf65fcd059f277a9b045d800a5ae2"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },
@@ -29,9 +29,9 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1886,
-    "vias": 341,
-    "zones": 352,
+    "tracks": 1782,
+    "vias": 329,
+    "zones": 250,
     "holes": 9,
     "copper_layers": [
       "F.Cu",
@@ -61,7 +61,7 @@
     "planned_cutouts": {
       "findings": 0,
       "margin_mm": 0.33,
-      "rects": 47,
+      "rects": 30,
       "tolerance_mm": 0.005,
       "fill_points": 64,
       "per_rect": [
@@ -143,13 +143,6 @@
           "closest_copper_mm": null
         },
         {
-          "id": "J105",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
           "id": "J106",
           "items_inside": 0,
           "items_within_margin": 0,
@@ -164,62 +157,6 @@
           "closest_copper_mm": null
         },
         {
-          "id": "J108",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 0.33
-        },
-        {
-          "id": "J109",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
-          "id": "J110",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
-          "id": "J111",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
-          "id": "J112",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 0.33
-        },
-        {
-          "id": "J113",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 1.929
-        },
-        {
-          "id": "J114",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
-          "id": "J115",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
           "id": "J205",
           "items_inside": 0,
           "items_within_margin": 0,
@@ -228,13 +165,6 @@
         },
         {
           "id": "J206",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
-          "id": "J507",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
@@ -267,48 +197,6 @@
           "items_within_margin": 0,
           "fills_within_margin": 0,
           "closest_copper_mm": null
-        },
-        {
-          "id": "TP103",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
-          "id": "TP104",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 0.639
-        },
-        {
-          "id": "TP105",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 0.361
-        },
-        {
-          "id": "TP106",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 0.659
-        },
-        {
-          "id": "TP107",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 0.406
-        },
-        {
-          "id": "TP108",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 0.9
         },
         {
           "id": "TP201",
@@ -381,13 +269,6 @@
           "closest_copper_mm": null
         },
         {
-          "id": "TP503",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
           "id": "TP2903",
           "items_inside": 0,
           "items_within_margin": 0,
@@ -403,7 +284,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1866,
+      "tracks_checked": 1762,
       "pour_necks": [],
       "split_nets": {}
     },
