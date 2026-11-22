@@ -4,21 +4,21 @@
   "graph_sha256": {
     "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
     "E2.json": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db",
-    "E3.json": "950e961ff1bcb0a3c20b54bcfcf44ad45f63fa79fc7bc2a0b8eb43192a36d75f",
+    "E3.json": "46574eadf5bd2c5a9a282d16f56ed35d2aea712fa77cccf784c22210f40ebea5",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
     "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
   },
-  "netlist_sha256": "957df5afc368d31ce2f7704c504923348f6f2da84d1dd723d733538b6b6b82e4",
+  "netlist_sha256": "1ee5634cf07d831601e1eb3c61e0828ce3f51d869478a06dbd257367afd27d87",
   "counts": {
-    "hardware_components": 851,
-    "hardware_pin_declarations": 2942,
-    "connected_hardware_pins": 2717,
-    "connected_hardware_nets": 486,
-    "declared_nc_pins": 225,
-    "xml_hardware_components": 851,
-    "xml_pin_nodes": 2942,
-    "xml_nets": 711,
-    "explicit_power_flags": 25
+    "hardware_components": 857,
+    "hardware_pin_declarations": 2958,
+    "connected_hardware_pins": 2732,
+    "connected_hardware_nets": 491,
+    "declared_nc_pins": 226,
+    "xml_hardware_components": 857,
+    "xml_pin_nodes": 2958,
+    "xml_nets": 717,
+    "explicit_power_flags": 26
   },
   "dnp_components": [
     "J102",
@@ -165,6 +165,12 @@
       "net": "E3_FAN5_P",
       "reason": "Fan supply is physically powered from LAB5 through PTC F301 and AO3401A Q304 when enabled (W2 CTRL-5 order). Both pass elements have passive pins, so KiCad requires a powered-net marker on the fan side.",
       "source": "STACK.md high-side Noctua fan control; E3 Q304/F301 connectivity."
+    },
+    {
+      "sheet": "E3",
+      "net": "LAB5_PICO",
+      "reason": "U316 IN is fed from LAB5 through the PTC F302, whose pins are passive: KiCad needs a powered-net marker on the PTC output (W2 CTRL-6).",
+      "source": "E3 F302/U316 connectivity (W2 CTRL-6)."
     },
     {
       "sheet": "E5",

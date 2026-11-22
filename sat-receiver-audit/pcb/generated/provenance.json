@@ -10,7 +10,7 @@
     },
     {
       "file": "design/E3.json",
-      "sha256": "950e961ff1bcb0a3c20b54bcfcf44ad45f63fa79fc7bc2a0b8eb43192a36d75f"
+      "sha256": "46574eadf5bd2c5a9a282d16f56ed35d2aea712fa77cccf784c22210f40ebea5"
     },
     {
       "file": "design/E4.json",
@@ -22,11 +22,11 @@
     },
     {
       "file": "build/kicad/footprints/manifest.json",
-      "sha256": "6b9b480ac6f99aaaad27011715b89d5041b16991208551979465eed412dc4748"
+      "sha256": "e817c8754947a8f06789085ed55383f36037cf66a2245892263130b49944ac7c"
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "957df5afc368d31ce2f7704c504923348f6f2da84d1dd723d733538b6b6b82e4"
+      "sha256": "1ee5634cf07d831601e1eb3c61e0828ce3f51d869478a06dbd257367afd27d87"
     }
   ],
   "source_documents": [
@@ -135,7 +135,7 @@
       "interface_open",
       "interface_resolved"
     ],
-    "projection_sha256": "765074bb0546eb8e1a8d854432b1a8b3abc3adb2ba4fa5b4f125e27793b17ea0"
+    "projection_sha256": "12c097b3f097e196f1239096a8070f25138e755f01b6f9058dc3d9b6ab0b491c"
   },
   "partition": {
     "file": "pcb/partition-spec.json",

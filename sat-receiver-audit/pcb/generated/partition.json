@@ -1,12 +1,12 @@
 {
   "summary": {
     "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
-    "components": 851,
-    "schematic_contacts": 2942,
-    "connected_contacts": 2717,
-    "nets": 486,
+    "components": 857,
+    "schematic_contacts": 2958,
+    "connected_contacts": 2732,
+    "nets": 491,
     "categories": {
-      "bare_board_part": 748,
+      "bare_board_part": 754,
       "harness_assembly": 13,
       "integral_to_host_part": 2,
       "mechanical_or_remote_part": 11,
@@ -16,7 +16,7 @@
       "purchased_module_internal_detail": 5
     },
     "board_candidates": {
-      "CTRL_HMI": 149,
+      "CTRL_HMI": 155,
       "DC_CORE": 71,
       "ENC": 2,
       "HATCH": 5,
@@ -33,12 +33,12 @@
       "USB_POWER": 20,
       "USB_POWER_SW": 21
     },
-    "graph_assigned_footprints": 749,
-    "portable_graph_assignments": 749,
+    "graph_assigned_footprints": 755,
+    "portable_graph_assignments": 755,
     "bare_parts_without_footprint": 0,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
-    "xml_compared_connected_pins": 2717,
+    "xml_compared_connected_pins": 2732,
     "core_parts": 71,
     "core_connected_pins": 180,
     "core_boundary_nets": 8,
@@ -62,7 +62,7 @@
       },
       {
         "file": "design/E3.json",
-        "sha256": "950e961ff1bcb0a3c20b54bcfcf44ad45f63fa79fc7bc2a0b8eb43192a36d75f"
+        "sha256": "46574eadf5bd2c5a9a282d16f56ed35d2aea712fa77cccf784c22210f40ebea5"
       },
       {
         "file": "design/E4.json",
@@ -74,11 +74,11 @@
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "6b9b480ac6f99aaaad27011715b89d5041b16991208551979465eed412dc4748"
+        "sha256": "e817c8754947a8f06789085ed55383f36037cf66a2245892263130b49944ac7c"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "957df5afc368d31ce2f7704c504923348f6f2da84d1dd723d733538b6b6b82e4"
+        "sha256": "1ee5634cf07d831601e1eb3c61e0828ce3f51d869478a06dbd257367afd27d87"
       }
     ],
     "source_documents": [
@@ -187,7 +187,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "765074bb0546eb8e1a8d854432b1a8b3abc3adb2ba4fa5b4f125e27793b17ea0"
+      "projection_sha256": "12c097b3f097e196f1239096a8070f25138e755f01b6f9058dc3d9b6ab0b491c"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
@@ -3355,6 +3355,23 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
+      "ref": "C344",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "TI SLVS841G pin functions (IN >=0.1 uF ceramic); engineering design",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
       "ref": "C401",
       "sheet": "E4",
       "mount": "pcb_smt",
@@ -5324,6 +5341,40 @@
       "pad_coverage": "PASS",
       "pin_count": 2,
       "source": "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "F302",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "MF-MSMF050-2 0.5A",
+      "kind": "fuse",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "F303",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "MF-MSMF110/16-2 1.1A",
+      "kind": "fuse",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf",
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
@@ -11090,6 +11141,40 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
+      "ref": "R397",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "150k 1%",
+      "kind": "resistor",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "https://www.ti.com/lit/ds/symlink/tps2553.pdf",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "R398",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "1k",
+      "kind": "resistor",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "project design (W2 CTRL-6, build/15)",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
       "ref": "R405",
       "sheet": "E4",
       "mount": "pcb_smt",
@@ -14266,6 +14351,23 @@
       "pad_coverage": "PASS",
       "pin_count": 6,
       "source": "https://www.ti.com/lit/gpn/tps2553",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "U316",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "TPS2553DBVR",
+      "kind": "ic",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 6,
+      "source": "https://www.ti.com/lit/ds/symlink/tps2553.pdf",
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {

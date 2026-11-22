@@ -5,10 +5,10 @@
   "index_sheets": [
     "/"
   ],
-  "physical_components": 851,
-  "connected_physical_contacts": 2717,
-  "named_nets": 486,
-  "explicit_nc_contacts": 225,
+  "physical_components": 857,
+  "connected_physical_contacts": 2732,
+  "named_nets": 491,
+  "explicit_nc_contacts": 226,
   "dnp_components": [
     "J102",
     "L407",
@@ -35,15 +35,15 @@
     "build/kicad/E2_03.kicad_sch": "8803d441ec73fd76b3502c28f865b9aec1ad08bbcfce07c6e49a7ae82c25f701",
     "build/kicad/E2_04.kicad_sch": "3d3d5beef41210343c282d32aaf3177550e355e6d2fa1ba78864d5ab6db8b236",
     "build/kicad/E2_05.kicad_sch": "5e216e535a63313ebbacbab29095dbd9511930acb6a13c9dc0e56e3ff81adab9",
-    "build/kicad/E3.kicad_sch": "a1999149bc3d0a74b02eba6d6991a0ed4d4c2bb508bcb9d5e1e233fd4739fc66",
-    "build/kicad/E3_02.kicad_sch": "cc65731a1e5141baf7ff90e1fc542bc5627cea7190a0bd678070230a9a917902",
-    "build/kicad/E3_03.kicad_sch": "5bc5794a5e1f7758db1336d9162bbb1d48e4a72fa43c19a03228fba2405b67bf",
-    "build/kicad/E4.kicad_sch": "5d71da5e76b75948dd2197cd0ad524ddcd157c7dc3632b8f675d9b56ca85f49e",
-    "build/kicad/E4_02.kicad_sch": "32437a924d2c973e4b018ebe90a16e2aff6f62c41acc3c995b2f4a9ebc821a70",
-    "build/kicad/E4_03.kicad_sch": "69ef4bc4daef96eb939c282e49d7949644c25619154f6ae180222e95eb9fb038",
-    "build/kicad/E4_04.kicad_sch": "bcf2045b802226eb901a67ffa31e5507e9f21019e70cd0800613c68a2dc2f9b4",
-    "build/kicad/E5.kicad_sch": "f230d09a5f7cae2f00437e249538cc93052d1f9a045c6c5314046b12e3f9460a",
-    "build/kicad/E5_02.kicad_sch": "c0421b16da50dae5eac2a682744da4728e069dae3355adb14e48a6b7a3576a4f",
+    "build/kicad/E3.kicad_sch": "d4b5b12092d5fbadbff1f801c5fb6f7e95ffae98502ace7963888e07a899fedb",
+    "build/kicad/E3_02.kicad_sch": "e0d7f2d4bba0edfbd41e83b8ae0262c996716dde26f2b0a96943183445515d1e",
+    "build/kicad/E3_03.kicad_sch": "7edacfa80c6910d7b72c079ab693b33f486b6ce8cbcee12875b39f8e4d5d4ad9",
+    "build/kicad/E4.kicad_sch": "4dab8f1c4c4f2da1850d37a47d1757d21c4e9eb28e2dfc0934a5c14c0ed90073",
+    "build/kicad/E4_02.kicad_sch": "c29b6938c593225f89d90aaca7cf881c8a27f1c278b89e88e2a402666b3760b6",
+    "build/kicad/E4_03.kicad_sch": "7d97c2e2bc0814d29d4540013147bf3f80c299136cfd06c64e4964bec2873475",
+    "build/kicad/E4_04.kicad_sch": "bf53ca9d5023a5ef3ba76954ba599b0a3e0ab40bdb4b3be636b93a7c9d32b52c",
+    "build/kicad/E5.kicad_sch": "17a170942443fedc318a79dd5aa1e231503c272f91adbc5c4472d5de4425821d",
+    "build/kicad/E5_02.kicad_sch": "d45565bc9189de071537df21b67e356eacd45701ebf945b364f23e0a1318571c",
     "build/kicad/sr-rx-v2.kicad_sch": "eab1b5d408eed2b50680f32b41fdc31b75e10b4b1fd21f059cf420216ee7d20e"
   },
   "input_files": [
@@ -53,7 +53,7 @@
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "957df5afc368d31ce2f7704c504923348f6f2da84d1dd723d733538b6b6b82e4"
+      "sha256": "1ee5634cf07d831601e1eb3c61e0828ce3f51d869478a06dbd257367afd27d87"
     }
   ]
 }

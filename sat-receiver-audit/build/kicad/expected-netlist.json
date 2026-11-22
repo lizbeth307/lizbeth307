@@ -2189,6 +2189,24 @@
       "type": "passive"
     },
     {
+      "ref": "U316",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "power_in"
+    },
+    {
+      "ref": "R397",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "C344",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
       "ref": "C307",
       "pin": "2",
       "sheet": "E3",
@@ -5373,8 +5391,8 @@
       "type": "passive"
     },
     {
-      "ref": "D301",
-      "pin": "2",
+      "ref": "F302",
+      "pin": "1",
       "sheet": "E3",
       "type": "passive"
     },
@@ -5391,7 +5409,7 @@
       "type": "passive"
     },
     {
-      "ref": "D306",
+      "ref": "F303",
       "pin": "1",
       "sheet": "E3",
       "type": "passive"
@@ -5409,18 +5427,6 @@
       "type": "power_in"
     },
     {
-      "ref": "C342",
-      "pin": "1",
-      "sheet": "E3",
-      "type": "passive"
-    },
-    {
-      "ref": "C343",
-      "pin": "1",
-      "sheet": "E3",
-      "type": "passive"
-    },
-    {
       "ref": "J305",
       "pin": "3",
       "sheet": "E3",
@@ -5429,12 +5435,6 @@
     {
       "ref": "J305",
       "pin": "4",
-      "sheet": "E3",
-      "type": "passive"
-    },
-    {
-      "ref": "J314",
-      "pin": "2",
       "sheet": "E3",
       "type": "passive"
     },
@@ -12863,6 +12863,60 @@
       "type": "passive"
     }
   ],
+  "E3_PICO_VLIM": [
+    {
+      "ref": "D301",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "U316",
+      "pin": "6",
+      "sheet": "E3",
+      "type": "power_out"
+    }
+  ],
+  "LAB5_PICO": [
+    {
+      "ref": "F302",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "U316",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "power_in"
+    },
+    {
+      "ref": "U316",
+      "pin": "3",
+      "sheet": "E3",
+      "type": "input"
+    },
+    {
+      "ref": "C344",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    }
+  ],
+  "E3_U316_ILIM": [
+    {
+      "ref": "U316",
+      "pin": "5",
+      "sheet": "E3",
+      "type": "output"
+    },
+    {
+      "ref": "R397",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    }
+  ],
   "PWR_ON_KEY": [
     {
       "ref": "D303",
@@ -13473,10 +13527,24 @@
       "type": "input"
     }
   ],
-  "E3_FAN_PG": [
+  "E3_FAN_PD": [
     {
       "ref": "Q303",
       "pin": "3",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "R398",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    }
+  ],
+  "E3_FAN_PG": [
+    {
+      "ref": "R398",
+      "pin": "1",
       "sheet": "E3",
       "type": "passive"
     },
@@ -13625,6 +13693,38 @@
     {
       "ref": "J314",
       "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    }
+  ],
+  "LAB5_BLOWER": [
+    {
+      "ref": "F303",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "D306",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "C342",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "C343",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "J314",
+      "pin": "2",
       "sheet": "E3",
       "type": "passive"
     }
