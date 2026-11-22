@@ -8,8 +8,8 @@
   "ratios_1_8": {
    "PWR_A": 0.661,
    "PWR_B": 0.497,
-   "CTRL_top": 1.117,
-   "CTRL_bottom": 0.908
+   "CTRL_top": 1.087,
+   "CTRL_bottom": 0.906
   },
   "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2), PWR-B (mezzanine on the PWR-A footprint, Samtec LSHM-150-02.5 pair J208/J209, 5.00 mm stack (W2 B2B; was QSH/QTH-060-01)), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a): the draft PWR-B list, with the LNB OVP comparator (U220 group) kept on PWR-A next to U212 so that E1_SW and the LNB LDO rail do not cross. Computed verdict (MODEL ESTIMATE): no evaluated partition fits at 1.8. Candidate (a) gives PWR-A 0.640 and PWR-B 0.427 (usable / demand), because every PWR-A part taller than hA and every PWR-A power header costs PWR-B a window or an edge strip (3.8k + 1.4k of the 7.6k outline). CTRL two-sided gives top 1.003 and bottom 0.979 by area, and five CTRL bottom headers have no height-valid variant under the depth cap (ctrl_headers_unresolved), so CTRL is NOT FIT as well.",
   "why_a": "(a) and (b) leave almost the same total shortfall (about 7.3k mm2 at 1.8), but (a) needs 53 B2B contacts against 81, moves no fused high-current internal net (E2_J21_FUSED) across the boards, and keeps the J21/display/Lime/AUX12 eFuses with their fuse holders and bulk capacitors; moving more groups to PWR-B overfills PWR-B, whose usable area is set by the windows",
@@ -20,7 +20,7 @@
   "shortfall_1_8_mm2": {
    "PWR_A": 3924,
    "PWR_B": 2318,
-   "CTRL_bottom": 471
+   "CTRL_bottom": 486
   },
   "shortfall_note": "demand at 1.8 minus usable area, candidate (a), pcb/partition-budget.json; the PWR harness headers alone are 2.7k mm2 raw (about 4.9k at 1.8), two thirds of the PWR shortfall",
   "ctrl_headers_unresolved": [
@@ -1603,15 +1603,15 @@
     "c": {
      "PWR_A": 0.747,
      "PWR_B": 0.811,
-     "CTRL_top": 1.117,
-     "CTRL_bottom": 0.908
+     "CTRL_top": 1.087,
+     "CTRL_bottom": 0.906
     },
     "f2b": {
      "PCB_REAR": 1.75,
      "PWR_A": 0.702,
      "PWR_B": 0.679,
-     "CTRL_top": 1.117,
-     "CTRL_bottom": 0.908
+     "CTRL_top": 1.087,
+     "CTRL_bottom": 0.906
     }
    }
   },
@@ -1628,8 +1628,8 @@
     "f3": {
      "PWR_A": 0.661,
      "PWR_B": 0.473,
-     "CTRL_top": 1.124,
-     "CTRL_bottom": 0.946
+     "CTRL_top": 1.093,
+     "CTRL_bottom": 0.943
     }
    }
   },
@@ -1646,14 +1646,14 @@
     "w1": {
      "PWR_A": 0.686,
      "PWR_B": 0.52,
-     "CTRL_top": 1.117,
-     "CTRL_bottom": 0.908
+     "CTRL_top": 1.087,
+     "CTRL_bottom": 0.906
     },
     "w2": {
      "PWR_A": 0.914,
      "PWR_B": 0.678,
-     "CTRL_top": 1.117,
-     "CTRL_bottom": 0.908
+     "CTRL_top": 1.087,
+     "CTRL_bottom": 0.906
     }
    }
   },
@@ -1672,27 +1672,27 @@
     "s8": {
      "PWR_A": 0.661,
      "PWR_B": 0.65,
-     "CTRL_top": 1.117,
-     "CTRL_bottom": 0.908
+     "CTRL_top": 1.087,
+     "CTRL_bottom": 0.906
     },
     "s8c": {
      "PCB_REAR": 1.75,
      "PWR_A": 0.801,
      "PWR_B": 1.13,
-     "CTRL_top": 1.117,
-     "CTRL_bottom": 0.908
+     "CTRL_top": 1.087,
+     "CTRL_bottom": 0.906
     },
     "a80": {
      "PWR_A": 0.664,
      "PWR_B": 0.503,
-     "CTRL_top": 1.117,
-     "CTRL_bottom": 0.908
+     "CTRL_top": 1.087,
+     "CTRL_bottom": 0.906
     },
     "am": {
      "PWR_A": 0.6,
      "PWR_B": 0.34,
-     "CTRL_top": 1.205,
-     "CTRL_bottom": 1.175
+     "CTRL_top": 1.172,
+     "CTRL_bottom": 1.17
     }
    }
   }
