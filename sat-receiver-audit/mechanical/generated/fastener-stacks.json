@@ -726,42 +726,6 @@
       "result": "OPEN: insert depth and panel thickness at the screws not read (P-01)"
     },
     {
-      "id": "INA228",
-      "build17_row": "F09",
-      "what": "INA228 5832 to the rear-wall bosses",
-      "count": 2,
-      "thread": "M2.5",
-      "seat": "ina228 board top face, z 7.6",
-      "stack_mm": [
-        [
-          "ina228 board",
-          1.6
-        ]
-      ],
-      "grip_mm": 1.6,
-      "receiver": {
-        "kind": "CNC Kitchen TC-M2,5x4 insert in a printed rear-wall boss (hole 5 deep from the boss top z 6)",
-        "thread_mm": 4.0,
-        "tip_limit": "blind insert hole bottom (insert + 1)"
-      },
-      "min_engagement_mm": 3.75,
-      "length_window_mm": [
-        5.35,
-        6.1
-      ],
-      "max_engagement_mm": 4.5,
-      "orderable_lengths": {
-        "series": "ISO 14580 M2.5",
-        "named_in_build17": true,
-        "in_window": [
-          6
-        ],
-        "src": "mechanical/params/parts.json iso14580_lengths"
-      },
-      "result": "PASS (model): under-head length 5.35-6.1 mm; ISO 14580 M2.5 x 6 in the window",
-      "note": "M2.5 x 6 passes 0.4 beyond the insert into the empty hole (the full 4.0 insert thread engaged)"
-    },
-    {
       "id": "HUB-5997",
       "build17_row": "F10",
       "what": "Adafruit 5997 CH334F to the rear-wall bosses",
@@ -796,30 +760,6 @@
       },
       "result": "PASS (model): under-head length 5.35-6.1 mm; ISO 14580 M2.5 x 6 in the window",
       "note": "M2.5 x 6 passes 0.4 beyond the insert into the empty hole (the full 4.0 insert thread engaged)"
-    },
-    {
-      "id": "SWM-2813",
-      "build17_row": "F05",
-      "what": "Pololu #2813 to the printed pad of the rear wall",
-      "count": 1,
-      "thread": "none (tape joint)",
-      "seat": "printed pad top",
-      "stack_mm": [
-        [
-          "3M VHB 4910 clear acrylic foam tape",
-          1.0
-        ]
-      ],
-      "grip_mm": null,
-      "receiver": {
-        "kind": "acrylic foam tape on a printed face (no screw)",
-        "thread_mm": null,
-        "tip_limit": null
-      },
-      "min_engagement_mm": null,
-      "length_window_mm": null,
-      "result": "OPEN: tape joint, no screw: 1 mm tape (parts.json vhb_4910, status listing); bond strength on ASA and on the board solder mask not read; hold under vibration and temperature - bench",
-      "note": "the wires are tied down next to the board (the tape does not carry the wire pull)"
     },
     {
       "id": "VEML7700",
@@ -1010,8 +950,8 @@
     "F15": "SMA mating torque"
   },
   "summary": {
-    "PASS": 11,
-    "OPEN": 24,
+    "PASS": 10,
+    "OPEN": 23,
     "FAIL": 0
   }
 }

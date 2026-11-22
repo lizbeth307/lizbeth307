@@ -330,186 +330,57 @@
       "kind": "harness",
       "ends": [
         "PACK",
-        "PWR"
+        "PWRC"
       ],
-      "note": "shortest: PWR bottom edge straight down into the battery tray",
+      "note": "W2 F2C-FALLBACK (MECH-F2C): PWR-C right edge (J105 S05 lands, enclosure x 160) down to the pack top face; the PACK_FUSE J117 end beside it (x 161.7-172.4) is not modelled",
       "points_mm": [
         [
-          20.0,
-          38.5,
-          47.564
+          160.0,
+          6.6,
+          60.48
         ],
         [
-          20.0,
+          160.0,
           33.75,
-          47.564
+          60.48
         ]
       ],
-      "path_mm": 4.8,
+      "path_mm": 27.1,
       "bends": 0,
       "bundle_od_mm": 4.2,
       "wires": 3,
       "bend_allowance_mm": 0.0,
       "service_loops_mm": 30.0,
-      "length_mm": 35,
+      "length_mm": 58,
       "through": [],
       "crossings": [],
       "provisional": [
         "F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face",
-        "J105 (X05J1-PWR, PWR_A), J109 (X05S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0"
+        "J105 (X05C1-PWRC, PWR_C), J109 (X05S1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 0"
       ],
-      "status": "OPEN (end provisional): F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face; J105 (X05J1-PWR, PWR_A), J109 (X05S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0",
-      "in_build16": true
-    },
-    "S06": {
-      "kind": "harness",
-      "ends": [
-        "PWR",
-        "INA"
-      ],
-      "note": "SL2, rear layer: shaft between the HF+ can and the hatch bay, west along y 68 under the HF+ can (between the INA228 top and the LC76G, W2 MECH-6), down to the INA228 envelope (W2 MECH-3)",
-      "points_mm": [
-        [
-          122.0,
-          73.5,
-          47.564
-        ],
-        [
-          122.0,
-          74.25,
-          47.564
-        ],
-        [
-          122.0,
-          74.25,
-          33.0
-        ],
-        [
-          115.3,
-          74.25,
-          33.0
-        ],
-        [
-          115.3,
-          74.25,
-          11.05
-        ],
-        [
-          115.3,
-          68.0,
-          11.05
-        ],
-        [
-          41.4,
-          68.0,
-          11.05
-        ],
-        [
-          41.4,
-          64.8,
-          11.05
-        ]
-      ],
-      "path_mm": 127.3,
-      "bends": 6,
-      "bundle_od_mm": 6.42,
-      "wires": 7,
-      "bend_allowance_mm": 30.3,
-      "service_loops_mm": 30.0,
-      "length_mm": 188,
-      "through": [
-        "SL2"
-      ],
-      "crossings": [],
-      "provisional": [
-        "INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope",
-        "J106 (X06J1-PWR, PWR_A), J110 (X06S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
-      ],
-      "status": "OPEN (end provisional): INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope; J106 (X06J1-PWR, PWR_A), J110 (X06S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3",
-      "in_build16": true
-    },
-    "S07": {
-      "kind": "harness",
-      "ends": [
-        "PWR",
-        "SWM"
-      ],
-      "note": "SL2, rear layer: shaft between the HF+ can and the hatch bay, west along y 74.25, down to the #2813 envelope (W2 MECH-3)",
-      "points_mm": [
-        [
-          126.0,
-          73.5,
-          47.564
-        ],
-        [
-          126.0,
-          74.25,
-          47.564
-        ],
-        [
-          126.0,
-          74.25,
-          33.0
-        ],
-        [
-          115.3,
-          74.25,
-          33.0
-        ],
-        [
-          115.3,
-          74.25,
-          10.55
-        ],
-        [
-          103.46,
-          74.25,
-          10.55
-        ],
-        [
-          103.46,
-          64.4,
-          10.55
-        ]
-      ],
-      "path_mm": 70.2,
-      "bends": 5,
-      "bundle_od_mm": 5.43,
-      "wires": 5,
-      "bend_allowance_mm": 21.3,
-      "service_loops_mm": 30.0,
-      "length_mm": 122,
-      "through": [
-        "SL2"
-      ],
-      "crossings": [],
-      "provisional": [
-        "#2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope",
-        "J107 (X07J1-PWR, PWR_A), J111 (X07S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
-      ],
-      "status": "OPEN (end provisional): #2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope; J107 (X07J1-PWR, PWR_A), J111 (X07S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3",
+      "status": "OPEN (end provisional): F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face; J105 (X05C1-PWRC, PWR_C), J109 (X05S1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 0",
       "in_build16": true
     },
     "S10": {
       "kind": "harness",
       "ends": [
-        "PWR",
+        "PWRC",
         "CHG"
       ],
-      "note": "PWR bottom edge, along y 38.2 and up the gap right of PWR at plate level, east along y 74.25 under the HDMI cable run, up between the display edge and the CTRL over the Lime to the IP2368",
+      "note": "W2 F2C-FALLBACK (MECH-F2C): re-ended at PWR-C (its edge zone 1); PWR bottom edge, along y 38.2 and up the gap right of PWR at plate level, east along y 74.25 under the HDMI cable run, up between the display edge and the CTRL over the Lime to the IP2368",
       "points_mm": [
         [
-          130.0,
-          38.5,
-          47.564
+          139.0,
+          37.5,
+          60.48
         ],
         [
-          130.0,
+          139.0,
           38.2,
-          47.564
+          60.48
         ],
         [
-          130.0,
+          139.0,
           38.2,
           42.5
         ],
@@ -549,28 +420,28 @@
           51.0
         ]
       ],
-      "path_mm": 150.9,
+      "path_mm": 155.2,
       "bends": 8,
       "bundle_od_mm": 6.42,
       "wires": 7,
       "bend_allowance_mm": 40.3,
       "service_loops_mm": 30.0,
-      "length_mm": 222,
+      "length_mm": 226,
       "through": [],
       "crossings": [],
       "provisional": [
-        "J108 (X10J1-PWR, PWR_A), J112 (X10S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0"
+        "J108 (X10C1-PWRC, PWR_C), J112 (X10S1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1"
       ],
-      "status": "OPEN (end provisional): J108 (X10J1-PWR, PWR_A), J112 (X10S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0",
+      "status": "OPEN (end provisional): J108 (X10C1-PWRC, PWR_C), J112 (X10S1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1",
       "in_build16": true
     },
     "S11": {
       "kind": "harness",
       "ends": [
         "USBC",
-        "PWR"
+        "PWRC"
       ],
-      "note": "bottom-face port, under the plate extension at y 17.55 (W2 MECH-7 part 2: between the LAB BUS nut envelope, y <= 13.3, and the HDMI flex rise, y >= 21.6) to SL3, front layer over the BMS, along y 38.2 to the PWR right edge (J113/J114 in the corner columns, no FFC)",
+      "note": "W2 F2C-FALLBACK (MECH-F2C): re-ended at PWR-C (its edge zone 1); bottom-face port, under the plate extension at y 17.55 (W2 MECH-7 part 2: between the LAB BUS nut envelope, y <= 13.3, and the HDMI flex rise, y >= 21.6) to SL3, front layer over the BMS, along y 38.2 to the PWR right edge (J113/J114 in the corner columns, no FFC)",
       "points_mm": [
         [
           189.0,
@@ -598,82 +469,82 @@
           53.0
         ],
         [
-          143.0,
+          10.2,
           38.2,
           53.0
         ],
         [
-          143.0,
-          50.05,
-          53.0
+          10.2,
+          38.2,
+          59.48
         ],
         [
-          142.0,
-          50.0,
-          47.564
+          10.2,
+          37.5,
+          60.48
         ]
       ],
-      "path_mm": 177.6,
+      "path_mm": 300.7,
       "bends": 6,
-      "bundle_od_mm": 4.05,
+      "bundle_od_mm": 2.89,
       "wires": 4,
-      "bend_allowance_mm": 19.1,
+      "bend_allowance_mm": 12.2,
       "service_loops_mm": 30.0,
-      "length_mm": 227,
+      "length_mm": 343,
       "through": [
         "SL3"
       ],
       "crossings": [],
       "provisional": [
         "behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall",
-        "J113 (X11S1-PWR, PWR_A), J114 (X11P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1"
+        "J113 (X11S1-PWRC, PWR_C), J114 (X11C1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1"
       ],
-      "status": "OPEN (end provisional): behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall; J113 (X11S1-PWR, PWR_A), J114 (X11P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1",
+      "status": "OPEN (end provisional): behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall; J113 (X11S1-PWRC, PWR_C), J114 (X11C1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1",
       "in_build16": true
     },
     "S12": {
       "kind": "harness",
       "ends": [
-        "PWR",
+        "PWRC",
         "XT30"
       ],
-      "note": "W2 MECH-7 part 2: J115 stays in the third column of the PWR-A bottom-right corner and leaves by the right edge (no S02 FFC, boards PWR edge_zones[1]); down the gap at x 143 between PWR and the blower to y 38.2, then the service XT30 pigtail into the battery compartment",
+      "note": "W2 F2C-FALLBACK (MECH-F2C): re-ended at PWR-C (its edge zone 1); W2 MECH-7 part 2: J115 stays in the third column of the PWR-A bottom-right corner and leaves by the right edge (no S02 FFC, boards PWR edge_zones[1]); down the gap at x 143 between PWR and the blower to y 38.2, then the service XT30 pigtail into the battery compartment",
       "points_mm": [
         [
-          142.0,
-          55.3,
-          47.564
+          126.6,
+          37.5,
+          60.48
         ],
         [
           143.0,
-          55.3,
-          47.564
+          37.5,
+          60.48
         ],
         [
           143.0,
           38.2,
-          47.564
+          60.48
         ],
         [
           143.0,
           33.75,
-          47.564
+          60.48
         ]
       ],
-      "path_mm": 22.5,
-      "bends": 1,
+      "path_mm": 21.6,
+      "bends": 2,
       "bundle_od_mm": 2.87,
       "wires": 2,
-      "bend_allowance_mm": 2.3,
+      "bend_allowance_mm": 6.8,
       "service_loops_mm": 30.0,
-      "length_mm": 55,
+      "length_mm": 59,
       "through": [],
       "crossings": [],
       "provisional": [
         "XT30 pigtail place in the battery compartment TBD: end on the pack top face",
-        "J115 (X12P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1"
+        "J115 (X12C1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1"
       ],
-      "status": "OPEN (end provisional): XT30 pigtail place in the battery compartment TBD: end on the pack top face; J115 (X12P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1",
+      "status": "OPEN (end provisional): XT30 pigtail place in the battery compartment TBD: end on the pack top face; J115 (X12C1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1",
       "in_build16": true
     },
     "S13": {
@@ -1867,25 +1738,25 @@
     "S32": {
       "kind": "harness",
       "ends": [
-        "PWR",
+        "PWRC",
         "GX16"
       ],
-      "note": "PWR right edge (J507 in the corner column, no S02 FFC: W2 MECH-7 part 2), along y 38.2 over the BMS to SL3, rear layer to the GX16 socket",
+      "note": "W2 F2C-FALLBACK (MECH-F2C): re-ended at PWR-C (its edge zone 1); PWR right edge (J507 in the corner column, no S02 FFC: W2 MECH-7 part 2), along y 38.2 over the BMS to SL3, rear layer to the GX16 socket",
       "points_mm": [
         [
-          142.0,
-          43.0,
-          47.564
+          47.05,
+          37.5,
+          60.48
         ],
         [
           143.0,
-          43.0,
-          47.564
+          37.5,
+          60.48
         ],
         [
           143.0,
           38.2,
-          47.564
+          60.48
         ],
         [
           143.0,
@@ -1913,21 +1784,21 @@
           20.1
         ]
       ],
-      "path_mm": 164.8,
+      "path_mm": 257.7,
       "bends": 6,
       "bundle_od_mm": 2.81,
       "wires": 4,
       "bend_allowance_mm": 13.2,
       "service_loops_mm": 30.0,
-      "length_mm": 209,
+      "length_mm": 301,
       "through": [
         "SL3"
       ],
       "crossings": [],
       "provisional": [
-        "J507 (X32S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1"
+        "J507 (X32S1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1"
       ],
-      "status": "OPEN (end provisional): J507 (X32S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1",
+      "status": "OPEN (end provisional): J507 (X32S1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1",
       "in_build16": true
     },
     "S33": {
@@ -2337,6 +2208,51 @@
       "provisional": [],
       "status": "EXTERNAL: outside the enclosure; the length is set by the cable, not by the enclosure model",
       "in_build16": true
+    },
+    "S42": {
+      "kind": "harness",
+      "ends": [
+        "PWR",
+        "PWRC"
+      ],
+      "note": "W2 F2C-FALLBACK (MECH-F2C): W-C1, 18 AWG: from the PWR-C top edge (J118/J119 lands, enclosure y 37.5, front slab) over the tray front edge to the PWR-A bottom edge (J106/J107 Mini-Fit Jr. 2x1, through their PWR-B edge strips); model centreline, the bend over the tray edge is OPEN for the CAD",
+      "points_mm": [
+        [
+          65.3,
+          37.5,
+          60.48
+        ],
+        [
+          65.3,
+          38.2,
+          59.48
+        ],
+        [
+          46.0,
+          38.2,
+          59.48
+        ],
+        [
+          46.0,
+          38.5,
+          47.564
+        ]
+      ],
+      "path_mm": 32.4,
+      "bends": 2,
+      "bundle_od_mm": 4.85,
+      "wires": 4,
+      "bend_allowance_mm": 7.6,
+      "service_loops_mm": 30.0,
+      "length_mm": 71,
+      "through": [],
+      "crossings": [],
+      "provisional": [
+        "J118 (X42C2-PWRC, PWR_C), J119 (X42C1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1",
+        "J106 (X42J2-PWR, PWR_A), J107 (X42J1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0"
+      ],
+      "status": "OPEN (end provisional): J118 (X42C2-PWRC, PWR_C), J119 (X42C1-PWRC, PWR_C) position TBD (board placement): end on the PWR_C edge zone 1; J106 (X42J2-PWR, PWR_A), J107 (X42J1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0",
+      "in_build16": true
     }
   },
   "branches": {
@@ -2398,13 +2314,65 @@
       ],
       "replaces": "the PPS/UART6 transit of S01 + S25 through CTRL (E3 nets unchanged: harness only)"
     },
+    "S02C": {
+      "kind": "harness",
+      "ends": [
+        "CTRL",
+        "PWRC"
+      ],
+      "note": "W2 F2C-FALLBACK (MECH-F2C): W-C2: from the CTRL left edge (J306/J307, zone 0 s 26) west along y 39.0 at the CTRL exit height z 62.98, south of the display clamp boss (163.8, 46: 1.08 mm, not along y 42-43, which runs through it) and over the PACK_FUSE carrier (y <= 32.7), to the PWR-C top edge at its right end (J120, JST PHD 2x5 side entry, opening up, its face 2.1 mm inside the edge beside the corner notch); model centreline; it shares the passage south of the boss with S02B (bundle-to-bundle room not modelled, MECH proof-fit OPEN)",
+      "points_mm": [
+        [
+          176.0,
+          39.0,
+          62.98
+        ],
+        [
+          153.1,
+          39.0,
+          62.98
+        ],
+        [
+          153.1,
+          37.5,
+          60.48
+        ]
+      ],
+      "path_mm": 25.8,
+      "bends": 1,
+      "bundle_od_mm": 4.34,
+      "wires": 9,
+      "bend_allowance_mm": 3.4,
+      "service_loops_mm": 30.0,
+      "length_mm": 60,
+      "through": [],
+      "crossings": [],
+      "provisional": [
+        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+        "PWR_C header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      ],
+      "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone; PWR_C header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "from_segment": "S02",
+      "nets": [
+        "CHG_INHIBIT",
+        "E1_BAT_ADC",
+        "I2C0_SCL",
+        "I2C0_SDA",
+        "IMU_RX",
+        "IMU_TX",
+        "INA228_ALERT",
+        "PICO_OFF",
+        "PWR_BUTTON"
+      ],
+      "replaces": "the 9 E1/E5 signals of S02 that ran CTRL - PWR-B J202/J203 - B2B - PWR-A until F2-C (design/E3.json unchanged: the same J306/J307 contacts)"
+    },
     "S02B": {
       "kind": "harness",
       "ends": [
         "CTRL",
         "PWR"
       ],
-      "note": "W2 PWR-L6-PLACE third pass: the 20 S02-SIG-2 wires leave S02 at the CTRL left edge (zone 0, s 47) and run at the CTRL exit height z 62.98 down x 175.2 (right of the display, x <= 170.52, and of the blower) to y 37.0 over the battery tray (top z 58.4), west along y 37.0 to x 108.3 (clear of the display clamp boss (163.8, 46) and the display, y >= 50.3, by >= 0.5 mm plus the bundle radius), north to y 46.5 and down onto the PHDR plug top of J203 (rows board y 9.75 / 7.75, PHD_top h_mated 8.8; the last 0.75 mm in y at the housing top); not along y 46: that leg crosses the clamp boss; with the 22 AWG PTFE bundle (OD 6.47) the leg keeps >= 0.5 mm to the front wall (67.58) and to the tray top; it runs beside the S23/S34 bundle at the zone-2 exit (dressing, bend radius over J203 and proof-fit OPEN)",
+      "note": "W2 PWR-L6-PLACE third pass: the 20 S02-SIG-2 wires leave S02 at the CTRL left edge (zone 0, s 47) and run at the CTRL exit height z 62.98 down x 175.2 (right of the display, x <= 170.52, and of the blower) to y 37.0 over the battery tray (top z 58.4), west along y 37.0 to x 108.3 (clear of the display clamp boss (163.8, 46) and the display, y >= 50.3, by >= 0.5 mm plus the bundle radius), north to y 46.5 and down onto the PHDR plug top of J203 (rows board y 9.75 / 7.75, PHD_top h_mated 8.8; the last 0.75 mm in y at the housing top); not along y 46: that leg crosses the clamp boss; with the 22 AWG PTFE bundle (OD 6.47) the leg keeps >= 0.5 mm to the front wall (67.58) and to the tray top; it runs beside the S23/S34 bundle at the zone-2 exit (dressing, bend radius over J203 and proof-fit OPEN); W2 F2C-FALLBACK (MECH-F2C): 13 wires (OD 5.21), and the PWR-C board fills the slab over the tray up to y 37.5, so the leg rises to z 63.5 at x 175.2, runs west along y 39.05 (clamp boss (163.8, 46) >= 0.5 mm: 0.595) to x 159.35, through the PWR-C corner notch (enclosure x 156.1-160, y 35.8-37.5) north to y 40.65 and west along y 40.65 (PWR-C top edge 37.5: 0.54 mm) to x 108.3, then down onto J203 as before; z 63.5 keeps it over the S23/S34 leg (y 40.5, z 59.0); it crosses the PWR-C top-edge exits J120 (W-C2), J108 (S10) and J115 (S12) and shares the passage south of the boss with W-C2: bundle-to-bundle room is not modelled, the pair side by side does not fit there with 0.5 mm (MECH proof-fit OPEN, build/15 W2 F2C-FALLBACK)",
       "points_mm": [
         [
           176.0,
@@ -2418,18 +2386,33 @@
         ],
         [
           175.2,
-          37.0,
-          62.98
+          60.0,
+          63.5
+        ],
+        [
+          175.2,
+          39.05,
+          63.5
+        ],
+        [
+          159.35,
+          39.05,
+          63.5
+        ],
+        [
+          159.35,
+          40.65,
+          63.5
         ],
         [
           108.3,
-          37.0,
-          62.98
+          40.65,
+          63.5
         ],
         [
           108.3,
           46.5,
-          62.98
+          63.5
         ],
         [
           108.3,
@@ -2442,13 +2425,13 @@
           58.028
         ]
       ],
-      "path_mm": 105.9,
-      "bends": 5,
-      "bundle_od_mm": 6.47,
-      "wires": 20,
-      "bend_allowance_mm": 25.4,
+      "path_mm": 102.8,
+      "bends": 8,
+      "bundle_od_mm": 5.21,
+      "wires": 13,
+      "bend_allowance_mm": 32.7,
       "service_loops_mm": 30.0,
-      "length_mm": 162,
+      "length_mm": 166,
       "through": [],
       "crossings": [],
       "provisional": [
@@ -2465,18 +2448,11 @@
         "FLT_LIME3V3",
         "FLT_LNB",
         "FLT_SB_LNA",
-        "I2C0_SCL",
-        "I2C0_SDA",
-        "IMU_RX",
-        "IMU_TX",
-        "INA228_ALERT",
         "OVP_LNB_N",
         "PG_BONI",
         "PG_LNB",
         "PICO_DISP_EN",
-        "PICO_OFF",
         "PTC_AUX",
-        "PWR_BUTTON",
         "SLED_DET"
       ],
       "replaces": "the J203 conductors of S02 (W2 PWR-L6-PLACE third pass: J203 left PWR-B edge zone 0 for the top-entry exit of zone 2; J307.k <-> J203.k except J306.5/7/12/16 <-> J203.2/14/15/18 since the probe C pin swap of the fourth pass, tools/assembly_data.py HEADERS)"
@@ -2576,15 +2552,11 @@
         "S25",
         "S30",
         "S35",
-        "S06",
-        "S07",
         "S36"
       ],
       "routed": [
         "S03",
         "S04",
-        "S06",
-        "S07",
         "S13",
         "S14",
         "S15",

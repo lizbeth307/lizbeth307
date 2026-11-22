@@ -142,7 +142,7 @@
             108,
             128
           ],
-          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22, S35 and S36 leave from PWR-B J204/J207 on the PWR-B top span x 58-107 (boards PWR_B edge_zones[1], W2 MECH-7 part 2) and reach SL2 along the y 74.25 channel; PWR-B leaves a window over this span",
+          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path leads (S06/S07 until W2 F2C-FALLBACK, deleted) to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22, S35 and S36 leave from PWR-B J204/J207 on the PWR-B top span x 58-107 (boards PWR_B edge_zones[1], W2 MECH-7 part 2) and reach SL2 along the y 74.25 channel; PWR-B leaves a window over this span",
           "headers": [
             "J206"
           ]
@@ -1594,6 +1594,106 @@
       "height_zones": [],
       "rear_zones": [],
       "dxf": "boards/enc-edge-cuts.dxf"
+    },
+    "PWR_C": {
+      "name": "power-entry board PWR-C (PWR_ENTRY; fallback F2-C after gate G1, W2 F2C-FALLBACK)",
+      "domains": [
+        "PWR_ENTRY"
+      ],
+      "outline_mm": [
+        [
+          5.5,
+          0
+        ],
+        [
+          156,
+          0
+        ],
+        [
+          156,
+          31.8
+        ],
+        [
+          152.1,
+          31.8
+        ],
+        [
+          152.1,
+          33.5
+        ],
+        [
+          0,
+          33.5
+        ],
+        [
+          0,
+          5.5
+        ]
+      ],
+      "cutouts_mm": [
+        [
+          67.0,
+          8.0,
+          18.0,
+          18.0
+        ]
+      ],
+      "area_mm2": 4880.2,
+      "holes_mm": [
+        [
+          151.5,
+          4.5
+        ],
+        [
+          76.0,
+          30.0
+        ],
+        [
+          11.0,
+          4.5
+        ],
+        [
+          3.0,
+          12.0
+        ]
+      ],
+      "hole_d": 3.2,
+      "hole_keepout_d": 7.0,
+      "max_component_height": 6.5,
+      "placements": {
+        "default": {
+          "origin": [
+            4.0,
+            4.0
+          ],
+          "z_bottom": 67.08,
+          "facing": "-z"
+        }
+      },
+      "mount": "five M3 positions on front-shell standoff pads (fixing OPEN: the board back lies 0.5 mm from the front-wall inner face z 67.58, which leaves no insert depth; build/15 W2 F2C-FALLBACK); fitted before the battery tray",
+      "edge_zones": [
+        {
+          "edge": "right",
+          "span": [
+            0,
+            33.5
+          ],
+          "use": "S05 from PACK_FUSE J117 (J105 lands) only: enclosure x 160, the PACK_FUSE carrier at x 161.7-172.4 leaves 1.7 mm, no room for another bundle (W-C2 left this edge for the top edge)"
+        },
+        {
+          "edge": "top",
+          "span": [
+            0,
+            156
+          ],
+          "use": "W-C2 = harness branch S02C to CTRL J306/J307 (J120, JST PHD 2x5 side entry, opening up, at the right end), S10 to the IP2368 (J108, J112), S12 service XT30 (J115), W-C1 = harness S42 to PWR-A J106/J107 (J118/J119 lands; PWR-A bottom edge at enclosure y 38.5), S32 to the GX16 (J507), S05 NTC (J109), S11 from the USB-C panel (J113, J114)"
+        }
+      ],
+      "thermal_bond_mm": [],
+      "modules_on_board": [],
+      "height_zones": [],
+      "rear_zones": [],
+      "dxf": "boards/pwr_c-edge-cuts.dxf"
     }
   }
 }
