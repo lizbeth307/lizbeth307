@@ -120,11 +120,85 @@ def classes():
     return {p['pattern']: (p['netclass'], width[p['netclass']]) for p in pro['netclass_patterns']}, width['Default']
 
 
+# W2 PWR-L6-ROUTE: port of the W2 PWR-L6-PLACE fourth-pass helpers of build/kicad/boards/PWR_B/freeze/freeze6.py (unchanged):
+# split remainders merged back and short pieces whose end meets nothing exactly (the KiCad 10.0.7 track_dangling pattern)
+TINY = 0.15  # mm: a split remainder shorter than this is merged back (W2 PWR-L6-PLACE fourth pass, combined)
+
+
+def _at_point(m, net, lay, q, skip):
+    n = 0
+    for ot in m.near(lay, (q[0] - 0.01, q[1] - 0.01, q[0] + 0.01, q[1] + 0.01)):
+        if ot.id in skip or ot.net != net:
+            continue
+        if ot.kind == 'track' and min(math.dist(q, ot.a), math.dist(q, ot.b)) < 1e-6:
+            n += 1
+        elif ot.kind in ('via', 'pad') and ot.shape.dist(*q) <= 1e-6:
+            n += 1
+    return n
+
+
+def merge_remainders(m, srcs=('router', 'new', 'escape')):
+    """W2 PWR-L6-PLACE fourth pass (probe A push 2, route run 43537055803: KiCad 10.0.7 track_dangling on two split
+    remainders, FLT_SB_LNA In2.Cu 0.0904 mm and LNB13V2 F.Cu 0.0077 mm): a router / completion track shorter than TINY that
+    shares an end, collinear, with one other such track of the same net, layer and width, and no other item at that end, is
+    merged back into it (same copper). Returns [(net, layer, length)]."""
+    done, changed = [], True
+    while changed:
+        changed = False
+        for t in list(m.items):
+            if not (t.alive and t.kind == 'track' and t.src in srcs and math.dist(t.a, t.b) < TINY):
+                continue
+            lay = t.layers[0]
+            for q, far in ((t.a, t.b), (t.b, t.a)):
+                partner = None
+                for u in m.near(lay, (q[0] - 0.01, q[1] - 0.01, q[0] + 0.01, q[1] + 0.01)):
+                    if u.id == t.id or u.kind != 'track' or u.net != t.net or u.src not in srcs or abs(u.width - t.width) > 1e-9:
+                        continue
+                    ufar = u.b if math.dist(u.a, q) < 1e-6 else u.a if math.dist(u.b, q) < 1e-6 else None
+                    if ufar is None:
+                        continue
+                    v1, v2 = (q[0] - ufar[0], q[1] - ufar[1]), (far[0] - q[0], far[1] - q[1])
+                    cross = v1[0] * v2[1] - v1[1] * v2[0]
+                    if abs(cross) / (math.hypot(*v1) * math.hypot(*v2) + 1e-12) < 1e-3 and v1[0] * v2[0] + v1[1] * v2[1] > 0:
+                        partner = (u, ufar)
+                        break
+                if partner is None or _at_point(m, t.net, lay, q, {t.id, partner[0].id}) > 0:
+                    continue
+                u, ufar = partner
+                m.remove(t)
+                m.remove(u)
+                m.add_track(t.net, lay, t.width, ufar, far, src=u.src)
+                done.append((t.net, lay, round(math.dist(t.a, t.b), 4)))
+                changed = True
+                break
+    return done
+
+
+def short_pieces(m):
+    """Tracks shorter than their width with an end that meets no other item of the net exactly (a track end, a via or a
+    pad): the pattern KiCad 10.0.7 flags as track_dangling (route run 43537055803); the model's end test accepts such an
+    end inside another track's copper, so it is listed here."""
+    out = []
+    for t in m.items:
+        # PWR_A: router and completion copper only (the scripted copper and the stubs are KiCad-checked by the route run, as in
+        # fin.dangling)
+        if not (t.alive and t.kind == 'track') or t.src not in ('router', 'new', 'escape') or math.dist(t.a, t.b) >= t.width:
+            continue
+        for e in (t.a, t.b):
+            if not _at_point(m, t.net, t.layers[0], e, {t.id}) and not any(
+                    o.kind in ('via', 'pad') and o.shape.dist(*e) <= 1e-4 for o in
+                    m.near(t.layers[0], (e[0] - 0.01, e[1] - 0.01, e[0] + 0.01, e[1] + 0.01)) if o.net == t.net):
+                out.append(('short piece', t.net, B(e), t.layers[0], round(math.dist(t.a, t.b), 4), t.src))
+                break
+    return out
+
+
 def verify(m):
     """Open connections, dangling copper and clearance of every track and via (exact checks), as CTRL freeze_route.py."""
     nets = sorted({i.net for i in m.items if i.alive and i.net})
     open_ = {n: len(m.islands(n)) - 1 for n in nets if len(m.islands(n)) > 1}
     bad = [('dangling',) + d for d in F.dangling(m)]
+    bad += short_pieces(m)
     ends = collections.defaultdict(list)
     for it in m.items:
         if it.alive and it.kind == 'track':
@@ -361,6 +435,8 @@ def main(argv=None):
     ap.add_argument('--prev', help='W2 PWRJ-LAYERS6 ratchet: the route-frozen-6l.json the run was routed with; its locked copper '
                                    'on the board is harvested again together with the new router copper')
     ap.add_argument('--order', choices=('class', 'short'), default='class', help='completion order of the open nets')
+    ap.add_argument('--rip-wide', action='store_true',
+                    help='W2 PWR-L6-ROUTE: a rip-up search in the 25 mm box when the 8 mm box has none (fin.connect_all rip_wide)')
     ap.add_argument('--spec-zones', action='store_true',
                     help='W2 PWR-L6-ROUTE: model the scripted pours with clearance_mm by their spec outlines (spec_zones)')
     ap.add_argument('--leave-open', action='append', default=[], metavar='NET',
@@ -479,7 +555,8 @@ def main(argv=None):
         # a class-width path may take a short pad-to-pad neck (fin.neck_link, NECK_MAX mm), listed in the spec neck_exempt
         m.keepouts[:] = base_keepouts + zone_keepouts(net)
         ok, ripped, nk = fz.connect_all(net, width=width(net), layers=layers(net), allow_rip=not args.no_rip,
-                                        neck=(width(net), NECK_MAX, neck_ok) if layers(net) == OUTER else None)
+                                        neck=(width(net), NECK_MAX, neck_ok) if layers(net) == OUTER else None,
+                                        rip_wide=args.rip_wide)
         necks += nk
         if not ok and layers(net) == OUTER:  # low-current branches of a power net (exemption policy: TP, R >= 100 ohm, sense pins)
             bk = branch_kind(GRAPH)
@@ -498,6 +575,8 @@ def main(argv=None):
         touched |= set(ripped)
     for n in sorted({i.net for i in m.items if i.alive and i.net and i.net not in M.PLANES}):
         F.prune(m, n, srcs=('router', 'new', 'escape'))  # an escape stub whose link failed goes too
+    merged = merge_remainders(m)
+    print('split remainders merged back:', len(merged))
     open_, bad = verify(m)
     dropped = (0, [])
     if bad:
@@ -539,7 +618,7 @@ def main(argv=None):
                        'plane layer) by build/kicad/boards/PWR_A/freeze/freeze6.py'),
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed)),
                    **({'scripted_open_in_run': bad_never, 'scripted_split_in_model': scripted_split} if bad_never else {})},
-        'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops,
+        'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops, 'merged_split_remainders': len(merged),
                   **({'spec_zones': {'modelled': zones_modelled[0], 'fill_items_removed': zones_modelled[1]}} if zones_modelled else {}),
                   'final_check_dropped': {'items': dropped[0], 'nets': dropped[1]}, 'left_open': left_open},
         'necks': sorted(necks, key=lambda r: (r['ref'], r['pad'], r['to'])),

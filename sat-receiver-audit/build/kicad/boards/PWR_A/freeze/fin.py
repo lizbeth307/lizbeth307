@@ -348,10 +348,12 @@ def neck_link(m, net, A, B, layers, class_w, neck_max, neck_min=0.25, allow=None
 
 
 def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu', 'B.Cu'), g=0.05, via_cost=1.5, neck=None,
-                max_links=80):
+                max_links=80, rip_wide=False):
     """Join the islands of a net pair by pair (W2 PWRJ-LAYERS6): as Finisher.connect, but a pair without a path is skipped
     and the next pair is tried, so one walled-in pad does not leave the rest of the net open; neck = (class width, max mm)
-    allows neck_link for a pair that has no class-width path. Returns (all joined, ripped nets, neck records)."""
+    allows neck_link for a pair that has no class-width path. W2 PWR-L6-ROUTE: rip_wide also tries the rip-up search in the 25 mm
+    box when the 8 mm box has no path (route run 43591929140: E2_AUX_PTC, E5_IMU5V, E5_VBUS_HFP_SW and LNB13V2_DAMP join at the
+    class width once the router copper is gone, but not inside 8 mm). Returns (all joined, ripped nets, neck records)."""
     ripped, necks, failed = [], [], set()
     prune(self.m, net)
     for _ in range(max_links):
@@ -381,6 +383,10 @@ def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu',
                     res = R.route_link(self.m, net, A, B, island_box([A, B], 8.0), width=width, g=g, via_cost=via_cost,
                                        verbose=False, layers=layers, soft_src=('router',), soft_cost=2.0)
                     how = 'rip'
+                    if res is None and rip_wide and nb == 0:
+                        res = R.route_link(self.m, net, A, B, island_box([A, B], 25.0), width=width, g=g, via_cost=via_cost,
+                                           verbose=False, layers=layers, soft_src=('router',), soft_cost=2.0, max_nodes=3_000_000)
+                        how = 'rip-wide'
                     if res is not None:
                         hits, bad = conflicts(self.m, net, res)
                         if bad:
