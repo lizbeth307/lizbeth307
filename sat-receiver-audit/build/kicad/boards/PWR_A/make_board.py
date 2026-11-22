@@ -92,10 +92,32 @@ MOVES: dict = {
     # W2 F2C-FALLBACK part 2 (design choices, build/15): local repairs of the re-placed reduced PWR-A where a power net could not join
     # even alone on the scripted board (MODEL, freeze/plan6.py plan_net on the net alone; the nearest legal spot of place_board.py rules,
     # courtyard GAP 0.4 mm, pockets, H-TRIM, scripted copper, where the part's power pads join)
-    'U111': (30.85, 36.15, 0, 'F', 'W2 F2C-FALLBACK part 2: LM74700 U111 turned by 180 degrees in place, so that its ANODE pin 3 (E1_SW, '
-                                   'sense) faces the E1_SW copper and takes its branch'),
+    # W2 PWR-A closure round 1, probe X (design choice, build/15): LM74700 U111 back at the place_board.py orientation (180 degrees), so
+    # that its left pin column faces the Q102 stage in the order of the copper there: CATHODE pin 4 (E1_CONV_IN) at the drain pad and the
+    # E1_CONV_IN spine, GATE pin 5 at the Q102 gate, ANODE pin 6 at the E1_SW bar; EN pin 3 (E1_SW, sense/logic) is tied to ANODE pin 6
+    # under the body (SC-U111-EN). At 0 degrees (W2 F2C-FALLBACK part 2) the E1_SW branch of pin 6 ran round pins 4 and 5 and walled them
+    # in: CATHODE, GATE and VCAP had no exit (push 2: E1_CONV_IN, E1_RPP_GATE, E1_RPP_VCAP open; MODEL: no 0.15 mm path on any layer)
+    'U111': (30.85, 36.15, 180, 'F', 'W2 PWR-A closure probe X: LM74700 U111 at 180 degrees, CATHODE/GATE/ANODE facing the Q102 stage, '
+                                     'EN tied to ANODE under the body (SC-U111-EN)'),
     'C291': (42.5, 8.0, 90, 'F', 'W2 F2C-FALLBACK part 2: LT3045 input bypass C291 (E2_LNA_IN) beside U205 instead of 60 mm away '
                                  '(place_board.py half-perimeter cost: a pin inside the box of a many-pin net costs nothing)'),
+    # W2 PWR-A closure round 1, probe X (design choice, build/15): the second LT3045 input bypass C289 (E2_LNA_IN, 1210) out of the
+    # column-to-band junction (40.0, 37.15), where the E2_LNA_IN class copper could not reach it on F.Cu or B.Cu (the LAB5 band and
+    # trunk lie between; push 2: C289.1 open, MODEL: inner-layer path only), to the E2_LNA_IN loop of U204/U205 beside C291: the nearest
+    # place_board.py-legal spot where the net joins (MODEL, plan6 plan_net alone); the junction keeps that room for the long power links
+    'C289': (38.0, 8.5, 0, 'F', 'W2 PWR-A closure probe X: LT3045 input bypass C289 (E2_LNA_IN) to the U204/U205 input loop beside C291, '
+                                'out of the column-to-band junction'),
+    # W2 PWR-A closure round 1, probe X (design choice, build/15): the LNB input damper R252 (E2_LNB_IN -> E2_LNB_IN_DAMP, 0.22 ohm, BATT
+    # class both sides) stood upright in pocket PB3 with its E2_LNB_IN pad below its DAMP pad; both nets leave southwards (L211 / C254), so
+    # the DAMP copper had to pass the E2_LNB_IN pad and only one of the two joined at the class width (MODEL, plan6 plan_net: either order
+    # left the other open). R252 lies flat now, E2_LNB_IN pad west and DAMP pad east, both facing south with 1.3 mm between the two 1.6 mm
+    # links; the LNB13V2 damper R259 (PWR1A 0.2 mm both sides) moves up-left in PB3 to make that room (place_board.py-legal spots)
+    'R252': (21.2, 30.15, 180, 'B', 'W2 PWR-A closure probe X: LNB input damper flat in PB3, both BATT pads facing south'),
+    'R259': (18.0, 33.5, 0, 'B', 'W2 PWR-A closure probe X: LNB13V2 damper up-left in PB3 to make room for R252'),
+    # W2 PWR-A closure round 1, probe X (design choice, build/15): the U108 EN divider resistor R133 turned by 180 degrees in place: at 180 its
+    # GND pad faced R132 and the GND fan-out via landed between R133.1 and R132.2, the two ends of E1_EN_LAB5 (push 2: open, MODEL: no
+    # 0.15 mm path on any layer); at 0 the EN pad sits right above R132.2 and the GND fan-out leaves on the other side
+    'R133': (18.9, 82.65, 0, 'F', 'W2 PWR-A closure probe X: U108 EN divider R133 turned, EN pad above R132.2'),
 }
 PLACEMENT = HERE / 'board-placement.json'
 
@@ -679,6 +701,15 @@ SCRIPT_TRACKS = [
              f'{U108_WHY}: FB pin 10 to RFBB R130.1 and RFBT R129.2 (feedback resistors at FB), F.Cu only'),
     sc_track('SC-U108-RT', 'E1_LAB5_RT', 0.2, [(16.25, 79.725), (22.15, 79.725)], f'{U108_WHY}: RT pin 12 to R131.1'),
 ]
+# W2 PWR-A closure round 1, probe X (design choice, build/15): ties of a part's own pins under its body, added by build() after the
+# placement (place_board.py does not see them: they lie inside the courtyard of a part that MOVES pins, so no other courtyard can reach
+# them). LM74700 U111 at 180 degrees: EN pin 3 (E1_SW, sense/logic: the enable tied to the anode supply) to ANODE pin 6 through the gap
+# between the pin columns (0.25 mm, 0.2 mm from the GND, GATE and VCAP pads), then from ANODE on to the E1_SW bar at x 28.4; milliamperes
+# (sense pins): branch_exempt row U111 of SCRIPT_BRANCHES
+PART_TRACKS = [
+    sc_track('SC-U111-EN', 'E1_SW', 0.25, [(31.55, 37.1), (30.85, 36.55), (30.85, 35.75), (30.15, 35.2), (28.2, 35.2)],
+             'LM74700 U111 EN pin 3 tied to ANODE pin 6 under the body and ANODE on to the E1_SW bar (sense/logic pins, milliamperes)'),
+]
 SCRIPT_VIAS = [  # (id, net, (x, y), why): 0.6 / 0.3 like the other scripted vias
     ('SC-U107-SENSE-V1', 'SYS12', (12.9, 38.3), f'{U107_WHY}: BIAS / output-sense via ("VIAS to BIAS"), below thermal_bond zone 3\''),
     ('SC-U107-SENSE-V2', 'SYS12', (6.2, 62.0), f'{U107_WHY}: the output sense up into the SYS12 bar left of thermal_bond zone 3\''),
@@ -810,6 +841,9 @@ SCRIPT_BRANCHES = {
              'reason': 'BIAS pin 1 and the RFBT / CFF output sense: bias and sense current (milliamperes), In2.Cu under the In1.Cu GND'},
     'U108': {'pads': ['5'], 'max_mm': 4.0, 'min_width_mm': 0.25,
              'reason': 'VLDOIN pin 5 (internal LDO input, milliamperes) to VOUT1 between the module pins'},
+    # W2 PWR-A closure round 1, probe X: the SC-U111-EN tie (4.5 mm from pin 3 to the E1_SW bar)
+    'U111': {'pads': ['3', '6'], 'max_mm': 5.0, 'min_width_mm': 0.25,
+             'reason': 'LM74700 EN pin 3 tied to ANODE pin 6 under the body, then to the E1_SW bar (sense/logic pins, milliamperes)'},
 }
 TPS25947_SOURCE = ('TI TPS25947xx data sheet SLVSFC9C (rev. C, May 2026) section 8.4.1 Layout Guidelines and figure 8-22 Layout Example, '
                    'https://www.ti.com/lit/ds/symlink/tps25947.pdf, read 2026-11-14 (curl default User-Agent, HTTP 200, sha256 '
@@ -1123,6 +1157,100 @@ def gnd_bridges(inp, vias):
                                 'why': f'GND bridge of the fan-out via {v["id"]} to {ref}.{q["number"]}, which it only grazes '
                                        '(minimum connection width 0.15 mm; W2 F2C-FALLBACK part 2, make_board.py gnd_bridges)'})
     return out
+
+
+# W2 PWR-A closure round 1, probe X (design choice, build/15): the GND fan-out of the B2B J208 turns inward. gnd_fanout gives every GND pin
+# of the J208 top row (y 20.35) a via straight above it at y 21.65 (the first free direction), so each top-row power pin between two GND
+# pins (3V3_Q6A, LNA4V5, VBUS_HFP, LAB5_RLY, BONI13V8, LNB13V2, AUX12, ...) sat behind two vias 0.3 mm apart and had no exit (push 2 of
+# W2 F2C-FALLBACK part 2: AUX12 J208.33 open, MODEL: no 0.15 mm path on any layer). Between the two pin rows (pads 17.4 / 19.6) there is
+# room for a via at y 19.05 (0.2 mm from the top-row pads); the bottom-row GND vias there stay. Done after gnd_fanout and only in the board
+# build, so place_board.py keeps its (more conservative) view of the fixed fan-out above the connector and its placement does not change.
+B2B_INWARD = ('J208',)
+
+
+def b2b_inward_fanout(inp, pre, tracks, vias):
+    """Move the GND fan-out of the outer pin row of each B2B_INWARD connector between its pin rows: a via at the row's inner pad edge less
+    VIA_D / 2 + CLEAR + MARGIN, or (when that via would break the drill spacing or a clearance) a stub to the nearest inner GND via. A via
+    another stub still ends on stays. Returns (tracks, vias, moved pads)."""
+    tracks, vias, moved = list(tracks), list(vias), []
+    pads = [p for pa in inp.parts.values() for p in pa.pads]
+    segs, pours = scripted_items(pre)
+    need = CLEAR + MARGIN - EPS
+    for ref in B2B_INWARD:
+        pa = inp.parts.get(ref)
+        if pa is None:
+            continue
+        mine = [q for q in pa.pads if q['type'] == 'smd' and q['number']]
+        cy = (min(q['box'][1] for q in mine) + max(q['box'][3] for q in mine)) / 2
+        top = [q for q in mine if q['at'][1] > cy]
+        bot = [q for q in mine if q['at'][1] < cy]
+        if not top or not bot:
+            continue
+        inner_top = min(q['box'][1] for q in top)          # lower edge of the outer (top) row
+        inner_bot = max(q['box'][3] for q in bot)          # upper edge of the bottom row
+        vy = r4(inner_top - VIA_D / 2 - need - EPS)
+        if vy - VIA_D / 2 - need < inner_bot:
+            continue
+        for q in sorted(top, key=lambda q: q['at'][0]):
+            if q['net'] != 'GND':
+                continue
+            vid = f'GND-{ref}-{q["number"]}'
+            old_v = next((v for v in vias if v['id'] == vid + '-V'), None)
+            old_t = next((t for t in tracks if t['id'] == vid + '-S'), None)
+            if old_t is None:
+                continue
+            at_old = tuple(old_t['path'][-1])
+            if at_old[1] <= q['at'][1]:
+                continue                                     # already inward
+            if old_v is not None and any(t is not old_t and t['net'] == 'GND' and tuple(t['path'][-1]) == tuple(old_v['at'])
+                                         for t in tracks):
+                continue                                     # another stub ends on this via
+            x = q['at'][0]
+            drills = [(tuple(v['at']), v['drill_mm']) for v in pre.get('vias', []) + vias if v is not old_v]
+            drills += [(p['at'], p['drill'][0] if p['drill'] else 0.0) for p in pads if p['type'] in ('thru_hole', 'np_thru_hole')]
+
+            def via_ok(at):
+                if any(math.hypot(at[0] - d[0], at[1] - d[1]) < VIA_DRILL / 2 + dd / 2 + HOLE_GAP for d, dd in drills):
+                    return False
+                if any(p['net'] != 'GND' and box_dist((at[0], at[1], at[0], at[1]), p['box']) - VIA_D / 2 < need for p in pads):
+                    return False
+                if any(s['net'] != 'GND' and seg_seg_dist(s['a'], s['b'], at, at) - s['r'] - VIA_D / 2 < need for s in segs):
+                    return False
+                if any(z['net'] != 'GND' and box_dist((at[0], at[1], at[0], at[1]), z['box']) - VIA_D / 2 < need for z in pours):
+                    return False
+                return True
+
+            def stub_ok(path):
+                for a, b in zip(path, path[1:]):
+                    if any(p['net'] != 'GND' and pa.side in p['layers'] and seg_box_dist(a, b, p['box']) - W_GND / 2 < need for p in pads):
+                        return False
+                return True
+            new_at = (r4(x), vy)
+            path = [(q['at'][0], q['at'][1]), new_at]
+            new_via = via_ok(new_at) and stub_ok(path)
+            if not new_via:
+                inner = sorted((v for v in vias + pre.get('vias', []) if v['net'] == 'GND' and inner_bot < v['at'][1] < inner_top
+                                and abs(v['at'][0] - x) < 1.2), key=lambda v: abs(v['at'][0] - x))
+                path = None
+                for v in inner:
+                    cand = [(q['at'][0], q['at'][1]), (q['at'][0], r4(v['at'][1] + 0.4)), tuple(v['at'])]
+                    if stub_ok(cand):
+                        path, new_at = cand, tuple(v['at'])
+                        break
+                if path is None:
+                    continue
+            tracks.remove(old_t)
+            if old_v is not None:
+                vias.remove(old_v)
+            tracks.append({'id': vid + '-S', 'net': 'GND', 'layer': f'{pa.side}.Cu', 'width_mm': W_GND,
+                           'path': [[r4(px), r4(py)] for px, py in path], 'locked': True,
+                           'why': (f'GND fan-out of {ref}.{q["number"]} inward between the pin rows (W2 PWR-A closure probe X, b2b_inward_fanout)'
+                                   if new_via else f'GND fan-out of {ref}.{q["number"]} to the inner GND via at {list(new_at)} (b2b_inward_fanout)')})
+            if new_via:
+                vias.append({'id': vid + '-V', 'net': 'GND', 'at': [new_at[0], new_at[1]], 'drill_mm': VIA_DRILL, 'diameter_mm': VIA_D,
+                             'locked': True, 'why': f'GND plane via of {ref}.{q["number"]} between the pin rows (b2b_inward_fanout)'})
+            moved.append(f'{ref}.{q["number"]}')
+    return tracks, vias, moved
 
 
 def fixed_refs(study, shrink2=None):
@@ -1662,9 +1790,12 @@ def build(frozen=True, planned=True):
     problems = check_placement(inp)
     pre, copper_notes = board_copper(spec['pre_route'], inp)
     pre, script_notes = script_copper(pre)
-    problems += script_clearance(inp, pre, {t['id'] for t in SCRIPT_TRACKS} | {v[0] for v in SCRIPT_VIAS} | {z['id'] for z in SCRIPT_ZONES})
+    pre['tracks'] += [dict(t) for t in PART_TRACKS]
+    problems += script_clearance(inp, pre, {t['id'] for t in SCRIPT_TRACKS + PART_TRACKS} | {v[0] for v in SCRIPT_VIAS}
+                                 | {z['id'] for z in SCRIPT_ZONES})
     problems += scripted_joined(inp, pre)
     gt, gv, skipped = gnd_fanout(inp, pre, first=fixed_refs(study))
+    gt, gv, _inward = b2b_inward_fanout(inp, pre, gt, gv)
     gt = gt + gnd_bridges(inp, gv)
     base = {'tracks': pre['tracks'] + gt, 'vias': pre['vias'] + gv, 'zones': pre['zones']}
     for net in CONVERTER_NETS:
@@ -1736,9 +1867,14 @@ def build(frozen=True, planned=True):
     exempt = {ref: {**row, 'reason': 'W2 PWR-L6-SCRIPT converter stage (' + SCRIPT_SOURCE.split(',')[0] + '): ' + row['reason']}
               for ref, row in SCRIPT_BRANCHES.items()}
     for ref, row in pbranch.items():
-        exempt[ref] = {'max_mm': r4(row['max_mm']), 'min_width_mm': r4(row['min_width_mm']),
-                       'reason': ('W2 PWR-L6-SCRIPT planned low-current branch (freeze/plan6.py; exemption policy: a test point, a '
-                                  'resistor of 100 ohm or more or a sense or logic pin; MODEL, bench gates OPEN): ' + ', '.join(row['links']))}
+        planned = {'max_mm': r4(row['max_mm']), 'min_width_mm': r4(row['min_width_mm']),
+                   'reason': ('W2 PWR-L6-SCRIPT planned low-current branch (freeze/plan6.py; exemption policy: a test point, a '
+                              'resistor of 100 ohm or more or a sense or logic pin; MODEL, bench gates OPEN): ' + ', '.join(row['links']))}
+        if ref in exempt:  # W2 PWR-A closure probe X: a planned branch of a part with a scripted branch: one row, the chain through both
+            old = exempt[ref]
+            planned = {'max_mm': r4(old['max_mm'] + planned['max_mm']), 'min_width_mm': r4(min(old['min_width_mm'], planned['min_width_mm'])),
+                       'reason': old['reason'] + '; ' + planned['reason']}
+        exempt[ref] = planned
     for ref, row in rows.items():
         exempt[ref] = {'max_mm': r4(row['max_mm']), 'min_width_mm': r4(row['min_width_mm']),
                        'reason': ('W2 PWRJ-LAYERS6: low-current branch of a power net from the frozen-route completion (a test point: '
