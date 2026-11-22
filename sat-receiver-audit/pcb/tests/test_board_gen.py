@@ -1174,5 +1174,67 @@ class ZoneLocalClearance(unittest.TestCase):
         self.assertNotEqual(plain.GetLocalClearance(), pcbnew.FromMM(0.15))
 
 
+class ZoneMinThickness(unittest.TestCase):
+    """W2 F2C-FALLBACK part 2: an optional zone key min_thickness_mm sets the KiCad minimum fill width (ZONE::SetMinThickness). KiCad
+    10.0.7 opens a fill by half its min_thickness (default 0.25 mm), which rounded the far corners of the PWR_A pin-entry landings
+    below the class width (route run 45030517114, pcb/check_boards.py measure_pin_entry). Only the PWR_A scripted pours carry the key,
+    at the project track floor, and their landings are make_board.LAND_EXTRA longer than the class width."""
+
+    def pwr_a(self):
+        return bg.read_json(bg.BASE / 'build/kicad/boards/PWR_A/board-spec.json')
+
+    def test_bad_value_is_refused(self):
+        spec = self.pwr_a()
+        zone = next(z for z in spec['pre_route']['zones'] if 'min_thickness_mm' in z)
+        for bad in (0.1, 0, True, '0.15'):
+            zone['min_thickness_mm'] = bad
+            with self.assertRaises(SystemExit, msg=repr(bad)):
+                bg.validate_spec(spec, 'PWR_A')
+        zone['min_thickness_mm'] = 0.15
+        bg.validate_spec(spec, 'PWR_A')
+
+    def test_only_pwr_a_scripted_pours_carry_the_key(self):
+        for board in bg.list_boards():
+            spec = bg.read_json(bg.spec_path(board))
+            keyed = [z['id'] for z in spec['post_route_zones'] + spec['pre_route'].get('zones', []) if 'min_thickness_mm' in z]
+            if board != 'PWR_A':
+                self.assertEqual(keyed, [], board)
+        spec = self.pwr_a()
+        keyed = {z['id']: z['min_thickness_mm'] for z in spec['pre_route']['zones'] if 'min_thickness_mm' in z}
+        self.assertTrue(keyed)
+        self.assertEqual(set(keyed.values()), {spec['fab_floor']['min_track_width']})
+        self.assertTrue(all(k.startswith(('SC-', 'PE-')) for k in keyed), sorted(keyed))
+        self.assertEqual(set(keyed), {z['id'] for z in spec['pre_route']['zones'] if 'clearance_mm' in z})
+
+    def test_scripted_entry_landings_are_longer(self):
+        sys.path.insert(0, str(bg.BASE / 'build/kicad/boards/PWR_A'))
+        import make_board as mb
+        self.assertGreater(mb.LAND_EXTRA, mb.POUR_MIN_THICKNESS / 2 - 0.05)
+        for zid, (_net, _pad, _strip, land, rects, _why) in mb.ENTRY_ZONES.items():
+            old, new = rects[-1], mb.extend_landing(rects)[-1]
+            grown = [round(abs(a - b), 4) for a, b in zip(old, new)]
+            self.assertEqual(sorted(grown), [0.0, 0.0, 0.0, mb.LAND_EXTRA], zid)
+            k = grown.index(mb.LAND_EXTRA)
+            self.assertGreaterEqual(round(abs(new[k] - new[k - 2 if k >= 2 else k + 2]), 4), round(land + mb.LAND_EXTRA, 4), zid)
+
+    @unittest.skipUnless(importlib.util.find_spec('pcbnew') is not None, 'KiCad pcbnew (sr-rx-pcb checks job only)')
+    def test_kicad_zone_gets_the_min_thickness(self):
+        import pcbnew
+        board = pcbnew.BOARD()
+        net = pcbnew.NETINFO_ITEM(board, 'N1')
+        board.Add(net)
+
+        class Frame:
+            def k(self, x, y):
+                return pcbnew.VECTOR2I(pcbnew.FromMM(x), pcbnew.FromMM(y))
+        zone = {'id': 'Z1', 'net': 'N1', 'layer': 'F.Cu', 'outline': [[0, 0], [2, 0], [2, 1], [0, 1]], 'priority': 4,
+                'pad_connection': 'solid', 'clearance_mm': 0.15, 'min_thickness_mm': 0.15}
+        item = bg.add_copper_zone(pcbnew, board, Frame(), {}, {}, zone, {'N1': net})
+        self.assertEqual(item.GetMinThickness(), pcbnew.FromMM(0.15))
+        plain = bg.add_copper_zone(pcbnew, board, Frame(), {}, {}, {k: v for k, v in zone.items() if k != 'min_thickness_mm'},
+                                   {'N1': net})
+        self.assertNotEqual(plain.GetMinThickness(), pcbnew.FromMM(0.15))
+
+
 if __name__ == '__main__':
     unittest.main()

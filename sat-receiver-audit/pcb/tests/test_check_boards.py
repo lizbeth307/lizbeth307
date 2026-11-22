@@ -1174,5 +1174,28 @@ class ExemptionPolicyReviewTests(unittest.TestCase):
         self.assertTrue(any('converter_capacitor' in f['detail'] for f in review(t, spec, graph=g)['findings']))
 
 
+class PinEntryRotatedPad(unittest.TestCase):
+    """W2 F2C-FALLBACK part 2: measure_pin_entry takes the pad box of a pad at 90 / 270 degrees across its turned size (the pad record
+    keeps the KiCad size unrotated); before, a turned 0.3 x 2.4 mm eFuse bar was measured as if it were 2.4 x 0.3 mm."""
+
+    def outline_polys(self, rects):
+        return [cb.Poly([(r[0], r[1]), (r[2], r[1]), (r[2], r[3]), (r[0], r[3])]) for r in rects]
+
+    def test_turned_bar_entry_measures_like_the_unturned_one(self):
+        need = 1.6
+        # the bar 2.4 mm along x and 0.3 mm along y (on the board), entered at its +x end: a 0.5 mm strip, then a landing
+        rects = [(-1.2, -0.15, 1.2, 0.15), (1.2, -0.15, 1.7, 0.15), (1.7, -0.8, 3.4, 0.8)]
+        polys = self.outline_polys(rects)
+        flat = {'x': 0.0, 'y': 0.0, 'w': 2.4, 'h': 0.3, 'angle': 0.0}
+        turned = {'x': 0.0, 'y': 0.0, 'w': 0.3, 'h': 2.4, 'angle': 90.0}
+        a, b = cb.measure_pin_entry(flat, polys, need), cb.measure_pin_entry(turned, polys, need)
+        self.assertIsNone(a['problem'], a)
+        self.assertEqual(a, b)
+        self.assertEqual([s['side'] for s in b['sides']], ['+x'])
+        self.assertAlmostEqual(b['sides'][0]['pad_side_mm'], 0.3)
+        b270 = cb.measure_pin_entry({**turned, 'angle': 270.0}, polys, need)
+        self.assertEqual(a, b270)
+
+
 if __name__ == '__main__':
     unittest.main()

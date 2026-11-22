@@ -87,6 +87,13 @@ MOVES: dict = {
     # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-05: 0.475 mm up (was 0.375), so that the SW link under it is 0.45 mm wide (TI "short,
     # wide traces" for CBOOT), 0.175 mm from C122.1; pad 1 still overlaps the VIN2 stub, pad 2 the PGND2 bar
     'C122': (13.07, 48.0, 90, 'F', 'W2 PWR-L6-SCRIPT: C122 (CIN_HF2) 0.475 mm up for the 0.45 mm SW-CBOOT link under it (SNVSBD5D 11.1)'),
+    # W2 F2C-FALLBACK part 2 (design choices, build/15): local repairs of the re-placed reduced PWR-A where a power net could not join
+    # even alone on the scripted board (MODEL, freeze/plan6.py plan_net on the net alone; the nearest legal spot of place_board.py rules,
+    # courtyard GAP 0.4 mm, pockets, H-TRIM, scripted copper, where the part's power pads join)
+    'U111': (30.85, 36.15, 0, 'F', 'W2 F2C-FALLBACK part 2: LM74700 U111 turned by 180 degrees in place, so that its ANODE pin 3 (E1_SW, '
+                                   'sense) faces the E1_SW copper and takes its branch'),
+    'C291': (42.5, 8.0, 90, 'F', 'W2 F2C-FALLBACK part 2: LT3045 input bypass C291 (E2_LNA_IN) beside U205 instead of 60 mm away '
+                                 '(place_board.py half-perimeter cost: a pin inside the box of a many-pin net costs nothing)'),
 }
 PLACEMENT = HERE / 'board-placement.json'
 
@@ -654,11 +661,8 @@ SCRIPT_TRACKS = [
              'BATT 1.6 mm pin-group bar over the Q102 sources S1-S3 from the E1_SW bar (power switch: no neck, no stem)'),
     sc_track('SC-Q201-S', 'SYS12', 1.6, [(31.468, 58.05), (31.468, 59.5)],
              'BATT 1.6 mm from the SYS12 crossing onto the Q201 source (power switch: no neck, no stem)'),
-    # --- W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-03 / -C-03: the TVS cathodes on BATT copper within 5 mm (make_spec.py TVS_ANCHORS) ---
-    sc_track('SC-D105-K', 'E1_SW', 1.6, [(13.45, 9.25), (16.6, 9.25)],
-             'TVS D105 (SMBJ17A) cathode to the E1_SW rise pour at the BATT width 1.6 mm, 1.15 mm pad to pour (TVS joined at class width)'),
-    sc_track('SC-D104-K', 'E1_N', 1.6, [(69.55, 8.25), (72.6, 8.25), (73.85, 7.9)],
-             'TVS D104 (SMBJ17A) cathode to the J108.2 (E1_N) pin at the BATT width 1.6 mm, 1.4 mm pad to pad (TVS joined at class width)'),
+    # --- W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-03 / -C-03 had the TVS cathodes D104/D105 here (SC-D104-K, SC-D105-K); W2
+    # F2C-FALLBACK (part 2, build/15): D104 and D105 are PWR-C parts (build/kicad/boards/PWR_C), so their tracks left PWR-A ---
     # --- U108 TPSM63606 (zone 4') ---
     sc_track('SC-U108-VOUT1', 'E1_LAB5_RAW', 1.6, [(12.0, 76.2), (12.0, 77.3)], f'{U108_WHY}: BATT 1.6 mm onto VOUT1 (pin 8) from its via'),
     sc_track('SC-U108-VOUT2', 'E1_LAB5_RAW', 1.6, [(16.0, 76.2), (16.0, 77.3)], f'{U108_WHY}: BATT 1.6 mm onto VOUT2 (pin 9) from its via'),
@@ -690,11 +694,18 @@ SCRIPT_VIAS = [  # (id, net, (x, y), why): 0.6 / 0.3 like the other scripted via
 # filled nothing, SC-PE-U201-OUT only its landing, SC-U213-IN-GROUP 3 %), so the copper the planner and the checks drew did not
 # exist; at the project clearance (netclasses.json project_defaults 0.15) KiCad fills the outline the planner checked.
 POUR_CLEARANCE = CLEAR
+# W2 F2C-FALLBACK part 2: the KiCad minimum fill width of the scripted pours. KiCad 10.0.7 fills a zone opened by half its min_thickness
+# (default 0.25 mm), so every convex fill corner is rounded at 0.125 mm and a piece narrower than 0.25 mm is not filled: route run
+# 45030517114 measured the class-width landings of 21 pin entries narrower than the class at their far corners (pcb/check_boards.py
+# measure_pin_entry) and the 0.3 mm TPS259470 bar strips partly unfilled. 0.15 mm is the project track floor (fab_floor min_track_width,
+# the JLC 2 oz multilayer 0.15 mm), so no fill piece is narrower than a track may be; the landings are also LAND_EXTRA longer
+POUR_MIN_THICKNESS = 0.15
+LAND_EXTRA = 0.1  # mm, landing length beyond the class width (KiCad fill rounding at the far corners, 0.075 mm at min_thickness 0.15)
 
 
 def sc_zone(zid, net, layer, outline, why, priority=3):
     return {'id': zid, 'net': net, 'layer': layer, 'outline': [[r4(x), r4(y)] for x, y in outline], 'priority': priority,
-            'pad_connection': 'solid', 'clearance_mm': POUR_CLEARANCE,
+            'pad_connection': 'solid', 'clearance_mm': POUR_CLEARANCE, 'min_thickness_mm': POUR_MIN_THICKNESS,
             'why': why + ' (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than '
             'its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)'}
 
@@ -716,18 +727,33 @@ EFUSE_ENTRY_WHY = ('W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS25
 LDO_ENTRY_WHY = ('W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-04: BATT entry of TPS7A4701 IN pin 16 (0.31 mm pin cross-section 0.45 mm up, '
                  '1.6 mm landing); pin 15 joins it through the pin-group pour')
 # zone id -> (net, pad, strip mm, landing mm, rectangles [x0, y0, x1, y1] board mm, why): the scripted pin entries
+# (W2 F2C-FALLBACK part 2: the U109 TPS259470 entries SC-PE-U109-IN/OUT left with U109, a PWR-C part since F2-C; the U203 entries
+# moved 0.6 mm up with U203, make_spec.py EFUSE_ANCHORS)
 ENTRY_ZONES = {
-    'SC-PE-U109-IN': ('E1_USB_PD_RAW', 'U109.5', 0.35, 0.95, [[4.05, 36.3, 6.45, 36.6], [3.7, 36.3, 4.05, 36.6], [2.75, 35.975, 3.7, 36.925]], EFUSE_ENTRY_WHY),
-    'SC-PE-U109-OUT': ('E1_USB_PD_SAFE', 'U109.6', 0.35, 0.95, [[4.05, 36.8, 6.45, 37.1], [6.45, 36.8, 6.8, 37.1], [6.8, 36.475, 7.75, 37.425]], EFUSE_ENTRY_WHY),
     'SC-PE-U201-IN': ('E2_J21_FUSED', 'U201.5', 0.5, 1.6, [[29.6, 69.65, 29.9, 72.05], [29.6, 69.15, 29.9, 69.65], [28.95, 67.55, 30.55, 69.15]], EFUSE_ENTRY_WHY),
     'SC-PE-U201-OUT': ('E2_J21_EF', 'U201.6', 0.2, 0.95, [[30.1, 69.65, 30.4, 72.05], [30.1, 72.05, 30.4, 72.25], [29.775, 72.25, 30.725, 73.2]], EFUSE_ENTRY_WHY),
     'SC-PE-U202-IN': ('E2_DISP_IN', 'U202.5', 0.5, 1.6, [[8.85, 102, 11.25, 102.3], [8.35, 102.0, 8.85, 102.3], [6.75, 101.35, 8.35, 102.95]], EFUSE_ENTRY_WHY),
     'SC-PE-U202-OUT': ('DISP12', 'U202.6', 0.15, 0.4, [[8.85, 102.5, 11.25, 102.8], [11.25, 102.5, 11.4, 102.8], [11.4, 102.45, 11.8, 102.85]], EFUSE_ENTRY_WHY),
-    'SC-PE-U203-IN': ('VCC_3V3_MKEY', 'U203.5', 0.1, 0.4, [[16.65, 90.65, 16.95, 93.05], [16.65, 90.55, 16.95, 90.65], [16.6, 90.15, 17.0, 90.55]], EFUSE_ENTRY_WHY),
-    'SC-PE-U203-OUT': ('E2_LIME_EF', 'U203.6', 0.15, 0.4, [[16.15, 90.65, 16.45, 93.05], [16.15, 93.05, 16.45, 93.2], [16.1, 93.2, 16.5, 93.6]], EFUSE_ENTRY_WHY),
+    'SC-PE-U203-IN': ('VCC_3V3_MKEY', 'U203.5', 0.1, 0.4, [[16.65, 91.25, 16.95, 93.65], [16.65, 91.15, 16.95, 91.25], [16.6, 90.75, 17.0, 91.15]], EFUSE_ENTRY_WHY),
+    'SC-PE-U203-OUT': ('E2_LIME_EF', 'U203.6', 0.15, 0.4, [[16.15, 91.25, 16.45, 93.65], [16.15, 93.65, 16.45, 93.8], [16.1, 93.8, 16.5, 94.2]], EFUSE_ENTRY_WHY),
     'SC-U211-IN-ENTRY': ('E2_LNB_IN', 'U211.16', 0.45, 1.6, [[13.695, 18.5, 14.005, 19.25], [13.695, 19.25, 14.005, 19.7], [13.05, 19.7, 14.65, 21.3]], LDO_ENTRY_WHY),
     'SC-U213-IN-ENTRY': ('E2_BONI_IN', 'U213.16', 0.45, 1.6, [[76.695, 18.5, 77.005, 19.25], [76.695, 19.25, 77.005, 19.7], [76.05, 19.7, 77.65, 21.3]], LDO_ENTRY_WHY),
 }
+
+
+def extend_landing(rects, extra=None):
+    """[pad cross-section, strip, landing] with the landing LAND_EXTRA longer away from the pad (W2 F2C-FALLBACK part 2: the KiCad
+    fill rounds the far corners of the landing, POUR_MIN_THICKNESS)."""
+    extra = LAND_EXTRA if extra is None else extra
+    bar, land = rects[0], list(rects[-1])
+    bc = ((bar[0] + bar[2]) / 2, (bar[1] + bar[3]) / 2)
+    lc = ((land[0] + land[2]) / 2, (land[1] + land[3]) / 2)
+    dx, dy = lc[0] - bc[0], lc[1] - bc[1]
+    if abs(dx) >= abs(dy):
+        land[2 if dx > 0 else 0] += extra if dx > 0 else -extra
+    else:
+        land[3 if dy > 0 else 1] += extra if dy > 0 else -extra
+    return [list(r) for r in rects[:-1]] + [[r4(v) for v in land]]
 
 
 def make_board_outline(rects):
@@ -746,8 +772,15 @@ SCRIPT_ZONES = [
             f'{U108_WHY}: VOUT pins 8/9 joined by a polygon on a lower layer (In4.Cu, over the GND fill) through the three VOUT vias',
             priority=2),
     in_group('SC-U211-IN-GROUP', 'E2_LNB_IN', 12.55, 16.55),
+    # W2 F2C-FALLBACK part 2 (synthesis PWR-L6-SCRIPT: "pin-group bars on the LT3045 E2_LNA_IN pins"): IN pins 1-4 of each LT3045 joined by
+    # a bar over the pads and the 0.25 mm gaps between them (1.45 mm wide, above the PWR3A width 0.95 mm), so the four pins are one
+    # class-width piece that the planned E2_LNA_IN copper meets from the left; 0.25 mm from the NC pin 5 (MODEL: freeze/plan6.py left
+    # U205.3/.4 apart from U205.1/.2 on the reduced PWR-A, the net alone)
+    *[sc_zone(f'SC-{ref}-IN-GROUP', 'E2_LNA_IN', 'F.Cu', [(43.255, y + 13.345), (44.705, y + 13.345), (44.705, y + 15.695), (43.255, y + 15.695)],
+              'LT3045 IN pins 1-4 pin-group bar (all four on E2_LNA_IN in the graph, design/E2.json)', priority=2)
+      for ref, y in (('U205', 0.0), ('U204', 6.0))],
     in_group('SC-U213-IN-GROUP', 'E2_BONI_IN', 75.55, 16.55),
-    *[sc_zone(zid, net, 'F.Cu', make_board_outline(rects), why) for zid, (net, _pad, _strip, _land, rects, why) in ENTRY_ZONES.items()],
+    *[sc_zone(zid, net, 'F.Cu', make_board_outline(extend_landing(rects)), why) for zid, (net, _pad, _strip, _land, rects, why) in ENTRY_ZONES.items()],
 ]
 # scripted pin entries (pcb/check_boards.py measures them; same form as the planned PE- pours): zone id -> row
 SCRIPT_ENTRIES = {zid: {'pad': pad, 'strip_mm': strip, 'landing_mm': [land, land]} for zid, (_net, pad, strip, land, _r, _w) in ENTRY_ZONES.items()}
@@ -788,7 +821,7 @@ EXEMPTION_POLICY = {
             'forbidden role takes an exemption only through a carve-out row below, recorded in build/15 for owner/judge acceptance'),
     'carve_outs': [
         {'id': 'CO-EFUSE-BAR-END', 'scope': 'pin_entry', 'role': 'efuse_in_out',
-         'pads': ['U109.5', 'U109.6', 'U201.5', 'U201.6', 'U202.5', 'U202.6', 'U203.5', 'U203.6'],
+         'pads': ['U201.5', 'U201.6', 'U202.5', 'U202.6', 'U203.5', 'U203.6'],
          'why': ('the TPS259470 RPW0010A IN and OUT are 0.3 x 2.4 mm bars between the signal pin rows, 0.2 mm apart: copper reaches them '
                  'only at a bar end. TI\'s own layout (figure 8-22) leaves the IN bar at one end and the OUT bar at the other, at the bar '
                  'width, into the IN and OUT planes; the entry here is that strip (bar cross-section, at most half the class width long, '
@@ -1490,7 +1523,7 @@ def planned_copper(inp, pre):
             # W2 PWR-L6-ROUTE: priority 4, one above the scripted SC- pours (route run 43591929140: zones_intersect of
             # PE-E2_BONI_IN-U213.15 and SC-U213-IN-ENTRY, both priority 3), and the scripted fill clearance
             zones.append({'id': z['id'], 'net': net, 'layer': z['layer'], 'outline': outline, 'priority': 4, 'pad_connection': 'solid',
-                          'clearance_mm': POUR_CLEARANCE,
+                          'clearance_mm': POUR_CLEARANCE, 'min_thickness_mm': POUR_MIN_THICKNESS,
                           'why': f'W2 PWR-L6-SCRIPT pin-entry pour of {z["pad"]} ({SCRIPT6.name}): the pad, its cross-section at most '
                                  'half the class width beyond it, then a class-width landing for the planned track'})
         for b in d['branches']:

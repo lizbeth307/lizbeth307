@@ -185,7 +185,10 @@ TVS_ANCHORS = {'D104': (67.4, 8.25, 180), 'D105': (11.3, 9.25, 180)}
 # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04 (design choice): the TPS259470 eFuses keep their board places of 8ed0778b and
 # take the orientation of TI SLVSFC9C figure 8-22 (IN bar leaves at one end, OUT at the other), with room for both bar ends: U201 turned
 # from 90 to 0 so that IN leaves down to F201 and OUT up to C204 (at 90 both ends faced the E1_CONV_IN spine or C202): ref -> (x, y, rot)
-EFUSE_ANCHORS = {'U109': (5.25, 36.7, 90), 'U201': (30.0, 70.85, 0), 'U202': (10.05, 102.4, 90), 'U203': (16.55, 91.85, 180)}
+# W2 F2C-FALLBACK part 2 (design choice, build/15): U203 0.6 mm up (91.85 -> 92.45), so that its IN entry landing below the bar has a 0.4 mm
+# PWR2A corridor between the corner pins 1/10 and the GND bar of the U108 input capacitors (CU-GND-CIN-U108, top edge y 89.9); at 91.85 the
+# VCC_3V3_MKEY link could not leave the landing at the planning clearance (MODEL, freeze/plan6.py, the net alone)
+EFUSE_ANCHORS = {'U109': (5.25, 36.7, 90), 'U201': (30.0, 70.85, 0), 'U202': (10.05, 102.4, 90), 'U203': (16.55, 92.45, 180)}
 SMALL_SIGNAL_LIMIT = {'C128': 2.0}  # mm, pad centre to pin centre (CVCC); the others 5.0
 SMALL_SIGNAL_SOURCE = ('TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 Layout Example, '
                        'https://www.ti.com/lit/ds/symlink/lm61460.pdf, and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section '

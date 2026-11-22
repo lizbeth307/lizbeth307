@@ -775,6 +775,11 @@ def validate_spec(spec, board):
                                            and float(zone['clearance_mm']) > 0
                                            and float(zone['clearance_mm']) >= float(spec['fab_floor'].get('min_clearance', 0))):
             raise SpecError(f'{board}: zone {zone.get("id")} clearance_mm must be a positive number at or above fab_floor min_clearance')
+        # W2 F2C-FALLBACK part 2: an optional minimum fill width (mm, ZONE::SetMinThickness); a zone without it keeps the KiCad default
+        mt = zone.get('min_thickness_mm')
+        if 'min_thickness_mm' in zone and not (isinstance(mt, (int, float)) and not isinstance(mt, bool) and float(mt) > 0
+                                               and float(mt) >= float(spec['fab_floor'].get('min_track_width', 0))):
+            raise SpecError(f'{board}: zone {zone.get("id")} min_thickness_mm must be a positive number at or above fab_floor min_track_width')
     for via in spec['pre_route'].get('vias', []):
         at = via.get('at', [])
         if via.get('net') not in nets or len(at) != 2 or not all(isinstance(v, (int, float)) for v in at) or \
@@ -1630,6 +1635,8 @@ def add_copper_zone(pcb, board, frame, spec, contract, zone, nets):
         item.SetPadConnection(getattr(pcb, ZONE_PAD_CONNECTIONS[zone['pad_connection']]))
     if 'clearance_mm' in zone:  # W2 PWR-L6-ROUTE: opt-in local zone clearance (zones without the key keep the KiCad default)
         item.SetLocalClearance(pcb.FromMM(float(zone['clearance_mm'])))
+    if 'min_thickness_mm' in zone:  # W2 F2C-FALLBACK part 2: opt-in minimum fill width (zones without the key keep the KiCad default)
+        item.SetMinThickness(pcb.FromMM(float(zone['min_thickness_mm'])))
     board.Add(item)
     return item
 

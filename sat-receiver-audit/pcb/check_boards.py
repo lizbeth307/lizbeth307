@@ -1744,7 +1744,10 @@ def measure_pin_entry(pad, polys, need, grid=ENTRY_GRID):
     (raster of the zone polygon). Returns {'sides', 'strip_mm', 'problem'}."""
     def inside(x, y):
         return any(poly.contains(x, y) for poly in polys)
-    x0, y0, x1, y1 = pad['x'] - pad['w'] / 2, pad['y'] - pad['h'] / 2, pad['x'] + pad['w'] / 2, pad['y'] + pad['h'] / 2
+    # W2 F2C-FALLBACK part 2: the pad record keeps its size unrotated (KiCad pad size) with its absolute angle; a pad at 90 or 270
+    # degrees spans h along x (route run 45030517114 measured the TPS259470 U202 bars, footprint at 90 degrees, across their length)
+    pw, ph = (pad['h'], pad['w']) if round(float(pad.get('angle') or 0.0) / 90.0) % 2 else (pad['w'], pad['h'])
+    x0, y0, x1, y1 = pad['x'] - pw / 2, pad['y'] - ph / 2, pad['x'] + pw / 2, pad['y'] + ph / 2
     cx, cy = pad['x'], pad['y']
     sides, strip, problem = [], 0.0, None
     for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):

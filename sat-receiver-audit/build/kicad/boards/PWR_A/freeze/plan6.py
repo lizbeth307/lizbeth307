@@ -115,7 +115,12 @@ def pad_shapes(mb, inp):
         for node, (cu, _box) in zip(nodes, mb.pad_copper(text)):
             if cu or node[2] == 'np_thru_hole':
                 rr = next((float(k[1]) for k in node if isinstance(k, list) and k and k[0] == 'roundrect_rratio'), 0.25)
-                keep.append((str(node[3]) if len(node) > 3 else 'rect', rr))
+                # W2 F2C-FALLBACK part 2: an SMD pad whose copper is only on the footprint's back layer (the B.Cu pad 13 of the KiCad
+                # LT3045 MSOP-12-1EP ThermalVias footprint) is on the other board side; route run 45030517114 had 4 clearance errors of
+                # planned B.Cu copper against it, which the planner had put on F.Cu
+                lays = [str(v) for k in node if isinstance(k, list) and k and k[0] == 'layers' for v in k[1:]]
+                back = node[2] == 'smd' and any(v == 'B.Cu' for v in lays) and not any(v in ('F.Cu', '*.Cu') for v in lays)
+                keep.append((str(node[3]) if len(node) > 3 else 'rect', rr, back))
         out[t['ref']] = keep
     return out
 
@@ -135,7 +140,7 @@ def board_text(spec, inp, shapes=None):
         L.append(f' (footprint "plan6:{ref}" (layer "{pa.side}.Cu") (at 0 0) (property "Reference" {q(ref)})')
         sh = shapes.get(ref) or []
         for k, p in enumerate(pa.pads):
-            kind, rr = sh[k] if k < len(sh) else ('rect', 0.25)
+            kind, rr, back = sh[k] if k < len(sh) else ('rect', 0.25, False)
             form = {'circle': 'circle', 'oval': 'oval', 'roundrect': 'roundrect'}.get(kind, 'rect')
             extra = f' (roundrect_rratio {rr})' if form == 'roundrect' else ''
             if form == 'circle':
@@ -155,7 +160,8 @@ def board_text(spec, inp, shapes=None):
                 L.append(f'  (pad {q(p["number"])} thru_hole {form} (at {cx:.4f} {cy:.4f}) (size {w:.4f} {h:.4f}) (drill {d:.4f}) '
                          f'(layers "*.Cu"){extra}{net})')
             else:
-                L.append(f'  (pad {q(p["number"])} smd {form} (at {cx:.4f} {cy:.4f}) (size {w:.4f} {h:.4f}) (layers "{pa.side}.Cu")'
+                side = ('B' if pa.side == 'F' else 'F') if back else pa.side
+                L.append(f'  (pad {q(p["number"])} smd {form} (at {cx:.4f} {cy:.4f}) (size {w:.4f} {h:.4f}) (layers "{side}.Cu")'
                          f'{extra}{net})')
         L.append(' )')
     for t in pre['tracks']:
@@ -203,6 +209,10 @@ def board_text(spec, inp, shapes=None):
 
 def script_guard(mb, inp, pre):
     """The guard make_board.py compares: pads and the scripted tracks, vias and pours the plan was made on."""
+    if hasattr(mb, 'script_guard'):
+        # W2 F2C-FALLBACK part 2: make_board.py's own guard (since W2 PWR-L6-ROUTE it leaves the pour fill clearance clearance_mm
+        # out of the zone hash; the copy below did not, so a fresh plan never matched make_board)
+        return mb.script_guard(inp, pre)
     g = mb.frozen_guard(inp, pre['tracks'], pre['vias'])
     zones = sorted(json.dumps({k: v for k, v in z.items() if k != 'why'}, sort_keys=True) for z in pre['zones'])
     g['zones_sha256'] = hashlib.sha256('\n'.join(zones).encode()).hexdigest()
@@ -226,6 +236,7 @@ class Planner:
         self.cls.update(getattr(mb, 'BOARD_CLASS_OVERRIDES', {}))  # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-06: E1_CONV_IN at BATT
         self.classes = nc['classes']
         self.fz = F.Finisher(self.m, log=lambda *a: None)
+        self.branch_ids = set()  # item ids of the low-current branches (negotiate() keeps them)
         cb = mb.bg  # pcb/board_gen; check_boards for the exemption roles
         sys.path.insert(0, str(mb.BASE / 'pcb'))
         import check_boards as CB
@@ -297,6 +308,8 @@ class Planner:
         x0, y0, x1, y1 = pad.bbox
         cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
         best = None
+        # W2 F2C-FALLBACK part 2: the landing is make_board.LAND_EXTRA longer away from the pad (KiCad rounds the far fill corners)
+        xe = float(getattr(self.mb, 'LAND_EXTRA', 0.0))
         for lay in [l for l in pad.layers if l in OUTER]:
             for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
                 for k in range(0, int(w / 2 / 0.05) + 1):
@@ -306,7 +319,7 @@ class Planner:
                         sx0, sx1 = sorted((edge, edge + dx * e))
                         strip = (sx0, y0, sx1, y1) if e else None
                         lx = edge + dx * (e + w / 2)
-                        land = (lx - w / 2, cy - w / 2, lx + w / 2, cy + w / 2)
+                        land = (lx - w / 2 - (xe if dx < 0 else 0.0), cy - w / 2, lx + w / 2 + (xe if dx > 0 else 0.0), cy + w / 2)
                         axis = ((cx, cy), (lx, cy))
                         cross = y1 - y0
                     else:
@@ -314,7 +327,7 @@ class Planner:
                         sy0, sy1 = sorted((edge, edge + dy * e))
                         strip = (x0, sy0, x1, sy1) if e else None
                         ly = edge + dy * (e + w / 2)
-                        land = (cx - w / 2, ly - w / 2, cx + w / 2, ly + w / 2)
+                        land = (cx - w / 2, ly - w / 2 - (xe if dy < 0 else 0.0), cx + w / 2, ly + w / 2 + (xe if dy > 0 else 0.0))
                         axis = ((cx, cy), (cx, ly))
                         cross = x1 - x0
                     # the landing: a class-width disc at its centre and the square around it clear of other nets
@@ -436,10 +449,12 @@ class Planner:
                     pads = [p for p in self.cboard.pads if p['ref'] == ref and p['net'] == net]
                     return bool(pads) and all(CB.exemption_role(self.cboard, {'b2b': self.spec.get('b2b', [])}, self.graph, ref, p['number'],
                                                                 self.lookup, self.classes)[0] in CB.EXEMPT_BRANCH_ROLES for p in pads)
+                n0 = len(self.m.items)
                 okb, br = self.fz.branch_pass(net, allowed, lambda refs: BRANCH_W, lambda refs: OUTER, BRANCH_MAX,
                                               target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= w)
                                               or (i.kind == 'pad' and i.src == 'zone'))
                 rec['branches'] = br
+                self.branch_ids.update(it.id for it in self.m.items[n0:] if it.alive)  # negotiate() never rips a branch
                 ok = ok or okb
             rec['via_cluster'] = len(self.via_cluster(net, w, need_v))
         finally:
@@ -535,9 +550,126 @@ def drop_failing(pl):
     return out
 
 
+def net_open(pl, net):
+    """Open joins of a net on the planning board: its copper islands that hold a pad (or more than one item), less one."""
+    return max(0, len([g for g in pl.m.islands(net) if any(i.kind == 'pad' for i in g) or len(g) > 1]) - 1)
+
+
+def snapshot(m):
+    return len(m.items), [it.alive for it in m.items]
+
+
+def restore(m, snap):
+    n, alive = snap
+    for it in m.items[n:]:
+        it.alive = False
+    for it, a in zip(m.items[:n], alive):
+        it.alive = a
+
+
+def cluster_missing(pl, net, w, need):
+    """Extra vias (Planner.via_cluster rings) around each planned via of the net that has fewer than `need` vias of the net within
+    1.7 mm (the outer ring 1.6 mm): the vias of links re-planned by negotiate(). Returns the number added."""
+    vias = [it for it in pl.m.items if it.alive and it.kind == 'via' and it.net == net and it.src == 'new']
+    added = 0
+    for v in vias:
+        have = sum(1 for o in pl.m.items if o.alive and o.kind == 'via' and o.net == net and math.dist(o.at, v.at) <= 1.7)
+        for ring in (0.95, 1.25, 1.6):
+            for k in range(8):
+                if have >= need:
+                    break
+                ang = 2 * math.pi * k / 8
+                p = (round(v.at[0] + ring * math.cos(ang), 4), round(v.at[1] + ring * math.sin(ang), 4))
+                if pl.m.via_margin(net, p, R.VIA_D, R.VIA_DRILL, clr=PLAN_CLR)[0] < 0:
+                    continue
+                if any(pl.m.track_margin(net, lay, w, v.at, p, clr=PLAN_CLR)[0] < 0 for lay in OUTER):
+                    continue
+                pl.m.add_via(net, p, R.VIA_D, R.VIA_DRILL, src='new')
+                for lay in OUTER:
+                    pl.m.add_track(net, lay, w, v.at, p, src='new')
+                have += 1
+                added += 1
+    return added
+
+
+def relink(pl, rec, net, allow_rip):
+    """The link step of Planner.plan_net again (class-width grid A* on F.Cu/B.Cu, then the second pass at the project clearance);
+    with allow_rip the search may cross planned copper of other nets (src new, never a branch or a pour), which it removes.
+    Returns the nets whose copper it removed."""
+    cname = pl.cls[net]
+    w_link = rec.get('link_width_mm') or pl.width(net)
+    pl.m.keepouts[:] = pl.base_keepouts + pl.zone_keepouts(net)
+    ripped = []
+    try:
+        ok, ripped, _n = pl.fz.connect_all(net, allow_rip=allow_rip, width=w_link, layers=OUTER, via_cost=VIA_COST[cname], neck=None,
+                                           max_links=60, rip_wide=allow_rip, soft=('new',))
+        if not ok and not allow_rip:
+            planning_rules(RELAXED_CLR)
+            try:
+                pl.fz.connect_all(net, allow_rip=False, width=w_link, layers=OUTER, via_cost=VIA_COST[cname], neck=None, max_links=60,
+                                  g=0.1)
+            finally:
+                planning_rules()
+        cluster_missing(pl, net, pl.width(net), int(pl.classes[cname].get('vias_per_transition') or 1))
+    finally:
+        pl.m.keepouts[:] = pl.base_keepouts
+    return ripped
+
+
+def negotiate(pl, plan, rounds, log=print):
+    """W2 F2C-FALLBACK part 2: rip-up and re-plan among the planned power nets, transactional. plan6 plans the nets one by one
+    without rip-up, so a net planned early can wall in a later one (MODEL, W2 F2C-FALLBACK: J21, AUX12, VBUS_HFP, LAB5_RLY,
+    E2_AUX_PTC, E2_LNB_EF, E2_LNB_MON and E5_VBUS_HFP_SW joined alone on the reduced PWR-A but not in the class order). For each net
+    left open, in class order: the link search may cross the planned copper of other nets (that copper is removed), then every
+    net it cut is joined again without rip-up; the change is kept only when the total of open joins on the board went down,
+    otherwise the board goes back to the snapshot. Branch copper and pin-entry pours are never ripped. Returns the log rows."""
+    rows = []
+    hard = pl.branch_ids
+    orig_conflicts = F.conflicts
+
+    def conflicts(m, net, res, soft_src=('router',)):
+        hits, bad = orig_conflicts(m, net, res, soft_src=soft_src)
+        bad = bad + [h for h in hits if h.id in hard and h not in bad]
+        return hits, bad
+    F.conflicts = conflicts
+    clr0 = M.CLR
+    M.CLR = PLAN_CLR  # the rip search clears the planning clearance, as the commit check does
+    try:
+        total = sum(net_open(pl, n) for n in plan)
+        for rnd in range(1, rounds + 1):
+            improved = False
+            for net in sorted((n for n in plan if net_open(pl, n)), key=lambda n: (CLASS_ORDER[pl.cls[n]], n)):
+                if not net_open(pl, net):
+                    continue
+                t0 = time.time()
+                snap = snapshot(pl.m)
+                ripped = relink(pl, plan[net], net, allow_rip=True)
+                for rn in ripped:
+                    if rn in plan:
+                        relink(pl, plan[rn], rn, allow_rip=False)
+                after = sum(net_open(pl, n) for n in plan)
+                keep = after < total
+                rows.append(f'round {rnd} {net}: ripped {ripped}, open {total} -> {after}, {"kept" if keep else "undone"} '
+                            f'({time.time() - t0:.0f} s)')
+                log('   negotiate', rows[-1], flush=True)
+                if keep:
+                    total, improved = after, True
+                else:
+                    restore(pl.m, snap)
+            if not improved or total == 0:
+                break
+    finally:
+        F.conflicts = orig_conflicts
+        M.CLR = clr0
+    return rows
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--nets', help='comma-separated nets (default: every power-class net with pads on the board)')
+    ap.add_argument('--negotiate', type=int, default=0, metavar='ROUNDS',
+                    help='W2 F2C-FALLBACK part 2: rounds of transactional rip-up and re-plan of the nets left open (negotiate())')
+    ap.add_argument('--first', help='W2 F2C-FALLBACK part 2: comma-separated nets planned before the others (the plan order)')
     ap.add_argument('--out', default=str(OUT))
     ap.add_argument('--verify', action='store_true', help='only report the margins of the scripted copper')
     args = ap.parse_args(argv)
@@ -558,6 +690,9 @@ def main(argv=None):
     nets = args.nets.split(',') if args.nets else power
     todo = [n for n in nets if len([g for g in pl.m.islands(n) if any(i.kind == 'pad' for i in g)]) > 1]
     todo.sort(key=lambda n: (CLASS_ORDER[pl.cls[n]], round(span(pl.m, n), 3), n))
+    if args.first:  # W2 F2C-FALLBACK part 2: these nets first, in the given order, then the rest in class order
+        first = [n for n in args.first.split(',') if n in todo]
+        todo = first + [n for n in todo if n not in first]
     print('nets to plan:', len(todo), 'of', len(nets))
     plan = {}
     for net in todo:
@@ -571,6 +706,16 @@ def main(argv=None):
             print('    open:', [g[:4] for g in rec['open_islands']])
         for line in rec['log']:
             print('   ', line)
+    negotiated = []
+    if args.negotiate and any(r['open'] for r in plan.values()):
+        negotiated = negotiate(pl, plan, args.negotiate)
+        for net, rec in plan.items():
+            rec['tracks'], rec['vias'] = pl.harvest(net)
+            isl = [g for g in pl.m.islands(net) if any(i.kind == 'pad' for i in g) or len(g) > 1]
+            rec['open'] = max(0, len(isl) - 1)
+            rec['open_islands'] = [sorted(f'{i.ref}.{i.pad}' for i in g if i.kind == 'pad' and i.src == 'pad') for g in isl] if len(isl) > 1 else []
+            rec['kind'] = 'power' if rec['open'] == 0 else 'link'
+        print('after negotiation:', {n: r['open'] for n, r in sorted(plan.items()) if r['open']}, flush=True)
     bad = verify(pl)
     if bad:  # drop planned copper that fails the exact final check at 0.15 mm (its joins stay open) and re-harvest
         dropped = drop_failing(pl)
@@ -585,6 +730,11 @@ def main(argv=None):
         bad = verify(pl)
     result = {'nets': len(plan), 'power': sorted(n for n, r in plan.items() if r['kind'] == 'power'),
               'link': {n: r['open'] for n, r in sorted(plan.items()) if r['kind'] == 'link'}, 'violations': len(bad)}
+    if args.first:
+        result['first'] = [n for n in args.first.split(',') if n in plan]
+    if args.negotiate:
+        result['negotiate'] = {'rounds': args.negotiate, 'kept': [r for r in negotiated if r.endswith(')') and ' kept ' in r],
+                               'tries': len(negotiated)}
     print('result:', json.dumps(result))
     for b in bad[:20]:
         print('  violation', b)

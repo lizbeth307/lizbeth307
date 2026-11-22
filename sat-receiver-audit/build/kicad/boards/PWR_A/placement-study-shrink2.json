@@ -5,11 +5,11 @@
   "status": "MODEL / planning result of the board_gen planner (standard library); no KiCad board, no routing, no hardware result; bench gates OPEN",
   "generator": "build/kicad/boards/PWR_A/placement_study.py",
   "inputs": {
-    "spec_sha256": "6cc9497150ef6ea79a4f00fb58aa6cf206ac4c2b6d8b81028f7532a6e6b0b5f2",
-    "contract_pwr": "ad2613a3ccb2a39d96c6bc01578c8554cdea1d1272e286a8570187c76fe8c18e",
+    "spec_sha256": "9fccd1f65b015519b316943ca5aca1feafb1c869c2e1c49dc0cdfe6192743857",
+    "contract_pwr": "38152078220463bf4ce8e405b0aae905beb74da0c7d85b79be0bc9b6b0e43203",
     "contract_pwr_b_outline": "ffe8e8c1eab5700401657c3c70be9da78460409e41ebaf72ceb0224135d4d0ed",
     "template_sha256": "4c45cb593f465bb6f348ed63e88ee99fec436badb804f0a3000f3fb88550dbb3",
-    "project_sha256": "303d84366849308ab64d5621d4ef49de1130743bbacf1384cdb41849070ba645",
+    "project_sha256": "3722cbaadac0fa09d5672567e95b9d00df98a71b17315eefab2f6cde048f6b6b",
     "pwr_b_placeholders": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
     "pwr_b_spec_sha256": "872f7b889472bca1ba1bcb49efa5a65acc28c2415fad8ecdf79df9e82beedf4f",
     "pwr_b_connectors_sha256": "a67a8b933ca952b742e7e46262936fbb478592ef363e7a505e13b49762386e1f"
@@ -44,7 +44,7 @@
     "anchored_mm2": 2523.4124,
     "free_after_anchors_and_reserves_mm2": 5117.196,
     "remaining_demand_mm2": 1078.2556,
-    "free_regions_of_spec_mm2": 2624.849,
+    "free_regions_of_spec_mm2": 2623.109,
     "placed_refs": 226,
     "placed_top_refs": 153,
     "placed_mm2": 3601.668,
@@ -1381,14 +1381,14 @@
         "ref": "U203",
         "at": [
           16.55,
-          91.85
+          92.45
         ],
         "rotation": 180,
         "courtyard_box": [
           15.1,
-          90.4,
+          91.0,
           18.0,
-          93.3
+          93.9
         ],
         "checks": {
           "inside_outline": true,
@@ -3934,7 +3934,7 @@
           "region": "LEG_Z4_TOP",
           "refs": 1,
           "courtyard_mm2": 10.53,
-          "region_mm2": 20.59
+          "region_mm2": 18.85
         },
         {
           "region": "LEG_TOP",
@@ -3959,27 +3959,27 @@
       "regions_refused": [
         {
           "region": "LEG_Z4_TOP",
-          "first_refusal": "C208 (3.2 x 4.6) does not fit region [15.1, 93.3, 18.0, 100.4]"
+          "first_refusal": "C208 (3.2 x 4.6) does not fit region [15.1, 93.9, 18.0, 100.4]"
         },
         {
           "region": "LEG_Z4_TOP",
-          "first_refusal": "C209 (3.2 x 4.6) does not fit region [15.1, 93.3, 18.0, 100.4]"
+          "first_refusal": "C209 (3.2 x 4.6) does not fit region [15.1, 93.9, 18.0, 100.4]"
         },
         {
           "region": "LEG_Z4_TOP+",
-          "first_refusal": "C208 (4.6 x 3.2) does not fit region [15.1, 93.3, 18.0, 96.0]"
+          "first_refusal": "C208 (4.6 x 3.2) does not fit region [15.1, 93.9, 18.0, 96.0]"
         },
         {
           "region": "LEG_Z4_TOP+",
-          "first_refusal": "C209 (4.6 x 3.2) does not fit region [15.1, 93.3, 18.0, 96.0]"
+          "first_refusal": "C209 (4.6 x 3.2) does not fit region [15.1, 93.9, 18.0, 96.0]"
         },
         {
           "region": "LEG_Z4_TOP+",
-          "first_refusal": "C212 (3.4 x 1.96) does not fit region [15.1, 93.3, 18.0, 96.0]"
+          "first_refusal": "C212 (3.4 x 1.96) does not fit region [15.1, 93.9, 18.0, 96.0]"
         },
         {
           "region": "LEG_Z4_TOP+",
-          "first_refusal": "C213 (3.4 x 1.96) does not fit region [15.1, 93.3, 18.0, 96.0]"
+          "first_refusal": "C213 (3.4 x 1.96) does not fit region [15.1, 93.9, 18.0, 96.0]"
         },
         {
           "region": "LEG_TOP",
@@ -4525,7 +4525,7 @@
         108,
         128
       ],
-      "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22, S35 and S36 leave from PWR-B J204/J207 on the PWR-B top span x 58-107 (boards PWR_B edge_zones[1], W2 MECH-7 part 2) and reach SL2 along the y 74.25 channel; PWR-B leaves a window over this span",
+      "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path leads (S06/S07 until W2 F2C-FALLBACK, deleted) to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22, S35 and S36 leave from PWR-B J204/J207 on the PWR-B top span x 58-107 (boards PWR_B edge_zones[1], W2 MECH-7 part 2) and reach SL2 along the y 74.25 channel; PWR-B leaves a window over this span",
       "hole_keepout_chords": [],
       "free_length_mm": 20.0,
       "pwr_a_headers": [
@@ -11185,16 +11185,16 @@
         "ref": "U203",
         "at": [
           16.55,
-          91.85
+          92.45
         ],
         "rotation": 180,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           15.1,
-          90.4,
+          91.0,
           18.0,
-          93.3
+          93.9
         ]
       },
       {

@@ -266,6 +266,8 @@ def htrim_check(spec, boxes, pin_fields, zmax, wm):
 
 TVS_MAX_MM = 5.0  # mm, synthesis PWR-L6-SCRIPT: TVS joined at class width within 5 mm
 TVS_REQUIRED = ('D104', 'D105')  # the TVS clamps the synthesis names (E1_N, E1_SW); the others are reported (OPEN when they miss)
+# W2 F2C-FALLBACK part 2: D104 and D105 are PWR-C parts since F2-C (their class-width joints are checked on PWR_C by check_boards,
+# power_copper_rule); on PWR-A only D201 (J21) is left, reported here
 
 
 def tvs_checks(board, spec, graph):
