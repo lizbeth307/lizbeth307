@@ -17,8 +17,8 @@
       "bytes": 399635
     },
     "design/E3.json": {
-      "sha256": "950e961ff1bcb0a3c20b54bcfcf44ad45f63fa79fc7bc2a0b8eb43192a36d75f",
-      "bytes": 212850
+      "sha256": "a4b8e36ce1abf50f3ceed3d41f6e4c3b75af43b313946b39df72c4d3c9ad7b17",
+      "bytes": 224361
     },
     "design/E4.json": {
       "sha256": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
@@ -38,27 +38,27 @@
     }
   },
   "scope": {
-    "graph_components": 851,
-    "graph_pins": 2942,
+    "graph_components": 857,
+    "graph_pins": 2958,
     "graph_sheets": {
       "E1": 91,
       "E2": 278,
-      "E3": 172,
+      "E3": 178,
       "E4": 221,
       "E5": 89
     },
     "top_level_circuit_assemblies": 69,
     "source_kind_module_count": 57,
-    "detailed_subinterfaces": 231,
+    "detailed_subinterfaces": 232,
     "catalogue_only_or_factory_internal_entities": 30,
     "catalogue_documents": 102,
     "partition_refs_assigned_exactly_once": true,
     "missing_refs": [],
     "duplicate_refs": [],
-    "graph_connected_pins": 2717,
-    "graph_nc_pins": 225,
-    "canonical_nets": 486,
-    "cross_assembly_nets": 238
+    "graph_connected_pins": 2732,
+    "graph_nc_pins": 226,
+    "canonical_nets": 491,
+    "cross_assembly_nets": 239
   },
   "critical_constraints": [
     "Every one of the 750 source component references is assigned exactly once to a circuit assembly. Circuit passives remain parameters, not fictitious software registers.",
@@ -5487,6 +5487,10 @@
       "refs": [
         "U305",
         "D301",
+        "F302",
+        "U316",
+        "R397",
+        "C344",
         "C307",
         "C308",
         "R327",
@@ -5495,7 +5499,7 @@
         "R328",
         "R329"
       ],
-      "component_count": 9,
+      "component_count": 13,
       "named_nets": [
         "3V3_Q6A",
         "E1_BAT_ADC",
@@ -5519,14 +5523,17 @@
         "E3_PICO_RUN",
         "E3_PICO_SWCLK",
         "E3_PICO_SWDIO",
+        "E3_PICO_VLIM",
         "E3_PICO_VSYS",
         "E3_PIEZO_DRIVE",
         "E3_Q6A_KEY_GATE",
         "E3_Q6A_ON_SENSE",
+        "E3_U316_ILIM",
         "GND",
         "IMU_RX",
         "IMU_TX",
         "LAB5",
+        "LAB5_PICO",
         "PICO_DISP_EN",
         "PICO_OFF",
         "SAFE_BOOT",
@@ -5544,6 +5551,24 @@
           "ref": "D301",
           "kind": "diode",
           "value": "SS14",
+          "status": "design"
+        },
+        {
+          "ref": "F302",
+          "kind": "fuse",
+          "value": "MF-MSMF050-2 0.5A",
+          "status": "design"
+        },
+        {
+          "ref": "R397",
+          "kind": "resistor",
+          "value": "150k 1%",
+          "status": "design"
+        },
+        {
+          "ref": "C344",
+          "kind": "capacitor",
+          "value": "100n 16V",
           "status": "design"
         },
         {
@@ -6529,6 +6554,7 @@
         "R365",
         "R366",
         "Q303",
+        "R398",
         "R367",
         "Q304",
         "F301",
@@ -6541,13 +6567,14 @@
         "R370",
         "R371",
         "Q305",
+        "F303",
         "D306",
         "C320",
         "FAN302",
         "C342",
         "C343"
       ],
-      "component_count": 20,
+      "component_count": 22,
       "named_nets": [
         "E3_BLOWER_EN",
         "E3_BLOWER_GATE",
@@ -6556,12 +6583,14 @@
         "E3_FAN5_P",
         "E3_FAN_EN",
         "E3_FAN_NG",
+        "E3_FAN_PD",
         "E3_FAN_PG",
         "E3_FAN_TACH",
         "E3_FAN_TACH_RAW",
         "E3_PICO3V3",
         "GND",
-        "LAB5"
+        "LAB5",
+        "LAB5_BLOWER"
       ],
       "protocol_or_special_subinterfaces": [],
       "commercial_or_functional_module_refs": [
@@ -6585,6 +6614,12 @@
           "ref": "Q303",
           "kind": "nfet",
           "value": "AO3400A",
+          "status": "design"
+        },
+        {
+          "ref": "R398",
+          "kind": "resistor",
+          "value": "1k",
           "status": "design"
         },
         {
@@ -6651,6 +6686,12 @@
           "ref": "Q305",
           "kind": "nfet",
           "value": "AO3400A",
+          "status": "design"
+        },
+        {
+          "ref": "F303",
+          "kind": "fuse",
+          "value": "MF-MSMF110/16-2 1.1A",
           "status": "design"
         },
         {
@@ -7062,6 +7103,7 @@
         "K1_ON",
         "K2_ON",
         "LAB5",
+        "LAB5_BLOWER",
         "MCP_INT",
         "OVP_LNB_N",
         "PG_BONI",
@@ -18617,6 +18659,85 @@
       "protocol_fidelity_boundary": "Project packet/state-machine fixture boundary; firmware source and protocol tests determine implementation coverage. No MCU silicon emulation claim."
     },
     {
+      "module_id": "E3/U316",
+      "parent_assembly": "E3-CIR-05",
+      "ref": "U316",
+      "value": "TPS2553DBVR",
+      "source_kind": "ic",
+      "source_status": "design",
+      "interface_family": "analog_or_discrete_control_ic",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "LAB5_PICO",
+        "GND",
+        "LAB5_PICO",
+        "E3_U316_ILIM",
+        "E3_PICO_VLIM"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_numbered_pin_map",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "power_in",
+          "net": "LAB5_PICO"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "LAB5_PICO"
+        },
+        {
+          "number": "4",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "nc": true
+        },
+        {
+          "number": "5",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E3_U316_ILIM"
+        },
+        {
+          "number": "6",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "E3_PICO_VLIM"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E3.json",
+          "ref": "U316",
+          "component_source": "https://www.ti.com/lit/ds/symlink/tps2553.pdf"
+        },
+        {
+          "path": "components/ti_tps2553_lab_port_0_75_a_lna_ch1_4_300.md"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "W2 CTRL-6 (W2 CTRL-5 decision, build/15 \"Захист VSYS Pico за D301\"; reviews RV4-E-3, RV4-S-1): constant-current TPS2553DBVR (no -1) ahead of D301, so a short of the Pico VSYS, of C307 or inside the Pico module is limited to IOS 0.154-0.209 A with RILIM R397 150k 1 % (SLVS841G Rev. G, Oct 2026, eq. 1 and 3, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-22) and the 0.15 mm E3_PICO_VSYS copper (0.224-0.248 A at +20 C on L2/L3, MODEL) never carries more than its rating; it recovers by itself when the fault clears (a -1 part could latch off on the start into the VSYS capacitance). EN tied to IN: on whenever LAB5 is present, like U553 in design/E5.json.",
+        "DBV SOT-23-6 per SLVS841G pin functions: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. FAULT is an active-low open-drain output and is left unconnected (no input reads it; a VSYS fault shows as a Pico brown-out). IN takes the 0.1 uF ceramic C344 to GND as close to the IC as possible (pin function table).",
+        "Accept LCSC lots only with marking 2553 (parts.json U-TPS2553DBVR); never the latch-off -1 part here."
+      ],
+      "coverage_constraints": [
+        "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
       "module_id": "E3/U307",
       "parent_assembly": "E3-CIR-05",
       "ref": "U307",
@@ -19924,7 +20045,7 @@
       "interface_family": "motor_power_and_tach",
       "software_interface_specified": false,
       "interface_signals": [
-        "LAB5",
+        "LAB5_BLOWER",
         "E3_BLOWER_GND"
       ],
       "configuration_from_source": {},
@@ -19935,7 +20056,7 @@
           "number": "RED",
           "name": "RED_PLUS",
           "type": "power_in",
-          "net": "LAB5"
+          "net": "LAB5_BLOWER"
         },
         {
           "number": "BLACK",
@@ -21629,7 +21750,7 @@
       "software_interface_specified": false,
       "interface_signals": [
         "E3_BLOWER_GND",
-        "LAB5"
+        "LAB5_BLOWER"
       ],
       "configuration_from_source": {},
       "pinout_status": "project_harness_assignment_not_factory_pinout",
@@ -21643,9 +21764,9 @@
         },
         {
           "number": "2",
-          "name": "LAB5",
+          "name": "LAB5_BLOWER",
           "type": "passive",
-          "net": "LAB5"
+          "net": "LAB5_BLOWER"
         }
       ],
       "sources": [
@@ -32465,6 +32586,10 @@
     "BT301": "E3-CIR-04",
     "U305": "E3-CIR-05",
     "D301": "E3-CIR-05",
+    "F302": "E3-CIR-05",
+    "U316": "E3-CIR-05",
+    "R397": "E3-CIR-05",
+    "C344": "E3-CIR-05",
     "C307": "E3-CIR-05",
     "C308": "E3-CIR-05",
     "R327": "E3-CIR-05",
@@ -32542,6 +32667,7 @@
     "R365": "E3-CIR-12",
     "R366": "E3-CIR-12",
     "Q303": "E3-CIR-12",
+    "R398": "E3-CIR-12",
     "R367": "E3-CIR-12",
     "Q304": "E3-CIR-12",
     "F301": "E3-CIR-12",
@@ -32554,6 +32680,7 @@
     "R370": "E3-CIR-12",
     "R371": "E3-CIR-12",
     "Q305": "E3-CIR-12",
+    "F303": "E3-CIR-12",
     "D306": "E3-CIR-12",
     "C320": "E3-CIR-12",
     "FAN302": "E3-CIR-12",
@@ -41157,13 +41284,38 @@
       "cross_assembly": false
     },
     {
-      "net": "E3_FAN_PG",
+      "net": "E3_FAN_PD",
       "pins": [
         {
           "sheet": "E3",
           "ref": "Q303",
           "pin": "3",
           "name": "D",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-12"
+        },
+        {
+          "sheet": "E3",
+          "ref": "R398",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-12"
+        }
+      ],
+      "assemblies": [
+        "E3-CIR-12"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E3_FAN_PG",
+      "pins": [
+        {
+          "sheet": "E3",
+          "ref": "R398",
+          "pin": "1",
+          "name": "1",
           "electrical_type": "passive",
           "assembly": "E3-CIR-12"
         },
@@ -42663,6 +42815,31 @@
       "cross_assembly": true
     },
     {
+      "net": "E3_PICO_VLIM",
+      "pins": [
+        {
+          "sheet": "E3",
+          "ref": "D301",
+          "pin": "2",
+          "name": "A",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-05"
+        },
+        {
+          "sheet": "E3",
+          "ref": "U316",
+          "pin": "6",
+          "name": "OUT",
+          "electrical_type": "power_out",
+          "assembly": "E3-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E3-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
       "net": "E3_PICO_VSYS",
       "pins": [
         {
@@ -42926,6 +43103,31 @@
       ],
       "assemblies": [
         "E3-CIR-03"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E3_U316_ILIM",
+      "pins": [
+        {
+          "sheet": "E3",
+          "ref": "U316",
+          "pin": "5",
+          "name": "ILIM",
+          "electrical_type": "output",
+          "assembly": "E3-CIR-05"
+        },
+        {
+          "sheet": "E3",
+          "ref": "R397",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E3-CIR-05"
       ],
       "cross_assembly": false
     },
@@ -52745,6 +52947,30 @@
         },
         {
           "sheet": "E3",
+          "ref": "U316",
+          "pin": "2",
+          "name": "GND",
+          "electrical_type": "power_in",
+          "assembly": "E3-CIR-05"
+        },
+        {
+          "sheet": "E3",
+          "ref": "R397",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-05"
+        },
+        {
+          "sheet": "E3",
+          "ref": "C344",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-05"
+        },
+        {
+          "sheet": "E3",
           "ref": "C307",
           "pin": "2",
           "name": "2",
@@ -57120,9 +57346,9 @@
         },
         {
           "sheet": "E3",
-          "ref": "D301",
-          "pin": "2",
-          "name": "A",
+          "ref": "F302",
+          "pin": "1",
+          "name": "1",
           "electrical_type": "passive",
           "assembly": "E3-CIR-05"
         },
@@ -57144,39 +57370,15 @@
         },
         {
           "sheet": "E3",
-          "ref": "D306",
+          "ref": "F303",
           "pin": "1",
-          "name": "K",
+          "name": "1",
           "electrical_type": "passive",
           "assembly": "E3-CIR-12"
         },
         {
           "sheet": "E3",
           "ref": "C320",
-          "pin": "1",
-          "name": "1",
-          "electrical_type": "passive",
-          "assembly": "E3-CIR-12"
-        },
-        {
-          "sheet": "E3",
-          "ref": "FAN302",
-          "pin": "RED",
-          "name": "RED_PLUS",
-          "electrical_type": "power_in",
-          "assembly": "E3-CIR-12"
-        },
-        {
-          "sheet": "E3",
-          "ref": "C342",
-          "pin": "1",
-          "name": "1",
-          "electrical_type": "passive",
-          "assembly": "E3-CIR-12"
-        },
-        {
-          "sheet": "E3",
-          "ref": "C343",
           "pin": "1",
           "name": "1",
           "electrical_type": "passive",
@@ -57194,14 +57396,6 @@
           "sheet": "E3",
           "ref": "J305",
           "pin": "4",
-          "name": "LAB5",
-          "electrical_type": "passive",
-          "assembly": "E3-CIR-15"
-        },
-        {
-          "sheet": "E3",
-          "ref": "J314",
-          "pin": "2",
           "name": "LAB5",
           "electrical_type": "passive",
           "assembly": "E3-CIR-15"
@@ -57328,6 +57522,105 @@
         "E5-CIR-08"
       ],
       "cross_assembly": true
+    },
+    {
+      "net": "LAB5_BLOWER",
+      "pins": [
+        {
+          "sheet": "E3",
+          "ref": "F303",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-12"
+        },
+        {
+          "sheet": "E3",
+          "ref": "D306",
+          "pin": "1",
+          "name": "K",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-12"
+        },
+        {
+          "sheet": "E3",
+          "ref": "FAN302",
+          "pin": "RED",
+          "name": "RED_PLUS",
+          "electrical_type": "power_in",
+          "assembly": "E3-CIR-12"
+        },
+        {
+          "sheet": "E3",
+          "ref": "C342",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-12"
+        },
+        {
+          "sheet": "E3",
+          "ref": "C343",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-12"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J314",
+          "pin": "2",
+          "name": "LAB5_BLOWER",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-15"
+        }
+      ],
+      "assemblies": [
+        "E3-CIR-12",
+        "E3-CIR-15"
+      ],
+      "cross_assembly": true
+    },
+    {
+      "net": "LAB5_PICO",
+      "pins": [
+        {
+          "sheet": "E3",
+          "ref": "F302",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-05"
+        },
+        {
+          "sheet": "E3",
+          "ref": "U316",
+          "pin": "1",
+          "name": "IN",
+          "electrical_type": "power_in",
+          "assembly": "E3-CIR-05"
+        },
+        {
+          "sheet": "E3",
+          "ref": "U316",
+          "pin": "3",
+          "name": "EN",
+          "electrical_type": "input",
+          "assembly": "E3-CIR-05"
+        },
+        {
+          "sheet": "E3",
+          "ref": "C344",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E3-CIR-05"
+      ],
+      "cross_assembly": false
     },
     {
       "net": "LAB5_RLY",
@@ -60701,6 +60994,14 @@
     },
     {
       "sheet": "E3",
+      "ref": "U316",
+      "pin": "4",
+      "name": "FAULT_N",
+      "electrical_type": "open_collector",
+      "assembly": "E3-CIR-05"
+    },
+    {
+      "sheet": "E3",
       "ref": "D302",
       "pin": "2",
       "name": "NC",
@@ -61482,10 +61783,10 @@
   "validation": {
     "status": "PASS",
     "source_snapshot_hashes_unchanged": true,
-    "all851refs_assigned_once": true,
-    "all2717connected_pin_net_triples_exact": true,
-    "all225NCpins_exact": true,
-    "all231subinterface_pin_arrays_exact": true,
+    "all857refs_assigned_once": true,
+    "all2732connected_pin_net_triples_exact": true,
+    "all226NCpins_exact": true,
+    "all232subinterface_pin_arrays_exact": true,
     "all_catalogue_sources_exist": true,
     "no_project_files_written_by_inventory_task": true,
     "synchronised": "23.10.2026 with the current design graphs: refs removed from the graphs dropped, renamed nets followed, graph-derived fields recomputed; curated fields unchanged"

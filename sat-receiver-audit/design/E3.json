@@ -5535,7 +5535,7 @@
           "number": "RED",
           "name": "RED_PLUS",
           "type": "power_in",
-          "net": "LAB5"
+          "net": "LAB5_BLOWER"
         },
         {
           "number": "BLACK",
