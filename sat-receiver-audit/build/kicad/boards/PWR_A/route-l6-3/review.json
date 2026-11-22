@@ -1,0 +1,1814 @@
+{
+  "schema": "srrx-board-review-v1",
+  "board_id": "PWR_A",
+  "status": "MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN",
+  "generator": "pcb/check_boards.py",
+  "result": "FINDINGS",
+  "inputs": {
+    "board_file": {
+      "path": "build/kicad/boards/PWR_A/route-l6-3/PWR_A.kicad_pcb",
+      "sha256": "b5af4e71c0dfc8b881218c7d652d4721c8d1217feb848021a55ae2602de0b297"
+    },
+    "projection_sha256": {
+      "graph_refs_pins_nets": "9c167f8ee14386fbcb4d773fccad0eb27be8b38fd8745d14187b913f696e0a2b",
+      "footprints": "bb762581893ac61a1ec791363424bf55d12ac2a02fa9e6f49dfbcb3524285f03",
+      "contract_board": "3b101ded8781cae83235bfdd87719f6156073436420f5603fa9d9bc3cca4f3db",
+      "netclasses": "85b15528ab7154d7f08da6877c9a6e2fefc2f44b62e4f4cfdb0ded8b9da304e6",
+      "spec": "44b12a7830457831ca6bdc7a519347ccced00b7f0afa552beb46efdad44174d8"
+    },
+    "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
+  },
+  "frame": {
+    "origin": [
+      100.0,
+      210.0
+    ],
+    "y": "up",
+    "source": "Edge.Cuts bounding box"
+  },
+  "counts": {
+    "footprints": 287,
+    "pads": 944,
+    "tracks": 3427,
+    "vias": 807,
+    "zones": 100,
+    "holes": 19,
+    "copper_layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "In3.Cu",
+      "In4.Cu",
+      "B.Cu"
+    ]
+  },
+  "checks": {
+    "outline": {
+      "findings": 0,
+      "area_mm2": 7910.0,
+      "loops": 1
+    },
+    "holes": {
+      "findings": 0,
+      "contract_holes": 7,
+      "board_holes": 19
+    },
+    "keepouts": {
+      "findings": 0,
+      "keepout_r_mm": 3.5,
+      "tolerance_mm": 0.005
+    },
+    "pad_nets": {
+      "findings": 0,
+      "expected_refs": 280,
+      "board_footprints": 287
+    },
+    "class_widths": {
+      "findings": 27,
+      "tracks_checked": 3398,
+      "pour_necks": [
+        {
+          "net": "E1_SW",
+          "layer": "F.Cu",
+          "neck_mm": 1.223,
+          "limit_mm": 1.6,
+          "grid_mm": 0.05,
+          "at": [
+            120.975,
+            188.025
+          ]
+        },
+        {
+          "net": "E1_SW",
+          "layer": "F.Cu",
+          "neck_mm": 1.223,
+          "limit_mm": 1.6,
+          "grid_mm": 0.05,
+          "at": [
+            125.825,
+            191.025
+          ]
+        },
+        {
+          "net": "E1_USB_PD_SAFE",
+          "layer": "F.Cu",
+          "neck_mm": 0.374,
+          "limit_mm": 0.95,
+          "grid_mm": 0.05,
+          "at": [
+            106.925,
+            173.05
+          ]
+        },
+        {
+          "net": "E2_DISP_IN",
+          "layer": "F.Cu",
+          "neck_mm": 0.712,
+          "limit_mm": 1.6,
+          "grid_mm": 0.05,
+          "at": [
+            108.025,
+            107.825
+          ]
+        },
+        {
+          "net": "E2_LIME_EF",
+          "layer": "F.Cu",
+          "neck_mm": 0.266,
+          "limit_mm": 0.4,
+          "grid_mm": 0.05,
+          "at": [
+            116.275,
+            116.725
+          ]
+        },
+        {
+          "net": "LAB5",
+          "layer": "F.Cu",
+          "neck_mm": 0.311,
+          "limit_mm": 0.95,
+          "grid_mm": 0.05,
+          "at": [
+            186.525,
+            194.575
+          ]
+        }
+      ],
+      "split_nets": {},
+      "exemption_policy": {
+        "branch_roles": [
+          "test_point",
+          "resistor_ge_100",
+          "sense_logic_pin"
+        ],
+        "neck_forbidden_roles": [
+          "tvs",
+          "connector",
+          "shunt",
+          "fuse",
+          "power_switch",
+          "efuse_in_out",
+          "converter_capacitor",
+          "converter_power_pin"
+        ],
+        "neck_rule": "at least the narrow side of its pad wide, no longer than its long side",
+        "branch_exempt": 6,
+        "neck_exempt": 1,
+        "pin_entry_pours": {
+          "declared": 22,
+          "accepted": 1
+        },
+        "pin_entry_measured": [
+          {
+            "zone": "PE-E1_CONV_IN-U111.4",
+            "pad": "U111.4",
+            "role": "sense_logic_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "+x",
+                  "pad_side_mm": 0.6,
+                  "strip_mm": 0.0
+                },
+                {
+                  "side": "+y",
+                  "pad_side_mm": 1.325,
+                  "strip_mm": 0.0
+                },
+                {
+                  "side": "-y",
+                  "pad_side_mm": 1.325,
+                  "strip_mm": 0.0
+                }
+              ],
+              "strip_mm": 0.0,
+              "problem": null
+            },
+            "declared": {
+              "strip_mm": 0.0,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          },
+          {
+            "zone": "PE-E1_N-U103.1",
+            "pad": "U103.1",
+            "role": "ic_power_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "-y",
+                  "pad_side_mm": 1.325,
+                  "strip_mm": 0.05
+                }
+              ],
+              "strip_mm": 0.05,
+              "problem": "landing on -y narrower than the class width 1.6 mm within 1.6 mm"
+            },
+            "declared": {
+              "strip_mm": 0.0,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          },
+          {
+            "zone": "PE-E1_SW-U111.3",
+            "pad": "U111.3",
+            "role": "sense_logic_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "+x",
+                  "pad_side_mm": 0.6,
+                  "strip_mm": 0.0
+                },
+                {
+                  "side": "+y",
+                  "pad_side_mm": 1.325,
+                  "strip_mm": 0.0
+                },
+                {
+                  "side": "-y",
+                  "pad_side_mm": 1.325,
+                  "strip_mm": 0.0
+                }
+              ],
+              "strip_mm": 0.0,
+              "problem": "landing on +x narrower than the class width 1.6 mm within 1.6 mm"
+            },
+            "declared": {
+              "strip_mm": 0.0,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          },
+          {
+            "zone": "PE-E1_SW-U111.6",
+            "pad": "U111.6",
+            "role": "sense_logic_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "-x",
+                  "pad_side_mm": 0.6,
+                  "strip_mm": 0.0
+                },
+                {
+                  "side": "+y",
+                  "pad_side_mm": 1.325,
+                  "strip_mm": 0.0
+                },
+                {
+                  "side": "-y",
+                  "pad_side_mm": 1.325,
+                  "strip_mm": 0.0
+                }
+              ],
+              "strip_mm": 0.0,
+              "problem": "landing on -x narrower than the class width 1.6 mm within 1.6 mm"
+            },
+            "declared": {
+              "strip_mm": 0.0,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          },
+          {
+            "zone": "PE-E1_SW-U220.5",
+            "pad": "U220.5",
+            "role": "sense_logic_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "-x",
+                  "pad_side_mm": 0.6,
+                  "strip_mm": 0.35
+                }
+              ],
+              "strip_mm": 0.35,
+              "problem": "landing on -x narrower than the class width 1.6 mm within 1.6 mm"
+            },
+            "declared": {
+              "strip_mm": 0.3,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          },
+          {
+            "zone": "PE-E2_BONI_IN-U213.15",
+            "pad": "U213.15",
+            "role": "ic_power_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "-y",
+                  "pad_side_mm": 0.75,
+                  "strip_mm": 0.5
+                }
+              ],
+              "strip_mm": 0.5,
+              "problem": "landing on -y narrower than the class width 1.6 mm within 1.6 mm"
+            },
+            "declared": {
+              "strip_mm": 0.45,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          },
+          {
+            "zone": "PE-E2_LNA_IN-U204.4",
+            "pad": "U204.4",
+            "role": "sense_logic_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "-y",
+                  "pad_side_mm": 1.45,
+                  "strip_mm": 0.0
+                }
+              ],
+              "strip_mm": 0.0,
+              "problem": "landing on -y narrower than the class width 0.95 mm within 0.95 mm"
+            },
+            "declared": {
+              "strip_mm": 0.0,
+              "landing_mm": [
+                0.95,
+                0.95
+              ]
+            }
+          },
+          {
+            "zone": "PE-E2_LNA_IN-U205.4",
+            "pad": "U205.4",
+            "role": "sense_logic_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "-y",
+                  "pad_side_mm": 1.45,
+                  "strip_mm": 0.0
+                }
+              ],
+              "strip_mm": 0.0,
+              "problem": "landing on -y narrower than the class width 0.95 mm within 0.95 mm"
+            },
+            "declared": {
+              "strip_mm": 0.0,
+              "landing_mm": [
+                0.95,
+                0.95
+              ]
+            }
+          },
+          {
+            "zone": "PE-LAB5-J208.10",
+            "pad": "J208.10",
+            "role": "b2b_contact",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "+y",
+                  "pad_side_mm": 0.3,
+                  "strip_mm": 0.4
+                }
+              ],
+              "strip_mm": 0.4,
+              "problem": "landing on +y narrower than the class width 0.95 mm within 0.95 mm"
+            },
+            "declared": {
+              "strip_mm": 0.35,
+              "landing_mm": [
+                0.95,
+                0.95
+              ]
+            }
+          },
+          {
+            "zone": "PE-LAB5-J208.14",
+            "pad": "J208.14",
+            "role": "b2b_contact",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "+y",
+                  "pad_side_mm": 0.3,
+                  "strip_mm": 0.4
+                }
+              ],
+              "strip_mm": 0.4,
+              "problem": "landing on +y narrower than the class width 0.95 mm within 0.95 mm"
+            },
+            "declared": {
+              "strip_mm": 0.35,
+              "landing_mm": [
+                0.95,
+                0.95
+              ]
+            }
+          },
+          {
+            "zone": "PE-LAB5-J208.2",
+            "pad": "J208.2",
+            "role": "b2b_contact",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "-x",
+                  "pad_side_mm": 1.5,
+                  "strip_mm": 0.0
+                }
+              ],
+              "strip_mm": 0.0,
+              "problem": "landing on -x narrower than the class width 0.95 mm within 0.95 mm"
+            },
+            "declared": {
+              "strip_mm": 0.0,
+              "landing_mm": [
+                0.95,
+                0.95
+              ]
+            }
+          },
+          {
+            "zone": "PE-LAB5-J208.6",
+            "pad": "J208.6",
+            "role": "b2b_contact",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "+y",
+                  "pad_side_mm": 0.3,
+                  "strip_mm": 0.4
+                }
+              ],
+              "strip_mm": 0.4,
+              "problem": "landing on +y narrower than the class width 0.95 mm within 0.95 mm"
+            },
+            "declared": {
+              "strip_mm": 0.35,
+              "landing_mm": [
+                0.95,
+                0.95
+              ]
+            }
+          },
+          {
+            "zone": "SC-PE-U109-IN",
+            "pad": "U109.5",
+            "role": "efuse_in_out",
+            "carve_out": "CO-EFUSE-BAR-END",
+            "measured": {
+              "sides": [
+                {
+                  "side": "+x",
+                  "pad_side_mm": 2.4,
+                  "strip_mm": null
+                },
+                {
+                  "side": "-x",
+                  "pad_side_mm": 2.4,
+                  "strip_mm": 1.45
+                }
+              ],
+              "strip_mm": 1.45,
+              "problem": "the pour leaving +x never reaches the class width 0.95 mm (a strip, not an entry)"
+            },
+            "declared": {
+              "strip_mm": 0.35,
+              "landing_mm": [
+                0.95,
+                0.95
+              ]
+            }
+          },
+          {
+            "zone": "SC-PE-U109-OUT",
+            "pad": "U109.6",
+            "role": "efuse_in_out",
+            "carve_out": "CO-EFUSE-BAR-END",
+            "measured": {
+              "sides": [
+                {
+                  "side": "+x",
+                  "pad_side_mm": 2.4,
+                  "strip_mm": 1.475
+                },
+                {
+                  "side": "-x",
+                  "pad_side_mm": 2.4,
+                  "strip_mm": null
+                }
+              ],
+              "strip_mm": 1.475,
+              "problem": "strip 1.475 mm on +x longer than half the class width (0.475 mm)"
+            },
+            "declared": {
+              "strip_mm": 0.35,
+              "landing_mm": [
+                0.95,
+                0.95
+              ]
+            }
+          },
+          {
+            "zone": "SC-PE-U201-IN",
+            "pad": "U201.5",
+            "role": "efuse_in_out",
+            "carve_out": "CO-EFUSE-BAR-END",
+            "measured": {
+              "sides": [
+                {
+                  "side": "+y",
+                  "pad_side_mm": 0.3,
+                  "strip_mm": 0.575
+                }
+              ],
+              "strip_mm": 0.575,
+              "problem": "landing on +y narrower than the class width 1.6 mm within 1.6 mm"
+            },
+            "declared": {
+              "strip_mm": 0.5,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          },
+          {
+            "zone": "SC-PE-U201-OUT",
+            "pad": "U201.6",
+            "role": "efuse_in_out",
+            "carve_out": "CO-EFUSE-BAR-END",
+            "measured": {
+              "sides": [
+                {
+                  "side": "-y",
+                  "pad_side_mm": 0.3,
+                  "strip_mm": 0.25
+                }
+              ],
+              "strip_mm": 0.25,
+              "problem": "landing on -y narrower than the class width 0.95 mm within 0.95 mm"
+            },
+            "declared": {
+              "strip_mm": 0.2,
+              "landing_mm": [
+                0.95,
+                0.95
+              ]
+            }
+          },
+          {
+            "zone": "SC-PE-U202-IN",
+            "pad": "U202.5",
+            "role": "efuse_in_out",
+            "carve_out": "CO-EFUSE-BAR-END",
+            "measured": {
+              "sides": [
+                {
+                  "side": "+x",
+                  "pad_side_mm": 2.4,
+                  "strip_mm": null
+                },
+                {
+                  "side": "-x",
+                  "pad_side_mm": 2.4,
+                  "strip_mm": 1.6
+                }
+              ],
+              "strip_mm": 1.6,
+              "problem": "the pour leaving +x never reaches the class width 1.6 mm (a strip, not an entry)"
+            },
+            "declared": {
+              "strip_mm": 0.5,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          },
+          {
+            "zone": "SC-PE-U202-OUT",
+            "pad": "U202.6",
+            "role": "efuse_in_out",
+            "carve_out": "CO-EFUSE-BAR-END",
+            "measured": {
+              "sides": [
+                {
+                  "side": "+x",
+                  "pad_side_mm": 2.4,
+                  "strip_mm": null
+                },
+                {
+                  "side": "-x",
+                  "pad_side_mm": 2.4,
+                  "strip_mm": null
+                }
+              ],
+              "strip_mm": 0.0,
+              "problem": "the pour leaving +x never reaches the class width 0.4 mm (a strip, not an entry)"
+            },
+            "declared": {
+              "strip_mm": 0.15,
+              "landing_mm": [
+                0.4,
+                0.4
+              ]
+            }
+          },
+          {
+            "zone": "SC-PE-U203-IN",
+            "pad": "U203.5",
+            "role": "efuse_in_out",
+            "carve_out": "CO-EFUSE-BAR-END",
+            "measured": {
+              "sides": [
+                {
+                  "side": "+y",
+                  "pad_side_mm": 0.3,
+                  "strip_mm": 0.15
+                }
+              ],
+              "strip_mm": 0.15,
+              "problem": "landing on +y narrower than the class width 0.4 mm within 0.4 mm"
+            },
+            "declared": {
+              "strip_mm": 0.1,
+              "landing_mm": [
+                0.4,
+                0.4
+              ]
+            }
+          },
+          {
+            "zone": "SC-PE-U203-OUT",
+            "pad": "U203.6",
+            "role": "efuse_in_out",
+            "carve_out": "CO-EFUSE-BAR-END",
+            "measured": {
+              "sides": [
+                {
+                  "side": "-y",
+                  "pad_side_mm": 0.3,
+                  "strip_mm": 0.175
+                }
+              ],
+              "strip_mm": 0.175,
+              "problem": "landing on -y narrower than the class width 0.4 mm within 0.4 mm"
+            },
+            "declared": {
+              "strip_mm": 0.15,
+              "landing_mm": [
+                0.4,
+                0.4
+              ]
+            }
+          },
+          {
+            "zone": "SC-U211-IN-ENTRY",
+            "pad": "U211.16",
+            "role": "ic_power_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "-y",
+                  "pad_side_mm": 0.31,
+                  "strip_mm": 0.5
+                }
+              ],
+              "strip_mm": 0.5,
+              "problem": "landing on -y narrower than the class width 1.6 mm within 1.6 mm"
+            },
+            "declared": {
+              "strip_mm": 0.45,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          },
+          {
+            "zone": "SC-U213-IN-ENTRY",
+            "pad": "U213.16",
+            "role": "ic_power_pin",
+            "carve_out": null,
+            "measured": {
+              "sides": [
+                {
+                  "side": "-y",
+                  "pad_side_mm": 0.31,
+                  "strip_mm": 0.8
+                }
+              ],
+              "strip_mm": 0.8,
+              "problem": "landing on -y narrower than the class width 1.6 mm within 1.6 mm"
+            },
+            "declared": {
+              "strip_mm": 0.45,
+              "landing_mm": [
+                1.6,
+                1.6
+              ]
+            }
+          }
+        ],
+        "carve_outs": [
+          {
+            "id": "CO-EFUSE-BAR-END",
+            "scope": "pin_entry",
+            "pads": [
+              "U109.5",
+              "U109.6",
+              "U201.5",
+              "U201.6",
+              "U202.5",
+              "U202.6",
+              "U203.5",
+              "U203.6"
+            ],
+            "role": "efuse_in_out"
+          },
+          {
+            "id": "CO-U107-BOOT",
+            "scope": "branch",
+            "pads": [
+              "C127.2"
+            ],
+            "role": "converter_capacitor"
+          }
+        ]
+      }
+    },
+    "rf50": {
+      "findings": 0,
+      "rf50_segments": 0
+    },
+    "gnd_chassis_ties": {
+      "findings": 0,
+      "ties": [],
+      "expected": 0
+    },
+    "b2b": {
+      "findings": 0,
+      "pairs": 1
+    },
+    "tht_pockets": {
+      "findings": 0,
+      "applies": true,
+      "tht_pads": 90,
+      "npth_pegs": 12,
+      "pockets": 28
+    },
+    "heights": {
+      "findings": 0,
+      "checked": 170
+    },
+    "pth_annular": {
+      "findings": 0,
+      "floor_mm": 0.15,
+      "fab_floor": "jlc_4l_1oz"
+    }
+  },
+  "findings": [
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-E1_N-U103.1",
+      "detail": "exemption_policy: pin_entry_pours.PE-E1_N-U103.1 on U103.1: landing on -y narrower than the class width 1.6 mm within 1.6 mm (measured on the zone, BATT 1.6 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-E1_SW-U111.3",
+      "detail": "exemption_policy: pin_entry_pours.PE-E1_SW-U111.3 on U111.3: landing on +x narrower than the class width 1.6 mm within 1.6 mm (measured on the zone, BATT 1.6 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-E1_SW-U111.6",
+      "detail": "exemption_policy: pin_entry_pours.PE-E1_SW-U111.6 on U111.6: landing on -x narrower than the class width 1.6 mm within 1.6 mm (measured on the zone, BATT 1.6 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-E1_SW-U220.5",
+      "detail": "exemption_policy: pin_entry_pours.PE-E1_SW-U220.5 on U220.5: landing on -x narrower than the class width 1.6 mm within 1.6 mm (measured on the zone, BATT 1.6 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-E2_BONI_IN-U213.15",
+      "detail": "exemption_policy: pin_entry_pours.PE-E2_BONI_IN-U213.15 on U213.15: landing on -y narrower than the class width 1.6 mm within 1.6 mm (measured on the zone, BATT 1.6 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-E2_LNA_IN-U204.4",
+      "detail": "exemption_policy: pin_entry_pours.PE-E2_LNA_IN-U204.4 on U204.4: landing on -y narrower than the class width 0.95 mm within 0.95 mm (measured on the zone, PWR3A 0.95 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-E2_LNA_IN-U205.4",
+      "detail": "exemption_policy: pin_entry_pours.PE-E2_LNA_IN-U205.4 on U205.4: landing on -y narrower than the class width 0.95 mm within 0.95 mm (measured on the zone, PWR3A 0.95 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-LAB5-J208.10",
+      "detail": "exemption_policy: pin_entry_pours.PE-LAB5-J208.10 on J208.10: landing on +y narrower than the class width 0.95 mm within 0.95 mm (measured on the zone, PWR3A 0.95 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-LAB5-J208.14",
+      "detail": "exemption_policy: pin_entry_pours.PE-LAB5-J208.14 on J208.14: landing on +y narrower than the class width 0.95 mm within 0.95 mm (measured on the zone, PWR3A 0.95 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-LAB5-J208.2",
+      "detail": "exemption_policy: pin_entry_pours.PE-LAB5-J208.2 on J208.2: landing on -x narrower than the class width 0.95 mm within 0.95 mm (measured on the zone, PWR3A 0.95 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry PE-LAB5-J208.6",
+      "detail": "exemption_policy: pin_entry_pours.PE-LAB5-J208.6 on J208.6: landing on +y narrower than the class width 0.95 mm within 0.95 mm (measured on the zone, PWR3A 0.95 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-PE-U109-IN",
+      "detail": "exemption_policy: pin_entry_pours.SC-PE-U109-IN on U109.5: the pour leaving +x never reaches the class width 0.95 mm (a strip, not an entry) (measured on the zone, PWR3A 0.95 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-PE-U109-OUT",
+      "detail": "exemption_policy: pin_entry_pours.SC-PE-U109-OUT on U109.6: strip 1.475 mm on +x longer than half the class width (0.475 mm) (measured on the zone, PWR3A 0.95 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-PE-U201-IN",
+      "detail": "exemption_policy: pin_entry_pours.SC-PE-U201-IN on U201.5: landing on +y narrower than the class width 1.6 mm within 1.6 mm (measured on the zone, BATT 1.6 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-PE-U201-OUT",
+      "detail": "exemption_policy: pin_entry_pours.SC-PE-U201-OUT on U201.6: landing on -y narrower than the class width 0.95 mm within 0.95 mm (measured on the zone, PWR3A 0.95 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-PE-U202-IN",
+      "detail": "exemption_policy: pin_entry_pours.SC-PE-U202-IN on U202.5: the pour leaving +x never reaches the class width 1.6 mm (a strip, not an entry) (measured on the zone, BATT 1.6 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-PE-U202-OUT",
+      "detail": "exemption_policy: pin_entry_pours.SC-PE-U202-OUT on U202.6: the pour leaving +x never reaches the class width 0.4 mm (a strip, not an entry) (measured on the zone, PWR2A 0.4 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-PE-U203-IN",
+      "detail": "exemption_policy: pin_entry_pours.SC-PE-U203-IN on U203.5: landing on +y narrower than the class width 0.4 mm within 0.4 mm (measured on the zone, PWR2A 0.4 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-PE-U203-OUT",
+      "detail": "exemption_policy: pin_entry_pours.SC-PE-U203-OUT on U203.6: landing on -y narrower than the class width 0.4 mm within 0.4 mm (measured on the zone, PWR2A 0.4 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-U211-IN-ENTRY",
+      "detail": "exemption_policy: pin_entry_pours.SC-U211-IN-ENTRY on U211.16: landing on -y narrower than the class width 1.6 mm within 1.6 mm (measured on the zone, BATT 1.6 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pin entry SC-U213-IN-ENTRY",
+      "detail": "exemption_policy: pin_entry_pours.SC-U213-IN-ENTRY on U213.16: landing on -y narrower than the class width 1.6 mm within 1.6 mm (measured on the zone, BATT 1.6 mm)"
+    },
+    {
+      "check": "class_widths",
+      "item": "pour E1_SW",
+      "detail": "BATT pour neck below 1.6 mm (single layer) on F.Cu (raster +/-0.05 mm)",
+      "at": [
+        120.975,
+        188.025
+      ],
+      "value": 1.223,
+      "limit": 1.6,
+      "layer": "F.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "pour E1_SW",
+      "detail": "BATT pour neck below 1.6 mm (single layer) on F.Cu (raster +/-0.05 mm)",
+      "at": [
+        125.825,
+        191.025
+      ],
+      "value": 1.223,
+      "limit": 1.6,
+      "layer": "F.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "pour E1_USB_PD_SAFE",
+      "detail": "PWR3A pour neck below 0.95 mm (single layer) on F.Cu (raster +/-0.05 mm)",
+      "at": [
+        106.925,
+        173.05
+      ],
+      "value": 0.374,
+      "limit": 0.95,
+      "layer": "F.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "pour E2_DISP_IN",
+      "detail": "BATT pour neck below 1.6 mm (single layer) on F.Cu (raster +/-0.05 mm)",
+      "at": [
+        108.025,
+        107.825
+      ],
+      "value": 0.712,
+      "limit": 1.6,
+      "layer": "F.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "pour E2_LIME_EF",
+      "detail": "PWR2A pour neck below 0.4 mm (single layer) on F.Cu (raster +/-0.05 mm)",
+      "at": [
+        116.275,
+        116.725
+      ],
+      "value": 0.266,
+      "limit": 0.4,
+      "layer": "F.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "pour LAB5",
+      "detail": "PWR3A pour neck below 0.95 mm (single layer) on F.Cu (raster +/-0.05 mm)",
+      "at": [
+        186.525,
+        194.575
+      ],
+      "value": 0.311,
+      "limit": 0.95,
+      "layer": "F.Cu"
+    }
+  ],
+  "unverified": [
+    {
+      "check": "class_widths",
+      "item": "C127 branch on E1_SYS12_SW",
+      "reason": "branch_exempt: 3 track piece(s), path 5.925 mm <= 7.0 mm, width >= 0.45 mm left out of the BATT width and neck checks (carve-out CO-U107-BOOT): W2 PWR-L6-SCRIPT converter stage (TI LM61460 SNVSBD5D (rev. D): SW-CBOOT link (SNVSBD5D 11.1: through the VIN2-RBOOT gap) to the bootstrap capacitor, 0.45 / 0.6 mm; gate-drive charge only; carve-out CO-U107-BOOT"
+    },
+    {
+      "check": "class_widths",
+      "item": "R111 branch on E1_SW",
+      "reason": "branch_exempt: 4 track piece(s), path 8.392 mm <= 8.5 mm, width >= 0.25 mm left out of the BATT width and neck checks: W2 PWR-L6-SCRIPT planned low-current branch (freeze/plan6.py; exemption policy: a test point, a resistor of 100 ohm or more or a sense or logic pin; MODEL, bench gates OPEN): E1_SW 0.25 mm x 6.861 mm"
+    },
+    {
+      "check": "class_widths",
+      "item": "R221 branch on SYS12",
+      "reason": "branch_exempt: 5 track piece(s), path 8.783 mm <= 9.5 mm, width >= 0.25 mm left out of the BATT width and neck checks: W2 PWR-L6-SCRIPT planned low-current branch (freeze/plan6.py; exemption policy: a test point, a resistor of 100 ohm or more or a sense or logic pin; MODEL, bench gates OPEN): SYS12 0.25 mm x 7.673 mm"
+    },
+    {
+      "check": "class_widths",
+      "item": "TP105 branch on E1_SW",
+      "reason": "branch_exempt: 3 track piece(s), path 11.322 mm <= 11.5 mm, width >= 0.25 mm left out of the BATT width and neck checks: W2 PWR-L6-SCRIPT planned low-current branch (freeze/plan6.py; exemption policy: a test point, a resistor of 100 ohm or more or a sense or logic pin; MODEL, bench gates OPEN): E1_SW 0.25 mm x 9.69 mm"
+    },
+    {
+      "check": "class_widths",
+      "item": "U107 branch on SYS12",
+      "reason": "branch_exempt: 11 track piece(s), path 33.516 mm <= 40.0 mm, width >= 0.25 mm left out of the BATT width and neck checks: W2 PWR-L6-SCRIPT converter stage (TI LM61460 SNVSBD5D (rev. D): BIAS pin 1 and the RFBT / CFF output sense: bias and sense current (milliamperes), In2.Cu under the In1.Cu GND"
+    },
+    {
+      "check": "class_widths",
+      "item": "U108 branch on E1_LAB5_RAW",
+      "reason": "branch_exempt: 3 track piece(s), path 3.775 mm <= 4.0 mm, width >= 0.25 mm left out of the BATT width and neck checks: W2 PWR-L6-SCRIPT converter stage (TI LM61460 SNVSBD5D (rev. D): VLDOIN pin 5 (internal LDO input, milliamperes) to VOUT1 between the module pins"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_LAB5_RAW pour on In4.Cu",
+      "reason": "inner copper not counted for BATT"
+    },
+    {
+      "check": "class_widths",
+      "item": "AUX12 vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 14 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "AUX12_DAMP vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 6 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "BONI13V8_PORT vias",
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 9 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "DISP12 vias",
+      "reason": "vias_per_transition 3 (PWR2A) is advisory, not counted: 3 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_LAB5_RAW vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 3 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_N vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 8 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_SW vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 13 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_USB_PD_RAW vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 5 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_USB_PD_SAFE vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 10 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_BONI_IN vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 8 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_DISP_IN vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 12 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_J21_FUSED vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 8 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_LIME_EF vias",
+      "reason": "vias_per_transition 3 (PWR2A) is advisory, not counted: 15 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_LNA4_SHUNT vias",
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 6 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_LNA4_SW vias",
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 2 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_LNA_IN vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 16 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_LNB_EF vias",
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 5 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_LNB_IN vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 9 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_LNB_IN_DAMP vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 5 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_LNB_MON vias",
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 4 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E5_IMU5V vias",
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 4 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E5_VBUS_HFP_SW vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "J21 vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 5 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "J21_DAMP vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 5 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "LAB5 vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 40 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "LIME3V3 vias",
+      "reason": "vias_per_transition 3 (PWR2A) is advisory, not counted: 14 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "LNB13V2 vias",
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 10 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "SYS12 vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 7 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "VBUS_HFP vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 5 via(s) of the net on the board"
+    },
+    {
+      "check": "heights",
+      "item": "J115",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J110",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J206",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J113",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J208",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J109",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J114",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J507",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J111",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J108",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J106",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J107",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J112",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J205",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R203",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R222",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R109",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R288",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R2913",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R122",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R106",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R205",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R2903",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R261",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R260",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R258",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R277",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R121",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R211",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R276",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R279",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C510",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R267",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R262",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R202",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R266",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C508",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R201",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R227",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R206",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C114",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R220",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C258",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C281",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R291",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R219",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R509",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R252",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R212",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R225",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R108",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C279",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C269",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R253",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R263",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R207",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R292",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R209",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R553",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R216",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R224",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R116",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R103",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R221",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R274",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R510",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C553",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R289",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R290",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R204",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C513",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R254",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R218",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R259",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R213",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C106",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C552",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C288",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R226",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R223",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R115",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R210",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R513",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C115",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C214",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C278",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R264",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C280",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R107",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R215",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R256",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R123",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R113",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R112",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R278",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C211",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C201",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R214",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R114",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C2913",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R208",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R111",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R275",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R255",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R2923",
+      "reason": "height unknown (spec heights or footprint property Height); limit 1.03 mm"
+    },
+    {
+      "check": "geometry",
+      "item": "U202.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U202.4",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U202.7",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U202.10",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U201.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U201.4",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U201.7",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U201.10",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U203.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U203.4",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U203.7",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U203.10",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.4",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.7",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.10",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U107.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U107.5",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U107.9",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U107.11",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "Q102.5",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    }
+  ]
+}
