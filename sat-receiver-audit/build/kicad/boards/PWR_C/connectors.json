@@ -1,0 +1,451 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "PWR_C",
+  "status": "CI_MODEL_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "PWRC",
+      "placement": "default",
+      "board_origin_enclosure_mm": null,
+      "z_bottom": null,
+      "facing": null,
+      "connectors": [
+        {
+          "template_ref": "J105",
+          "ref": "J105",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            11.0,
+            2.6
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                11.0,
+                2.6
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SHUNT_P",
+              "at": [
+                16.4,
+                2.6
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J108",
+          "ref": "J108",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x03_P5.4mm_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            15.6,
+            30.8
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                15.6,
+                30.8
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_N",
+              "at": [
+                21.0,
+                30.8
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E1_USB_PD_SAFE",
+              "at": [
+                26.4,
+                30.8
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J109",
+          "ref": "J109",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            134.95,
+            26.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CHG_NTC",
+              "at": [
+                134.95,
+                26.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": null,
+              "at": [
+                132.95,
+                26.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J112",
+          "ref": "J112",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            127.45,
+            26.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CHG_CC1",
+              "at": [
+                127.45,
+                26.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_CHG_CC2",
+              "at": [
+                125.45,
+                26.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E1_CHG_INHIBIT_LOW",
+              "at": [
+                123.45,
+                26.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E1_CHG_NTC",
+              "at": [
+                121.45,
+                26.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J113",
+          "ref": "J113",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            142.45,
+            26.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CHG_CC1",
+              "at": [
+                142.45,
+                26.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_CHG_CC2",
+              "at": [
+                140.45,
+                26.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J114",
+          "ref": "J114",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            147.1,
+            30.8
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                147.1,
+                30.8
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_USB_PD_RAW",
+              "at": [
+                152.5,
+                30.8
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J115",
+          "ref": "J115",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            30.7,
+            30.8
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                30.7,
+                30.8
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SERVICE_P",
+              "at": [
+                36.1,
+                30.8
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J118",
+          "ref": "J118",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            92.0,
+            30.8
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                92.0,
+                30.8
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "LAB5",
+              "at": [
+                97.4,
+                30.8
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J119",
+          "ref": "J119",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            68.5,
+            30.8
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                68.5,
+                30.8
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SW",
+              "at": [
+                63.1,
+                30.8
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J120",
+          "ref": "J120",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PHD_S10B-PHDSS_2x05_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            10.9,
+            21.9
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "I2C0_SCL",
+              "at": [
+                10.9,
+                21.9
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "I2C0_SDA",
+              "at": [
+                10.9,
+                23.9
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "INA228_ALERT",
+              "at": [
+                8.9,
+                21.9
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "IMU_RX",
+              "at": [
+                8.9,
+                23.9
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "IMU_TX",
+              "at": [
+                6.9,
+                21.9
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "E1_BAT_ADC",
+              "at": [
+                6.9,
+                23.9
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "CHG_INHIBIT",
+              "at": [
+                4.9,
+                21.9
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "PICO_OFF",
+              "at": [
+                4.9,
+                23.9
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "PWR_BUTTON",
+              "at": [
+                2.9,
+                21.9
+              ]
+            },
+            {
+              "pad": "10",
+              "net": null,
+              "at": [
+                2.9,
+                23.9
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J507",
+          "ref": "J507",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            115.95,
+            26.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                115.95,
+                26.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E5_IMU5V",
+              "at": [
+                113.95,
+                26.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "IMU_RX",
+              "at": [
+                111.95,
+                26.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "IMU_TX",
+              "at": [
+                109.95,
+                26.5
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
