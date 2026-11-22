@@ -12,10 +12,17 @@ audit checks both anyway.
 
 Nets: every net of pcb/generated/netclasses.json whose protection names a fuse (F1xx/F2xx with an "N A" rating, not a PTC, eFuse
 or TPS2553 limit), and every series-derived net reached through such a fuse. Per board (build/kicad/boards/<B>/<B>.kicad_pcb):
-  * each track segment of such a net: IPC-2221 rise at 110 % and 135 % for its width and layer copper (outer k 0.048, inner k 0.024;
-    stackup copper of netclasses.json); a segment wholly inside a filled zone of its own net on its layer is reported as covered
-    (the pour carries it) and a segment shorter than --short mm (default 1.0, pad entries) is listed apart: the long-trace formula
-    does not apply to them;
+  * each track segment of such a net: IPC-2221 rise at 110 % and 135 % for its width and layer copper (outer k 0.048, inner k 0.024);
+    the copper of each board is its own (review RV-CTRL6-S-2): report.json layers.copper_option 'outer_2oz' takes the outer and
+    inner foil of pcb/generated/stackup-6l.json copper_options (0.070 / 0.0152 mm; without that file 0.070 mm outer and the
+    project's 0.0152 mm finished 0.5 oz inner), a 6-layer board without an option takes the stackup-6l.json layers, any other
+    board the stackup of netclasses.json (0.035 / 0.0152 mm); the basis is written per board (copper_basis);
+    a segment wholly inside a filled zone of its own net on its layer is reported as covered (the pour carries it) and a segment
+    shorter than --short mm (default 1.0, pad entries) is listed apart: the long-trace formula does not apply to them;
+  * a pad stub of a multi-contact connector (a J* footprint with k >= 2 pads on the net; the chain of segments from the pad up
+    to the first junction, via or other pad) carries the even share 1/k of the loop current (parallel contacts, MODEL) and is
+    listed apart under connector_stubs with its share and rise; it counts as failing only if it fails at its share
+    (review RV-CTRL6-S-2);
   * vias of the net grouped by proximity (3 mm): the group carries the full current with an even share as a lower bound of the
     hottest via (the CTRL clusters and ladders have their own DC share models in pcb/tests); rise of one via by the project fit
     (netclasses.json formulas.via, 1.001 A at +20 degC).
@@ -58,14 +65,100 @@ def rise(amps, width_mm, copper_mm, k):
     return (amps / (k * area ** 0.725)) ** (1 / 0.44)
 
 
+def board_copper(board, b, nc):
+    """(layer -> finished copper mm, basis text) of one board (review RV-CTRL6-S-2)."""
+    rep = BASE / f'build/kicad/boards/{board}/report.json'
+    option = (json.loads(rep.read_text(encoding='utf-8')).get('layers') or {}).get('copper_option') if rep.is_file() else None
+    six = BASE / 'pcb/generated/stackup-6l.json'
+    six_doc = json.loads(six.read_text(encoding='utf-8')) if six.is_file() else None
+    if option == 'outer_2oz':
+        opt = ((six_doc or {}).get('copper_options') or {}).get('outer_2oz') or {}
+        outer, inner = float(opt.get('outer_copper_mm', 0.070)), float(opt.get('inner_copper_mm', 0.0152))
+        src = ('pcb/generated/stackup-6l.json copper_options.outer_2oz' if opt
+               else 'no stackup-6l.json: 2 oz 0.070 mm outer, 0.0152 mm inner')
+        return {l: (outer if l in ('F.Cu', 'B.Cu') else inner) for l in b.copper_layers}, f'report.json copper_option outer_2oz; {src}'
+    copper = {l['kicad']: l['copper_mm'] for l in nc['stackup']['layers'] if 'kicad' in l}
+    if not set(b.copper_layers) - set(copper):
+        return copper, f'pcb/generated/netclasses.json stackup {nc["stackup"].get("id")}'
+    if six_doc:
+        copper = {l['kicad']: l['copper_mm'] for l in six_doc['stackup']['layers'] if 'kicad' in l}
+        if not set(b.copper_layers) - set(copper):
+            return copper, f'pcb/generated/stackup-6l.json stackup {six_doc["stackup"].get("id")}'
+    return ({l: (0.035 if l in ('F.Cu', 'B.Cu') else 0.0152) for l in b.copper_layers},
+            'no stackup for these layers: outer 1 oz 0.035 mm, inner 0.0152 mm assumed')
+
+
+def connector_stubs(b, net, tracks):
+    """{track index: (share 1/k, 'J.pad')} for the pad stubs of multi-contact connectors on this net (review RV-CTRL6-S-2).
+
+    A stub starts at a J* pad of a footprint with k >= 2 pads on the net that has exactly one track of the net attached and no
+    via in it, and follows single segments of that layer until a via or a junction of three or more track ends; that chain
+    carries only its own contact's share. A chain that runs into another pad (a part, or another contact) or ends open is not a
+    stub, and a pad where two or more tracks meet is a merge point: those keep the full loop current (conservative)."""
+    def key(x, y):
+        return (round(x, 4), round(y, 4))
+    ends = collections.defaultdict(list)
+    for i, t in enumerate(tracks):
+        ends[(t.layer,) + key(t.shape.x1, t.shape.y1)].append(i)
+        ends[(t.layer,) + key(t.shape.x2, t.shape.y2)].append(i)
+    vias = [(v['x'], v['y'], v['size'] / 2) for v in b.vias if v['net'] == net]
+    pads = [p for p in b.pads if p['net'] == net]
+
+    def via_at(x, y):
+        return any(math.hypot(x - vx, y - vy) <= r + 1e-6 for vx, vy, r in vias)
+
+    def pad_at(layer, x, y, own):
+        return any(p is not own and layer in p['layers'] and p['geo'].contains(x, y) for p in pads)
+    out = {}
+    for fp in b.footprints:
+        if not re.fullmatch(r'J\d+', fp['ref'] or ''):
+            continue
+        mine = [p for p in fp['pads'] if p['net'] == net]
+        k = len({p['number'] for p in mine})
+        if k < 2:
+            continue
+        for p in mine:
+            attached = []
+            for i, t in enumerate(tracks):
+                s = t.shape
+                if t.layer in p['layers']:
+                    for (ax, ay), (bx, by) in (((s.x1, s.y1), (s.x2, s.y2)), ((s.x2, s.y2), (s.x1, s.y1))):
+                        if p['geo'].contains(ax, ay):
+                            attached.append((i, (bx, by)))
+                            break
+            if len(attached) != 1 or any(p['geo'].contains(vx, vy) for vx, vy, _r in vias):
+                continue
+            cur, far = attached[0]
+            chain, stub = [cur], False
+            while True:
+                lay = tracks[cur].layer
+                if via_at(*far):
+                    stub = True
+                    break
+                if pad_at(lay, far[0], far[1], p) or p['geo'].contains(*far):
+                    break
+                nxt = [j for j in ends[(lay,) + key(*far)] if j != cur]
+                if len(nxt) >= 2:
+                    stub = True
+                    break
+                if len(nxt) != 1 or nxt[0] in chain:
+                    break
+                cur = nxt[0]
+                chain.append(cur)
+                s2 = tracks[cur].shape
+                far = (s2.x2, s2.y2) if key(s2.x1, s2.y1) == key(*far) else (s2.x1, s2.y1)
+            if stub:
+                for i in chain:
+                    out[i] = (1.0 / k, f'{fp["ref"]}.{p["number"]}')
+    return out
+
+
 def audit(board, nc, nets, short_mm):
     path = BASE / f'build/kicad/boards/{board}/{board}.kicad_pcb'
     if not path.is_file():
         return {'board': board, 'status': 'no committed board'}
     b = cb.load_board(path)
-    copper = {l['kicad']: l['copper_mm'] for l in nc['stackup']['layers'] if 'kicad' in l}
-    if set(b.copper_layers) - set(copper):  # a board with another stack (6 layers): outer 1 oz, inner 0.5 oz like the project
-        copper = {l: (0.035 if l in ('F.Cu', 'B.Cu') else 0.0152) for l in b.copper_layers}
+    copper, basis = board_copper(board, b, nc)
     ipc = nc['formulas']['ipc2221']
     fit = nc['formulas']['via']['current_a_dt20']
     zones = collections.defaultdict(list)
@@ -73,17 +166,18 @@ def audit(board, nc, nets, short_mm):
         if not z['keepout']:
             for lay, polys in z['fills'].items():
                 zones[(z['net'], lay)].extend(polys)
-    out = {'board': board, 'nets': []}
+    out = {'board': board, 'copper_basis': basis, 'copper_mm': {l: copper[l] for l in b.copper_layers}, 'nets': []}
     present = {t.net for t in b.tracks} | {v['net'] for v in b.vias}
     for net, (fuse, rating) in sorted(nets.items()):
         if net not in present:
             continue
         i110, i135 = 1.1 * rating, 1.35 * rating
         rec = {'net': net, 'fuse': fuse, 'rating_a': rating, 'i110_a': round(i110, 3), 'i135_a': round(i135, 3),
-               'fail_110': [], 'fail_135': [], 'short_pieces': [], 'covered_by_pour': 0, 'segments': 0, 'via_groups': []}
-        for t in b.tracks:
-            if t.net != net:
-                continue
+               'fail_110': [], 'fail_135': [], 'short_pieces': [], 'connector_stubs': [], 'covered_by_pour': 0, 'segments': 0,
+               'via_groups': []}
+        tracks = [t for t in b.tracks if t.net == net]
+        stubs = connector_stubs(b, net, tracks)
+        for idx, t in enumerate(tracks):
             s = t.shape
             ln = math.hypot(s.x2 - s.x1, s.y2 - s.y1)
             rec['segments'] += 1
@@ -97,7 +191,11 @@ def audit(board, nc, nets, short_mm):
             if ln < short_mm:
                 rec['short_pieces'].append(item)
                 continue
-            r110, r135 = rise(i110, t.width, copper[t.layer], k), rise(i135, t.width, copper[t.layer], k)
+            share = stubs.get(idx, (1.0, None))
+            r110, r135 = rise(i110 * share[0], t.width, copper[t.layer], k), rise(i135 * share[0], t.width, copper[t.layer], k)
+            if share[1]:
+                rec['connector_stubs'].append(dict(item, pad=share[1], share=round(share[0], 4), rise_110_c=round(r110, 1),
+                                                   rise_135_c=round(r135, 1)))
             if r110 > DT_110:
                 rec['fail_110'].append(dict(item, rise_c=round(r110, 1)))
             if r135 > DT_135:
@@ -116,6 +214,7 @@ def audit(board, nc, nets, short_mm):
         rec['n_fail_110'], rec['n_fail_135'] = len(rec['fail_110']), len(rec['fail_135'])
         rec['len_fail_110_mm'] = round(sum(x['length_mm'] for x in rec['fail_110']), 2)
         rec['via_groups_over_fit_110'] = [g for g in rec['via_groups'] if g['rise_110_c'] > DT_110]
+        rec['fail_110_all'] = sorted(rec['fail_110'], key=lambda x: -x['rise_c'])
         del rec['fail_110'], rec['fail_135']
         out['nets'].append(rec)
     return out
