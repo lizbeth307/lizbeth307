@@ -14,7 +14,7 @@ def conflicts(m, net, res, soft_src=('router',)):
     w = res['width']
     for lay, pts in res['runs']:
         for a, b in zip(pts, pts[1:]):
-            r = w / 2
+            r = R.wof(w, lay) / 2
             bb = (min(a[0], b[0]) - r - 1, min(a[1], b[1]) - r - 1, max(a[0], b[0]) + r + 1, max(a[1], b[1]) + r + 1)
             for it in m.near(lay, bb):
                 if it.net == net or it.kind == 'npth':

@@ -64,7 +64,7 @@ NECK_MAX = 3.0  # mm: longest pad-to-pad neck of a power pair without a class-wi
 # 2 oz at the PWR2A width 0.4 mm, IPC-2221 about 2 A at +10 degC, MODEL) and resistors of 100 ohm or more (dividers, bias:
 # milliamperes); series parts (fuses, shunts, inductors, FETs, diodes, connectors, damper resistors) stay main path
 BRANCH_MAX = 12.0   # mm, longest branch path
-BRANCH_W = {'TP': 0.25, 'R': 0.25, 'C': 0.4}
+BRANCH_W = {'TP': 0.25, 'R': 0.25, 'C': 0.4, 'S': 0.25}
 ROUTING = tuple(M.RLAYERS)
 OUTER = ('F.Cu', 'B.Cu')
 K = lambda x, y: (round(x + 100.0, 4), round(210.0 - y, 4))  # board mm -> KiCad mm (frame of pcb/board_gen.py)
@@ -272,13 +272,17 @@ def ohms(value):
     return v * {'': 1.0, 'r': 1.0, 'k': 1e3, 'm': 1e6}[m.group(2).lower()]
 
 
-def branch_kind(graph):
-    """ref -> 'TP' | 'C' | 'R' for parts that may hang on a power net as a low-current branch, else None."""
+def branch_kind(graph, sense=False):
+    """ref -> 'TP' | 'C' | 'R' for parts that may hang on a power net as a low-current branch, else None. W2 PWR-A closure
+    round 1, probe Y (sense=True): an IC ('U') is 'S', a sense/logic pin branch; the caller's role test (pcb/check_boards.py
+    exemption_role sense_logic_pin) decides per pad."""
     def kind(ref):
         if ref is None:
             return None
         if ref.startswith('TP'):
             return 'TP'
+        if sense and re.match(r'U\d', ref):
+            return 'S'
         if re.match(r'C\d', ref):
             return 'C'
         if re.match(r'R\d', ref):
@@ -415,6 +419,169 @@ def drop_failing_completion(m):
     return len(drop), nets
 
 
+# W2 PWR-A closure round 1, probe Y (--pad-vias): a through via in the SMD pad of a walled-in pin. The blocker split of route
+# run 45062920789 (W2 F2C-FALLBACK part 2) left 15 signal nets with no 0.15 mm path on any routing layer: their pins are boxed in
+# on their own layer by pads, scripted pours and planned copper, and no via site is reachable. A via in the pad takes such a pin
+# straight to In2.Cu/In3.Cu. PWR_B carries the same kind of via (VIP-U215-6/7, W2 PWR-L6-PLACE third pass); JLC fills and caps
+# via-in-pad by default from 6 layers (pcb/generated/stackup-6l.json capabilities.via_in_pad). The via is the project via
+# 0.6/0.3 mm (PWR_A.kicad_pro min_via_diameter 0.6, annulus 0.15); it keeps the KiCad clearance 0.15 (+0.01) to other-net copper
+# on every layer, the hole clearance 0.25 (+0.01), 0.5 mm (+0.02) hole to hole and the keep-outs; it overlaps only its own pad
+# and its own net. Pads of 0.5 mm pitch (LSHM-150, TPS25947 RPW) take no such via (it would reach the neighbour pads).
+VIP_SIZES = ((0.6, 0.3),)
+VIP_CLR = 0.16       # mm: KiCad clearance 0.15 + 0.01
+VIP_HOLE_CLR = 0.26  # mm: PWR_A.kicad_pro min_hole_clearance 0.25 + 0.01
+VIP_MAX_PAD = 3.0    # mm: no via in pads larger than this on both sides (exposed pads; power pads keep their own vias)
+
+
+def vip_margin(m, net, at, size, drill):
+    """Smallest margin (>= 0 is clear) of a via in a pad of `net`: other-net copper (VIP_CLR, hole VIP_HOLE_CLR), hole to hole,
+    keep-outs, edges; same-net copper (its own pad) is allowed."""
+    r = size / 2
+    bb = (at[0] - r - 1.5, at[1] - r - 1.5, at[0] + r + 1.5, at[1] + r + 1.5)
+    worst, why, seen = math.inf, None, set()
+    for lay in M.LAYERS:
+        for it in m.near(lay, bb):
+            if it.id in seen:
+                continue
+            seen.add(it.id)
+            if it.kind in ('via', 'npth') or (it.kind == 'pad' and it.drill):
+                d = math.hypot(at[0] - it.at[0], at[1] - it.at[1]) - drill / 2 - (it.drill or 0) / 2 - M.HOLE_HOLE - 0.02
+                if d < worst:
+                    worst, why = d, f'hole {it.kind} {it.ref or ""}.{it.pad or ""}'
+            if it.kind == 'npth' or it.net == net:
+                continue
+            dist = it.shape.dist(*at)
+            for mg in (dist - r - VIP_CLR, dist - drill / 2 - VIP_HOLE_CLR):
+                if mg < worst:
+                    worst, why = mg, f'{it.kind} {it.net} {it.ref or ""}.{it.pad or ""}'
+    for k in m.keepouts:
+        kb = k['poly'].bbox
+        if kb[0] > bb[2] or kb[2] < bb[0] or kb[1] > bb[3] or kb[3] < bb[1]:
+            continue
+        mg = k['poly'].dist(*at) - r - 0.01
+        if mg < worst:
+            worst, why = mg, 'keepout ' + k['name']
+    mg = min(M.seg_dist(at[0], at[1], e0[0], e0[1], e1[0], e1[1]) for e0, e1 in m.edges) - r - M.EDGE_CLR - 0.02
+    if mg < worst:
+        worst, why = mg, 'edge'
+    if not m.inside(at):
+        return -9.0, 'outside'
+    return worst, why
+
+
+def vip_spots(pad, size):
+    """Via centres in a pad: its centre, then along its long axis in 0.05 mm steps while the via centre stays a quarter of the via
+    inside the pad ends (KiCad mm)."""
+    x0, y0, x1, y1 = pad.shape.bbox
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    horiz = (x1 - x0) >= (y1 - y0)
+    half = ((x1 - x0) if horiz else (y1 - y0)) / 2 - size / 4
+    out = [(round(cx, 4), round(cy, 4))]
+    k = 1
+    while k * 0.05 <= half + 1e-9:
+        for sgn in (1, -1):
+            d = sgn * k * 0.05
+            out.append((round(cx + d, 4), round(cy, 4)) if horiz else (round(cx, 4), round(cy + d, 4)))
+        k += 1
+    return [q for q in out if pad.shape.dist(*q) <= 0.0]
+
+
+def add_pad_vias(m, net, sizes=VIP_SIZES, refs=None):
+    """A via in each SMD pad of `net` (outer layer, at most VIP_MAX_PAD on its short side, no via in it yet; refs limits the parts)
+    that has a free spot, src 'vip'. Returns the added via items."""
+    added = []
+    groups = [gr for gr in m.islands(net) if any(i.kind == 'pad' for i in gr)]
+    if len(groups) <= 1:
+        return added
+    for gr in groups:
+        for p in gr:
+            if p.kind != 'pad' or p.src != 'pad' or p.drill or not any(l in OUTER for l in p.layers):
+                continue
+            if refs is not None and p.ref not in refs:
+                continue
+            bx = p.shape.bbox
+            if min(bx[2] - bx[0], bx[3] - bx[1]) > VIP_MAX_PAD:
+                continue
+            if any(o.kind == 'via' and o.net == net and p.shape.dist(*o.at) <= 0 for o in m.near(p.layers[0], bx)):
+                continue
+            done = False
+            for size, drill in sizes:
+                for at in vip_spots(p, size):
+                    if vip_margin(m, net, at, size, drill)[0] >= 0:
+                        added.append(m.add_via(net, at, size, drill, src='vip'))
+                        done = True
+                        break
+                if done:
+                    break
+    return added
+
+
+def vip_used(m, v):
+    """A via in a pad is used when a track of its net ends in it on a layer other than its pad's."""
+    for lay in M.LAYERS:
+        if any(o.kind == 'pad' and o.src == 'pad' and o.net == v.net and o.shape.dist(*v.at) <= 0
+               for o in m.near(lay, (v.at[0] - 0.5, v.at[1] - 0.5, v.at[0] + 0.5, v.at[1] + 0.5))):
+            continue
+        for o in m.near(lay, (v.at[0] - 1, v.at[1] - 1, v.at[0] + 1, v.at[1] + 1)):
+            if o.kind == 'track' and o.net == v.net and any(v.shape.dist(*e) <= 1e-4 for e in (o.a, o.b)):
+                return True
+    return False
+
+
+def drop_unused_vips(m, net):
+    """Remove the vias in pads of `net` that no track uses. Returns the number removed."""
+    n = 0
+    for it in m.items:
+        if it.alive and it.kind == 'via' and it.src == 'vip' and it.net == net and not vip_used(m, it):
+            m.remove(it)
+            n += 1
+    return n
+
+
+# W2 PWR-A closure round 1, probe Y (--deep-entry): a completion track ends inside a small SMD pad at least half its width from
+# the pad edge (route run 45062920789: the A* entered the DVDT pins of U201 / U202 over a pad corner, two KiCad
+# connection_width errors). Pads up to DEEP_MAX on their short side; a pad too small for that keeps its whole area.
+DEEP_MAX = 1.0
+_COVERED = R.Grid.covered
+DEEP = {'width': None}
+
+
+def covered_deep(self, items, layer):
+    w = DEEP['width']
+    if not w:
+        return _COVERED(self, items, layer)
+    w = R.wof(w, layer)
+    small = [it for it in items if it.kind == 'pad' and it.src == 'pad' and layer in it.layers
+             and min(it.bbox[2] - it.bbox[0], it.bbox[3] - it.bbox[1]) <= DEEP_MAX]
+    ids = {it.id for it in small}
+    cov = _COVERED(self, [it for it in items if it.id not in ids], layer)
+    d = w / 2
+    for it in small:
+        win = self.win(it.bbox, 0.0)
+        if win is None:
+            continue
+        X, Y = self.X[win], self.Y[win]
+        full = R.shape_dist(X, Y, it.shape) <= 0.0
+        deep = full.copy()
+        for dx, dy in ((d, 0), (-d, 0), (0, d), (0, -d), (d * 0.7071, d * 0.7071), (-d * 0.7071, d * 0.7071),
+                       (d * 0.7071, -d * 0.7071), (-d * 0.7071, -d * 0.7071)):
+            deep &= R.shape_dist(X + dx, Y + dy, it.shape) <= 0.0
+        cov[win] |= deep if deep.any() else full
+    return cov
+
+
+_ROUTE_LINK = R.route_link
+
+
+def route_link_deep(m, net, isl_a, isl_b, box, width=0.15, **kw):
+    """R.route_link with the deep pad entry of the track width of this link (DEEP)."""
+    DEEP['width'] = width
+    try:
+        return _ROUTE_LINK(m, net, isl_a, isl_b, box, width=width, **kw)
+    finally:
+        DEEP['width'] = None
+
+
 # W2 PWR-TOOLS: why a net may be left open (--leave-open) in a harvest
 LEAVE_OPEN_WHY = {
     'E2_BONI_EF': ('the grid A* joins it only through a B.Cu end inside the copper of a diagonal E2_BONI_EF track, which KiCad '
@@ -487,8 +654,20 @@ def main(argv=None):
     ap.add_argument('--leave-open', action='append', default=[], metavar='NET',
                     help='W2 PWR-TOOLS: a net the grid A* does not complete in this harvest (its DRC drops and pruning still '
                          'apply); recorded under fixes.left_open with LEAVE_OPEN_WHY')
+    ap.add_argument('--pad-vias', action='store_true',
+                    help='W2 PWR-A closure round 1, probe Y: a net left open tries again with a via in the SMD pads of its pins '
+                         '(add_pad_vias); unused ones are removed')
+    ap.add_argument('--deep-entry', action='store_true',
+                    help='W2 PWR-A closure round 1, probe Y: completion tracks end at least half their width inside small pads '
+                         '(covered_deep)')
+    ap.add_argument('--sense-branches', action='store_true',
+                    help='W2 PWR-A closure round 1, probe Y: sense/logic pins of ICs on a power net (pcb/check_boards.py role '
+                         'sense_logic_pin) take a 0.25 mm branch on the four routing layers, as test points do')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
+    if args.deep_entry:
+        R.Grid.covered = covered_deep
+        R.route_link = route_link_deep
     art = Path(args.artifact)
     report = json.loads((art / 'board/report.json').read_text(encoding='utf-8'))
     m = M.Model(str(art / 'board/PWR_A.kicad_pcb'))
@@ -560,6 +739,9 @@ def main(argv=None):
             mg, why = m.track_margin(it.net, it.layers[0], it.width, it.a, it.b, ignore={it.id})
         elif it.kind == 'via':
             mg, why = m.via_margin(it.net, it.at, it.size, it.drill, ignore={it.id})
+            if why and why.startswith('own pad'):  # probe Y: a frozen via in its own SMD pad (add_pad_vias) is checked as one
+                mg, why = vip_margin(m, it.net, it.at, it.size, it.drill)
+                mg += VIP_CLR - M.CLR  # the KiCad clearance, not the placement margin
         else:
             continue
         if mg < -0.0005:
@@ -607,15 +789,32 @@ def main(argv=None):
                                         neck=(width(net), NECK_MAX, neck_ok) if layers(net) == OUTER else None,
                                         rip_wide=args.rip_wide, soft=('router', 'new') if args.rip_new else ('router',))
         necks += nk
+        vips = []
+        if not ok and args.pad_vias and layers(net) != OUTER:  # probe Y: a via in the pads of the walled-in pins, then again
+            vips = add_pad_vias(m, net)
+            if vips:
+                ok, ripped2, nk = fz.connect_all(net, width=width(net), layers=layers(net), allow_rip=not args.no_rip, neck=None,
+                                                 rip_wide=args.rip_wide, soft=('router', 'new') if args.rip_new else ('router',))
+                ripped += [n for n in ripped2 if n not in ripped]
+                necks += nk
         if not ok and layers(net) == OUTER:  # low-current branches of a power net (exemption policy: TP, R >= 100 ohm, sense pins)
-            bk = branch_kind(GRAPH)
-            okb, br = fz.branch_pass(net, lambda r: bk(r) is not None and branch_ok(r, net),
-                                     lambda refs: max(BRANCH_W[bk(r)] for r in refs),
-                                     lambda refs: ROUTING if all(bk(r) == 'TP' for r in refs) else OUTER, BRANCH_MAX,
-                                     target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= width(net))
-                                     or (i.kind == 'pad' and i.src == 'zone'))
-            branches += br
-            ok = ok or okb
+            bk = branch_kind(GRAPH, sense=args.sense_branches)
+            for attempt in ((False, True) if args.pad_vias else (False,)):
+                if attempt:  # probe Y: the branch parts get vias in their pads (branches on the routing layers only)
+                    vips += add_pad_vias(m, net, refs={i.ref for gr in m.islands(net) for i in gr if i.kind == 'pad'
+                                                       and bk(i.ref) in ('TP', 'S') and branch_ok(i.ref, net)})
+                okb, br = fz.branch_pass(net, lambda r: bk(r) is not None and branch_ok(r, net),
+                                         lambda refs: max(BRANCH_W[bk(r)] for r in refs),
+                                         lambda refs: ROUTING if all(bk(r) in ('TP', 'S') for r in refs) else OUTER, BRANCH_MAX,
+                                         target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= width(net))
+                                         or (i.kind == 'pad' and i.src == 'zone'))
+                branches += br
+                ok = ok or okb
+                if ok:
+                    break
+        if vips:
+            n_drop = drop_unused_vips(m, net)
+            print(f'  {net}: vias in pads added {len(vips)}, unused removed {n_drop}')
         m.keepouts[:] = base_keepouts
         print(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if not ok:
@@ -624,6 +823,7 @@ def main(argv=None):
         touched |= set(ripped)
     for n in sorted({i.net for i in m.items if i.alive and i.net and i.net not in M.PLANES}):
         F.prune(m, n, srcs=('router', 'new', 'escape'))  # an escape stub whose link failed goes too
+        drop_unused_vips(m, n)
     merged = merge_remainders(m)
     print('split remainders merged back:', len(merged))
     open_, bad = verify(m)
@@ -640,8 +840,8 @@ def main(argv=None):
     groups = collections.defaultdict(list)
     vias = {'router': [], 'new': []}
     for it in m.items:
-        if it.alive and it.src in ('router', 'new', 'escape'):
-            src = 'new' if it.src == 'escape' else it.src
+        if it.alive and it.src in ('router', 'new', 'escape', 'vip'):
+            src = 'new' if it.src in ('escape', 'vip') else it.src
             if it.kind == 'track':
                 groups[(src, it.net, it.layers[0], round(it.width, 4))].append((it.a, it.b))
             elif it.kind == 'via':
