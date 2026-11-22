@@ -395,7 +395,8 @@ def power_copper(placed):
             a, b = (r[0] + h / 2, (r[1] + r[3]) / 2), (max(r[2] - h / 2, r[0] + h / 2 + 0.002), (r[1] + r[3]) / 2)
         else:
             a, b = ((r[0] + r[2]) / 2, r[1] + w / 2), ((r[0] + r[2]) / 2, max(r[3] - w / 2, r[1] + w / 2 + 0.002))
-        track(f'{zid}-SK', net, r4(math.floor(short * 1000) / 1000), [a, b],
+        tw = need if abs(short - need) < 1e-3 else r4(math.floor(short * 1000) / 1000)  # never under the class (run 45047556040)
+        track(f'{zid}-SK', net, tw, [a, b],
               f'locked skeleton of the pour {zid} (its short side, >= the {net} class width {need} mm): the router keeps '
               'other nets off the pour', layer=layer)
     # U109 pins 9 (E1_PD_ILM) and 7 (E1_PD_DVDT) on the right side: locked escapes in their own lanes to R116.1 and C115.1
@@ -571,6 +572,19 @@ def project_json(inp, nets):
 
 
 # Power-net pads joined by the scripted copper (no exemption); the router reaches the others, which branch_exempt lists.
+# Pin entries (sr-rx-pcb run 45047556040, check_boards class_widths): the pad itself is narrower than its class, and the
+# neck raster measures the pour 0.925 mm (half the class) beyond it, where the neighbouring other-net pins of the package
+# leave 1.48 mm (U109 bars, pins 1 / 10 beside them) and 0.66 mm (U553 IN, pin 2 below it). These pads are left out of the
+# raster as branch pads; they carry no router branch (their copper is the scripted pour). pin_entry_pours (the PWR_A form
+# with exemption_policy) is not used on this board: OPEN for the PCB review.
+PIN_ENTRY = {
+    'U109': ('pin entries of the TPS259470 IN / OUT bars (pins 5 / 6, 0.3 mm wide): the pours run along the whole bar and leave '
+             'at its ends (TI SLVSFC9C figure 8-22) at the class width; pins 1 and 10 beside the bar ends limit the entry neck to '
+             '1.48 mm in the raster (run 45047556040); no router branch on these pads'),
+    'U553': ('pin entry of U553 IN (pin 1, SOT-23-5): the LAB5 column (1.85 mm) reaches the pin through a strip one pin pitch tall; '
+             'pin 2 below it limits the entry neck to 0.66 mm in the raster (run 45047556040); router branches only on its '
+             'other LAB5 pads'),
+}
 NO_EXEMPT = ('J105', 'R101', 'U106', 'J118', 'J119', 'F103', 'J108', 'J114', 'J115', 'D104', 'D105')
 
 
@@ -579,7 +593,7 @@ def branch_exempt(inp, placed):
     dividers, test points and decoupling capacitors. Never one of NO_EXEMPT (the acceptance of F2C-FALLBACK)."""
     nc = inp.netclasses
     power = {n for n, c in nc['nets'].items() if c.get('class') in ('BATT', 'PWR3A', 'PWR2A')}
-    scripted = {'U109': {'5', '6'}, 'C116': {'1'}, 'C117': {'1'}, 'U553': {'1'}, 'C552': {'1'}}
+    scripted = {'C116': {'1'}, 'C117': {'1'}, 'C552': {'1'}}
     out = {}
     for ref, pa in sorted(placed.items(), key=lambda kv: bg.sort_ref(kv[0])):
         pads_ = sorted({p['number'] for p in pa.pads if p['net'] in power} - scripted.get(ref, set()), key=bg.sort_ref)
@@ -590,6 +604,8 @@ def branch_exempt(inp, placed):
         out[ref] = {'max_mm': 25.0, 'min_width_mm': 0.2 if sense else 0.5, 'pads': pads_,
                     'reason': f'{TAG}: router branch of {", ".join(nets)} to a low-current pad ({inp.graph[ref]["value"][:40]}); '
                               'the current path is the scripted class-width copper (make_spec.py power_copper)'}
+        if ref in PIN_ENTRY:
+            out[ref]['reason'] = f'{TAG}: {PIN_ENTRY[ref]}'
     return out
 
 

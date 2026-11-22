@@ -1033,7 +1033,7 @@
         "id": "PC-E1N-WEST-SK",
         "net": "E1_N",
         "layer": "F.Cu",
-        "width_mm": 3.199,
+        "width_mm": 3.2,
         "path": [
           [
             15.6,
@@ -1069,7 +1069,7 @@
         "id": "PC-E1N-D104-SK",
         "net": "E1_N",
         "layer": "F.Cu",
-        "width_mm": 3.199,
+        "width_mm": 3.2,
         "path": [
           [
             19.6,
@@ -1177,7 +1177,7 @@
         "id": "PC-PDRAW-LAND-SK",
         "net": "E1_USB_PD_RAW",
         "layer": "F.Cu",
-        "width_mm": 1.849,
+        "width_mm": 1.85,
         "path": [
           [
             138.775,
@@ -1249,7 +1249,7 @@
         "id": "PC-PDSAFE-LAND-SK",
         "net": "E1_USB_PD_SAFE",
         "layer": "F.Cu",
-        "width_mm": 1.849,
+        "width_mm": 1.85,
         "path": [
           [
             139.275,
@@ -1303,7 +1303,7 @@
         "id": "PC-PDSAFE-B-RUN-SK",
         "net": "E1_USB_PD_SAFE",
         "layer": "B.Cu",
-        "width_mm": 1.849,
+        "width_mm": 1.85,
         "path": [
           [
             26.4,
@@ -1339,7 +1339,7 @@
         "id": "PC-LAB5-DOWN-SK",
         "net": "LAB5",
         "layer": "F.Cu",
-        "width_mm": 1.849,
+        "width_mm": 1.85,
         "path": [
           [
             97.4,
@@ -2505,10 +2505,6 @@
           [
             15.4409,
             20.2443
-          ],
-          [
-            16.0,
-            20.2443
           ]
         ],
         "locked": true
@@ -2815,10 +2811,6 @@
         "path": [
           [
             20.6375,
-            2.6
-          ],
-          [
-            20.638,
             2.6
           ],
           [
@@ -6437,13 +6429,23 @@
       ],
       "reason": "W2 F2C-FALLBACK (PCB-PWRC-2): router branch of E1_N to a low-current pad (TPS70933DBVR); the current path is the scripted class-width copper (make_spec.py power_copper)"
     },
+    "U109": {
+      "max_mm": 25.0,
+      "min_width_mm": 0.5,
+      "pads": [
+        "5",
+        "6"
+      ],
+      "reason": "W2 F2C-FALLBACK (PCB-PWRC-2): pin entries of the TPS259470 IN / OUT bars (pins 5 / 6, 0.3 mm wide): the pours run along the whole bar and leave at its ends (TI SLVSFC9C figure 8-22) at the class width; pins 1 and 10 beside the bar ends limit the entry neck to 1.48 mm in the raster (run 45047556040); no router branch on these pads"
+    },
     "U553": {
       "max_mm": 25.0,
       "min_width_mm": 0.5,
       "pads": [
+        "1",
         "3"
       ],
-      "reason": "W2 F2C-FALLBACK (PCB-PWRC-2): router branch of LAB5 to a low-current pad (TPS2553DBVR); the current path is the scripted class-width copper (make_spec.py power_copper)"
+      "reason": "W2 F2C-FALLBACK (PCB-PWRC-2): pin entry of U553 IN (pin 1, SOT-23-5): the LAB5 column (1.85 mm) reaches the pin through a strip one pin pitch tall; pin 2 below it limits the entry neck to 0.66 mm in the raster (run 45047556040); router branches only on its other LAB5 pads"
     }
   },
   "gnd_fanout": {

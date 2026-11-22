@@ -86,6 +86,39 @@ def add_pours(m):
     return n
 
 
+def redundant_pieces(m):
+    """Router track pieces that lie wholly in a fill of their own net's pour (run 45047556040: the last piece of the U103 / TP104
+    E1_N branch inside PC-E1N-WEST, which check_boards measured as a 0.2 mm BATT track beyond the branch chain): removed, the
+    fill joins the remaining branch end. Returns [(net, layer, length)]."""
+    pours = collections.defaultdict(list)
+    for it in m.items:
+        if it.alive and it.src == 'pour':
+            pours[(it.net, it.layers[0])].append(it.shape)
+    out = []
+    for it in m.items:
+        if not (it.alive and it.src == 'router' and it.kind == 'track'):
+            continue
+        polys = pours.get((it.net, it.layers[0]))
+        if not polys:
+            continue
+        pts = [(it.a[0] + k / 8 * (it.b[0] - it.a[0]), it.a[1] + k / 8 * (it.b[1] - it.a[1])) for k in range(9)]
+        if all(any(pl.contains(*q) and pl.dist(*q) <= 0 for pl in polys) for q in pts):
+            m.remove(it)
+            out.append((it.net, it.layers[0], round(math.dist(it.a, it.b), 4)))
+    return out
+
+
+def drop_micro(path, eps=0.002):
+    """Points of a chain closer than eps to the previous one (a 0.0005 mm router piece at R101.1, run 45047556040) are merged."""
+    out = [path[0]]
+    for q in path[1:]:
+        if math.dist(q, out[-1]) >= eps:
+            out.append(q)
+    if len(out) == 1:
+        out.append(path[-1])
+    return out
+
+
 def classes():
     """Net -> (class, track width) from the committed PWR_C.kicad_pro (net class patterns; Default 0.15 mm)."""
     pro = json.loads((HERE.parent / 'PWR_C.kicad_pro').read_text(encoding='utf-8'))['net_settings']
@@ -152,6 +185,8 @@ def main(argv=None):
     model_only = {n: k for n, k in fz.unconnected().items() if n not in NEVER and n not in kicad_open}
     print('KiCad open connections:', dict(kicad_open))
     print('model-only islands (joined in KiCad by copper overlap, left as routed):', model_only)
+    inside = redundant_pieces(m)
+    print('router pieces inside a pour of their own net, removed (check_boards counts them as narrow power tracks):', inside)
     viol = set()
     for it in m.items:
         if not (it.alive and it.src == 'router'):
@@ -213,6 +248,9 @@ def main(argv=None):
     tracks, nseg = {'router': [], 'new': []}, collections.Counter()
     for (src, net, lay, w), segs in sorted(groups.items()):
         for path in f6.chains(segs):
+            path = drop_micro(path)
+            if len(path) < 2 or math.dist(path[0], path[-1]) < 0.002:
+                continue
             tracks[src].append([net, lay, w, [B(p) for p in path]])
             nseg[src] += len(path) - 1
     for k in vias:
