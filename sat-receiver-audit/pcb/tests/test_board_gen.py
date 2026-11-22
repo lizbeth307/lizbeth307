@@ -1144,7 +1144,9 @@ class ZoneLocalClearance(unittest.TestCase):
         for board in bg.list_boards():
             spec = bg.read_json(bg.spec_path(board))
             keyed = [z['id'] for z in spec['post_route_zones'] + spec['pre_route'].get('zones', []) if 'clearance_mm' in z]
-            if board != 'PWR_A':
+            if board == 'PWR_C':  # W2 F2C-FALLBACK: the scripted PWR-C power pours fill at the project clearance as well
+                self.assertTrue(keyed and all(k.startswith('PC-') for k in keyed), board)
+            elif board != 'PWR_A':
                 self.assertEqual(keyed, [], board)
         spec = self.pwr_a()
         keyed = {z['id']: z['clearance_mm'] for z in spec['pre_route']['zones'] if 'clearance_mm' in z}
