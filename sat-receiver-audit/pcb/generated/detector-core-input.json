@@ -9008,7 +9008,7 @@
       },
       {
         "file": "design/E3.json",
-        "sha256": "46574eadf5bd2c5a9a282d16f56ed35d2aea712fa77cccf784c22210f40ebea5"
+        "sha256": "28a8bb0edb2911178d5a5775f2bf2e377cbaf142f63b642b62cc4f5a6f024981"
       },
       {
         "file": "design/E4.json",
@@ -9024,7 +9024,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "1ee5634cf07d831601e1eb3c61e0828ce3f51d869478a06dbd257367afd27d87"
+        "sha256": "5434190384dbfb071cfb63bbc45c8b05577efe981c2419c82fc88154d50f752b"
       }
     ],
     "source_documents": [

@@ -181,85 +181,85 @@
       "stem": "E3",
       "instance": "815659b2-9f99-5caa-9e97-34b4cd398135",
       "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/3)",
-      "components": 107,
+      "components": 78,
       "sheet": "E3",
       "notes": [
+        "E3-04",
+        "N-E3-01",
+        "N-E3-03",
         "E3-05",
+        "E3-08",
+        "N-E3-02",
         "E3-06"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
+        "E3-04": 110,
+        "N-E3-01": 110,
+        "N-E3-03": 110,
         "E3-05": 110,
+        "E3-08": 110,
+        "N-E3-02": 110,
         "E3-06": 110
       },
-      "fill": 0.798,
+      "fill": 0.748,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 134,
-        "ground_symbols": 44,
-        "junctions": 64,
-        "wire_crossings": 9,
-        "wires": 415
+        "global_labels": 118,
+        "ground_symbols": 34,
+        "junctions": 63,
+        "wire_crossings": 10,
+        "wires": 373
       }
     },
     {
       "stem": "E3_02",
       "instance": "047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0",
       "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/3)",
-      "components": 38,
+      "components": 79,
       "sheet": "E3",
       "notes": [
         "E3-02",
         "E3-07",
-        "E3-01"
+        "E3-03"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "E3-02": 110,
         "E3-07": 110,
-        "E3-01": 110
+        "E3-03": 110
       },
-      "fill": 0.76,
+      "fill": 0.742,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 148,
-        "ground_symbols": 28,
-        "junctions": 32,
-        "wire_crossings": 10,
-        "wires": 252
+        "global_labels": 110,
+        "ground_symbols": 38,
+        "junctions": 39,
+        "wire_crossings": 5,
+        "wires": 282
       }
     },
     {
       "stem": "E3_03",
       "instance": "c85ad7f8-a0d1-5e29-929c-feed1fd251ab",
       "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (3/3)",
-      "components": 36,
+      "components": 25,
       "sheet": "E3",
       "notes": [
-        "E3-03",
-        "E3-08",
-        "N-E3-02",
-        "E3-04",
-        "N-E3-01",
-        "N-E3-03"
+        "E3-01"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E3-03": 110,
-        "E3-08": 110,
-        "N-E3-02": 110,
-        "E3-04": 110,
-        "N-E3-01": 110,
-        "N-E3-03": 110
+        "E3-01": 110
       },
-      "fill": 0.464,
+      "fill": 0.51,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 50,
+        "global_labels": 108,
         "ground_symbols": 18,
-        "junctions": 28,
-        "wire_crossings": 6,
-        "wires": 166
+        "junctions": 20,
+        "wire_crossings": 10,
+        "wires": 176
       }
     },
     {
@@ -436,16 +436,16 @@
     }
   ],
   "components": 857,
-  "supply_annotations": 26,
+  "supply_annotations": 27,
   "connected_contacts": 2732,
   "nets": 491,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 1225,
+    "global_labels": 1229,
     "ground_symbols": 536,
-    "junctions": 560,
+    "junctions": 558,
     "wire_crossings": 57,
-    "wires": 3315
+    "wires": 3313
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -1112,7 +1112,7 @@
   "source_sha256": {
     "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
     "E2.json": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db",
-    "E3.json": "46574eadf5bd2c5a9a282d16f56ed35d2aea712fa77cccf784c22210f40ebea5",
+    "E3.json": "28a8bb0edb2911178d5a5775f2bf2e377cbaf142f63b642b62cc4f5a6f024981",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
     "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
   }

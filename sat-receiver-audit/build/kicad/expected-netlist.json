@@ -5421,12 +5421,6 @@
       "type": "passive"
     },
     {
-      "ref": "FAN302",
-      "pin": "RED",
-      "sheet": "E3",
-      "type": "power_in"
-    },
-    {
       "ref": "J305",
       "pin": "3",
       "sheet": "E3",
@@ -13709,6 +13703,12 @@
       "pin": "1",
       "sheet": "E3",
       "type": "passive"
+    },
+    {
+      "ref": "FAN302",
+      "pin": "RED",
+      "sheet": "E3",
+      "type": "power_in"
     },
     {
       "ref": "C342",

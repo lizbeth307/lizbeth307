@@ -4,11 +4,11 @@
   "graph_sha256": {
     "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
     "E2.json": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db",
-    "E3.json": "46574eadf5bd2c5a9a282d16f56ed35d2aea712fa77cccf784c22210f40ebea5",
+    "E3.json": "28a8bb0edb2911178d5a5775f2bf2e377cbaf142f63b642b62cc4f5a6f024981",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
     "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
   },
-  "netlist_sha256": "1ee5634cf07d831601e1eb3c61e0828ce3f51d869478a06dbd257367afd27d87",
+  "netlist_sha256": "5434190384dbfb071cfb63bbc45c8b05577efe981c2419c82fc88154d50f752b",
   "counts": {
     "hardware_components": 857,
     "hardware_pin_declarations": 2958,
@@ -18,7 +18,7 @@
     "xml_hardware_components": 857,
     "xml_pin_nodes": 2958,
     "xml_nets": 717,
-    "explicit_power_flags": 26
+    "explicit_power_flags": 27
   },
   "dnp_components": [
     "J102",
@@ -171,6 +171,12 @@
       "net": "LAB5_PICO",
       "reason": "U316 IN is fed from LAB5 through the PTC F302, whose pins are passive: KiCad needs a powered-net marker on the PTC output (W2 CTRL-6).",
       "source": "E3 F302/U316 connectivity (W2 CTRL-6)."
+    },
+    {
+      "sheet": "E3",
+      "net": "LAB5_BLOWER",
+      "reason": "The blower FAN302 (power_in) is fed from LAB5 through the PTC F303, whose pins are passive: KiCad needs a powered-net marker on the PTC output (W2 CTRL-6).",
+      "source": "E3 F303/FAN302 connectivity (W2 CTRL-6)."
     },
     {
       "sheet": "E5",
