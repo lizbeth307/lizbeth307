@@ -671,7 +671,7 @@
         "rotation": 0,
         "side": "B"
       },
-      "anchor_source": "W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, RILIM R397 150k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304: U316 input capacitor below U316, pad 1 (LAB5_PICO) under U316.3"
+      "anchor_source": "W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, RILIM R397 140k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304: U316 input capacitor below U316, pad 1 (LAB5_PICO) under U316.3"
     },
     {
       "ref": "D301",
@@ -763,7 +763,7 @@
         "rotation": 270,
         "side": "B"
       },
-      "anchor_source": "W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, RILIM R397 150k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304: the PTC where D301 was, its LAB5 pad 1 at (37.85, 66.8) on the 1.85 mm B.Cu LAB5 feed under cut-out 1, pad 2 (LAB5_PICO) down towards U316"
+      "anchor_source": "W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, RILIM R397 140k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304: the PTC where D301 was, its LAB5 pad 1 at (37.85, 66.8) on the 1.85 mm B.Cu LAB5 feed under cut-out 1, pad 2 (LAB5_PICO) down towards U316"
     },
     {
       "ref": "F303",
@@ -1469,7 +1469,7 @@
         "rotation": 180,
         "side": "B"
       },
-      "anchor_source": "W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, RILIM R397 150k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304: RILIM of U316 below C344, above the Pico courtyard (y 54.4)"
+      "anchor_source": "W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, RILIM R397 140k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304: RILIM of U316 below C344, above the Pico courtyard (y 54.4)"
     },
     {
       "ref": "R398",
@@ -1709,7 +1709,7 @@
         "rotation": 0,
         "side": "B"
       },
-      "anchor_source": "W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, RILIM R397 150k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304: the limiter below F302, IN/GND/EN (pins 1-3) towards J304, OUT/ILIM (6, 5) towards BZ301"
+      "anchor_source": "W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, RILIM R397 140k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304: the limiter below F302, IN/GND/EN (pins 1-3) towards J304, OUT/ILIM (6, 5) towards BZ301"
     }
   ],
   "holes": {
@@ -5050,7 +5050,7 @@
           ]
         ],
         "locked": true,
-        "why": "W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax 0.209 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL): U316.6 left to the two vias"
+        "why": "W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax 0.223 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL): U316.6 left to the two vias"
       },
       {
         "id": "VLIM-F",
@@ -5072,7 +5072,7 @@
           ]
         ],
         "locked": true,
-        "why": "W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax 0.209 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL): the two vias to the D301 anode on the top side"
+        "why": "W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax 0.223 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL): the two vias to the D301 anode on the top side"
       },
       {
         "id": "FANPD-Q303-R398",
@@ -30528,7 +30528,7 @@
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax 0.209 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL)"
+        "why": "W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax 0.223 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL)"
       },
       {
         "id": "VLIM-V2",
@@ -30540,7 +30540,7 @@
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax 0.209 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL)"
+        "why": "W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax 0.223 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL)"
       },
       {
         "id": "GNDC-RS-V1",

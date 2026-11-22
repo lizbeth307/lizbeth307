@@ -1008,13 +1008,13 @@
       "basis": "NET_CURRENT",
       "source": "tools/assembly_data.py:539",
       "inputs": {
-        "continuous_a": 0.209,
-        "protective_a": 0.209,
-        "protection": "U316 TPS2553DBVR, сталий струм (RILIM 150k: 154–209 mA)",
-        "current_source": "VSYS Pico: оцінка ≈0.145 A без прочитаного джерела (build/15), межа — IOSmax U316 (TI SLVS841G); W2 CTRL-6"
+        "continuous_a": 0.223,
+        "protective_a": 0.223,
+        "protection": "U316 TPS2553DBVR, сталий струм (RILIM 140k: 165–223 mA)",
+        "current_source": "VSYS Pico: оцінка ≈0.145 A при VSYS 4.5 V без прочитаного джерела, з падінням F302 і U316 — до 0.159 A (модель, build/15), межа — IOSmax U316 (TI SLVS841G); W2 CTRL-6"
       },
       "in_graph": true,
-      "required_outer_width_mm": 0.0347
+      "required_outer_width_mm": 0.0379
     },
     "E4_BENCH": {
       "class": "RF50",
@@ -1935,10 +1935,10 @@
       "basis": "NET_CURRENT",
       "source": "tools/assembly_data.py:537",
       "inputs": {
-        "continuous_a": 0.209,
+        "continuous_a": 0.223,
         "protective_a": 1.0,
         "protection": "PTC F302 MF-MSMF050-2 (Itrip 1.00 A при 23 °C; Ihold 0.50 A, 0.33 A при 70 °C)",
-        "current_source": "тривалий — не більше межі U316 IOSmax 0.209 A (R397 150k, TI SLVS841G); Bourns MF-MSMF REV. BE (прочитано 22.11.2026); W2 CTRL-6"
+        "current_source": "тривалий — не більше межі U316 IOSmax 0.223 A (R397 140k, TI SLVS841G); Bourns MF-MSMF REV. BE (прочитано 22.11.2026); W2 CTRL-6"
       },
       "in_graph": true,
       "required_outer_width_mm": 0.1972
