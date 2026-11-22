@@ -16,8 +16,8 @@ What this script changes in the graph, and why:
 - The two Mini-Fit Jr. 2x1 headers of S06/S07 (same part 0039288020) become the PWR-A ends of harness S42 (W-C1, PWR-A
   <-> PWR-C): J107 contacts 1 GND, 2 E1_SW (E1_SW comes from the #2813 on PWR-C) and J106 contacts 1 GND, 2 LAB5 (the
   feed of the E5 IMU 5 V switch U553 and C552, which move to PWR-C). Both GND contacts carry the return of the PWR-A/PWR-B
-  loads to the pack, which now enters at J105 on PWR-C. The PWR-C ends are the solder-wire lands J118 (GND, E1_SW) and
-  J119 (GND, LAB5), 18 AWG.
+  loads to the pack, which now enters at J105 on PWR-C. The PWR-C ends are the solder-wire lands J119 (GND, E1_SW; mate
+  of J107) and J118 (GND, LAB5; mate of J106), 18 AWG.
 - The E1/E5 signals of the moved groups leave S02 on PWR-B: J202.1 CHG_INHIBIT, J202.2 E1_BAT_ADC, J203.8/.9 I2C0,
   J203.10/.11 IMU_RX/TX, J203.12 INA228_ALERT, J203.17 PICO_OFF and J203.19 PWR_BUTTON become reserve contacts. They run
   PWR-C <-> CTRL on harness branch S02C (W-C2) from J120 (JST PHD 2x5 side entry) to the same CTRL contacts J306/J307,
@@ -73,12 +73,14 @@ E1_HEADERS = {
 SIDE_NOTE = (f'{TAG}: роз’єм стоїть на PWR-C (деталі до 6.5 мм), тому бічний вхід JST PH S*B-PH-K-S замість вертикального '
              'B*B (з розеткою 8.0 мм).')
 NEW_E1 = [
-    {'ref': 'J118', 'value': 'X42C1-PWRC: майданчики проводів 18 AWG, S42 (W-C1, E1_SW)', 'kind': 'connector', 'group': GROUP_HDR,
-     'source': SRC, 'status': 'design', 'pins': [pin('1', 'GND'), pin('2', 'E1_SW')],
-     'notes': [WIRE_NOTE + ' Кінець PWR-C джгута S42 (W-C1) до J107 на PWR-A: E1_SW з VOUT #2813 U106 і повернення GND.']},
-    {'ref': 'J119', 'value': 'X42C2-PWRC: майданчики проводів 18 AWG, S42 (W-C1, LAB5)', 'kind': 'connector', 'group': GROUP_HDR,
+    # J118 pairs with J106 and J119 with J107 (tools/build_assembly_docs.py pairs the S42 GND wires by ref order: J106.1 - J118.1,
+    # J107.1 - J119.1), so each Mini-Fit Jr. 2x1 housing of W-C1 lands on one 2-land site of PWR-C, feed and return together
+    {'ref': 'J118', 'value': 'X42C2-PWRC: майданчики проводів 18 AWG, S42 (W-C1, LAB5)', 'kind': 'connector', 'group': GROUP_HDR,
      'source': SRC, 'status': 'design', 'pins': [pin('1', 'GND'), pin('2', 'LAB5')],
-     'notes': [WIRE_NOTE + ' Кінець PWR-C джгута S42 (W-C1) від J106 на PWR-A: LAB5 для U553/C552 і повернення GND.']},
+     'notes': [WIRE_NOTE + ' Кінець PWR-C джгута S42 (W-C1) від J106 на PWR-A: LAB5 для U553/C552 і повернення GND (пара J106 ↔ J118).']},
+    {'ref': 'J119', 'value': 'X42C1-PWRC: майданчики проводів 18 AWG, S42 (W-C1, E1_SW)', 'kind': 'connector', 'group': GROUP_HDR,
+     'source': SRC, 'status': 'design', 'pins': [pin('1', 'GND'), pin('2', 'E1_SW')],
+     'notes': [WIRE_NOTE + ' Кінець PWR-C джгута S42 (W-C1) до J107 на PWR-A: E1_SW з VOUT #2813 U106 і повернення GND (пара J107 ↔ J119).']},
     {'ref': 'J120', 'value': 'S02C-PWRC-SIG: JST PHD 2×5, боковий вхід, S02C (W-C2)', 'kind': 'connector', 'group': GROUP_HDR,
      'source': SRC, 'status': 'design',
      'pins': [pin('1', 'I2C0_SCL'), pin('2', 'I2C0_SDA'), pin('3', 'INA228_ALERT'), pin('4', 'IMU_RX'), pin('5', 'IMU_TX'),
@@ -141,10 +143,13 @@ def apply(e1, e2, e5):
             c['notes'] = [nt]
         elif ref in ('J109', 'J112', 'J113'):
             note(c, SIDE_NOTE)
-    have = {c['ref'] for c in e1['components']}
-    at = next(i for i, c in enumerate(e1['components']) if c['ref'] == 'J115') + 1
-    for k, new in enumerate(n for n in NEW_E1 if n['ref'] not in have):
-        e1['components'].insert(at + k, json.loads(json.dumps(new)))
+    have = {c['ref']: i for i, c in enumerate(e1['components'])}
+    at = have['J115'] + 1
+    for k, new in enumerate(NEW_E1):
+        if new['ref'] in have:  # refs of an earlier run take the current definition in place
+            e1['components'][have[new['ref']]] = json.loads(json.dumps(new))
+        else:
+            e1['components'].insert(at + k, json.loads(json.dumps(new)))
     u102 = c1['U102']
     u102.update({'value': 'INA228AIDGSR', 'status': 'design', 'notes': list(U102_NOTES)})
     r101 = c1['R101']

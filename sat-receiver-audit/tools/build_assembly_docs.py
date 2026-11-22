@@ -391,8 +391,8 @@ class Harness:
         for ref, pin, _, name in self.model.nets[net].get(unit, []):
             if not serves(ref, pin, sid):
                 continue
-            if family and self.model.is_board(unit) and HINT_OF.get(self.ref_family(ref), self.ref_family(ref)) != HINT_OF.get(family, family):
-                continue  # a board-side connector of another family in the same segment
+            if family and self.model.is_board(unit) and self.ref_family(ref) != "SOLDER" and HINT_OF.get(self.ref_family(ref), self.ref_family(ref)) != HINT_OF.get(family, family):
+                continue  # a board-side connector of another family in the same segment (a solder-wire land serves any: W2 F2C-FALLBACK, PWR-C)
             pins.append((ref, pin, name))
         return sorted(pins, key=lambda p: (ref_key(p[0]), int(p[1]) if p[1].isdigit() else 0, p[1]))
 

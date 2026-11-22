@@ -21,7 +21,7 @@
 
 До і після оплавлення, DMM у режимі опору, щуп «−» на GND. Записати значення; менше 10 Ω — зупинитися і шукати коротке (критерій asm). Значення другої плати порівнюються з першою.
 
-**PWR-A:** 3V3_Q6A, AON3V3, AUX12, BONI13V8_PORT, DISP12, E1_CHG_INHIBIT_LOW, E1_LAB5_RAW, E1_N, E1_SERVICE_P, E1_SHUNT_P, E1_SW, E1_SYS12_VCC, E1_USB_PD_RAW, E1_USB_PD_SAFE, E2_BONI_EF, E2_BONI_LDO, E2_J21_EF, E2_LIME_EF, E2_LNB_EF, E2_LNB_LDO, E2_LT_OUT1, E2_LT_OUT2, E5_IMU5V, E5_VBUS_HFP_SW, J21, LAB5, LAB5_RLY, LIME3V3, LNB13V2, SYS12, VBUS_HFP, VCC_3V3_MKEY
+**PWR-A:** 3V3_Q6A, AUX12, BONI13V8_PORT, DISP12, E1_LAB5_RAW, E1_SW, E1_SYS12_VCC, E2_BONI_EF, E2_BONI_LDO, E2_J21_EF, E2_LIME_EF, E2_LNB_EF, E2_LNB_LDO, E2_LT_OUT1, E2_LT_OUT2, E5_VBUS_HFP_SW, J21, LAB5, LAB5_RLY, LIME3V3, LNB13V2, SYS12, VBUS_HFP, VCC_3V3_MKEY
 
 **PWR-B:** 3V3_Q6A, AUX12, BIAS_CH1, BIAS_CH2_PORT, BIAS_CH3_PORT, BIAS_CH4, BIAS_SB_LNA, BONI13V8_PORT, E2_LNA1_SW, E2_LNA2_SW, E2_LNA3_SW, E2_LNA4_SW, E2_RTLB_SW, E2_SB_SW, LAB5, LAB5_RLY, LNB13V2, VBUS_HFP, VBUS_LABPORT, VBUS_RTLA, VBUS_RTLB
 
@@ -37,12 +37,12 @@
 |---|---|---|---|---|---|---|---|---|---|
 | TP101 | PWR-A | E1_PG_SYS12 | — | — | open-drain без підтяжки: лише сервісно з 10k до 3.3 V | сервісно | сервісно | сервісно | E1.json TP101 |
 | TP102 | PWR-A | E1_PG_LAB5 | — | — | open-drain без підтяжки: лише сервісно | сервісно | сервісно | сервісно | E1.json TP102 |
-| TP103 | PWR-A | E1_PD_FLT | — | open-drain без підтяжки; сервісно | сервісно | сервісно | сервісно | сервісно | E1.json TP103 |
-| TP104 | PWR-A | E1_N | — | = стенд 14.8 V мінус падіння шунта R101 15 mΩ і S05/S06 | ≈ стенд (−69 mV на шунті при 4.6 A) | ≈ стенд | ≈ стенд | ≈ стенд | 02 §2, 08 крок 16; E1 R101 (69 mV при 4.6 A) |
-| TP105 | PWR-A | E1_SW | — | ≈0 V (S1 вимкнено; витік ≤0.2 мкА) | V_N − ≤40 mV при 4.6 A | як S1 | як S1 | як S1 | 02 §2 (#2813) |
-| TP106 | PWR-A | AON3V3 | — | 3.3 V ±1 % (3.267–3.333 V) | 3.3 V ±1 % | 3.3 V ±1 % | 3.3 V ±1 % | 3.3 V ±1 % | STACK D3 (TPS70933 ±1 %) |
-| TP107 | PWR-A | GND | — | 0 V (опорна) | 0 V | 0 V | 0 V | 0 V | — |
-| TP108 | PWR-A | E1_UV_OFF | — | низький при V_N 14.8 V (високий = низька батарея) | низький | низький | низький | низький | E1.json U104; поріг 12.8 ±0.1 / 13.6 ±0.1 V (08 крок 4) |
+| TP103 | PWR_C | E1_PD_FLT | — | open-drain без підтяжки; сервісно | сервісно | сервісно | сервісно | сервісно | E1.json TP103 |
+| TP104 | PWR_C | E1_N | — | = стенд 14.8 V мінус падіння шунта R101 15 mΩ і S05/S06 | ≈ стенд (−69 mV на шунті при 4.6 A) | ≈ стенд | ≈ стенд | ≈ стенд | 02 §2, 08 крок 16; E1 R101 (69 mV при 4.6 A) |
+| TP105 | PWR_C | E1_SW | — | ≈0 V (S1 вимкнено; витік ≤0.2 мкА) | V_N − ≤40 mV при 4.6 A | як S1 | як S1 | як S1 | 02 §2 (#2813) |
+| TP106 | PWR_C | AON3V3 | — | 3.3 V ±1 % (3.267–3.333 V) | 3.3 V ±1 % | 3.3 V ±1 % | 3.3 V ±1 % | 3.3 V ±1 % | STACK D3 (TPS70933 ±1 %) |
+| TP107 | PWR_C | GND | — | 0 V (опорна) | 0 V | 0 V | 0 V | 0 V | — |
+| TP108 | PWR_C | E1_UV_OFF | — | низький при V_N 14.8 V (високий = низька батарея) | низький | низький | низький | низький | E1.json U104; поріг 12.8 ±0.1 / 13.6 ±0.1 V (08 крок 4) |
 | TP201 | PWR-A | J21 | — | 0 V | 11.5–12.5 V (без навантаження) | 11.5–12.5 V | 11.5–12.5 V | 11.5–12.5 V | 02 §2; 08 крок 16 |
 | TP202 | PWR-A | DISP12 | — | 0 V | 0 V (GP16 = 0, 100k) | 0 V | ≈ SYS12 (12.0 V ±4 %) | як у S2/S3 | E2.json U202; 02 §2 |
 | TP203 | PWR-A | LIME3V3 | EN_LIME3V3 | 0 V | 0 V | 0 V (EN_LIME3V3 = 0, 100k) | 0 V | ≈ VCC_3V3_MKEY при EN_LIME3V3 = 1 | E2.json U203; 02 §2 |
@@ -62,7 +62,7 @@
 | TP301 | CTRL | E3_GNSS_FAULT | — | — | open-drain FAULT_N U315 без підтяжки: лише сервісно з 10k до 3.3 V; U315 вимкнено (EN = 3V3_Q6A = 0) | без несправності — не активний (U315 увімкнено разом з 3V3_Q6A) | як S2 | як S2 | E3.json U315 (R-E3-15); TI SLVS841G §8.3.3 |
 | TP501 | T7_INSERT | E5_FAULT_T7 | EN_T7 | — | 0 V (підтяжка до 3V3_Q6A) | ≈3.3 V без несправності | як S2 | як S2; EN_T7 = 1 — T7 живиться | E5 §7 |
 | TP502 | HDMI_INSERT | E5_HDMI_ST_N | — | — | — | до 5 V: не підключати до GPIO 3.3 V | як S2 | як S2 | E5 §8 |
-| TP503 | PWR-A | E5_IMU_FAULT | — | — | open-drain FAULT_N U553 без підтяжки: лише сервісно; без несправності не активний (EN = LAB5) | як S1 | як S1 | як S1 | E5.json U553 (R-E5-08); TI SLVS841G §8.3.3 |
+| TP503 | PWR_C | E5_IMU_FAULT | — | — | open-drain FAULT_N U553 без підтяжки: лише сервісно; без несправності не активний (EN = LAB5) | як S1 | як S1 | як S1 | E5.json U553 (R-E5-08); TI SLVS841G §8.3.3 |
 | TP2901 | PWR-B | BIAS_CH2_PORT | EN_LNA2 | 0 V | 0 V | 0 V (блокувальний елемент закритий) | 0 V | ≈ BIAS_CH2 при EN_LNA2 = 1 | E2 R-E2-21; DC-30 |
 | TP2902 | PWR-B | BIAS_CH3_PORT | EN_LNA3 | 0 V | 0 V | 0 V (блокувальний елемент закритий) | 0 V | ≈ BIAS_CH3 при EN_LNA3 = 1 | E2 R-E2-21; DC-30 |
 | TP2903 | PWR-A | BONI13V8_PORT | EN_BONI | 0 V | 0 V | 0 V (блокувальний елемент закритий) | 0 V | ≈ BONI13V8 при EN_BONI = 1 | E2 R-E2-21; DC-30 |

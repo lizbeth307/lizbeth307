@@ -9,12 +9,12 @@
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "1b66154dd72b4e8bf8673968f86758e2f5c2e028c1ed92bce2116e002a57ba99",
-      "bytes": 155324
+      "sha256": "2265ae3197e38f5f7ea787f70c2b0ca7c126115427fdb71a6e93b93170d7b03e",
+      "bytes": 162978
     },
     "design/E2.json": {
-      "sha256": "f65b08f23e88d25864ddb1fa1016f3eeb1bbc23629d7f4d1cdfd0cddb7d4e640",
-      "bytes": 415862
+      "sha256": "9e3b73999f923c3093bd180274997277ad181bed0f45c17cf8d10bea79df9582",
+      "bytes": 416075
     },
     "design/E3.json": {
       "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
@@ -25,8 +25,8 @@
       "bytes": 229605
     },
     "design/E5.json": {
-      "sha256": "0b594795866dd05e99df4ea42d6548decf45414472e3c4a9475430452f5c4c57",
-      "bytes": 127380
+      "sha256": "dc4371e97e76603bcdcea53347c94d031fdba4e0826009434f82320ba2fc7b05",
+      "bytes": 127640
     },
     "STACK.md": {
       "sha256": "7b37be7be97c2d1845215199cf455fd1c496aa83aa933bdc60defa266bfdbb19",
@@ -38,10 +38,10 @@
     }
   },
   "scope": {
-    "graph_components": 882,
-    "graph_pins": 3035,
+    "graph_components": 883,
+    "graph_pins": 3040,
     "graph_sheets": {
-      "E1": 121,
+      "E1": 122,
       "E2": 278,
       "E3": 172,
       "E4": 221,
@@ -49,16 +49,16 @@
     },
     "top_level_circuit_assemblies": 69,
     "source_kind_module_count": 55,
-    "detailed_subinterfaces": 231,
+    "detailed_subinterfaces": 232,
     "catalogue_only_or_factory_internal_entities": 30,
     "catalogue_documents": 102,
     "partition_refs_assigned_exactly_once": true,
     "missing_refs": [],
     "duplicate_refs": [],
-    "graph_connected_pins": 2780,
-    "graph_nc_pins": 255,
+    "graph_connected_pins": 2758,
+    "graph_nc_pins": 282,
     "canonical_nets": 499,
-    "cross_assembly_nets": 233
+    "cross_assembly_nets": 232
   },
   "critical_constraints": [
     "Every one of the 750 source component references is assigned exactly once to a circuit assembly. Circuit passives remain parameters, not fictitious software registers.",
@@ -203,20 +203,20 @@
         {
           "ref": "R101",
           "kind": "resistor",
-          "value": "15 mΩ 1% 2 W (Adafruit R1)",
-          "status": "verified"
+          "value": "15 mΩ 1% 3 W 2512 (Bourns CRA2512-FZ-R015ELF)",
+          "status": "design"
         },
         {
           "ref": "C101",
           "kind": "capacitor",
-          "value": "100 nF (Adafruit C1)",
-          "status": "verified"
+          "value": "100nF X7R 10V (VS U102)",
+          "status": "design"
         },
         {
           "ref": "C102",
           "kind": "capacitor",
-          "value": "10 µF (Adafruit C2)",
-          "status": "verified"
+          "value": "10uF X7R 10V (VS U102)",
+          "status": "design"
         }
       ],
       "required_model_behaviors": [
@@ -1684,33 +1684,37 @@
         "J107",
         "J108",
         "J109",
-        "J110",
-        "J111",
         "J112",
         "J113",
         "J114",
-        "J115"
+        "J115",
+        "J118",
+        "J119",
+        "J120"
       ],
-      "component_count": 12,
+      "component_count": 13,
       "named_nets": [
-        "AON3V3",
+        "CHG_INHIBIT",
+        "E1_BAT_ADC",
         "E1_CHG_CC1",
         "E1_CHG_CC2",
         "E1_CHG_INHIBIT_LOW",
         "E1_CHG_NTC",
-        "E1_MASTER_OFF",
         "E1_N",
         "E1_SERVICE_P",
         "E1_SHUNT_P",
         "E1_SW",
-        "E1_SWITCH_A",
         "E1_USB_PD_RAW",
         "E1_USB_PD_SAFE",
         "GND",
         "I2C0_SCL",
         "I2C0_SDA",
+        "IMU_RX",
+        "IMU_TX",
         "INA228_ALERT",
-        "LAB5"
+        "LAB5",
+        "PICO_OFF",
+        "PWR_BUTTON"
       ],
       "protocol_or_special_subinterfaces": [],
       "commercial_or_functional_module_refs": [],
@@ -4913,9 +4917,7 @@
         "BIAS_SB_LNA",
         "BONI13V8",
         "BONI13V8_PORT",
-        "CHG_INHIBIT",
         "DISP12",
-        "E1_BAT_ADC",
         "E2_LNA4_SHUNT",
         "E2_LNA4_SW",
         "EN_AUX12",
@@ -4944,13 +4946,8 @@
         "FLT_LNB",
         "FLT_SB_LNA",
         "GND",
-        "I2C0_SCL",
-        "I2C0_SDA",
         "I2C2_SCL",
         "I2C2_SDA",
-        "IMU_RX",
-        "IMU_TX",
-        "INA228_ALERT",
         "J21",
         "LAB5",
         "LAB5_RLY",
@@ -4961,9 +4958,7 @@
         "PG_BONI",
         "PG_LNB",
         "PICO_DISP_EN",
-        "PICO_OFF",
         "PTC_AUX",
-        "PWR_BUTTON",
         "SLED_DET",
         "VBUS_HFP",
         "VBUS_RTLA",
@@ -11345,9 +11340,9 @@
       "module_id": "E1/U102",
       "parent_assembly": "E1-CIR-02",
       "ref": "U102",
-      "value": "INA228AIDGSR на Adafruit 5832",
+      "value": "INA228AIDGSR",
       "source_kind": "ic",
-      "source_status": "verified",
+      "source_status": "design",
       "interface_family": "i2c_registers",
       "software_interface_specified": true,
       "interface_signals": [
@@ -11434,12 +11429,12 @@
       ],
       "source_description": "",
       "source_notes": [
-        "Деталізація Adafruit #5832 після модифікації, а не другий IC. SJ1 з’єднує VBUS з VIN+, тобто шина вимірюється на батарейному боці шунта.",
-        "Зняти R6. A0/A1 на GND задають 0x40. Зняти R7 LED. SHUNT_CAL калібрувати на 0.5/2/4 A; ADCRANGE=0; continuous CHARGE/ENERGY. Драйвер ina238 не прив’язувати.",
-        "TI DGS0010A має JEDEC MO-187 BA, 3×3 mm, pitch 0.5 mm. Реальний стандартний KiCad MSOP-10 ID обрано замість неіснуючого VSSOP-10 ID. Bundled KiCad 10.0.7 має IPC pads 1.5×0.35 mm / centers 4.2 mm; TI example 1.45×0.3 mm / centers 4.4 mm. Це альтернативний land pattern; до layout перевірити toe/heel та технологію пайки. U102 є деталізацією breakout, не вказівкою пересаджувати IC."
+        "W2 F2C-FALLBACK (GR-F2C): мікросхема INA228AIDGSR стоїть на PWR-C поруч із шунтом R101 (раніше — деталь модуля Adafruit 5832 на задній стінці з джгутом S06, який видалено). A0/A1 на GND задають адресу 0x40. VS (AON3V3) — з C101 100 нФ і C102 10 мкФ біля виводу 6. IN+/IN− — лінії Кельвіна від внутрішніх країв майданчиків R101; VBUS — з батарейного боку шунта (E1_SHUNT_P).",
+        "SHUNT_CAL калібрувати на 0.5/2/4 A; ADCRANGE=0; continuous CHARGE/ENERGY. Драйвер ina238 не прив’язувати.",
+        "TI DGS0010A має JEDEC MO-187 BA, 3×3 mm, pitch 0.5 mm. Реальний стандартний KiCad MSOP-10 ID обрано замість неіснуючого VSSOP-10 ID. Bundled KiCad 10.0.7 має IPC pads 1.5×0.35 mm / centers 4.2 mm; TI example 1.45×0.3 mm / centers 4.4 mm. Це альтернативний land pattern; до випуску перевірити toe/heel та технологію пайки."
       ],
       "coverage_constraints": [
-        "INA228 register/alert/charge-energy integration model; modified Adafruit5832 board, not a second monitor.",
+        "INA228 register/alert/charge-energy integration model; bare INA228AIDGSR with the 15 mOhm shunt R101 on PWR-C (W2 F2C-FALLBACK (GR-F2C); was the modified Adafruit 5832 board), not a second monitor.",
         "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
       ],
       "protocol_fidelity_boundary": "Manufacturer register interface is identified by the graph source. Implement and test the project-required subset; this inventory itself supplies no runtime handler or fidelity PASS."
@@ -11595,7 +11590,7 @@
       "module_id": "E1/U106",
       "parent_assembly": "E1-CIR-04",
       "ref": "U106",
-      "value": "Pololu 2813 HP",
+      "value": "Pololu #2813 (Big Pushbutton Power Switch HP) на майданчику PWR-C",
       "source_kind": "module",
       "source_status": "module",
       "interface_family": "power_module_enable_pg_analog",
@@ -11672,7 +11667,8 @@
       ],
       "source_description": "Офіційні функціональні клеми Pololu, без довільних фізичних номерів.",
       "source_notes": [
-        "A через кнопку на GND дає лише ввімкнення. OFF >1 V вимикає від Pico або UV. CTRL і ON не підключено. Перевірити пріоритет held OFF над кнопкою."
+        "A через кнопку на GND дає лише ввімкнення. OFF >1 V вимикає від Pico або UV. CTRL і ON не підключено. Перевірити пріоритет held OFF над кнопкою.",
+        "W2 F2C-FALLBACK (GR-F2C): модуль лежить урівень на PWR-C (зазор ≤1 мм, MODEL: 1.0 + 1.57 + 2.4 = 4.97 мм проти межі 6.5 мм) на штирях 0.1 in обох рядів (16 отворів ⌀1.02) і з’єднаний з платою також у великих отворах VIN/GND/GND/VOUT (4 × ⌀2.18, крок 5.00) перемичками 18 AWG: Pololu радить для струму понад 5 A великі отвори або обидва отвори 0.1 in на вузол (https://www.pololu.com/product/2813, прочитано 2026-11-22), тут — обидва. Отвори за кресленням psw03b (12.01.2016, https://www.pololu.com/file/0J1102/big-pushbutton-power-switch-with-reverse-voltage-protection-dimension-diagram.pdf, прочитано 2026-11-22; вигляд знизу з підписами): ряд VIN — VIN, VIN, GND, GND, ON, OFF, CTRL, GND; ряд VOUT — VOUT, VOUT, GND, GND, B, A, A, GND; великі — VIN, GND, GND, VOUT. Допустимий струм штиря гребінки не прочитано — TBD."
       ],
       "coverage_constraints": [
         "VIN/VOUT/EN/PG/latching state and faults; no software register bus.",
@@ -12561,7 +12557,7 @@
       "module_id": "E1/J105",
       "parent_assembly": "E1-CIR-13",
       "ref": "J105",
-      "value": "X05J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S05",
+      "value": "X05C1-PWRC: майданчики проводів 18 AWG, S05",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -12591,12 +12587,12 @@
         {
           "path": "design/E1.json",
           "ref": "J105",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X05J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S05; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). S05 від майданчика J117 носійної плати PACK_FUSE."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -12608,14 +12604,14 @@
       "module_id": "E1/J106",
       "parent_assembly": "E1-CIR-13",
       "ref": "J106",
-      "value": "X06J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S06",
+      "value": "X42J2-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S42 (W-C1, LAB5)",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
       "software_interface_specified": false,
       "interface_signals": [
-        "E1_N",
-        "E1_SHUNT_P"
+        "GND",
+        "LAB5"
       ],
       "configuration_from_source": {},
       "pinout_status": "project_harness_assignment_not_factory_pinout",
@@ -12623,27 +12619,27 @@
       "source_pins": [
         {
           "number": "1",
-          "name": "E1_N",
+          "name": "GND",
           "type": "passive",
-          "net": "E1_N"
+          "net": "GND"
         },
         {
           "number": "2",
-          "name": "E1_SHUNT_P",
+          "name": "LAB5",
           "type": "passive",
-          "net": "E1_SHUNT_P"
+          "net": "LAB5"
         }
       ],
       "sources": [
         {
           "path": "design/E1.json",
           "ref": "J106",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X06J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "W2 F2C-FALLBACK (GR-F2C): кінець PWR-A джгута S42 (W-C1) до PWR-C: LAB5 за запобіжником F102 4 A для U553/C552 (група E5 «Сервіс і зовнішні шини» на PWR-C); контакти 1 GND, 2 LAB5."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -12655,14 +12651,14 @@
       "module_id": "E1/J107",
       "parent_assembly": "E1-CIR-13",
       "ref": "J107",
-      "value": "X07J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S07",
+      "value": "X42J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S42 (W-C1, E1_SW)",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
       "software_interface_specified": false,
       "interface_signals": [
-        "E1_N",
-        "E1_SW"
+        "E1_SW",
+        "GND"
       ],
       "configuration_from_source": {},
       "pinout_status": "project_harness_assignment_not_factory_pinout",
@@ -12670,9 +12666,9 @@
       "source_pins": [
         {
           "number": "1",
-          "name": "E1_N",
+          "name": "GND",
           "type": "passive",
-          "net": "E1_N"
+          "net": "GND"
         },
         {
           "number": "2",
@@ -12685,12 +12681,12 @@
         {
           "path": "design/E1.json",
           "ref": "J107",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X07J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "W2 F2C-FALLBACK (GR-F2C): кінець PWR-A джгута S42 (W-C1) до PWR-C: E1_SW з #2813 U106 на PWR-C (раніше S07 до задньої стінки); контакти 1 GND, 2 E1_SW; GND несе повернення навантажень PWR-A/PWR-B до паку (вхід S05 тепер на PWR-C, J105)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -12702,7 +12698,7 @@
       "module_id": "E1/J108",
       "parent_assembly": "E1-CIR-13",
       "ref": "J108",
-      "value": "X10J1-PWR: Molex Mini-Fit Jr. 2×2, верхній вхід, S10",
+      "value": "X10C1-PWRC: майданчики проводів 18 AWG, S10",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -12733,24 +12729,18 @@
           "name": "E1_USB_PD_SAFE",
           "type": "passive",
           "net": "E1_USB_PD_SAFE"
-        },
-        {
-          "number": "4",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
         }
       ],
       "sources": [
         {
           "path": "design/E1.json",
           "ref": "J108",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X10J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S10; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Резервний контакт 4 вилки Mini-Fit Jr. 2×2 знято (лунка 1×03)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -12762,7 +12752,7 @@
       "module_id": "E1/J109",
       "parent_assembly": "E1-CIR-13",
       "ref": "J109",
-      "value": "X05S1-PWR: JST PH 2, верхній вхід, S05",
+      "value": "X05S1-PWRC: JST PH 2, бічний вхід, S05",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -12791,134 +12781,13 @@
         {
           "path": "design/E1.json",
           "ref": "J109",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X05S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S05; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
-      ],
-      "coverage_constraints": [
-        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
-        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
-      ],
-      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
-    },
-    {
-      "module_id": "E1/J110",
-      "parent_assembly": "E1-CIR-13",
-      "ref": "J110",
-      "value": "X06S1-PWR: JST PH 5, верхній вхід, S06",
-      "source_kind": "connector",
-      "source_status": "design",
-      "interface_family": "passive_connector_or_named_boundary",
-      "software_interface_specified": false,
-      "interface_signals": [
-        "AON3V3",
-        "GND",
-        "I2C0_SCL",
-        "I2C0_SDA",
-        "INA228_ALERT"
-      ],
-      "configuration_from_source": {},
-      "pinout_status": "project_harness_assignment_not_factory_pinout",
-      "pinout_gate": "project harness header assignment (build/16 §4, tools/assembly_data.py HEADERS); header position and orientation by the board layout",
-      "source_pins": [
-        {
-          "number": "1",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "AON3V3",
-          "type": "passive",
-          "net": "AON3V3"
-        },
-        {
-          "number": "3",
-          "name": "I2C0_SCL",
-          "type": "passive",
-          "net": "I2C0_SCL"
-        },
-        {
-          "number": "4",
-          "name": "I2C0_SDA",
-          "type": "passive",
-          "net": "I2C0_SDA"
-        },
-        {
-          "number": "5",
-          "name": "INA228_ALERT",
-          "type": "passive",
-          "net": "INA228_ALERT"
-        }
-      ],
-      "sources": [
-        {
-          "path": "design/E1.json",
-          "ref": "J110",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
-        }
-      ],
-      "source_description": "",
-      "source_notes": [
-        "Роз'єм джгута X06S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
-      ],
-      "coverage_constraints": [
-        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
-        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
-      ],
-      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
-    },
-    {
-      "module_id": "E1/J111",
-      "parent_assembly": "E1-CIR-13",
-      "ref": "J111",
-      "value": "X07S1-PWR: JST PH 3, верхній вхід, S07",
-      "source_kind": "connector",
-      "source_status": "design",
-      "interface_family": "passive_connector_or_named_boundary",
-      "software_interface_specified": false,
-      "interface_signals": [
-        "E1_MASTER_OFF",
-        "E1_SWITCH_A",
-        "GND"
-      ],
-      "configuration_from_source": {},
-      "pinout_status": "project_harness_assignment_not_factory_pinout",
-      "pinout_gate": "project harness header assignment (build/16 §4, tools/assembly_data.py HEADERS); header position and orientation by the board layout",
-      "source_pins": [
-        {
-          "number": "1",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "E1_MASTER_OFF",
-          "type": "passive",
-          "net": "E1_MASTER_OFF"
-        },
-        {
-          "number": "3",
-          "name": "E1_SWITCH_A",
-          "type": "passive",
-          "net": "E1_SWITCH_A"
-        }
-      ],
-      "sources": [
-        {
-          "path": "design/E1.json",
-          "ref": "J111",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
-        }
-      ],
-      "source_description": "",
-      "source_notes": [
-        "Роз'єм джгута X07S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X05S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S05; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 F2C-FALLBACK (GR-F2C): роз’єм стоїть на PWR-C (деталі до 6.5 мм), тому бічний вхід JST PH S*B-PH-K-S замість вертикального B*B (з розеткою 8.0 мм)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -12930,7 +12799,7 @@
       "module_id": "E1/J112",
       "parent_assembly": "E1-CIR-13",
       "ref": "J112",
-      "value": "X10S1-PWR: JST PH 4, верхній вхід, S10",
+      "value": "X10S1-PWRC: JST PH 4, бічний вхід, S10",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -12974,12 +12843,13 @@
         {
           "path": "design/E1.json",
           "ref": "J112",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X10S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S10; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X10S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S10; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 F2C-FALLBACK (GR-F2C): роз’єм стоїть на PWR-C (деталі до 6.5 мм), тому бічний вхід JST PH S*B-PH-K-S замість вертикального B*B (з розеткою 8.0 мм)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -12991,7 +12861,7 @@
       "module_id": "E1/J113",
       "parent_assembly": "E1-CIR-13",
       "ref": "J113",
-      "value": "X11S1-PWR: JST PH 2, верхній вхід, S11",
+      "value": "X11S1-PWRC: JST PH 2, бічний вхід, S11",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -13021,12 +12891,13 @@
         {
           "path": "design/E1.json",
           "ref": "J113",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X11S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S11; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X11S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S11; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 F2C-FALLBACK (GR-F2C): роз’єм стоїть на PWR-C (деталі до 6.5 мм), тому бічний вхід JST PH S*B-PH-K-S замість вертикального B*B (з розеткою 8.0 мм)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -13038,7 +12909,7 @@
       "module_id": "E1/J114",
       "parent_assembly": "E1-CIR-13",
       "ref": "J114",
-      "value": "X11P1-PWR: Molex Micro-Fit 3.0 2, верхній вхід, S11",
+      "value": "X11C1-PWRC: майданчики проводів 18 AWG, S11",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -13068,12 +12939,12 @@
         {
           "path": "design/E1.json",
           "ref": "J114",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X11P1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S11; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -13085,7 +12956,7 @@
       "module_id": "E1/J115",
       "parent_assembly": "E1-CIR-13",
       "ref": "J115",
-      "value": "X12P1-PWR: Molex Micro-Fit 3.0 2, верхній вхід, S12",
+      "value": "X12C1-PWRC: майданчики проводів 18 AWG, S12",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -13115,12 +12986,208 @@
         {
           "path": "design/E1.json",
           "ref": "J115",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X12P1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S12; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E1/J118",
+      "parent_assembly": "E1-CIR-13",
+      "ref": "J118",
+      "value": "X42C2-PWRC: майданчики проводів 18 AWG, S42 (W-C1, LAB5)",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "GND",
+        "LAB5"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project harness header assignment (build/16 §4, tools/assembly_data.py HEADERS); header position and orientation by the board layout",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "LAB5",
+          "type": "passive",
+          "net": "LAB5"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E1.json",
+          "ref": "J118",
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Кінець PWR-C джгута S42 (W-C1) від J106 на PWR-A: LAB5 для U553/C552 і повернення GND (пара J106 ↔ J118)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E1/J119",
+      "parent_assembly": "E1-CIR-13",
+      "ref": "J119",
+      "value": "X42C1-PWRC: майданчики проводів 18 AWG, S42 (W-C1, E1_SW)",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E1_SW",
+        "GND"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project harness header assignment (build/16 §4, tools/assembly_data.py HEADERS); header position and orientation by the board layout",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E1_SW",
+          "type": "passive",
+          "net": "E1_SW"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E1.json",
+          "ref": "J119",
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Кінець PWR-C джгута S42 (W-C1) до J107 на PWR-A: E1_SW з VOUT #2813 U106 і повернення GND (пара J107 ↔ J119)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E1/J120",
+      "parent_assembly": "E1-CIR-13",
+      "ref": "J120",
+      "value": "S02C-PWRC-SIG: JST PHD 2×5, боковий вхід, S02C (W-C2)",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "CHG_INHIBIT",
+        "E1_BAT_ADC",
+        "I2C0_SCL",
+        "I2C0_SDA",
+        "IMU_RX",
+        "IMU_TX",
+        "INA228_ALERT",
+        "PICO_OFF",
+        "PWR_BUTTON"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project harness header assignment (build/16 §4, tools/assembly_data.py HEADERS); header position and orientation by the board layout",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "I2C0_SCL",
+          "type": "passive",
+          "net": "I2C0_SCL"
+        },
+        {
+          "number": "2",
+          "name": "I2C0_SDA",
+          "type": "passive",
+          "net": "I2C0_SDA"
+        },
+        {
+          "number": "3",
+          "name": "INA228_ALERT",
+          "type": "passive",
+          "net": "INA228_ALERT"
+        },
+        {
+          "number": "4",
+          "name": "IMU_RX",
+          "type": "passive",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "5",
+          "name": "IMU_TX",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "6",
+          "name": "E1_BAT_ADC",
+          "type": "passive",
+          "net": "E1_BAT_ADC"
+        },
+        {
+          "number": "7",
+          "name": "CHG_INHIBIT",
+          "type": "passive",
+          "net": "CHG_INHIBIT"
+        },
+        {
+          "number": "8",
+          "name": "PICO_OFF",
+          "type": "passive",
+          "net": "PICO_OFF"
+        },
+        {
+          "number": "9",
+          "name": "PWR_BUTTON",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        },
+        {
+          "number": "10",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E1.json",
+          "ref": "J120",
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "W2 F2C-FALLBACK (GR-F2C): кінець PWR-C гілки S02C (W-C2) джгута S02: 9 сигналів E1/E5 груп на PWR-C до тих самих контактів J306.1/.2 і J307.8–12/.17/.19 на CTRL, що й раніше через PWR-B J202/J203 (E3 не змінюється). Контакт 10 — резерв. GND у гілці немає: на J306/J307 вільного контакту немає (як у S02B), повернення — через GND S02 і S42 (OPEN: огляд шляху повернення)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -15392,8 +15459,6 @@
       "interface_family": "passive_connector_or_named_boundary",
       "software_interface_specified": false,
       "interface_signals": [
-        "CHG_INHIBIT",
-        "E1_BAT_ADC",
         "EN_AUX12",
         "EN_BONI",
         "EN_LABPORT",
@@ -15419,15 +15484,15 @@
       "source_pins": [
         {
           "number": "1",
-          "name": "CHG_INHIBIT",
+          "name": "NC",
           "type": "passive",
-          "net": "CHG_INHIBIT"
+          "nc": true
         },
         {
           "number": "2",
-          "name": "E1_BAT_ADC",
+          "name": "NC",
           "type": "passive",
-          "net": "E1_BAT_ADC"
+          "nc": true
         },
         {
           "number": "3",
@@ -15547,7 +15612,8 @@
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута S02-PWR-SIG-1 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута S02-PWR-SIG-1 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 F2C-FALLBACK (GR-F2C): сигнали E1/E5 груп на PWR-C (контакти 1, 2) виходять з S02: вони йдуть PWR-C ↔ CTRL гілкою S02C (W-C2, J120) до тих самих контактів J306/J307; тут ці контакти — резерв."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -15575,15 +15641,8 @@
         "FLT_LIME3V3",
         "FLT_LNB",
         "FLT_SB_LNA",
-        "I2C0_SCL",
-        "I2C0_SDA",
-        "IMU_RX",
-        "IMU_TX",
-        "INA228_ALERT",
         "OVP_LNB_N",
         "PICO_DISP_EN",
-        "PICO_OFF",
-        "PWR_BUTTON",
         "SLED_DET"
       ],
       "configuration_from_source": {},
@@ -15634,33 +15693,33 @@
         },
         {
           "number": "8",
-          "name": "I2C0_SCL",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SCL"
+          "nc": true
         },
         {
           "number": "9",
-          "name": "I2C0_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "nc": true
         },
         {
           "number": "10",
-          "name": "IMU_RX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_RX"
+          "nc": true
         },
         {
           "number": "11",
-          "name": "IMU_TX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_TX"
+          "nc": true
         },
         {
           "number": "12",
-          "name": "INA228_ALERT",
+          "name": "NC",
           "type": "passive",
-          "net": "INA228_ALERT"
+          "nc": true
         },
         {
           "number": "13",
@@ -15688,9 +15747,9 @@
         },
         {
           "number": "17",
-          "name": "PICO_OFF",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_OFF"
+          "nc": true
         },
         {
           "number": "18",
@@ -15700,9 +15759,9 @@
         },
         {
           "number": "19",
-          "name": "PWR_BUTTON",
+          "name": "NC",
           "type": "passive",
-          "net": "PWR_BUTTON"
+          "nc": true
         },
         {
           "number": "20",
@@ -15721,7 +15780,8 @@
       "source_description": "",
       "source_notes": [
         "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02B (гілка S02); номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
-        "W2 PWR-L6-PLACE (третій прохід): J203 — вертикальна вилка JST PHD B20B-PHDSS(LF)(SN) верхнього входу (LCSC C471521; каталог JST PHD 05.12.2023, копія LCSC, прочитано 13.11.2026: корпус 6.5 мм над платою, монтажна висота з розеткою 8.8 мм) у зоні 2 нижнього краю PWR-B; дроти J203 — гілка S02B джгута S02 (build/15). W2 PWR-L6-PLACE (четвертий прохід, проба C): J203.2/14/15/18 = EN_HFP/EN_LIME3V3/EN_LNB/FAULT_HFP обміном із J202.5/7/12/16 (FAULT_RTLA, PG_BONI, PG_LNB, PTC_AUX → J202); розпіновки CTRL не змінюються, тож J306.5/7/12/16 ↔ J203.2/14/15/18, решта J307.k ↔ J203.k (build/15)."
+        "W2 PWR-L6-PLACE (третій прохід): J203 — вертикальна вилка JST PHD B20B-PHDSS(LF)(SN) верхнього входу (LCSC C471521; каталог JST PHD 05.12.2023, копія LCSC, прочитано 13.11.2026: корпус 6.5 мм над платою, монтажна висота з розеткою 8.8 мм) у зоні 2 нижнього краю PWR-B; дроти J203 — гілка S02B джгута S02 (build/15). W2 PWR-L6-PLACE (четвертий прохід, проба C): J203.2/14/15/18 = EN_HFP/EN_LIME3V3/EN_LNB/FAULT_HFP обміном із J202.5/7/12/16 (FAULT_RTLA, PG_BONI, PG_LNB, PTC_AUX → J202); розпіновки CTRL не змінюються, тож J306.5/7/12/16 ↔ J203.2/14/15/18, решта J307.k ↔ J203.k (build/15).",
+        "W2 F2C-FALLBACK (GR-F2C): сигнали E1/E5 груп на PWR-C (контакти 8, 9, 10, 11, 12, 17, 19) виходять з S02: вони йдуть PWR-C ↔ CTRL гілкою S02C (W-C2, J120) до тих самих контактів J306/J307; тут ці контакти — резерв."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -16076,8 +16136,6 @@
         "AUX12",
         "BONI13V8",
         "BONI13V8_PORT",
-        "CHG_INHIBIT",
-        "E1_BAT_ADC",
         "E2_LNA4_SHUNT",
         "E2_LNA4_SW",
         "EN_AUX12",
@@ -16090,21 +16148,14 @@
         "FLT_LIME3V3",
         "FLT_LNB",
         "GND",
-        "I2C0_SCL",
-        "I2C0_SDA",
         "I2C2_SCL",
         "I2C2_SDA",
-        "IMU_RX",
-        "IMU_TX",
-        "INA228_ALERT",
         "LAB5",
         "LAB5_RLY",
         "LNA4V5",
         "LNB13V2",
         "OVP_LNB_N",
         "PICO_DISP_EN",
-        "PICO_OFF",
-        "PWR_BUTTON",
         "VBUS_HFP"
       ],
       "configuration_from_source": {},
@@ -16215,9 +16266,9 @@
         },
         {
           "number": "18",
-          "name": "CHG_INHIBIT",
+          "name": "NC",
           "type": "passive",
-          "net": "CHG_INHIBIT"
+          "nc": true
         },
         {
           "number": "19",
@@ -16227,9 +16278,9 @@
         },
         {
           "number": "20",
-          "name": "E1_BAT_ADC",
+          "name": "NC",
           "type": "passive",
-          "net": "E1_BAT_ADC"
+          "nc": true
         },
         {
           "number": "21",
@@ -16347,9 +16398,9 @@
         },
         {
           "number": "40",
-          "name": "I2C0_SCL",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SCL"
+          "nc": true
         },
         {
           "number": "41",
@@ -16395,9 +16446,9 @@
         },
         {
           "number": "48",
-          "name": "IMU_RX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_RX"
+          "nc": true
         },
         {
           "number": "49",
@@ -16407,9 +16458,9 @@
         },
         {
           "number": "50",
-          "name": "IMU_TX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_TX"
+          "nc": true
         },
         {
           "number": "51",
@@ -16419,9 +16470,9 @@
         },
         {
           "number": "52",
-          "name": "INA228_ALERT",
+          "name": "NC",
           "type": "passive",
-          "net": "INA228_ALERT"
+          "nc": true
         },
         {
           "number": "53",
@@ -16455,9 +16506,9 @@
         },
         {
           "number": "58",
-          "name": "PICO_OFF",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_OFF"
+          "nc": true
         },
         {
           "number": "59",
@@ -16467,9 +16518,9 @@
         },
         {
           "number": "60",
-          "name": "PWR_BUTTON",
+          "name": "NC",
           "type": "passive",
-          "net": "PWR_BUTTON"
+          "nc": true
         },
         {
           "number": "61",
@@ -16503,9 +16554,9 @@
         },
         {
           "number": "66",
-          "name": "I2C0_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "nc": true
         },
         {
           "number": "67",
@@ -16743,8 +16794,6 @@
         "AUX12",
         "BONI13V8",
         "BONI13V8_PORT",
-        "CHG_INHIBIT",
-        "E1_BAT_ADC",
         "E2_LNA4_SHUNT",
         "E2_LNA4_SW",
         "EN_AUX12",
@@ -16757,21 +16806,14 @@
         "FLT_LIME3V3",
         "FLT_LNB",
         "GND",
-        "I2C0_SCL",
-        "I2C0_SDA",
         "I2C2_SCL",
         "I2C2_SDA",
-        "IMU_RX",
-        "IMU_TX",
-        "INA228_ALERT",
         "LAB5",
         "LAB5_RLY",
         "LNA4V5",
         "LNB13V2",
         "OVP_LNB_N",
         "PICO_DISP_EN",
-        "PICO_OFF",
-        "PWR_BUTTON",
         "VBUS_HFP"
       ],
       "configuration_from_source": {},
@@ -16876,9 +16918,9 @@
         },
         {
           "number": "17",
-          "name": "CHG_INHIBIT",
+          "name": "NC",
           "type": "passive",
-          "net": "CHG_INHIBIT"
+          "nc": true
         },
         {
           "number": "18",
@@ -16888,9 +16930,9 @@
         },
         {
           "number": "19",
-          "name": "E1_BAT_ADC",
+          "name": "NC",
           "type": "passive",
-          "net": "E1_BAT_ADC"
+          "nc": true
         },
         {
           "number": "20",
@@ -17008,9 +17050,9 @@
         },
         {
           "number": "39",
-          "name": "I2C0_SCL",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SCL"
+          "nc": true
         },
         {
           "number": "40",
@@ -17056,9 +17098,9 @@
         },
         {
           "number": "47",
-          "name": "IMU_RX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_RX"
+          "nc": true
         },
         {
           "number": "48",
@@ -17068,9 +17110,9 @@
         },
         {
           "number": "49",
-          "name": "IMU_TX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_TX"
+          "nc": true
         },
         {
           "number": "50",
@@ -17080,9 +17122,9 @@
         },
         {
           "number": "51",
-          "name": "INA228_ALERT",
+          "name": "NC",
           "type": "passive",
-          "net": "INA228_ALERT"
+          "nc": true
         },
         {
           "number": "52",
@@ -17116,9 +17158,9 @@
         },
         {
           "number": "57",
-          "name": "PICO_OFF",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_OFF"
+          "nc": true
         },
         {
           "number": "58",
@@ -17128,9 +17170,9 @@
         },
         {
           "number": "59",
-          "name": "PWR_BUTTON",
+          "name": "NC",
           "type": "passive",
-          "net": "PWR_BUTTON"
+          "nc": true
         },
         {
           "number": "60",
@@ -17164,9 +17206,9 @@
         },
         {
           "number": "65",
-          "name": "I2C0_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "nc": true
         },
         {
           "number": "66",
@@ -30429,7 +30471,7 @@
       "module_id": "E5/J507",
       "parent_assembly": "E5-CIR-10",
       "ref": "J507",
-      "value": "X32S1-PWR: JST PH 4, верхній вхід, S32",
+      "value": "X32S1-PWRC: JST PH 4, бічний вхід, S32",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -30473,12 +30515,13 @@
         {
           "path": "design/E5.json",
           "ref": "J507",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X32S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S32; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X32S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S32; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 F2C-FALLBACK (GR-F2C): роз’єм стоїть на PWR-C (деталі до 6.5 мм), тому бічний вхід JST PH S*B-PH-K-S замість вертикального B*B (з розеткою 8.0 мм)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -32555,12 +32598,13 @@
     "J107": "E1-CIR-13",
     "J108": "E1-CIR-13",
     "J109": "E1-CIR-13",
-    "J110": "E1-CIR-13",
-    "J111": "E1-CIR-13",
     "J112": "E1-CIR-13",
     "J113": "E1-CIR-13",
     "J114": "E1-CIR-13",
     "J115": "E1-CIR-13",
+    "J118": "E1-CIR-13",
+    "J119": "E1-CIR-13",
+    "J120": "E1-CIR-13",
     "F201": "E2-CIR-01",
     "R201": "E2-CIR-01",
     "R202": "E2-CIR-01",
@@ -34214,21 +34258,12 @@
           "name": "AON3V3",
           "electrical_type": "passive",
           "assembly": "E1-CIR-12"
-        },
-        {
-          "sheet": "E1",
-          "ref": "J110",
-          "pin": "2",
-          "name": "AON3V3",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-13"
         }
       ],
       "assemblies": [
         "E1-CIR-02",
         "E1-CIR-03",
-        "E1-CIR-12",
-        "E1-CIR-13"
+        "E1-CIR-12"
       ],
       "cross_assembly": true
     },
@@ -35218,28 +35253,12 @@
           "assembly": "E1-CIR-11"
         },
         {
-          "sheet": "E2",
-          "ref": "J202",
-          "pin": "1",
+          "sheet": "E1",
+          "ref": "J120",
+          "pin": "7",
           "name": "CHG_INHIBIT",
           "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "18",
-          "name": "CHG_INHIBIT",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "17",
-          "name": "CHG_INHIBIT",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
+          "assembly": "E1-CIR-13"
         },
         {
           "sheet": "E3",
@@ -35260,7 +35279,7 @@
       ],
       "assemblies": [
         "E1-CIR-11",
-        "E2-CIR-20",
+        "E1-CIR-13",
         "E3-CIR-02",
         "E3-CIR-15"
       ],
@@ -35501,28 +35520,12 @@
           "assembly": "E1-CIR-08"
         },
         {
-          "sheet": "E2",
-          "ref": "J202",
-          "pin": "2",
+          "sheet": "E1",
+          "ref": "J120",
+          "pin": "6",
           "name": "E1_BAT_ADC",
           "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "20",
-          "name": "E1_BAT_ADC",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "19",
-          "name": "E1_BAT_ADC",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
+          "assembly": "E1-CIR-13"
         },
         {
           "sheet": "E3",
@@ -35543,7 +35546,7 @@
       ],
       "assemblies": [
         "E1-CIR-08",
-        "E2-CIR-20",
+        "E1-CIR-13",
         "E3-CIR-05",
         "E3-CIR-15"
       ],
@@ -36504,20 +36507,11 @@
           "name": "OFF",
           "electrical_type": "input",
           "assembly": "E1-CIR-04"
-        },
-        {
-          "sheet": "E1",
-          "ref": "J111",
-          "pin": "2",
-          "name": "E1_MASTER_OFF",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-13"
         }
       ],
       "assemblies": [
         "E1-CIR-03",
-        "E1-CIR-04",
-        "E1-CIR-13"
+        "E1-CIR-04"
       ],
       "cross_assembly": true
     },
@@ -36603,22 +36597,6 @@
           "name": "ВузолN",
           "electrical_type": "passive",
           "assembly": "E1-CIR-12"
-        },
-        {
-          "sheet": "E1",
-          "ref": "J106",
-          "pin": "1",
-          "name": "E1_N",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-13"
-        },
-        {
-          "sheet": "E1",
-          "ref": "J107",
-          "pin": "1",
-          "name": "E1_N",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-13"
         },
         {
           "sheet": "E1",
@@ -36957,14 +36935,6 @@
           "name": "E1_SHUNT_P",
           "electrical_type": "passive",
           "assembly": "E1-CIR-13"
-        },
-        {
-          "sheet": "E1",
-          "ref": "J106",
-          "pin": "2",
-          "name": "E1_SHUNT_P",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-13"
         }
       ],
       "assemblies": [
@@ -37082,6 +37052,14 @@
           "assembly": "E1-CIR-13"
         },
         {
+          "sheet": "E1",
+          "ref": "J119",
+          "pin": "2",
+          "name": "E1_SW",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-13"
+        },
+        {
           "sheet": "E2",
           "ref": "C252",
           "pin": "1",
@@ -37161,21 +37139,12 @@
           "name": "A",
           "electrical_type": "passive",
           "assembly": "E1-CIR-04"
-        },
-        {
-          "sheet": "E1",
-          "ref": "J111",
-          "pin": "3",
-          "name": "E1_SWITCH_A",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-13"
         }
       ],
       "assemblies": [
-        "E1-CIR-04",
-        "E1-CIR-13"
+        "E1-CIR-04"
       ],
-      "cross_assembly": true
+      "cross_assembly": false
     },
     {
       "net": "E1_SYS12_CBOOT",
@@ -51506,23 +51475,23 @@
         },
         {
           "sheet": "E1",
+          "ref": "J106",
+          "pin": "1",
+          "name": "GND",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-13"
+        },
+        {
+          "sheet": "E1",
+          "ref": "J107",
+          "pin": "1",
+          "name": "GND",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-13"
+        },
+        {
+          "sheet": "E1",
           "ref": "J108",
-          "pin": "1",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-13"
-        },
-        {
-          "sheet": "E1",
-          "ref": "J110",
-          "pin": "1",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-13"
-        },
-        {
-          "sheet": "E1",
-          "ref": "J111",
           "pin": "1",
           "name": "GND",
           "electrical_type": "passive",
@@ -51539,6 +51508,22 @@
         {
           "sheet": "E1",
           "ref": "J115",
+          "pin": "1",
+          "name": "GND",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-13"
+        },
+        {
+          "sheet": "E1",
+          "ref": "J118",
+          "pin": "1",
+          "name": "GND",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-13"
+        },
+        {
+          "sheet": "E1",
+          "ref": "J119",
           "pin": "1",
           "name": "GND",
           "electrical_type": "passive",
@@ -56917,35 +56902,11 @@
         },
         {
           "sheet": "E1",
-          "ref": "J110",
-          "pin": "3",
+          "ref": "J120",
+          "pin": "1",
           "name": "I2C0_SCL",
           "electrical_type": "passive",
           "assembly": "E1-CIR-13"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J203",
-          "pin": "8",
-          "name": "I2C0_SCL",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "40",
-          "name": "I2C0_SCL",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "39",
-          "name": "I2C0_SCL",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
         },
         {
           "sheet": "E3",
@@ -56975,7 +56936,6 @@
       "assemblies": [
         "E1-CIR-02",
         "E1-CIR-13",
-        "E2-CIR-20",
         "E3-CIR-01",
         "E3-CIR-15"
       ],
@@ -56994,35 +56954,11 @@
         },
         {
           "sheet": "E1",
-          "ref": "J110",
-          "pin": "4",
+          "ref": "J120",
+          "pin": "2",
           "name": "I2C0_SDA",
           "electrical_type": "passive",
           "assembly": "E1-CIR-13"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J203",
-          "pin": "9",
-          "name": "I2C0_SDA",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "66",
-          "name": "I2C0_SDA",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "65",
-          "name": "I2C0_SDA",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
         },
         {
           "sheet": "E3",
@@ -57052,7 +56988,6 @@
       "assemblies": [
         "E1-CIR-02",
         "E1-CIR-13",
-        "E2-CIR-20",
         "E3-CIR-01",
         "E3-CIR-15"
       ],
@@ -57394,28 +57329,12 @@
       "net": "IMU_RX",
       "pins": [
         {
-          "sheet": "E2",
-          "ref": "J203",
-          "pin": "10",
+          "sheet": "E1",
+          "ref": "J120",
+          "pin": "4",
           "name": "IMU_RX",
           "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "48",
-          "name": "IMU_RX",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "47",
-          "name": "IMU_RX",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
+          "assembly": "E1-CIR-13"
         },
         {
           "sheet": "E3",
@@ -57499,7 +57418,7 @@
         }
       ],
       "assemblies": [
-        "E2-CIR-20",
+        "E1-CIR-13",
         "E3-CIR-05",
         "E3-CIR-13",
         "E3-CIR-15",
@@ -57512,28 +57431,12 @@
       "net": "IMU_TX",
       "pins": [
         {
-          "sheet": "E2",
-          "ref": "J203",
-          "pin": "11",
+          "sheet": "E1",
+          "ref": "J120",
+          "pin": "5",
           "name": "IMU_TX",
           "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "50",
-          "name": "IMU_TX",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "49",
-          "name": "IMU_TX",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
+          "assembly": "E1-CIR-13"
         },
         {
           "sheet": "E3",
@@ -57617,7 +57520,7 @@
         }
       ],
       "assemblies": [
-        "E2-CIR-20",
+        "E1-CIR-13",
         "E3-CIR-05",
         "E3-CIR-13",
         "E3-CIR-15",
@@ -57639,35 +57542,11 @@
         },
         {
           "sheet": "E1",
-          "ref": "J110",
-          "pin": "5",
+          "ref": "J120",
+          "pin": "3",
           "name": "INA228_ALERT",
           "electrical_type": "passive",
           "assembly": "E1-CIR-13"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J203",
-          "pin": "12",
-          "name": "INA228_ALERT",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "52",
-          "name": "INA228_ALERT",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "51",
-          "name": "INA228_ALERT",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
         },
         {
           "sheet": "E3",
@@ -57705,7 +57584,6 @@
       "assemblies": [
         "E1-CIR-02",
         "E1-CIR-13",
-        "E2-CIR-20",
         "E3-CIR-01",
         "E3-CIR-15"
       ],
@@ -57971,6 +57849,22 @@
           "sheet": "E1",
           "ref": "J104",
           "pin": "4",
+          "name": "LAB5",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-13"
+        },
+        {
+          "sheet": "E1",
+          "ref": "J106",
+          "pin": "2",
+          "name": "LAB5",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-13"
+        },
+        {
+          "sheet": "E1",
+          "ref": "J118",
+          "pin": "2",
           "name": "LAB5",
           "electrical_type": "passive",
           "assembly": "E1-CIR-13"
@@ -59127,28 +59021,12 @@
           "assembly": "E1-CIR-04"
         },
         {
-          "sheet": "E2",
-          "ref": "J203",
-          "pin": "17",
+          "sheet": "E1",
+          "ref": "J120",
+          "pin": "8",
           "name": "PICO_OFF",
           "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "58",
-          "name": "PICO_OFF",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "57",
-          "name": "PICO_OFF",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
+          "assembly": "E1-CIR-13"
         },
         {
           "sheet": "E3",
@@ -59169,7 +59047,7 @@
       ],
       "assemblies": [
         "E1-CIR-04",
-        "E2-CIR-20",
+        "E1-CIR-13",
         "E3-CIR-05",
         "E3-CIR-15"
       ],
@@ -59239,28 +59117,12 @@
           "assembly": "E1-CIR-04"
         },
         {
-          "sheet": "E2",
-          "ref": "J203",
-          "pin": "19",
+          "sheet": "E1",
+          "ref": "J120",
+          "pin": "9",
           "name": "PWR_BUTTON",
           "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "60",
-          "name": "PWR_BUTTON",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "59",
-          "name": "PWR_BUTTON",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
+          "assembly": "E1-CIR-13"
         },
         {
           "sheet": "E3",
@@ -59305,7 +59167,7 @@
       ],
       "assemblies": [
         "E1-CIR-04",
-        "E2-CIR-20",
+        "E1-CIR-13",
         "E3-CIR-06",
         "E3-CIR-15"
       ],
@@ -60740,16 +60602,16 @@
     },
     {
       "sheet": "E1",
-      "ref": "J108",
-      "pin": "4",
+      "ref": "J109",
+      "pin": "2",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E1-CIR-13"
     },
     {
       "sheet": "E1",
-      "ref": "J109",
-      "pin": "2",
+      "ref": "J120",
+      "pin": "10",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E1-CIR-13"
@@ -61036,6 +60898,78 @@
     },
     {
       "sheet": "E2",
+      "ref": "J202",
+      "pin": "1",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J202",
+      "pin": "2",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J203",
+      "pin": "8",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J203",
+      "pin": "9",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J203",
+      "pin": "10",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J203",
+      "pin": "11",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J203",
+      "pin": "12",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J203",
+      "pin": "17",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J203",
+      "pin": "19",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
       "ref": "J207",
       "pin": "12",
       "name": "NC",
@@ -61045,7 +60979,31 @@
     {
       "sheet": "E2",
       "ref": "J208",
+      "pin": "18",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "20",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
       "pin": "30",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "40",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -61085,6 +61043,14 @@
     {
       "sheet": "E2",
       "ref": "J208",
+      "pin": "48",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
       "pin": "49",
       "name": "NC",
       "electrical_type": "passive",
@@ -61093,7 +61059,23 @@
     {
       "sheet": "E2",
       "ref": "J208",
+      "pin": "50",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
       "pin": "51",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "52",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -61125,7 +61107,23 @@
     {
       "sheet": "E2",
       "ref": "J208",
+      "pin": "58",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
       "pin": "59",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "60",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -61166,6 +61164,14 @@
       "sheet": "E2",
       "ref": "J208",
       "pin": "65",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "66",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -61405,7 +61411,31 @@
     {
       "sheet": "E2",
       "ref": "J209",
+      "pin": "17",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "19",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
       "pin": "29",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "39",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -61437,6 +61467,14 @@
     {
       "sheet": "E2",
       "ref": "J209",
+      "pin": "47",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
       "pin": "48",
       "name": "NC",
       "electrical_type": "passive",
@@ -61445,7 +61483,23 @@
     {
       "sheet": "E2",
       "ref": "J209",
+      "pin": "49",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
       "pin": "50",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "51",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -61477,7 +61531,23 @@
     {
       "sheet": "E2",
       "ref": "J209",
+      "pin": "57",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
       "pin": "58",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "59",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -61518,6 +61588,14 @@
       "sheet": "E2",
       "ref": "J209",
       "pin": "64",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "65",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -62761,10 +62839,10 @@
   "validation": {
     "status": "PASS",
     "source_snapshot_hashes_unchanged": true,
-    "all882refs_assigned_once": true,
-    "all2780connected_pin_net_triples_exact": true,
-    "all255NCpins_exact": true,
-    "all231subinterface_pin_arrays_exact": true,
+    "all883refs_assigned_once": true,
+    "all2758connected_pin_net_triples_exact": true,
+    "all282NCpins_exact": true,
+    "all232subinterface_pin_arrays_exact": true,
     "all_catalogue_sources_exist": true,
     "no_project_files_written_by_inventory_task": true,
     "synchronised": "23.10.2026 with the current design graphs: refs removed from the graphs dropped, renamed nets followed, graph-derived fields recomputed; curated fields unchanged"

@@ -285,7 +285,7 @@ HEADERS = {
     "J107": ("X42J1-PWR", {"S42": "1 2"}),  # W2 F2C-FALLBACK: S42 (W-C1) E1_SW from PWR-C (was S07)
     "J108": ("X10C1-PWRC", {"S10": "1-3"}),
     "J109": ("X05S1-PWRC", {"S05": "1"}),  # W2 F2C-FALLBACK: J109, J112, J113, J507 side-entry PH on PWR-C
-    "J118": ("X42C1-PWRC", {"S42": "1 2"}), "J119": ("X42C2-PWRC", {"S42": "1 2"}),  # W2 F2C-FALLBACK: PWR-C ends of S42 (W-C1)
+    "J118": ("X42C2-PWRC", {"S42": "1 2"}), "J119": ("X42C1-PWRC", {"S42": "1 2"}),  # W2 F2C-FALLBACK: PWR-C ends of S42 (W-C1): J118 mates J106, J119 J107
     "J120": ("S02C-PWRC-SIG", {"S02C": "1-9"}),  # W2 F2C-FALLBACK: PWR-C end of S02C (W-C2), J110/J111 (S06/S07) deleted
     "J112": ("X10S1-PWRC", {"S10": "1-4"}),
     "J113": ("X11S1-PWRC", {"S11": "1 2"}),

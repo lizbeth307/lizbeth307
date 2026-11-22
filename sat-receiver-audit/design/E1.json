@@ -3957,32 +3957,6 @@
     },
     {
       "ref": "J118",
-      "value": "X42C1-PWRC: майданчики проводів 18 AWG, S42 (W-C1, E1_SW)",
-      "kind": "connector",
-      "group": "Роз'єми джгутів PWR",
-      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
-      "status": "design",
-      "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
-      "pins": [
-        {
-          "number": "1",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "E1_SW",
-          "type": "passive",
-          "net": "E1_SW"
-        }
-      ],
-      "notes": [
-        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Кінець PWR-C джгута S42 (W-C1) до J107 на PWR-A: E1_SW з VOUT #2813 U106 і повернення GND."
-      ]
-    },
-    {
-      "ref": "J119",
       "value": "X42C2-PWRC: майданчики проводів 18 AWG, S42 (W-C1, LAB5)",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
@@ -4004,7 +3978,33 @@
         }
       ],
       "notes": [
-        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Кінець PWR-C джгута S42 (W-C1) від J106 на PWR-A: LAB5 для U553/C552 і повернення GND."
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Кінець PWR-C джгута S42 (W-C1) від J106 на PWR-A: LAB5 для U553/C552 і повернення GND (пара J106 ↔ J118)."
+      ]
+    },
+    {
+      "ref": "J119",
+      "value": "X42C1-PWRC: майданчики проводів 18 AWG, S42 (W-C1, E1_SW)",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E1_SW",
+          "type": "passive",
+          "net": "E1_SW"
+        }
+      ],
+      "notes": [
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Кінець PWR-C джгута S42 (W-C1) до J107 на PWR-A: E1_SW з VOUT #2813 U106 і повернення GND (пара J107 ↔ J119)."
       ]
     },
     {
