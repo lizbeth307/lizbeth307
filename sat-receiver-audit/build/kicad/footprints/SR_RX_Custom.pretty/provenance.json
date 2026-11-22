@@ -37,6 +37,12 @@
     "read": "2026-10-24",
     "source": "https://www.minicircuits.com/case_style/MC1630.pdf"
   },
+  "Pololu_2813_psw03b": {
+    "drawing": "psw03b dimension diagram, 12 January 2016: views 1 (board dimensions, top), 2 (connector callouts, bottom) and 3 (isometric, bottom-side labels); rendered with PyMuPDF and read from the images; large holes plated 2.2 mm (design value for an 18 AWG link)",
+    "kind": "custom",
+    "read": "2026-11-22",
+    "source": "https://www.pololu.com/file/0J1102/big-pushbutton-power-switch-with-reverse-voltage-protection-dimension-diagram.pdf"
+  },
   "QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD": {
     "kind": "derived",
     "note": "HMC7992LP3DE exposed pad named EPAD; ADI outline not read (analog.com unreachable 24.10.2026): exposed-pad size must be checked against the HMC7992 package drawing before PCB release",

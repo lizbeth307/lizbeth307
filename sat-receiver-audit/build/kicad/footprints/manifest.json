@@ -1,6 +1,6 @@
 {
   "kicad_version": "10.0.7",
-  "assignments": 780,
+  "assignments": 785,
   "footprints": [
     {
       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
@@ -116,6 +116,7 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "C101",
         "C105",
         "C106",
         "C114",
@@ -218,6 +219,7 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "C102",
         "C104",
         "C108",
         "C110",
@@ -519,6 +521,27 @@
       ]
     },
     {
+      "footprint": "Connector_JST:JST_PHD_S10B-PHDSS_2x05_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PHD_S10B-PHDSS_2x05_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "21c3c14fdf3b20f7cdb64680c759dd7e2ed1c51f66f93e641fa155a657d7dd77",
+      "pads": [
+        "1",
+        "10",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J120"
+      ]
+    },
+    {
       "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
       "file": "build/kicad/footprints/Connector_JST.pretty/JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal.kicad_mod",
       "sha256": "7f8ab891bb8ca28840688f5e3db368339970e0550e1b90069a72accc900677d5",
@@ -561,8 +584,6 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
-        "J109",
-        "J113",
         "J510"
       ]
     },
@@ -577,41 +598,8 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
-        "J111",
         "J502",
         "J513"
-      ]
-    },
-    {
-      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
-      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical.kicad_mod",
-      "sha256": "f5488d79bbafc8c929bcfacf8e960e81dcfc126c598e03083de317607937b58e",
-      "pads": [
-        "1",
-        "2",
-        "3",
-        "4"
-      ],
-      "origin": "KiCad 10.0.7 official, unmodified",
-      "refs": [
-        "J112",
-        "J507"
-      ]
-    },
-    {
-      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
-      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical.kicad_mod",
-      "sha256": "03211833fb2e60a511e2fe68e1604d057517e1315ad0221909895d20be5cd7fc",
-      "pads": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5"
-      ],
-      "origin": "KiCad 10.0.7 official, unmodified",
-      "refs": [
-        "J110"
       ]
     },
     {
@@ -667,6 +655,8 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "J109",
+        "J113",
         "J315",
         "J318",
         "J319"
@@ -698,12 +688,14 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "J112",
         "J309",
         "J310",
         "J312",
         "J316",
         "J317",
-        "J419"
+        "J419",
+        "J507"
       ]
     },
     {
@@ -818,8 +810,6 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
-        "J114",
-        "J115",
         "J205",
         "J509"
       ]
@@ -878,24 +868,8 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
-        "J105",
         "J106",
         "J107"
-      ]
-    },
-    {
-      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
-      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical.kicad_mod",
-      "sha256": "1f4aa9a92dea496e784b2fa2ec1b8145a153a88c644cd010a2eac5c14b85edb4",
-      "pads": [
-        "1",
-        "2",
-        "3",
-        "4"
-      ],
-      "origin": "KiCad 10.0.7 official, unmodified",
-      "refs": [
-        "J108"
       ]
     },
     {
@@ -1081,6 +1055,37 @@
       "refs": [
         "J116",
         "J117"
+      ]
+    },
+    {
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm.kicad_mod",
+      "sha256": "b8adcb230cffcbb256060c6beebad93b3bfd0f5bd43568f9a9f296cc7d428480",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J105",
+        "J114",
+        "J115",
+        "J118",
+        "J119"
+      ]
+    },
+    {
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x03_P5.4mm_D1.4mm_OD2.7mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-1sqmm_1x03_P5.4mm_D1.4mm_OD2.7mm.kicad_mod",
+      "sha256": "b5aa6b2b6e800df79be3c25565f3827085b53ae44eb972a2fabb0838cba2c427",
+      "pads": [
+        "1",
+        "2",
+        "3"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J108"
       ]
     },
     {
@@ -2066,6 +2071,7 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "R101",
         "R110"
       ]
     },
@@ -2141,6 +2147,25 @@
       "origin": "SR_RX_Custom custom",
       "refs": [
         "A407"
+      ]
+    },
+    {
+      "footprint": "SR_RX_Custom:Pololu_2813_psw03b",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/Pololu_2813_psw03b.kicad_mod",
+      "sha256": "d47a65f47b2ef5d1b3caf473c83ab729dcbc87b932347273b0417e2144957008",
+      "pads": [
+        "A",
+        "B",
+        "CTRL",
+        "GND",
+        "OFF",
+        "ON",
+        "VIN",
+        "VOUT"
+      ],
+      "origin": "SR_RX_Custom custom",
+      "refs": [
+        "U106"
       ]
     },
     {

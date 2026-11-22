@@ -1,0 +1,57 @@
+{
+ "schema": 1,
+ "date": "2026-11-22",
+ "note": "W2 F2C-FALLBACK (GR-F2C) reads of 2026-11-22: the parts that F2-C puts on the third power board PWR-C (gate G1 fired for PWR-A on 6 layers, build/15 row of W2 PWR-L6-ROUTE). A row records what the source showed; \"stock\": null means not shown. No browser User-Agent was sent (curl defaults; the JLCPCB parts search with the User-Agent of tools/check_parts_availability.py). PDFs and the DXF were read locally and are not committed. Arithmetic is labelled and is a MODEL input, not a measurement. LCSC listings of this package are in 2026-11-22-w2-f2c-lcsc.json (tools/check_parts_availability.py --codes).",
+ "entries": {
+  "web:pololu-2813": {
+   "item": "F2C-FALLBACK U106: Pololu #2813 Big Pushbutton Power Switch with Reverse Voltage Protection, HP (land on PWR-C)",
+   "distributor": "manufacturer page",
+   "url": "https://www.pololu.com/product/2813",
+   "read": "2026-11-22",
+   "method": "WebFetch of the product page and its resources page https://www.pololu.com/product/2813/resources",
+   "mpn": "2813",
+   "manufacturer": "Pololu",
+   "stock": null,
+   "price": null,
+   "note": "Operating range 4.5 V to 40 V (recommended 4.5 to 32 V, absolute max 40 V); maximum continuous current 'up to around 16 A'; each power node has one large hole along the top side or two 0.1 in spaced holes along the sides; 'For applications drawing more than 5 A, you should either use the large holes or both 0.1 in-spaced holes for each power connection'; the included 5 mm terminal blocks fit the four large holes and are rated for 16 A; size 0.8 x 1.0 x 0.16 in. Header pin current is not stated: TBD."
+  },
+  "web:pololu-psw03b-dimensions": {
+   "item": "F2C-FALLBACK U106 land: Pololu dimension diagram psw03b (items 2812, 2813)",
+   "distributor": "manufacturer drawing",
+   "url": "https://www.pololu.com/file/0J1102/big-pushbutton-power-switch-with-reverse-voltage-protection-dimension-diagram.pdf",
+   "read": "2026-11-22",
+   "method": "curl (default User-Agent), 366596 bytes; text via PyMuPDF and the views rendered with PyMuPDF and read from the images (connector callouts read on the bottom isometric view 3); drill guide https://www.pololu.com/file/0J1099/psw03b-drill.dxf (38083 bytes) fetched, not used for numbers",
+   "mpn": "2813",
+   "manufacturer": "Pololu",
+   "title": "Big Pushbutton Power Switch with Reverse Voltage Protection, drawing date 12 January 2016, PCB dev code psw03b, units mm [mil]",
+   "stock": null,
+   "price": null,
+   "note": "Board 20.3 [800] x 25.4 [1000] mm, PCB 1.57 [62], parts 2.4 [94] (1.9 [75]) above the board; 16 holes D1.02 [40] in two columns 17.78 [700] apart, 1.27 [50] from the side edges, pitch 2.54 [100], lowest hole 2.54 [100] from the bottom edge; 4 large holes D2.18 [86], pitch 5.00 [197], 2.29 [90] from the top edge and 2.66 [105] from the side edge; drill location tolerance +/-0.1, board edge +/-0.3. Bottom-view callouts: VIN column VIN, VIN, GND, GND, ON, OFF, CTRL, GND from the large-hole end; VOUT column VOUT, VOUT, GND, GND, B, A, A, GND (the A bracket spans two holes); large holes VIN, GND, GND, VOUT. In the top view the VIN column and the VIN large hole are on the left (the board via beside ON is mirrored between the top and bottom views)."
+  },
+  "web:bourns-cra2512": {
+   "item": "F2C-FALLBACK R101: Bourns CRA2512-FZ-R015ELF current sense resistor (INA228 shunt on PWR-C)",
+   "distributor": "manufacturer data sheet",
+   "url": "https://www.bourns.com/docs/product-datasheets/cra.pdf",
+   "read": "2026-11-22",
+   "method": "curl (default User-Agent), 562959 bytes, text via PyMuPDF",
+   "mpn": "CRA2512-FZ-R015ELF",
+   "manufacturer": "Bourns",
+   "title": "CRA2512 - High Power Current Sense Chip Resistor, REV. 07/26",
+   "stock": null,
+   "price": null,
+   "note": "Power rating at 70 C 3 W, derated to zero load at +170 C, operating -55 to +170 C; resistance range 0.010-0.100 Ohm, R015 = 0.015 Ohm listed; tolerance F = +/-1 %; TCR Z = +/-50 ppm/C; E = 4000 pieces per 7 in reel; LF tin plated; dimensions A 6.40 +/-0.20, B 3.20 +/-0.20, C 0.90 +/-0.20, T 0.90 +/-0.20 mm; recommended solder pad layout A 4.0, B 2.1, L 4.1 mm with sensing traces (dimension meaning read from the drawing labels only: check against the KiCad R_2512_6332Metric land before release, OPEN). Arithmetic (MODEL): 4.6 A gives 0.317 W and 69 mV, 7.5 A gives 0.844 W."
+  },
+  "web:ti-ina228": {
+   "item": "F2C-FALLBACK U102: TI INA228AIDGSR on PWR-C",
+   "distributor": "JLCPCB parts search",
+   "url": "https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList",
+   "read": "2026-11-22",
+   "method": "keyword search 'INA228' (User-Agent sr-rx-parts-snapshot), to find the LCSC codes; the stock is in 2026-11-22-w2-f2c-lcsc.json",
+   "mpn": "INA228AIDGSR",
+   "manufacturer": "Texas Instruments",
+   "stock": null,
+   "price": null,
+   "note": "Listings returned: C2887910 INA228AIDGSR (VSSOP-10-0.5mm, stock 1), C2862904 INA228AIDGST (stock 0), C5214669 INA228AQDGSRQ1 (MSOP-10-3mm, stock 1), C32710522 INA228AQDGSRQ1 (stock 0). LCSC stock is near zero for every INA228 variant on 2026-11-22: sourcing OPEN (TI or another distributor, not read)."
+  }
+ }
+}

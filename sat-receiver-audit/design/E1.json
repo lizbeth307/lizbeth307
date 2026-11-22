@@ -106,7 +106,7 @@
     "Зарядник BAT+ підключено до E1_N після шунта. Зарядний струм вимірюється INA228 зі знаком, протилежним розряду.",
     "SYS12 і LAB5 формуються тут. Захищені J21, DISP12, AUX12, LNB, Boni, LNA, Lime та два INA3221 належать E2.",
     "IC bypass розташувати біля виводів. Фільтри і transient-тести потребують конкретної плати. Немає PCB layout чи фізичних вимірів.",
-    "U102, R101, C101 і C102 є деталізацією наявного Adafruit #5832. Не купувати їх вдруге. Зняти R6/R7, A0/A1 з’єднати з GND для 0x40, SJ1 замкнути.",
+    "W2 F2C-FALLBACK (GR-F2C): U102 (INA228AIDGSR), шунт R101, C101 і C102 — деталі плати PWR-C (F2-C), модуль Adafruit #5832 більше не потрібен. A0/A1 з’єднано з GND для 0x40. Pololu #2813 U106 впаяно на майданчик PWR-C; S06/S07 видалено.",
     "PICO_OFF є імпульсом active high від GP13. UV працює від AON і утримує OFF нижче порога. Повторний запуск — кнопкою після відновлення ≥13.6 V. W2 GR-5A: EN-резерв SYS12 тепер — поріг LM61460 U107 (1.263 V ±5 %, гістерезис 24–32 %) з дільником R108 1.00 MΩ / R109 115 kΩ 1 % від E1_CONV_IN: wake 11.4…13.1 V (ном. 12.25 V), sleep 7.8…9.9 V (ном. 8.8 V), MODEL. Wake нижче UV release (≥13.5 V). Sleep тепер нижче BMS UVP (10.8 V): резерв більше не знімає SYS12 раніше за BMS; основне відсічення — UV trip U104, далі BMS; перевіряють E1-04 і Ж-03. Попередні 4.99k/562R (v2.1) розраховано для EN Pololu.",
     "Стендові RF-джерела підключаються лише до навантаження або DUT. Ця силова схема не створює TX-трактів."
   ],
@@ -353,11 +353,15 @@
     },
     {
       "ref": "R101",
-      "value": "15 mΩ 1% 2 W (Adafruit R1)",
+      "value": "15 mΩ 1% 3 W 2512 (Bourns CRA2512-FZ-R015ELF)",
       "kind": "resistor",
       "group": "Лічильник заряду",
-      "status": "verified",
-      "source": "https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch",
+      "status": "design",
+      "source": "https://www.bourns.com/docs/product-datasheets/cra.pdf",
+      "footprint": "Resistor_SMD:R_2512_6332Metric",
+      "mpn": "CRA2512-FZ-R015ELF",
+      "manufacturer": "Bourns",
+      "lcsc": "C2073490",
       "pins": [
         {
           "number": "1",
@@ -373,18 +377,19 @@
         }
       ],
       "notes": [
-        "Існуючий шунт Adafruit #5832; Kelvin-вимір. При 4.6 A: 69 mV і 0.317 W; при 7.5 A: 0.844 W."
+        "W2 F2C-FALLBACK (GR-F2C): шунт на PWR-C замість R1 модуля Adafruit 5832. Bourns CRA2512-FZ-R015ELF: 15 мОм ±1 %, ±50 ppm/°C, 3 Вт при 70 °C зі зниженням до нуля при 170 °C, корпус 6.40 × 3.20 × 0.90 мм (даташит CRA2512 REV. 07/26, https://www.bourns.com/docs/product-datasheets/cra.pdf, прочитано 2026-11-22). При 4.6 A: 69 мВ і 0.317 Вт; при 7.5 A: 0.844 Вт (MODEL). Кельвін-вимір: IN+/IN− від внутрішніх країв майданчиків. Рекомендований майданчик Bourns (A 4.0, B 2.1, L 4.1 мм) проти KiCad R_2512_6332Metric — перевірити до випуску (OPEN)."
       ]
     },
     {
       "ref": "U102",
-      "value": "INA228AIDGSR на Adafruit 5832",
+      "value": "INA228AIDGSR",
       "kind": "ic",
       "group": "Лічильник заряду",
-      "status": "verified",
+      "status": "design",
       "source": "https://www.ti.com/lit/ds/symlink/ina228.pdf",
-      "mpn": "5832",
-      "manufacturer": "Adafruit",
+      "mpn": "INA228AIDGSR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C2887910",
       "pins": [
         {
           "number": "1",
@@ -448,19 +453,24 @@
         }
       ],
       "notes": [
-        "Деталізація Adafruit #5832 після модифікації, а не другий IC. SJ1 з’єднує VBUS з VIN+, тобто шина вимірюється на батарейному боці шунта.",
-        "Зняти R6. A0/A1 на GND задають 0x40. Зняти R7 LED. SHUNT_CAL калібрувати на 0.5/2/4 A; ADCRANGE=0; continuous CHARGE/ENERGY. Драйвер ina238 не прив’язувати.",
-        "TI DGS0010A має JEDEC MO-187 BA, 3×3 mm, pitch 0.5 mm. Реальний стандартний KiCad MSOP-10 ID обрано замість неіснуючого VSSOP-10 ID. Bundled KiCad 10.0.7 має IPC pads 1.5×0.35 mm / centers 4.2 mm; TI example 1.45×0.3 mm / centers 4.4 mm. Це альтернативний land pattern; до layout перевірити toe/heel та технологію пайки. U102 є деталізацією breakout, не вказівкою пересаджувати IC."
+        "W2 F2C-FALLBACK (GR-F2C): мікросхема INA228AIDGSR стоїть на PWR-C поруч із шунтом R101 (раніше — деталь модуля Adafruit 5832 на задній стінці з джгутом S06, який видалено). A0/A1 на GND задають адресу 0x40. VS (AON3V3) — з C101 100 нФ і C102 10 мкФ біля виводу 6. IN+/IN− — лінії Кельвіна від внутрішніх країв майданчиків R101; VBUS — з батарейного боку шунта (E1_SHUNT_P).",
+        "SHUNT_CAL калібрувати на 0.5/2/4 A; ADCRANGE=0; continuous CHARGE/ENERGY. Драйвер ina238 не прив’язувати.",
+        "TI DGS0010A має JEDEC MO-187 BA, 3×3 mm, pitch 0.5 mm. Реальний стандартний KiCad MSOP-10 ID обрано замість неіснуючого VSSOP-10 ID. Bundled KiCad 10.0.7 має IPC pads 1.5×0.35 mm / centers 4.2 mm; TI example 1.45×0.3 mm / centers 4.4 mm. Це альтернативний land pattern; до випуску перевірити toe/heel та технологію пайки."
       ],
       "footprint": "Package_SO:MSOP-10_3x3mm_P0.5mm"
     },
     {
       "ref": "C101",
-      "value": "100 nF (Adafruit C1)",
+      "value": "100nF X7R 10V (VS U102)",
       "kind": "capacitor",
       "group": "Лічильник заряду",
-      "status": "verified",
-      "source": "https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/ina228.pdf; W2 F2C-FALLBACK (GR-F2C)",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -474,15 +484,23 @@
           "type": "passive",
           "net": "GND"
         }
+      ],
+      "notes": [
+        "W2 F2C-FALLBACK (GR-F2C): розв’язка VS U102 на PWR-C біля виводу 6 (номінали C1/C2 модуля Adafruit 5832, що їх тут замінено)."
       ]
     },
     {
       "ref": "C102",
-      "value": "10 µF (Adafruit C2)",
+      "value": "10uF X7R 10V (VS U102)",
       "kind": "capacitor",
       "group": "Лічильник заряду",
-      "status": "verified",
-      "source": "https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/ina228.pdf; W2 F2C-FALLBACK (GR-F2C)",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CC0805KKX7R7BB106",
+      "manufacturer": "YAGEO",
+      "lcsc": "C326595",
+      "alt_mpn": "TDK C2012X7R1A106KT0A0E",
       "pins": [
         {
           "number": "1",
@@ -496,6 +514,9 @@
           "type": "passive",
           "net": "GND"
         }
+      ],
+      "notes": [
+        "W2 F2C-FALLBACK (GR-F2C): розв’язка VS U102 на PWR-C біля виводу 6 (номінали C1/C2 модуля Adafruit 5832, що їх тут замінено)."
       ]
     },
     {
@@ -918,13 +939,14 @@
     },
     {
       "ref": "U106",
-      "value": "Pololu 2813 HP",
+      "value": "Pololu #2813 (Big Pushbutton Power Switch HP) на майданчику PWR-C",
       "kind": "module",
       "group": "Головний вимикач",
       "status": "module",
       "source": "https://www.pololu.com/product/2813",
       "mpn": "2813",
       "manufacturer": "Pololu",
+      "footprint": "SR_RX_Custom:Pololu_2813_psw03b",
       "pins": [
         {
           "number": "VIN",
@@ -976,7 +998,8 @@
         }
       ],
       "notes": [
-        "A через кнопку на GND дає лише ввімкнення. OFF >1 V вимикає від Pico або UV. CTRL і ON не підключено. Перевірити пріоритет held OFF над кнопкою."
+        "A через кнопку на GND дає лише ввімкнення. OFF >1 V вимикає від Pico або UV. CTRL і ON не підключено. Перевірити пріоритет held OFF над кнопкою.",
+        "W2 F2C-FALLBACK (GR-F2C): модуль лежить урівень на PWR-C (зазор ≤1 мм, MODEL: 1.0 + 1.57 + 2.4 = 4.97 мм проти межі 6.5 мм) на штирях 0.1 in обох рядів (16 отворів ⌀1.02) і з’єднаний з платою також у великих отворах VIN/GND/GND/VOUT (4 × ⌀2.18, крок 5.00) перемичками 18 AWG: Pololu радить для струму понад 5 A великі отвори або обидва отвори 0.1 in на вузол (https://www.pololu.com/product/2813, прочитано 2026-11-22), тут — обидва. Отвори за кресленням psw03b (12.01.2016, https://www.pololu.com/file/0J1102/big-pushbutton-power-switch-with-reverse-voltage-protection-dimension-diagram.pdf, прочитано 2026-11-22; вигляд знизу з підписами): ряд VIN — VIN, VIN, GND, GND, ON, OFF, CTRL, GND; ряд VOUT — VOUT, VOUT, GND, GND, B, A, A, GND; великі — VIN, GND, GND, VOUT. Допустимий струм штиря гребінки не прочитано — TBD."
       ],
       "description": "Офіційні функціональні клеми Pololu, без довільних фізичних номерів."
     },
@@ -3664,15 +3687,12 @@
     },
     {
       "ref": "J105",
-      "value": "X05J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S05",
+      "value": "X05C1-PWRC: майданчики проводів 18 AWG, S05",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
       "status": "design",
-      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
-      "mpn": "0039288020",
-      "manufacturer": "Molex",
-      "lcsc": "C490534",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
       "pins": [
         {
           "number": "1",
@@ -3688,15 +3708,15 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X05J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S05; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). S05 від майданчика J117 носійної плати PACK_FUSE."
       ]
     },
     {
       "ref": "J106",
-      "value": "X06J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S06",
+      "value": "X42J2-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S42 (W-C1, LAB5)",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
       "status": "design",
       "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
       "mpn": "0039288020",
@@ -3705,27 +3725,27 @@
       "pins": [
         {
           "number": "1",
-          "name": "E1_N",
+          "name": "GND",
           "type": "passive",
-          "net": "E1_N"
+          "net": "GND"
         },
         {
           "number": "2",
-          "name": "E1_SHUNT_P",
+          "name": "LAB5",
           "type": "passive",
-          "net": "E1_SHUNT_P"
+          "net": "LAB5"
         }
       ],
       "notes": [
-        "Роз'єм джгута X06J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "W2 F2C-FALLBACK (GR-F2C): кінець PWR-A джгута S42 (W-C1) до PWR-C: LAB5 за запобіжником F102 4 A для U553/C552 (група E5 «Сервіс і зовнішні шини» на PWR-C); контакти 1 GND, 2 LAB5."
       ]
     },
     {
       "ref": "J107",
-      "value": "X07J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S07",
+      "value": "X42J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S42 (W-C1, E1_SW)",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
       "status": "design",
       "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
       "mpn": "0039288020",
@@ -3734,9 +3754,9 @@
       "pins": [
         {
           "number": "1",
-          "name": "E1_N",
+          "name": "GND",
           "type": "passive",
-          "net": "E1_N"
+          "net": "GND"
         },
         {
           "number": "2",
@@ -3746,20 +3766,17 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X07J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "W2 F2C-FALLBACK (GR-F2C): кінець PWR-A джгута S42 (W-C1) до PWR-C: E1_SW з #2813 U106 на PWR-C (раніше S07 до задньої стінки); контакти 1 GND, 2 E1_SW; GND несе повернення навантажень PWR-A/PWR-B до паку (вхід S05 тепер на PWR-C, J105)."
       ]
     },
     {
       "ref": "J108",
-      "value": "X10J1-PWR: Molex Mini-Fit Jr. 2×2, верхній вхід, S10",
+      "value": "X10C1-PWRC: майданчики проводів 18 AWG, S10",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
       "status": "design",
-      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
-      "mpn": "0039288040",
-      "manufacturer": "Molex",
-      "lcsc": "C240829",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x03_P5.4mm_D1.4mm_OD2.7mm",
       "pins": [
         {
           "number": "1",
@@ -3778,29 +3795,23 @@
           "name": "E1_USB_PD_SAFE",
           "type": "passive",
           "net": "E1_USB_PD_SAFE"
-        },
-        {
-          "number": "4",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
         }
       ],
       "notes": [
-        "Роз'єм джгута X10J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S10; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Резервний контакт 4 вилки Mini-Fit Jr. 2×2 знято (лунка 1×03)."
       ]
     },
     {
       "ref": "J109",
-      "value": "X05S1-PWR: JST PH 2, верхній вхід, S05",
+      "value": "X05S1-PWRC: JST PH 2, бічний вхід, S05",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
       "status": "design",
-      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
-      "mpn": "B2B-PH-K-S(LF)(SN)",
+      "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+      "mpn": "S2B-PH-K-S(LF)(SN)",
       "manufacturer": "JST",
-      "lcsc": "C131337",
+      "lcsc": "C173752",
       "pins": [
         {
           "number": "1",
@@ -3816,102 +3827,21 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X05S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S05; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
-      ]
-    },
-    {
-      "ref": "J110",
-      "value": "X06S1-PWR: JST PH 5, верхній вхід, S06",
-      "kind": "connector",
-      "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
-      "status": "design",
-      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
-      "mpn": "B5B-PH-K-S(LF)(SN)",
-      "manufacturer": "JST",
-      "lcsc": "C157993",
-      "pins": [
-        {
-          "number": "1",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "AON3V3",
-          "type": "passive",
-          "net": "AON3V3"
-        },
-        {
-          "number": "3",
-          "name": "I2C0_SCL",
-          "type": "passive",
-          "net": "I2C0_SCL"
-        },
-        {
-          "number": "4",
-          "name": "I2C0_SDA",
-          "type": "passive",
-          "net": "I2C0_SDA"
-        },
-        {
-          "number": "5",
-          "name": "INA228_ALERT",
-          "type": "passive",
-          "net": "INA228_ALERT"
-        }
-      ],
-      "notes": [
-        "Роз'єм джгута X06S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
-      ]
-    },
-    {
-      "ref": "J111",
-      "value": "X07S1-PWR: JST PH 3, верхній вхід, S07",
-      "kind": "connector",
-      "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
-      "status": "design",
-      "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
-      "mpn": "B3B-PH-K-S(LF)(SN)",
-      "manufacturer": "JST",
-      "lcsc": "C131339",
-      "pins": [
-        {
-          "number": "1",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "E1_MASTER_OFF",
-          "type": "passive",
-          "net": "E1_MASTER_OFF"
-        },
-        {
-          "number": "3",
-          "name": "E1_SWITCH_A",
-          "type": "passive",
-          "net": "E1_SWITCH_A"
-        }
-      ],
-      "notes": [
-        "Роз'єм джгута X07S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X05S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S05; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 F2C-FALLBACK (GR-F2C): роз’єм стоїть на PWR-C (деталі до 6.5 мм), тому бічний вхід JST PH S*B-PH-K-S замість вертикального B*B (з розеткою 8.0 мм)."
       ]
     },
     {
       "ref": "J112",
-      "value": "X10S1-PWR: JST PH 4, верхній вхід, S10",
+      "value": "X10S1-PWRC: JST PH 4, бічний вхід, S10",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
       "status": "design",
-      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
-      "mpn": "B4B-PH-K-S(LF)(SN)",
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+      "mpn": "S4B-PH-K-S(LF)(SN)",
       "manufacturer": "JST",
-      "lcsc": "C131334",
+      "lcsc": "C157926",
       "pins": [
         {
           "number": "1",
@@ -3939,20 +3869,21 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X10S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S10; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X10S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S10; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 F2C-FALLBACK (GR-F2C): роз’єм стоїть на PWR-C (деталі до 6.5 мм), тому бічний вхід JST PH S*B-PH-K-S замість вертикального B*B (з розеткою 8.0 мм)."
       ]
     },
     {
       "ref": "J113",
-      "value": "X11S1-PWR: JST PH 2, верхній вхід, S11",
+      "value": "X11S1-PWRC: JST PH 2, бічний вхід, S11",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
       "status": "design",
-      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
-      "mpn": "B2B-PH-K-S(LF)(SN)",
+      "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+      "mpn": "S2B-PH-K-S(LF)(SN)",
       "manufacturer": "JST",
-      "lcsc": "C131337",
+      "lcsc": "C173752",
       "pins": [
         {
           "number": "1",
@@ -3968,20 +3899,18 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X11S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S11; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X11S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S11; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 F2C-FALLBACK (GR-F2C): роз’єм стоїть на PWR-C (деталі до 6.5 мм), тому бічний вхід JST PH S*B-PH-K-S замість вертикального B*B (з розеткою 8.0 мм)."
       ]
     },
     {
       "ref": "J114",
-      "value": "X11P1-PWR: Molex Micro-Fit 3.0 2, верхній вхід, S11",
+      "value": "X11C1-PWRC: майданчики проводів 18 AWG, S11",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
       "status": "design",
-      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
-      "mpn": "43650-0215",
-      "manufacturer": "Molex",
-      "lcsc": "C293740",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
       "pins": [
         {
           "number": "1",
@@ -3997,20 +3926,17 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X11P1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S11; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS)."
       ]
     },
     {
       "ref": "J115",
-      "value": "X12P1-PWR: Molex Micro-Fit 3.0 2, верхній вхід, S12",
+      "value": "X12C1-PWRC: майданчики проводів 18 AWG, S12",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
       "status": "design",
-      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
-      "mpn": "43650-0215",
-      "manufacturer": "Molex",
-      "lcsc": "C293740",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
       "pins": [
         {
           "number": "1",
@@ -4026,7 +3952,136 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X12P1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S12; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS)."
+      ]
+    },
+    {
+      "ref": "J118",
+      "value": "X42C1-PWRC: майданчики проводів 18 AWG, S42 (W-C1, E1_SW)",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E1_SW",
+          "type": "passive",
+          "net": "E1_SW"
+        }
+      ],
+      "notes": [
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Кінець PWR-C джгута S42 (W-C1) до J107 на PWR-A: E1_SW з VOUT #2813 U106 і повернення GND."
+      ]
+    },
+    {
+      "ref": "J119",
+      "value": "X42C2-PWRC: майданчики проводів 18 AWG, S42 (W-C1, LAB5)",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "LAB5",
+          "type": "passive",
+          "net": "LAB5"
+        }
+      ],
+      "notes": [
+        "Мідний майданчик під провід (W2 F2C-FALLBACK, GR-F2C) на PWR-C, купувати нічого: PWR-C бере деталі до 6.5 мм, а вертикальні Mini-Fit Jr. / Micro-Fit стоять 12.8 / 9.9 мм. Провід до 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм) паяється в отвір посадкового місця KiCad 10.0.7 SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм, крок 5.4 мм); номери контактів = контакти джгута (tools/assembly_data.py HEADERS). Кінець PWR-C джгута S42 (W-C1) від J106 на PWR-A: LAB5 для U553/C552 і повернення GND."
+      ]
+    },
+    {
+      "ref": "J120",
+      "value": "S02C-PWRC-SIG: JST PHD 2×5, боковий вхід, S02C (W-C2)",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "W2 F2C-FALLBACK (GR-F2C): build/kicad/boards/PWR_C/f2c_graph.py; tools/assembly_data.py HEADERS",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PHD_S10B-PHDSS_2x05_P2.00mm_Horizontal",
+      "mpn": "S10B-PHDSS(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C161672",
+      "pins": [
+        {
+          "number": "1",
+          "name": "I2C0_SCL",
+          "type": "passive",
+          "net": "I2C0_SCL"
+        },
+        {
+          "number": "2",
+          "name": "I2C0_SDA",
+          "type": "passive",
+          "net": "I2C0_SDA"
+        },
+        {
+          "number": "3",
+          "name": "INA228_ALERT",
+          "type": "passive",
+          "net": "INA228_ALERT"
+        },
+        {
+          "number": "4",
+          "name": "IMU_RX",
+          "type": "passive",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "5",
+          "name": "IMU_TX",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "6",
+          "name": "E1_BAT_ADC",
+          "type": "passive",
+          "net": "E1_BAT_ADC"
+        },
+        {
+          "number": "7",
+          "name": "CHG_INHIBIT",
+          "type": "passive",
+          "net": "CHG_INHIBIT"
+        },
+        {
+          "number": "8",
+          "name": "PICO_OFF",
+          "type": "passive",
+          "net": "PICO_OFF"
+        },
+        {
+          "number": "9",
+          "name": "PWR_BUTTON",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        },
+        {
+          "number": "10",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "W2 F2C-FALLBACK (GR-F2C): кінець PWR-C гілки S02C (W-C2) джгута S02: 9 сигналів E1/E5 груп на PWR-C до тих самих контактів J306.1/.2 і J307.8–12/.17/.19 на CTRL, що й раніше через PWR-B J202/J203 (E3 не змінюється). Контакт 10 — резерв. GND у гілці немає: на J306/J307 вільного контакту немає (як у S02B), повернення — через GND S02 і S42 (OPEN: огляд шляху повернення)."
       ]
     }
   ],

@@ -9243,15 +9243,15 @@
       "pins": [
         {
           "number": "1",
-          "name": "CHG_INHIBIT",
+          "name": "NC",
           "type": "passive",
-          "net": "CHG_INHIBIT"
+          "nc": true
         },
         {
           "number": "2",
-          "name": "E1_BAT_ADC",
+          "name": "NC",
           "type": "passive",
-          "net": "E1_BAT_ADC"
+          "nc": true
         },
         {
           "number": "3",
@@ -9363,7 +9363,8 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута S02-PWR-SIG-1 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута S02-PWR-SIG-1 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 F2C-FALLBACK (GR-F2C): сигнали E1/E5 груп на PWR-C (контакти 1, 2) виходять з S02: вони йдуть PWR-C ↔ CTRL гілкою S02C (W-C2, J120) до тих самих контактів J306/J307; тут ці контакти — резерв."
       ]
     },
     {
@@ -9422,33 +9423,33 @@
         },
         {
           "number": "8",
-          "name": "I2C0_SCL",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SCL"
+          "nc": true
         },
         {
           "number": "9",
-          "name": "I2C0_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "nc": true
         },
         {
           "number": "10",
-          "name": "IMU_RX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_RX"
+          "nc": true
         },
         {
           "number": "11",
-          "name": "IMU_TX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_TX"
+          "nc": true
         },
         {
           "number": "12",
-          "name": "INA228_ALERT",
+          "name": "NC",
           "type": "passive",
-          "net": "INA228_ALERT"
+          "nc": true
         },
         {
           "number": "13",
@@ -9476,9 +9477,9 @@
         },
         {
           "number": "17",
-          "name": "PICO_OFF",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_OFF"
+          "nc": true
         },
         {
           "number": "18",
@@ -9488,9 +9489,9 @@
         },
         {
           "number": "19",
-          "name": "PWR_BUTTON",
+          "name": "NC",
           "type": "passive",
-          "net": "PWR_BUTTON"
+          "nc": true
         },
         {
           "number": "20",
@@ -9501,7 +9502,8 @@
       ],
       "notes": [
         "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02B (гілка S02); номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
-        "W2 PWR-L6-PLACE (третій прохід): J203 — вертикальна вилка JST PHD B20B-PHDSS(LF)(SN) верхнього входу (LCSC C471521; каталог JST PHD 05.12.2023, копія LCSC, прочитано 13.11.2026: корпус 6.5 мм над платою, монтажна висота з розеткою 8.8 мм) у зоні 2 нижнього краю PWR-B; дроти J203 — гілка S02B джгута S02 (build/15). W2 PWR-L6-PLACE (четвертий прохід, проба C): J203.2/14/15/18 = EN_HFP/EN_LIME3V3/EN_LNB/FAULT_HFP обміном із J202.5/7/12/16 (FAULT_RTLA, PG_BONI, PG_LNB, PTC_AUX → J202); розпіновки CTRL не змінюються, тож J306.5/7/12/16 ↔ J203.2/14/15/18, решта J307.k ↔ J203.k (build/15)."
+        "W2 PWR-L6-PLACE (третій прохід): J203 — вертикальна вилка JST PHD B20B-PHDSS(LF)(SN) верхнього входу (LCSC C471521; каталог JST PHD 05.12.2023, копія LCSC, прочитано 13.11.2026: корпус 6.5 мм над платою, монтажна висота з розеткою 8.8 мм) у зоні 2 нижнього краю PWR-B; дроти J203 — гілка S02B джгута S02 (build/15). W2 PWR-L6-PLACE (четвертий прохід, проба C): J203.2/14/15/18 = EN_HFP/EN_LIME3V3/EN_LNB/FAULT_HFP обміном із J202.5/7/12/16 (FAULT_RTLA, PG_BONI, PG_LNB, PTC_AUX → J202); розпіновки CTRL не змінюються, тож J306.5/7/12/16 ↔ J203.2/14/15/18, решта J307.k ↔ J203.k (build/15).",
+        "W2 F2C-FALLBACK (GR-F2C): сигнали E1/E5 груп на PWR-C (контакти 8, 9, 10, 11, 12, 17, 19) виходять з S02: вони йдуть PWR-C ↔ CTRL гілкою S02C (W-C2, J120) до тих самих контактів J306/J307; тут ці контакти — резерв."
       ]
     },
     {
@@ -9868,9 +9870,9 @@
         },
         {
           "number": "18",
-          "name": "CHG_INHIBIT",
+          "name": "NC",
           "type": "passive",
-          "net": "CHG_INHIBIT"
+          "nc": true
         },
         {
           "number": "19",
@@ -9880,9 +9882,9 @@
         },
         {
           "number": "20",
-          "name": "E1_BAT_ADC",
+          "name": "NC",
           "type": "passive",
-          "net": "E1_BAT_ADC"
+          "nc": true
         },
         {
           "number": "21",
@@ -10000,9 +10002,9 @@
         },
         {
           "number": "40",
-          "name": "I2C0_SCL",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SCL"
+          "nc": true
         },
         {
           "number": "41",
@@ -10048,9 +10050,9 @@
         },
         {
           "number": "48",
-          "name": "IMU_RX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_RX"
+          "nc": true
         },
         {
           "number": "49",
@@ -10060,9 +10062,9 @@
         },
         {
           "number": "50",
-          "name": "IMU_TX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_TX"
+          "nc": true
         },
         {
           "number": "51",
@@ -10072,9 +10074,9 @@
         },
         {
           "number": "52",
-          "name": "INA228_ALERT",
+          "name": "NC",
           "type": "passive",
-          "net": "INA228_ALERT"
+          "nc": true
         },
         {
           "number": "53",
@@ -10108,9 +10110,9 @@
         },
         {
           "number": "58",
-          "name": "PICO_OFF",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_OFF"
+          "nc": true
         },
         {
           "number": "59",
@@ -10120,9 +10122,9 @@
         },
         {
           "number": "60",
-          "name": "PWR_BUTTON",
+          "name": "NC",
           "type": "passive",
-          "net": "PWR_BUTTON"
+          "nc": true
         },
         {
           "number": "61",
@@ -10156,9 +10158,9 @@
         },
         {
           "number": "66",
-          "name": "I2C0_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "nc": true
         },
         {
           "number": "67",
@@ -10479,9 +10481,9 @@
         },
         {
           "number": "17",
-          "name": "CHG_INHIBIT",
+          "name": "NC",
           "type": "passive",
-          "net": "CHG_INHIBIT"
+          "nc": true
         },
         {
           "number": "18",
@@ -10491,9 +10493,9 @@
         },
         {
           "number": "19",
-          "name": "E1_BAT_ADC",
+          "name": "NC",
           "type": "passive",
-          "net": "E1_BAT_ADC"
+          "nc": true
         },
         {
           "number": "20",
@@ -10611,9 +10613,9 @@
         },
         {
           "number": "39",
-          "name": "I2C0_SCL",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SCL"
+          "nc": true
         },
         {
           "number": "40",
@@ -10659,9 +10661,9 @@
         },
         {
           "number": "47",
-          "name": "IMU_RX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_RX"
+          "nc": true
         },
         {
           "number": "48",
@@ -10671,9 +10673,9 @@
         },
         {
           "number": "49",
-          "name": "IMU_TX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_TX"
+          "nc": true
         },
         {
           "number": "50",
@@ -10683,9 +10685,9 @@
         },
         {
           "number": "51",
-          "name": "INA228_ALERT",
+          "name": "NC",
           "type": "passive",
-          "net": "INA228_ALERT"
+          "nc": true
         },
         {
           "number": "52",
@@ -10719,9 +10721,9 @@
         },
         {
           "number": "57",
-          "name": "PICO_OFF",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_OFF"
+          "nc": true
         },
         {
           "number": "58",
@@ -10731,9 +10733,9 @@
         },
         {
           "number": "59",
-          "name": "PWR_BUTTON",
+          "name": "NC",
           "type": "passive",
-          "net": "PWR_BUTTON"
+          "nc": true
         },
         {
           "number": "60",
@@ -10767,9 +10769,9 @@
         },
         {
           "number": "65",
-          "name": "I2C0_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "nc": true
         },
         {
           "number": "66",

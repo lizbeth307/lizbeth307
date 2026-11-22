@@ -1,0 +1,168 @@
+{
+ "date": "2026-11-22",
+ "distributor": "LCSC",
+ "entries": {
+  "C161672": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Copper Alloy",
+    "Contact Plating": "Tin",
+    "Current Rating": "3A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "5",
+    "Number of Pins": "10P",
+    "Number of Rows": "2",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "2x5P",
+    "Pitch": "2mm",
+    "Plastic Material": "Glass fiber reinforced PA66",
+    "Reference Series": "PHD",
+    "Row Spacing": "2mm",
+    "Voltage Rating": "250V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "11.9mm",
+    "Y-Width of Bottom Edge on Board": "9mm",
+    "Z-Height of the Board": "5mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S10B-PHDSS-LF-SN_C161672.pdf",
+   "description": "-25℃~+85℃ 10P 11.9mm 2 250V 2mm 2mm 2x5P 3A 5 5mm 9mm Copper alloy Glass fiber reinforced PA66 PHD Right Angle Tin UL94V-0 White Push-Pull,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-22T14:30:19Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S10B-PHDSS(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.4639
+    ],
+    [
+     50,
+     0.3587
+    ],
+    [
+     150,
+     0.3135
+    ],
+    [
+     500,
+     0.2572
+    ],
+    [
+     2500,
+     0.2322
+    ],
+    [
+     5000,
+     0.2172
+    ]
+   ],
+   "stock": 8029,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s10b-phdss-lf-sn_C161672.html"
+  },
+  "C2073490": {
+   "attributes": {
+    "Power(Watts)": "3W",
+    "Resistance": "15mΩ",
+    "Temperature Coefficient": "±50ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Current Sense Resistor"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-CRA2512-FZ-R015ELF_C2073490.pdf",
+   "description": "15mΩ 3W Current Sense Resistor ±1% ±50ppm/℃ 2512 Current Sense Resistors / Shunt Resistors ROHS",
+   "fetched_utc": "2026-11-22T14:30:20Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "CRA2512-FZ-R015ELF",
+   "package": "2512",
+   "price_usd": [
+    [
+     1,
+     0.4184
+    ],
+    [
+     50,
+     0.3117
+    ],
+    [
+     150,
+     0.2661
+    ],
+    [
+     500,
+     0.209
+    ],
+    [
+     2500,
+     0.1836
+    ],
+    [
+     4000,
+     0.1684
+    ]
+   ],
+   "stock": 4741,
+   "url": "https://www.lcsc.com/product-detail/current-sense-resistors-shunt-resistors_bourns-cra2512-fz-r015elf_C2073490.html"
+  },
+  "C2887910": {
+   "attributes": {
+    "Common Mode Rejection Ratio (CMRR)": "154dB",
+    "Differential Voltage": "±163.84mV",
+    "Features": "High-side detection、Low-side detection、Bidirectional detection、Power monitoring、Digital output interface、Programmable threshold alarm、Integrated ADC、External shunt",
+    "Ib - Input Bias Current": "2.5nA",
+    "Input Offset Voltage Drift(Vos TC)": "0.01uV/℃",
+    "Operating Temperature": "-40℃~+125℃",
+    "Output Current": "10mA",
+    "Quiescent Current": "640uA",
+    "Single Supply": "2.7V~5.5V",
+    "Vcm - Common Mode Voltage": "-300mV~85V",
+    "Vos - Input Offset Voltage": "1uV"
+   },
+   "datasheet": "https://www.ti.com/cn/lit/gpn/ina228",
+   "description": "-300mV~85V -40℃~+125℃ 0.01uV/℃ 10mA 154dB 1uV 2.5nA 2.7V~5.5V 640uA High-side detection、Low-side detection、Bidirectional detection、Input filter、Power monitoring、Programmable threshold alarm、Integrated ADC、Enable/shutdown function ±163.84mV VSSOP-10-0.5mm Current Sense Amplifiers ROHS",
+   "fetched_utc": "2026-11-22T14:30:21Z",
+   "jlc_library": "extended",
+   "manufacturer": "Texas Instruments",
+   "mpn": "INA228AIDGSR",
+   "package": "VSSOP-10-0.5mm",
+   "price_usd": [
+    [
+     1,
+     6.7848
+    ],
+    [
+     10,
+     5.9374
+    ],
+    [
+     30,
+     5.4334
+    ],
+    [
+     100,
+     4.923
+    ],
+    [
+     500,
+     4.6874
+    ],
+    [
+     1000,
+     4.5811
+    ]
+   ],
+   "stock": 1,
+   "url": "https://www.lcsc.com/product-detail/current-sense-amplifiers_texas-instruments-ina228aidgsr_C2887910.html"
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C161672",
+  "C2073490",
+  "C2887910"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}

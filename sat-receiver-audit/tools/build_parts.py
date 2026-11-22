@@ -64,7 +64,8 @@ HARNESS_ROLLUP = ROOT / 'build/16-dzhgut-pidsumok.csv'
 # PWR-A / PWR-B (W2 AREA partition, pcb/partition-spec.json; pcb/prepare.py domains): two JLC order lines for the stack.
 BOARD3 = {'PWR_MAIN': 'PWR_A', 'PWR_BRANCH': 'PWR_A', 'USB_POWER': 'PWR_A', 'PWR_BRANCH_SW': 'PWR_B', 'USB_POWER_SW': 'PWR_B', 'RF_HMC': 'RF', 'RF_HF': 'RF', 'RF_INJECTOR': 'RF', 'DC_CORE': 'RF', 'CTRL_HMI': 'CTRL',
           # small boards off the three plate boards (pcb/prepare.py DOMAIN_OVERRIDE): each is its own JLC order line
-          'ENC': 'ENC', 'HATCH': 'HATCH', 'T7_INSERT': 'T7_INSERT', 'HDMI_INSERT': 'HDMI_INSERT', 'IMU_CARRIER': 'IMU_CARRIER', 'PACK_FUSE': 'PACK_FUSE'}
+          'ENC': 'ENC', 'HATCH': 'HATCH', 'T7_INSERT': 'T7_INSERT', 'HDMI_INSERT': 'HDMI_INSERT', 'IMU_CARRIER': 'IMU_CARRIER', 'PACK_FUSE': 'PACK_FUSE',
+          'PWR_ENTRY': 'PWR_C'}  # W2 F2C-FALLBACK: PWR-C, the third power board (fallback F2-C), its own JLC order line
 SHEET_BOARD = {'E1': 'PWR_A', 'E2': 'PWR_A', 'E3': 'CTRL', 'E4': 'RF', 'E5': 'PWR_A'}
 SECTIONS = [('pcb_smt', 'Плати: SMD (збирання JLC PCBA)'), ('pcb_tht', 'Плати: THT (ручне паяння або THT-збирання)'),
             ('pcb_module', 'Модулі, що паяються на плату'), ('module', 'Готові модулі й вузли'), ('panel', 'Панель'),

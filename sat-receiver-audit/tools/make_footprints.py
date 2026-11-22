@@ -328,7 +328,33 @@ def pololu_d36v50fx():
     return fp.render(-13.8, 13.8)
 
 
+def pololu_2813():
+    """Pololu #2813 Big Pushbutton Power Switch HP soldered flush onto PWR-C (W2 F2C-FALLBACK), dimension drawing psw03b (12 January 2016)."""
+    fp = FP('Pololu_2813_psw03b', 'Pololu #2813 Big Pushbutton Power Switch with Reverse Voltage Protection HP soldered flush on its land, top view of the module '
+            'as it sits on the board (dimension drawing psw03b, 12 January 2016): 16 holes D1.02 in two columns 17.78 apart, 1.27 mm from the side edges, '
+            'pitch 2.54, lowest 2.54 from the bottom edge (VIN column VIN, VIN, GND, GND, ON, OFF, CTRL, GND and VOUT column VOUT, VOUT, GND, GND, B, A, A, GND '
+            'from the large-hole end, bottom-view callouts mirrored); 4 large holes D2.18 (VIN, GND, GND, VOUT) at pitch 5.00, 2.29 from the top edge and 2.66 '
+            'from the side edges, here plated 2.2 mm holes for 18 AWG links (Pololu: above 5 A use the large holes or both 0.1 in holes per node); board '
+            '20.32 x 25.4, parts 2.4 above its 1.57 mm board', 'Pololu 2813 pushbutton power switch module land', smd=False)
+    w, h = 20.32, 25.4
+    vin = ['VIN', 'VIN', 'GND', 'GND', 'ON', 'OFF', 'CTRL', 'GND']
+    vout = ['VOUT', 'VOUT', 'GND', 'GND', 'B', 'A', 'A', 'GND']
+    for k in range(8):
+        y_top = 20.32 - 2.54 * k          # from the module bottom edge, large-hole end first
+        fp.tht(vin[k], 1.27 - w / 2, h / 2 - y_top, 1.7, 1.02, shape='rect' if k == 0 else 'circle')
+        fp.tht(vout[k], 19.05 - w / 2, h / 2 - y_top, 1.7, 1.02)
+    for x_top, name in ((2.66, 'VIN'), (7.66, 'GND'), (12.66, 'GND'), (17.66, 'VOUT')):
+        fp.tht(name, x_top - w / 2, h / 2 - (h - 2.29), 3.6, 2.2)
+    fp.rect(-w / 2, -h / 2, w / 2, h / 2, 'F.Fab', 0.1)
+    fp.rect(-w / 2 - 0.25, -h / 2 - 0.25, w / 2 + 0.25, h / 2 + 0.25, 'F.CrtYd', 0.05)
+    fp.rect(-w / 2 - 0.11, -h / 2 - 0.11, w / 2 + 0.11, h / 2 + 0.11, 'F.SilkS', 0.12)
+    fp.text('VIN', 1.27 - w / 2 + 2.6, h / 2 - 20.32, 'F.Fab', 0.8)
+    fp.text('VOUT', 19.05 - w / 2 - 2.9, h / 2 - 20.32, 'F.Fab', 0.8)
+    return fp.render(-h / 2 - 1.2, h / 2 + 1.2)
+
+
 CUSTOM_BUILDERS = {
+    'Pololu_2813_psw03b': pololu_2813,
     'TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm': rpw0010a,
     'TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm': lambda: qfn(
         'TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm', 'TI RGW0020A VQFN 20 pin 5x5 mm; TI land pattern example 4219039/A: pads 0.75x0.31, rows 4.65 apart, pitch 0.65, thermal pad 3.15 (TPS7A47 datasheet page 30); paste 4x1.37 per TI stencil example',
@@ -360,6 +386,10 @@ DERIVED = {
 }
 
 PROVENANCE = {
+    'Pololu_2813_psw03b': {'kind': 'custom', 'source': 'https://www.pololu.com/file/0J1102/big-pushbutton-power-switch-with-reverse-voltage-protection-dimension-diagram.pdf',
+                           'drawing': 'psw03b dimension diagram, 12 January 2016: views 1 (board dimensions, top), 2 (connector callouts, bottom) and 3 (isometric, '
+                                      'bottom-side labels); rendered with PyMuPDF and read from the images; large holes plated 2.2 mm (design value for an 18 AWG link)',
+                           'read': '2026-11-22'},
     'TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm': {'kind': 'custom', 'source': 'https://www.ti.com/lit/ds/symlink/tps25947.pdf', 'drawing': 'RPW0010A land pattern example 4225183/A (page 73)', 'read': '2026-10-24'},
     'TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm': {'kind': 'custom', 'source': 'https://www.ti.com/lit/ds/symlink/tps7a47.pdf', 'drawing': 'RGW0020A 4219039/A (pages 29-31)', 'read': '2026-10-24'},
     'TI_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.16x2.16mm': {'kind': 'custom', 'source': 'https://www.ti.com/lit/ds/symlink/ina3221.pdf', 'drawing': 'RGV0016A 4219037/A (pages 47-49)', 'read': '2026-10-24'},

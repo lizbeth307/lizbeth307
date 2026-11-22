@@ -45,7 +45,9 @@
   "design/parts/snapshots/2026-11-13-w2-grzone2-lcsc.json",
   "design/parts/snapshots/2026-11-13-w2-grzone2-manual.json",
   "design/parts/snapshots/2026-11-13-w2-pwrl6p3-manual.json",
-  "design/parts/snapshots/2026-11-13-w2-pwrl6p3-lcsc.json"
+  "design/parts/snapshots/2026-11-13-w2-pwrl6p3-lcsc.json",
+  "design/parts/snapshots/2026-11-22-w2-f2c-manual.json",
+  "design/parts/snapshots/2026-11-22-w2-f2c-lcsc.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -1070,7 +1072,8 @@
     "C4414",
     "C4415",
     "C4416",
-    "C4417"
+    "C4417",
+    "C101"
    ]
   },
   {
@@ -3433,7 +3436,8 @@
     }
    ],
    "refs": [
-    "C519"
+    "C519",
+    "C102"
    ]
   },
   {
@@ -5247,6 +5251,21 @@
    "note": "Board-side harness header (W2 GR-3): J202 S02-PWR-SIG-1, J306 S02-CTRL-SIG-1, J307 S02-CTRL-SIG-2 on CTRL, PWR_B (J203 S02-PWR-SIG-2 became the top-entry B20B-PHDSS, entry J-HDR-B20BPHDSS, W2 PWR-L6-PLACE third pass). Part, LCSC SKU and footprint as harness_families PHD 20 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
+   "id": "J-HDR-S10BPHDSS",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PHD_S10B-PHDSS_2x05_P2.00mm_Horizontal",
+   "manufacturer": "JST",
+   "mpn": "S10B-PHDSS(LF)(SN)",
+   "sku": {
+    "lcsc": "C161672"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "note": "Board-side harness header (W2 F2C-FALLBACK (GR-F2C)): J120 S02C-PWRC-SIG on PWR_C, the PWR-C end of harness branch S02C (W-C2) to the CTRL headers J306/J307; side entry for the 6.5 mm height of PWR-C (JLC listing: 5 mm on the board). The mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here.",
+   "refs": [
+    "J120"
+   ]
+  },
+  {
    "id": "J-HDR-B20BPHDSS",
    "mount": "pcb_tht",
    "footprint": "Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical",
@@ -5295,7 +5314,9 @@
     "J312",
     "J316",
     "J317",
-    "J419"
+    "J419",
+    "J112",
+    "J507"
    ],
    "note": "Board-side harness header (W2 GR-3): J309 X03S2-CTRL, J310 S15-30-CTRL, J312 X26S1-CTRL, J316 X37S1-CTRL, J317 X38S1-CTRL, J419 X03S2-RF on CTRL, RF. Part, LCSC SKU and footprint as harness_families PH 4 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
@@ -5357,7 +5378,9 @@
    "refs": [
     "J315",
     "J318",
-    "J319"
+    "J319",
+    "J109",
+    "J113"
    ],
    "note": "Board-side harness header (W2 GR-3): J315 X29S1-CTRL, J318 X39S1-CTRL, J319 X40S1-CTRL on CTRL. Part, LCSC SKU and footprint as harness_families PH 2 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
@@ -5388,27 +5411,10 @@
    },
    "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
    "refs": [
-    "J105",
     "J106",
     "J107"
    ],
    "note": "Board-side harness header (W2 GR-3): J105 X05J1-PWR, J106 X06J1-PWR, J107 X07J1-PWR on PWR_A. Part, LCSC SKU and footprint as harness_families MFJ 2 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
-  },
-  {
-   "id": "J-HDR-0039288040",
-   "mount": "pcb_tht",
-   "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
-   "manufacturer": "Molex",
-   "mpn": "0039288040",
-   "sku": {
-    "lcsc": "C240829",
-    "digikey": "WM23801-ND"
-   },
-   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
-   "refs": [
-    "J108"
-   ],
-   "note": "Board-side harness header (W2 GR-3): J108 X10J1-PWR on PWR_A. Part, LCSC SKU and footprint as harness_families MFJ 4 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
    "id": "J-HDR-B2BPH",
@@ -5421,26 +5427,9 @@
    },
    "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
    "refs": [
-    "J109",
-    "J113",
     "J510"
    ],
    "note": "Board-side harness header (W2 GR-3): J109 X05S1-PWR, J113 X11S1-PWR, J510 X15S1-HATCH on HATCH, PWR_A. Part, LCSC SKU and footprint as harness_families PH 2 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
-  },
-  {
-   "id": "J-HDR-B5BPH",
-   "mount": "pcb_tht",
-   "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
-   "manufacturer": "JST",
-   "mpn": "B5B-PH-K-S(LF)(SN)",
-   "sku": {
-    "lcsc": "C157993"
-   },
-   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
-   "refs": [
-    "J110"
-   ],
-   "note": "Board-side harness header (W2 GR-3): J110 X06S1-PWR on PWR_A. Part, LCSC SKU and footprint as harness_families PH 5 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
    "id": "J-HDR-B3BPH",
@@ -5453,26 +5442,9 @@
    },
    "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
    "refs": [
-    "J111",
     "J513"
    ],
    "note": "Board-side harness header (W2 GR-3): J111 X07S1-PWR, J513 X30S1-HATCH on HATCH, PWR_A. Part, LCSC SKU and footprint as harness_families PH 3 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
-  },
-  {
-   "id": "J-HDR-B4BPH",
-   "mount": "pcb_tht",
-   "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
-   "manufacturer": "JST",
-   "mpn": "B4B-PH-K-S(LF)(SN)",
-   "sku": {
-    "lcsc": "C131334"
-   },
-   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
-   "refs": [
-    "J112",
-    "J507"
-   ],
-   "note": "Board-side harness header (W2 GR-3): J112 X10S1-PWR, J507 X32S1-PWR on PWR_A. Part, LCSC SKU and footprint as harness_families PH 4 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
    "id": "J-HDR-436500215",
@@ -5485,8 +5457,6 @@
    },
    "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
    "refs": [
-    "J114",
-    "J115",
     "J205",
     "J509"
    ],
@@ -5576,6 +5546,28 @@
    "refs": [
     "J116",
     "J117"
+   ]
+  },
+  {
+   "id": "WP-SOLDERWIRE-1SQMM-1X02",
+   "mount": "pcb_pad",
+   "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+   "note": "Plated solder-wire lands on PWR-C (W2 F2C-FALLBACK (GR-F2C): J105 S05, J114 S11, J115 S12, J118/J119 S42); nothing to buy. PWR-C takes parts of 6.5 mm or less, so the vertical Mini-Fit Jr. / Micro-Fit headers (12.8 / 9.9 mm) become lands for up to 18 AWG: Alpha Wire 5857 (19/30, conductor 1.27 mm; snapshot 2026-11-07-w2-src1-manual.json web:alphawire-5857), 19 x 0.0507 mm2 = 0.96 mm2 <= 1 mm2, 1.27 mm <= D 1.4 mm (drill 1.75 mm), pitch 5.4 mm. Selection as build/15 «Майданчики проводів малих плат (W2 GR-4)».",
+   "refs": [
+    "J105",
+    "J114",
+    "J115",
+    "J118",
+    "J119"
+   ]
+  },
+  {
+   "id": "WP-SOLDERWIRE-1SQMM-1X03",
+   "mount": "pcb_pad",
+   "footprint": "Connector_Wire:SolderWire-1sqmm_1x03_P5.4mm_D1.4mm_OD2.7mm",
+   "note": "Plated solder-wire lands on PWR-C (W2 F2C-FALLBACK (GR-F2C): J108 S10); nothing to buy. PWR-C takes parts of 6.5 mm or less, so the vertical Mini-Fit Jr. / Micro-Fit headers (12.8 / 9.9 mm) become lands for up to 18 AWG: Alpha Wire 5857 (19/30, conductor 1.27 mm; snapshot 2026-11-07-w2-src1-manual.json web:alphawire-5857), 19 x 0.0507 mm2 = 0.96 mm2 <= 1 mm2, 1.27 mm <= D 1.4 mm (drill 1.75 mm), pitch 5.4 mm. Selection as build/15 «Майданчики проводів малих плат (W2 GR-4)».",
+   "refs": [
+    "J108"
    ]
   },
   {
@@ -5719,34 +5711,41 @@
    ]
   },
   {
-   "id": "U-ADAFRUIT-5832",
-   "mount": "module",
+   "id": "U-INA228AIDGSR",
+   "mount": "pcb_smt",
    "footprint": "Package_SO:MSOP-10_3x3mm_P0.5mm",
-   "manufacturer": "Adafruit",
-   "mpn": "5832",
+   "manufacturer": "Texas Instruments",
+   "mpn": "INA228AIDGSR",
    "sku": {
-    "web": "adafruit-5832"
+    "lcsc": "C2887910"
    },
-   "match": "5832",
-   "single_source": "Breakout carrying the INA228 and the 15 mΩ shunt (R101/C101/C102 are on it)",
-   "note": "U102 represents the purchased breakout; its MSOP-10 footprint field documents the chip package only and is never placed.",
+   "match": "INA228AIDGSR",
+   "single_source": "TI INA228 (the firmware uses its CHARGE/ENERGY registers, E1 U102 notes)",
+   "note": "W2 F2C-FALLBACK (GR-F2C): board part on PWR-C with its shunt R101 and VS decoupling C101/C102 (the Adafruit 5832 breakout stood 10.1 mm with its terminal block, above the 6.5 mm height of PWR-C). LCSC stock of every INA228 listing was 0-1 on 2026-11-22 (2026-11-22-w2-f2c-lcsc.json, -manual.json web:ti-ina228): sourcing OPEN.",
    "refs": [
     "U102"
    ]
   },
   {
-   "id": "ON-ADAFRUIT-5832",
-   "mount": "on_module",
-   "note": "Parts of the purchased Adafruit 5832 breakout; never bought or placed separately.",
+   "id": "R-2512-CRA2512-FZ-R015ELF",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "2512",
+   "footprint": "Resistor_SMD:R_2512_6332Metric",
+   "manufacturer": "Bourns",
+   "mpn": "CRA2512-FZ-R015ELF",
+   "sku": {
+    "lcsc": "C2073490"
+   },
+   "single_source": "INA228 shunt of PWR-C: 15 mOhm 1 % 3 W 50 ppm/C (Bourns CRA2512 REV. 07/26, manual web:bourns-cra2512); no second source checked on 2026-11-22",
+   "note": "W2 F2C-FALLBACK (GR-F2C): replaces R1 of the Adafruit 5832 (HoLLR2512-2W-15mR-1 %, no maker data sheet). Land pattern: KiCad R_2512_6332Metric against the Bourns recommended layout A 4.0 / B 2.1 / L 4.1 mm: check before release (OPEN).",
    "refs": [
-    "C101",
-    "C102",
     "R101"
    ]
   },
   {
    "id": "U-POLOLU-2813",
-   "mount": "module",
+   "mount": "pcb_module",
    "manufacturer": "Pololu",
    "mpn": "2813",
    "sku": {
@@ -5754,10 +5753,11 @@
    },
    "match": "2813",
    "single_source": "Pololu only",
-   "note": "Botland PLL-05117 per 10-bom row 63; Pololu shows \"Rationed\".",
+   "note": "Botland PLL-05117 per 10-bom row 63; Pololu shows \"Rationed\". W2 F2C-FALLBACK (GR-F2C): soldered flush onto its land on PWR-C (SR_RX_Custom:Pololu_2813_psw03b, drawing psw03b read 2026-11-22, manual web:pololu-psw03b-dimensions): both 0.1 in holes and the large hole of each power node joined (Pololu: above 5 A use the large holes or both 0.1 in holes). Header pin current not read: TBD.",
    "refs": [
     "U106"
-   ]
+   ],
+   "footprint": "SR_RX_Custom:Pololu_2813_psw03b"
   },
   {
    "id": "U-LM61460AANRJRR",

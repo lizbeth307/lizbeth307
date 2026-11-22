@@ -113,13 +113,13 @@ SOURCES = {
 BOARD_OF_DOMAIN = {  # build/15 «Кількість плат»; PWR = the PWR-A/PWR-B stack, one harness unit (PHYSICAL_BOARD below)
     "PWR_MAIN": "PWR", "PWR_BRANCH": "PWR", "USB_POWER": "PWR", "PWR_BRANCH_SW": "PWR", "USB_POWER_SW": "PWR",
     "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF",
-    "CTRL_HMI": "CTRL", "HATCH": "HATCH",
+    "CTRL_HMI": "CTRL", "HATCH": "HATCH", "PWR_ENTRY": "PWRC",  # W2 F2C-FALLBACK: PWR-C, its own harness unit (S42 to PWR, S02C to CTRL)
 }
 # Off-plate board domains of pcb/prepare.py whose parts belong to a module or cable unit here (no deviation; W2 GR-4: their boundary refs too):
 # ENC (ENCM/ENCV), T7_INSERT (T7A: J514-J517), HDMI_INSERT (HDMIA), IMU_CARRIER (IMUPACK: J518, J320-J322), PACK_FUSE (PACK: J116/J117).
 # Boards whose PH headers must be side entry: their envelope height is 5.5 mm (RF, CTRL) or 6.5 mm (ENC) and a
 # top-entry PH stands 8 mm with its housing (JST ePH); the side-entry header stands 4.8 mm (mechanical/params/boards.json).
-SIDE_ENTRY_UNITS = ("CTRL", "RF", "ENCM", "ENCV")
+SIDE_ENTRY_UNITS = ("CTRL", "RF", "ENCM", "ENCV", "PWRC")  # PWRC: 6.5 mm envelope (W2 F2C-FALLBACK)
 SIDE_ENTRY_PH_MAX = 8  # S16B-PH-K-S is not stocked (parts DB): 16-pin groups become 2 x 8 (build/15 «Сигнальні джгути»)
 
 UNITS = [
@@ -152,9 +152,9 @@ UNITS = [
      "x 161.7–172.4, y 11.5–37.9, z 46.5–64.3 (з pack_fuse_board) — над розширенням пластини біля правого торця лотка, на 2 стійках PEM SO-M2.5-6ZI 6 мм (M-07 PF1–PF2; під носієм — NTC корпусу TH302), "
      "запобіжник догори — доступний, коли знято передню половину (W2 MECH-5); провід BT104.+ → майданчик J116 (мідь до F101.1) — найкоротший, "
      "18 AWG (його захищає лише BMS, DOCP 40±10 A, 02 §2); провід S05 — від майданчика J117 (мідь від F101.2), W2 GR-4"),
-    ("INA", "module", "Adafruit INA228 5832 (U102, R101, C101, C102)", "задній шар під екраном HF+, на бобишках задньої стінки x 28.5–54.3, y 44.5–64.8, z 6–16.1 "
-     "(layout ina228; W2 MECH-3 — задній шар, бо над PWR-A мезонін PWR-B; W2 MECH-5 — клемник VIN−/VBUS/VIN+ на грані +y, куди приходить S06, гребінка JP2 — на грані −y); кріплення — F09"),
-    ("SWM", "module", "Pololu #2813 (U106)", "задній шар, на друкованому майданчику задньої стінки x 93.3–113.6, y 39–64.4, z 5.5–15.6 (layout swm_2813, W2 MECH-3); кріплення — F05"),
+    ("PWRC", "board", "Силова плата PWR-C (PWR_ENTRY, W2 F2C-FALLBACK): вхід батареї E1 з INA228 U102 і шунтом R101, Pololu #2813 U106 на майданчику, "
+     "UV/AON, сервісний заряд, захист USB-PD і сервіс IMU E5", "передній прошарок між лицьовою стінкою і батарейним лотком (mechanical/params/boards.json PWR_C, "
+     "W2 F2C-FALLBACK; S06/S07 видалено): джгут S42 (W-C1) — до нижнього краю PWR-A, гілка S02C (W-C2) — до CTRL; рішення build/15 «F2-C прийнято (W2 F2C-FALLBACK)»"),
     ("CHG", "module", "IP2368 COUT (U110, R117–R120, C118, TH102)", "лицьовий бік пластини вгорі праворуч x 172–220, y 122.5–156.5 (layout ip2368; "
      "R-IP2368 ≥10 мм від батареї)"),
     ("HUB", "module", "Adafruit 5997 CH334F (U510)", "задній шар під екраном HF+, на 4 бобишках задньої стінки x 55.3–86.9, y 39–59.3, z 6–13.3 "
@@ -200,14 +200,14 @@ UNIT_OF_REF = {
     "J301": "Q6A.HDR", "U500": "Q6A.CORE", "J521": "Q6A.J21", "J511": "Q6A.J5", "J512": "Q6A.J2",
     "J520": "Q6A.HDMI", "J530": "Q6A.MKEY", "J522": "Q6A.EDL", "J303": "Q6A.RTC", "BT301": "Q6A.RTC",
     "BT101": "PACK", "BT102": "PACK", "BT103": "PACK", "BT104": "PACK", "U101": "PACK", "J102": "PACK", "TH101": "PACK",
-    "U102": "INA", "R101": "INA", "C101": "INA", "C102": "INA",
+    # W2 F2C-FALLBACK: U102/R101/C101/C102 (INA228 and shunt) and U106 (#2813) are PWR-C board parts (domain PWR_ENTRY -> unit PWRC).
     # U108 sits on PWR: its output reaches F102 through PWR copper, not a crimped harness, so the
     # E1-05 headroom budget (F102 ≤10 mΩ, E1→E2 ≤10 mΩ) is not spent on wire and contacts (ASM-R5).
     # U107 sits on PWR as well (build/15 «Кількість плат», 07.11.2026): the SYS12 link is PWR copper, no harness S08.
-    "U106": "SWM", "U107": "PWR", "U108": "PWR",
+    "U107": "PWR", "U108": "PWR",
     "U110": "CHG", "R117": "CHG", "R118": "CHG", "R119": "CHG", "R120": "CHG", "C118": "CHG", "TH102": "CHG",
     # F101 at the pack (STACK D2 «біля батареї»): every harness wire of the battery circuit is downstream of it (ASM-R1).
-    "F101": "PACK", "F102": "PWR", "F103": "PWR", "F104": "PWR", "F201": "PWR", "F202": "PWR",
+    "F101": "PACK", "F102": "PWR", "F103": "PWRC", "F104": "PWR", "F201": "PWR", "F202": "PWR",
     "J101": "XT30", "J103": "USBC",
     "U510": "HUB", "U540": "T7", "U520": "DISP", "U530": "RISER", "A415": "LIME",
     "A411": "RTLA", "J543": "RTLA", "A412": "RTLB", "J541": "RTLB", "A414": "HFP", "J544": "HFP",
@@ -231,11 +231,11 @@ UNIT_OF_REF = {
     "A406": "BONI", "W425": "SPOD", "NT401": "RF",
     "J409": "RF", "J410": "RF", "J411": "RF", "J412": "RF",
 }
-# Test points of E1/E2 sit on the power board.
+# Test points of E1/E2 sit on the power board (W2 F2C-FALLBACK: TP103-TP108 on PWR-C).
 for _n in list(range(101, 109)) + list(range(201, 217)) + [2901, 2902, 2903]:
-    UNIT_OF_REF[f"TP{_n}"] = "PWR"
-# FAULT_N test points of the thin-branch switches (W2 GR-1) sit beside their switch: U315 on CTRL, U553 on PWR.
-UNIT_OF_REF.update({"TP301": "CTRL", "TP503": "PWR"})
+    UNIT_OF_REF[f"TP{_n}"] = "PWRC" if 103 <= _n <= 108 else "PWR"
+# FAULT_N test points of the thin-branch switches (W2 GR-1) sit beside their switch: U315 on CTRL, U553 on PWR-C (W2 F2C-FALLBACK).
+UNIT_OF_REF.update({"TP301": "CTRL", "TP503": "PWRC"})
 # Bare parts drawn on E3 but built into the IMU pack (E3 group "External IMU").
 UNIT_OF_GROUP = {("E3", "External IMU"): "IMUPACK"}
 # Physical board of a pcb/prepare.py domain (the 'board' column of build/16-dzhgut-rozyemy.csv). The harness unit PWR is the
@@ -244,7 +244,7 @@ UNIT_OF_GROUP = {("E3", "External IMU"): "IMUPACK"}
 PHYSICAL_BOARD = {"PWR_MAIN": "PWR_A", "PWR_BRANCH": "PWR_A", "USB_POWER": "PWR_A", "PWR_BRANCH_SW": "PWR_B", "USB_POWER_SW": "PWR_B",
                   "CTRL_HMI": "CTRL", "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF", "HATCH": "HATCH", "ENC": "ENC",
                   # the insert boards (W2 GR-4): a header there (J514) is listed on its own board
-                  "T7_INSERT": "T7_INSERT", "HDMI_INSERT": "HDMI_INSERT", "IMU_CARRIER": "IMU_CARRIER", "PACK_FUSE": "PACK_FUSE"}
+                  "T7_INSERT": "T7_INSERT", "HDMI_INSERT": "HDMI_INSERT", "IMU_CARRIER": "IMU_CARRIER", "PACK_FUSE": "PACK_FUSE", "PWR_ENTRY": "PWR_C"}
 # PWR-B is a mezzanine on the PWR-A L, joined by the Samtec B2B pair (pcb/partition-spec.json, W2 AREA), so BOARD_OF_DOMAIN keeps
 # one harness unit PWR for both. Source of the dual-row PHD headers (W2 GR-3), set here after the units so that the line citations
 # into this file (side-entry rule and ENC units: build/15, pcb/README.md, pcb/boards/ENC.json) keep their numbers.
@@ -262,8 +262,8 @@ SOURCES["JST-PHD"] = ("https://datasheet.lcsc.com/datasheet/pdf/5f2def6b1b145b42
 HEADERS = {
     "J304": ("X01I1-CTRL", {"S01": "1 3 5 8-10 12-15 17 20 25 27-30 32 34 35 38-40"}),
     "J305": ("X02P1-CTRL", {"S02": "1-4"}),
-    "J306": ("S02-CTRL-SIG-1", {"S02": "1-4 6 8-11 13-15 17-20", "S02B": "5 7 12 16"}),  # W2 PWR-L6-PLACE probe C: 5/7/12/16 to J203
-    "J307": ("S02-CTRL-SIG-2", {"S02B": "1 3-13 16 17 19 20", "S02": "2 14 15 18"}),  # branch S02B to J203; 2/14/15/18 to J202 (probe C)
+    "J306": ("S02-CTRL-SIG-1", {"S02": "3 4 6 8-11 13-15 17-20", "S02B": "5 7 12 16", "S02C": "1 2"}),  # probe C: 5/7/12/16 to J203; F2C: 1/2 to J120
+    "J307": ("S02-CTRL-SIG-2", {"S02B": "1 3-7 13 16 20", "S02": "2 14 15 18", "S02C": "8-12 17 19"}),  # S02B to J203; S02 to J202; S02C to J120 (F2C)
     "J308": ("X03S1-CTRL", {"S03": "1-8"}),
     "J309": ("X03S2-CTRL", {"S03": "1-4"}),
     "J310": ("S15-30-CTRL", {"S15": "1", "S30": "2-4"}),
@@ -280,26 +280,26 @@ HEADERS = {
     "J419": ("X03S2-RF", {"S03": "1-4"}),
     "J420": ("X04S1-RF", {"S04": "1-8"}),
     "J104": ("X02P1-PWR", {"S02": "1-4"}),
-    "J105": ("X05J1-PWR", {"S05": "1 2"}),
-    "J106": ("X06J1-PWR", {"S06": "1 2"}),
-    "J107": ("X07J1-PWR", {"S07": "1 2"}),
-    "J108": ("X10J1-PWR", {"S10": "1-3"}),
-    "J109": ("X05S1-PWR", {"S05": "1"}),
-    "J110": ("X06S1-PWR", {"S06": "1-5"}),
-    "J111": ("X07S1-PWR", {"S07": "1-3"}),
-    "J112": ("X10S1-PWR", {"S10": "1-4"}),
-    "J113": ("X11S1-PWR", {"S11": "1 2"}),
-    "J114": ("X11P1-PWR", {"S11": "1 2"}),
-    "J115": ("X12P1-PWR", {"S12": "1 2"}),
+    "J105": ("X05C1-PWRC", {"S05": "1 2"}),  # W2 F2C-FALLBACK: J105, J108, J114, J115 are 18 AWG solder-wire lands on PWR-C
+    "J106": ("X42J2-PWR", {"S42": "1 2"}),  # W2 F2C-FALLBACK: S42 (W-C1) LAB5 to PWR-C (was S06)
+    "J107": ("X42J1-PWR", {"S42": "1 2"}),  # W2 F2C-FALLBACK: S42 (W-C1) E1_SW from PWR-C (was S07)
+    "J108": ("X10C1-PWRC", {"S10": "1-3"}),
+    "J109": ("X05S1-PWRC", {"S05": "1"}),  # W2 F2C-FALLBACK: J109, J112, J113, J507 side-entry PH on PWR-C
+    "J118": ("X42C1-PWRC", {"S42": "1 2"}), "J119": ("X42C2-PWRC", {"S42": "1 2"}),  # W2 F2C-FALLBACK: PWR-C ends of S42 (W-C1)
+    "J120": ("S02C-PWRC-SIG", {"S02C": "1-9"}),  # W2 F2C-FALLBACK: PWR-C end of S02C (W-C2), J110/J111 (S06/S07) deleted
+    "J112": ("X10S1-PWRC", {"S10": "1-4"}),
+    "J113": ("X11S1-PWRC", {"S11": "1 2"}),
+    "J114": ("X11C1-PWRC", {"S11": "1 2"}),
+    "J115": ("X12C1-PWRC", {"S12": "1 2"}),
     "J201": ("X02S0-PWR", {"S02": "1-4"}),
-    "J202": ("S02-PWR-SIG-1", {"S02": "1-20"}),  # W2 PWR-L6-PLACE probe C: 5/7/12/16 carry PG_BONI/PTC_AUX/PG_LNB/FAULT_RTLA
-    "J203": ("S02-PWR-SIG-2", {"S02B": "1-20"}),  # top entry B20B-PHDSS in PWR-B zone 2; 2/14/15/18 = EN_HFP/EN_LIME3V3/EN_LNB/FAULT_HFP (probe C)
+    "J202": ("S02-PWR-SIG-1", {"S02": "3-20"}),  # probe C: 5/7/12/16 carry PG_BONI/PTC_AUX/PG_LNB/FAULT_RTLA; F2C: 1/2 reserve (S02C)
+    "J203": ("S02-PWR-SIG-2", {"S02B": "1-7 13-16 18 20"}),  # top entry B20B-PHDSS, zone 2; probe C swap; F2C: 8-12/17/19 reserve (S02C)
     "J204": ("X04S1-PWR", {"S04": "1-8"}),
     "J205": ("X19P1-PWR", {"S19": "1 2"}),
     "J206": ("SL2-PWR-MF", {"S13": "1 2", "S14": "3 4", "S17": "5 6", "S18": "7 8"}),
     "J207": ("SL2-PWR-PH", {"S20": "1 2", "S21": "3 4", "S22": "5-7", "S35": "8 9", "S36": "10 11"}),
     "J506": ("SL3-PWR-PH", {"S23": "1-3", "S34": "4-9"}),  # W2 GR-5B: J506 (S23) + J508 (S34) in one JST PH 9; top entry B9B in PWR-B zone 2 since W2 PWR-L6-PLACE
-    "J507": ("X32S1-PWR", {"S32": "1-4"}),
+    "J507": ("X32S1-PWRC", {"S32": "1-4"}),
     # J508 (X34S1-PWR, S34) is merged into J506 above (W2 GR-5B, SHRINK-2)
     "J509": ("X14P1-HATCH", {"S14": "1 2"}),
     "J510": ("X15S1-HATCH", {"S15": "1"}),
@@ -312,7 +312,7 @@ HEADERS = {
 PIN_SEGMENTS = {"J301": {"S01": "1 3 5 8-10 12-15 17 20 25 27-30 32 34 35 38-40", "PPS": "6 7 16 18"}}
 # Branch segments listed under their parent bundle in build/16 (wire ids <parent>-<branch>-nn, segment column = parent): the PPS
 # conductors are S01 ribbon conductors that leave it after the J20 socket; their route is branches.PPS of the mechanical model.
-SEGMENT_BRANCHES = {"PPS": "S01", "S02B": "S02"}  # S02B: the J307 <-> J203 conductors of S02 (W2 PWR-L6-PLACE third pass)
+SEGMENT_BRANCHES = {"PPS": "S01", "S02B": "S02", "S02C": "S02"}  # S02B: J307 <-> J203 (W2 PWR-L6-PLACE); S02C: J306/J307 <-> PWR-C J120 (W-C2, F2C)
 # Board units whose harness ends have no graph header ref yet, with the reason; only there the generator still writes an X id.
 PENDING_BOARD_ENDS = {
     "ENCM": "роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json "
@@ -362,15 +362,15 @@ SEGMENTS = [
      "лінії HMC7992/G6K/DCS; крізь проріз SL2 (M-07) і виріз N4 стінки РЧ-відсіку; подалі від буферних дроселів"),
     ("S04", "PWR", "RF", "Зміщення і реле: PWR ↔ RF", None, "TBD (CAD)",
      "шини bias ch1–ch4, LNB і LAB5_RLY котушок G6K (після PTC F104 на PWR-A, R-E1-09); крізь проріз SL2 і виріз N4 (M-07, M-09); J204 (PH 8, PWR-B) ↔ J420 (PH 8, RF): злиття J204 з J207 у PHD 2×10 (SHRINK-2) — OPEN, бо клема PHD бере 22 AWG, а PH — 30–24 AWG, тож потрібна й J420 PHD (лінія RF); LAB5_RLY 1.5 A проти 1.2 A контакту PH — OPEN (W2 GR-5B)"),
-    ("S05", "PACK", "PWR", "Пак (після F101) → PWR", None, "мінімальна (TBD, CAD)",
+    ("S05", "PACK", "PWRC", "Пак (після F101) → PWR-C", None, "мінімальна (TBD, CAD)",
      "F101 стоїть біля паку, тож увесь сегмент захищає F101 7.5 A; коло батареї 18 AWG (E1 F101); найкоротша траса, без петель; "
      "кінець у паку — майданчик J117 носійної плати PACK_FUSE (мідь від F101.2, W2 GR-4); "
-     "роз'єм S05 на PWR — також вхід стенда при запуску (19 §4)"),
-    ("S06", "PWR", "INA", "PWR ↔ INA228 (шунт)", None, "TBD (CAD)", "VIN+/VIN− — клеми шунта Adafruit 5832; I2C0/ALERT/VS — гребінка модуля"),
-    ("S07", "PWR", "SWM", "PWR ↔ Pololu #2813", None, "TBD (CAD)", "пайка до контактів модуля; коло батареї 18 AWG"),
-    ("S10", "PWR", "CHG", "PWR ↔ IP2368", None, "TBD (CAD)", "пайка до контактів роздрібної плати; KSD9700 — на MOSFET плати"),
-    ("S11", "USBC", "PWR", "USB-C панелі → PWR", None, "TBD (CAD)", "CC1/CC2 проходять PWR транзитом до IP2368; крізь проріз SL3 (M-07)"),
-    ("S12", "PWR", "XT30", "PWR → сервісний XT30", None, "TBD (CAD)",
+     "роз'єм S05 на PWR-C (майданчики J105, W2 F2C-FALLBACK) — також вхід стенда при запуску (19 §4)"),
+    ("S42", "PWR", "PWRC", "W-C1: силовий джгут PWR-A ↔ PWR-C (E1_SW, LAB5)", None, "TBD (CAD)", "W2 F2C-FALLBACK (S06/S07 видалено): E1_SW з VOUT Pololu #2813 U106 на PWR-C → J107 PWR-A, LAB5 з J106 PWR-A (за F102) → U553/C552 на PWR-C; обидва GND несуть повернення навантажень PWR-A/PWR-B до паку (S05 приходить на PWR-C, J105); коло батареї 18 AWG (E1 F101); на PWR-A — Mini-Fit Jr. 2×1 J106/J107, на PWR-C — майданчики проводів J118/J119"),
+    ("S02C", "CTRL", "PWRC", "W-C2: гілка S02 CTRL ↔ PWR-C (9 сигналів E1/E5)", None, "TBD (CAD)", "W2 F2C-FALLBACK: CHG_INHIBIT, E1_BAT_ADC, I2C0_SCL/SDA, IMU_RX/TX, INA228_ALERT, PICO_OFF і PWR_BUTTON з тих самих контактів J306.1/.2 і J307.8–12/.17/.19 на CTRL, що й раніше через PWR-B J202/J203 (E3 не змінюється), до J120 (JST PHD 2×5 боковий вхід) на PWR-C; GND немає (на J306/J307 немає вільного контакту, як у S02B): повернення через S02 і S42 (OPEN)"),
+    ("S10", "PWRC", "CHG", "PWR-C ↔ IP2368", None, "TBD (CAD)", "пайка до контактів роздрібної плати; KSD9700 — на MOSFET плати"),
+    ("S11", "USBC", "PWRC", "USB-C панелі → PWR-C", None, "TBD (CAD)", "CC1/CC2 проходять PWR-C транзитом до IP2368 (W2 F2C-FALLBACK)"),
+    ("S12", "PWRC", "XT30", "PWR-C → сервісний XT30", None, "TBD (CAD)",
      "пігтейл XT30U-F (бік паку/PWR, під напругою — гніздо); XT30U-M — на сервісному дроті; v2.1: ISDT/raw-balance заблоковано до E1-02"),
     ("S13", "PWR", "HUB", "LAB5 → CH334F JP5.1", None, "TBD (CAD)", "лише живлення хаба; дані — кабель C-HUB; крізь проріз SL2"),
     ("S14", "PWR", "HATCH", "J21 12 V → плата лючка (J503)", None, "TBD (CAD)", "кручена пара 12 V/GND (STACK §5.8); крізь проріз SL2"),
@@ -398,7 +398,7 @@ SEGMENTS = [
     ("S29", "CTRL", "PWRBTN", "CTRL → кнопка живлення", None, "TBD (CAD)", "пайка до виводів PV6F240SS"),
     ("S30", "CTRL", "HATCH", "CTRL → плата лючка (консоль UART5 J502)", None, "TBD (CAD)", "лише 3.3 V TTL, без живлення адаптера; крізь проріз SL2"),
     ("S31", "Q6A.EDL", "EDL", "Контакти EDL Q6A → SW501", "SOLDER", "TBD (CAD)", "точки пайки на Q6A не локалізовано (E5 §9); пайка до виводів PV6F240SS"),
-    ("S32", "PWR", "GX16", "PWR → гніздо GX16-4 (J504)", None, "TBD (CAD)", "U551 біля входу на PWR; корпус GX16 → CHASSIS; крізь проріз SL3"),
+    ("S32", "PWRC", "GX16", "PWR-C → гніздо GX16-4 (J504)", None, "TBD (CAD)", "U551 біля входу на PWR-C (W2 F2C-FALLBACK); корпус GX16 → CHASSIS"),
     ("S33", "GX16", "IMUPACK", "Зовнішній кабель IMU", "CABLE", "2000 (HELU 49655, STACK §2.10)",
      "HELU SUPERTRONIC-C-PURO 4×0.14 мм²; оплітка 360° у GX16 і в SKINTOP паку"),
     ("S34", "PWR", "LABBUS", "PWR → LAB BUS (J505)", None, "TBD (CAD)",
@@ -476,15 +476,15 @@ SEGMENT_NETS = {
     "S23": {"VBUS_LABPORT"}, "S35": {"BONI13V8_PORT"}, "S36": {"BIAS_SB_LNA"}, "S41": {"BIAS_SB_LNA"},
     "PPS": {"E3_GNSS_PPS", "UART6_RX", "UART6_TX"}, "S25": {"E3_GNSS5V", "E3_GNSS_RESET_N"},
 }
-NO_GND = {"S15", "S02B"}  # KEY joins J503, whose GND contact already carries the S14 return; S02B: J307/J203 have no free contact, the return is in S02 (W2 PWR-L6-PLACE)
-GND_GROUP_SKIP = {("S06", "MFJ"), ("S07", "MFJ")}  # shunt path and #2813 switch: no return current in that connector
-GND_CURRENT = {"S06": (0.01, None), "S07": (0.05, None)}  # chip/control ground only (INA228, #2813 logic)
+NO_GND = {"S15", "S02B", "S02C"}  # S15: J503 GND carries the S14 return; S02B/S02C: J306/J307 have no free contact, the return is in S02 (PWR-L6-PLACE, F2C)
+GND_GROUP_SKIP = set()  # W2 F2C-FALLBACK: S06/S07 deleted; the S42 GND contacts carry the PWR-A/PWR-B return (sized by the generator)
+GND_CURRENT = {}  # W2 F2C-FALLBACK: the chip/control grounds of S06/S07 left with them
 # Module end of a wire: which contact it lands on, (segment, unit, net) -> "REF.PIN (note)".
 END_PIN = {
     ("S05", "PACK", "E1_SHUNT_P"): "F101.2 (вихід тримача F101 біля плюса паку; провід паяється в майданчик J117 носійної плати PACK_FUSE, W2 GR-4)", ("S05", "PACK", "GND"): "U101.P- (P− BMS)",
-    ("S06", "INA", "E1_N"): "R101.2 (клема VIN− модуля 5832)", ("S06", "INA", "E1_SHUNT_P"): "R101.1 (клема VIN+ модуля 5832)",
-    ("S06", "INA", "GND"): "U102.7", ("S07", "SWM", "GND"): "U106.GND",
-    ("S10", "CHG", "GND"): "U110.BAT-", ("S13", "HUB", "GND"): "U510.JP5_4",
+    # W2 F2C-FALLBACK: the INA228 and #2813 module ends of S06/S07 left with the segments (both parts are on PWR-C)
+    ("S10", "CHG", "GND"): "U110.BAT-",
+    ("S13", "HUB", "GND"): "U510.JP5_4",
     ("S17", "Q6A.CORE", "GND"): "U500.GND", ("S18", "RISER", "GND"): "U530.GND", ("S19", "DISP", "GND"): "U520.DC_GND",
     ("S25", "GNSS", "GND"): "U304.P1.2", ("PPS", "GNSS", "GND"): "U304.P1.2 (повернення PPS/UART6, разом із GND S25)",
     ("S26", "VEML", "GND"): "U308.GND",

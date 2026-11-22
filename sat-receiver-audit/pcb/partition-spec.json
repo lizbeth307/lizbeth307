@@ -589,12 +589,12 @@
    }
   },
   "budget_chosen": {
-   "crossing_nets": 33,
+   "crossing_nets": 24,
    "power_pins": 13,
-   "signal_pins": 25,
+   "signal_pins": 16,
    "gnd_pins": 17,
-   "contacts_needed": 55,
-   "contacts_with_spare": 66
+   "contacts_needed": 46,
+   "contacts_with_spare": 56
   },
   "sense_taps": {
    "BONI13V8": "only the divider R283 of the Boni voltage monitor U218 (group 'Boni: контроль напруги') taps the rail"
@@ -656,37 +656,127 @@
    "derivation": "both halves are the same footprint (odd pads in one row, even pads in the other, pads 2k-1 and 2k at the same x); pin 01 meeting contact 02 means the upper half is turned over about the strip axis, so every column k pairs 2k-1 with 2k; pcb/tests/test_b2b_map.py checks it on the vendored footprint",
    "placement": "J209 on the PWR-B bottom over J208 (same centre in the shared PWR-A/PWR-B frame), so that its pad m lies over J208 pad b2b_mate(m): seen from the PWR-A top, J209 is J208 mirrored about the strip axis (y -> -y in the J208 frame); its pin-1 row lies over the even row of J208 and its alignment holes at (+/-13.5, +0.85) against (+/-13.5, -0.85) of J208. A bottom-side footprint flipped top/bottom, or flipped left/right and turned 180 degrees, is that mirror; pcb/check_boards.py b2b with pin_map from b2b-nets.json contacts checks it"
   },
-  "pin_map_rule": "pcb/prepare.py b2b_contacts (W2 B2B, review R2; sense pairs at the end since 11.11.2026): J208 column c = contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last column, a further pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail block of guard_rule in the order rail_order, which lists the rail contacts one by one (a net listed once keeps its contacts together; unlisted rails after it, by name), each rail contact followed by its GND return on the same row; one GND guard after the rail block, in that row; the rails of rail_row_even the same way from contact 2 on the even row; the other crossing nets in name order on the free contacts of the even row, one per column, one contact each; then the moves of signal_moves, in order (a signal net moves to a spare contact, or swaps with the signal net on its target); the rest spare (nc in the graph). For (a) (since W2 GR-5B, when the six damper rail nodes and VBUS_LABPORT stopped crossing): odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the 4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets in name order, then signal_moves (since W2 PWR-L6-PLACE fifth pass, probe Y): 26 <-> 28, 30 -> 86, 42 -> 66, so 30 and 42 spare, the other contacts up to 96 spare, 97-98 guard, 99-100 the LNA4 sense pair (until W2 GR-5B: odd 1-65 the 17 rail contacts with their returns to 67, 69 guard). J209 contact m carries the net of J208 contact b2b_mate(m). python -I pcb/write_b2b_graph.py writes the map into the graph refs (--check compares). Design value. Why the rails take one row and the sense pair the end: on the PWR-B board of record (build/kicad/boards/PWR_B/make_spec.py) J209 lies on the bottom side turned so that column 50 is under the ch4 shunt R246 and column 1 next to the end of the LAB5 trunk; the rail row faces the top-edge headers and the LNA channels, the signal row the harness headers J202/J203 below the strip, the LAB5 contacts sit next to the end of the trunk and the Kelvin pair reaches its shunt, as on the FX8 placeholder map that routed (rails mostly in one row, signals in the other). The checkerboard maps of 07-11.11.2026 (rails in both rows) left 3 to 15 connections open in route runs 43103920112, 43106418931, 43109754670, 43112965018 and 43115627813. PWR-A places J208 under J209 (b2b.mating_map)",
+  "pin_map_rule": "pcb/prepare.py b2b_contacts (W2 B2B, review R2; sense pairs at the end since 11.11.2026): J208 column c = contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last column, a further pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail block of guard_rule in the order rail_order, which lists the rail contacts one by one (a net listed once keeps its contacts together; unlisted rails after it, by name), each rail contact followed by its GND return on the same row; one GND guard after the rail block, in that row; the rails of rail_row_even the same way from contact 2 on the even row; the other crossing nets in name order on the free contacts of the even row, one per column, one contact each; then the moves of signal_moves, in order (a signal net moves to a spare contact, or swaps with the signal net on its target); the rest spare (nc in the graph). For (a) (since W2 GR-5B, when the six damper rail nodes and VBUS_LABPORT stopped crossing): odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the 4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-42 the 13 signal nets in name order, then signal_moves (since W2 F2C-FALLBACK: the 9 S02 signals of the PWR-C groups left the B2B, and the 13 moves put every remaining signal net back on its contact of the routed map of record, all to spare contacts: 22, 24, 26 EN_LIME3V3, 28 EN_HFP, 32-38, 44, 46, 54, 56 and 86 EN_LNB; so 18, 20, 30, 40, 42, 48-52 and 58-66 spare; W2 PWR-L6-PLACE fifth pass, probe Y, had 26 <-> 28, 30 -> 86, 42 -> 66 on the 22-net map), the other contacts up to 96 spare, 97-98 guard, 99-100 the LNA4 sense pair (until W2 GR-5B: odd 1-65 the 17 rail contacts with their returns to 67, 69 guard). J209 contact m carries the net of J208 contact b2b_mate(m). python -I pcb/write_b2b_graph.py writes the map into the graph refs (--check compares). Design value. Why the rails take one row and the sense pair the end: on the PWR-B board of record (build/kicad/boards/PWR_B/make_spec.py) J209 lies on the bottom side turned so that column 50 is under the ch4 shunt R246 and column 1 next to the end of the LAB5 trunk; the rail row faces the top-edge headers and the LNA channels, the signal row the harness headers J202/J203 below the strip, the LAB5 contacts sit next to the end of the trunk and the Kelvin pair reaches its shunt, as on the FX8 placeholder map that routed (rails mostly in one row, signals in the other). The checkerboard maps of 07-11.11.2026 (rails in both rows) left 3 to 15 connections open in route runs 43103920112, 43106418931, 43109754670, 43112965018 and 43115627813. PWR-A places J208 under J209 (b2b.mating_map)",
   "signal_moves": [
-   {
-    "net": "EN_HFP",
-    "to_pwr_a": 28,
-    "pwr_b": {
-     "from": 25,
-     "to": 27
-    },
-    "why": "swap with EN_LIME3V3 (J208 26 <-> 28, J209 .25 <-> .27): EN_HFP leaves J209.25, whose escape to J203.2 the EN_BONI escape via, the FLT_BONI stubs and the LNA4V5 F.Cu link wall in, for J209.27 straight over J203.1/J203.2 (x 93.05 against 93.3); EN_LIME3V3 (to J203.14) takes .25"
-   },
    {
     "net": "EN_LNB",
     "to_pwr_a": 86,
     "pwr_b": {
-     "from": 29,
+     "from": 25,
      "to": 85
     },
-    "why": "to the spare J209.85 (x 107.55) over its J203.15 (x 107.3), clear of the J209.33-59 fan-out; J209.29 turns spare"
+    "why": "W2 F2C-FALLBACK: back to J208 86 / J209.85, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 26; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
    },
    {
-    "net": "I2C0_SDA",
-    "to_pwr_a": 66,
+    "net": "PICO_DISP_EN",
+    "to_pwr_a": 56,
     "pwr_b": {
      "from": 41,
-     "to": 65
+     "to": 55
     },
-    "why": "to the spare J209.65 (x 102.55) beside its J203.9 (x 101.3), clear of the J209.33-59 fan-out; J209.41 turns spare; J209.61 and .63 left it open (MODEL), .65-.71 closed it"
+    "why": "W2 F2C-FALLBACK: back to J208 56 / J209.55, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 42; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "OVP_LNB_N",
+    "to_pwr_a": 54,
+    "pwr_b": {
+     "from": 39,
+     "to": 53
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 54 / J209.53, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 40; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "I2C2_SDA",
+    "to_pwr_a": 46,
+    "pwr_b": {
+     "from": 37,
+     "to": 45
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 46 / J209.45, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 38; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "I2C2_SCL",
+    "to_pwr_a": 44,
+    "pwr_b": {
+     "from": 35,
+     "to": 43
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 44 / J209.43, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 36; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "FLT_LNB",
+    "to_pwr_a": 38,
+    "pwr_b": {
+     "from": 33,
+     "to": 37
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 38 / J209.37, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 34; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "FLT_LIME3V3",
+    "to_pwr_a": 36,
+    "pwr_b": {
+     "from": 31,
+     "to": 35
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 36 / J209.35, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 32; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "FLT_BONI",
+    "to_pwr_a": 34,
+    "pwr_b": {
+     "from": 29,
+     "to": 33
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 34 / J209.33, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 30; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "FAULT_HFP",
+    "to_pwr_a": 32,
+    "pwr_b": {
+     "from": 27,
+     "to": 31
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 32 / J209.31, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 28; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "EN_HFP",
+    "to_pwr_a": 28,
+    "pwr_b": {
+     "from": 21,
+     "to": 27
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 28 / J209.27, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 22; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "EN_LIME3V3",
+    "to_pwr_a": 26,
+    "pwr_b": {
+     "from": 23,
+     "to": 25
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 26 / J209.25, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 24; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "EN_BONI",
+    "to_pwr_a": 24,
+    "pwr_b": {
+     "from": 19,
+     "to": 23
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 24 / J209.23, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 20; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
+   },
+   {
+    "net": "EN_AUX12",
+    "to_pwr_a": 22,
+    "pwr_b": {
+     "from": 17,
+     "to": 21
+    },
+    "why": "W2 F2C-FALLBACK: back to J208 22 / J209.21, its contact on the routed PWR-B map of record (CI run 43591929140), after the 9 S02 signals of the PWR-C groups left the B2B and the name-order fill moved it to J208 18; the frozen PWR-B copper of this net stays valid (spare target, no swap)"
    }
   ],
-  "signal_moves_why": "W2 PWR-L6-PLACE fifth pass, probe Y (14.11.2026), design value for the PWR-B board of record: the round-4 board of record (CI run 43548106710, 0 errors / 5 unconnected / ignored []) left EN_HFP (J209.25 to J203.2), EN_LNB (J209.29 to J203.15) and I2C0_SDA (J209.41 to J203.9) open in the J209 lower-row pocket that the fan-outs of contacts 33-59 to J203 fill; the moves put them on contacts that escape to their J203 pins. MODEL (transactional ratchet on the board of record, scratch): 5 -> 2 open (E1_BAT_ADC, VBUS_LABPORT). E1_BAT_ADC keeps J209.19: on J209.17/.23/.44/.48/.52/.60/.61/.72/.96 it stays open too (its block is the bar-to-arm crossing, not the contact). Signals only: a move never targets a rail, GND, guard or sense contact (pcb/prepare.py b2b_contacts), so guard_rule holds. PWR-A follows through the graph (J208 is unrouted).",
+  "signal_moves_why": "W2 F2C-FALLBACK (22.11.2026), design value: F2-C moves the E1/E5 groups of CHG_INHIBIT, E1_BAT_ADC, I2C0_SCL/SDA, IMU_RX/TX, INA228_ALERT, PICO_OFF and PWR_BUTTON to PWR-C (harness branch S02C to CTRL), so these 9 signals no longer cross the B2B. The name-order fill of the 13 remaining signal nets would shift every one of them; the moves, in order, put each back on its J208/J209 contact of the PWR-B board of record (route run 43591929140, applied as GENERATED 738975b6), so the frozen PWR-B copper keeps its J209 escapes and PWR-A (J208 unrouted) follows through the graph. Every target is a spare contact (no swap), signals only: a move never targets a rail, GND, guard or sense contact (pcb/prepare.py b2b_contacts), so guard_rule holds. Before (W2 PWR-L6-PLACE fifth pass, probe Y, 14.11.2026): EN_HFP and EN_LIME3V3 swapped (J209 .27 / .25), EN_LNB to J209.85 and I2C0_SDA to J209.65, out of the J209 lower-row pocket of route run 43548106710; those positions are kept.",
   "superseded": {
    "what": "W2 AREA choice Samtec QSH-060-01-L-D-A (PWR-A, LCSC C5199901) with QTH-060-01-L-D-A (PWR-B, LCSC C116054), 120 contacts plus a ground plane, 5.00 mm",
    "by": "W2 B2B, 07.11.2026",
@@ -730,7 +820,7 @@
    "contacts_needed": 55,
    "contacts_with_spare": 66
   },
-  "budget_note": "W2 AREA-2: budget_chosen is the B2B of the chosen candidate on the graph of record (pcb/generated/b2b-nets.json totals, checked by pcb/tests/test_b2b_map.py); budget_planned is the same candidate with its planned SHRINK-2 changes: the six damper rail nodes (BIAS_CH1-4_DAMP, VBUS_RTLB_DAMP, E2_SB_DAMP) and VBUS_LABPORT stop crossing once GR-5B moves C235/C239/C243/C247/C251/C298 and C506 to PWR-B; then pcb/prepare.py and pcb/write_b2b_graph.py rewrite the contact map and budget_chosen takes the new totals, in the GR-5B swap commit (partition.domain_override_note). W2 AREA-REC, 13.11.2026: GR-5B made that swap (4a9117cc), so budget_chosen (graph of record) and budget_planned (J204+J207-PHD still pending, no B2B effect) are the same: 33 nets, 55 contacts, 66 with the spare"
+  "budget_note": "W2 AREA-2: budget_chosen is the B2B of the chosen candidate on the graph of record (pcb/generated/b2b-nets.json totals, checked by pcb/tests/test_b2b_map.py); budget_planned is the same candidate with its planned SHRINK-2 changes: the six damper rail nodes (BIAS_CH1-4_DAMP, VBUS_RTLB_DAMP, E2_SB_DAMP) and VBUS_LABPORT stop crossing once GR-5B moves C235/C239/C243/C247/C251/C298 and C506 to PWR-B; then pcb/prepare.py and pcb/write_b2b_graph.py rewrite the contact map and budget_chosen takes the new totals, in the GR-5B swap commit (partition.domain_override_note). W2 AREA-REC, 13.11.2026: GR-5B made that swap (4a9117cc), so budget_chosen (graph of record) and budget_planned (J204+J207-PHD still pending, no B2B effect) are the same: 33 nets, 55 contacts, 66 with the spare W2 F2C-FALLBACK, 22.11.2026: the 9 S02 signals of the PWR-C groups left the B2B, so budget_chosen is 24 nets, 46 contacts, 56 with the spare (pcb/generated/b2b-nets.json totals); budget_planned keeps the SHRINK-2 expectation of the two-board stack."
  },
  "ctrl": {
   "bottom_footprint_prefixes": [
@@ -2961,6 +3051,69 @@
   ],
   "domain_override_pwr_a": [],
   "domain_override_pwr_a_planned": [],
+  "domain_override_pwr_c": [
+   "C101",
+   "C102",
+   "C103",
+   "C104",
+   "C105",
+   "C106",
+   "C114",
+   "C115",
+   "C116",
+   "C117",
+   "C552",
+   "C553",
+   "D101",
+   "D102",
+   "D103",
+   "D104",
+   "D105",
+   "F103",
+   "J105",
+   "J108",
+   "J109",
+   "J112",
+   "J113",
+   "J114",
+   "J115",
+   "J118",
+   "J119",
+   "J120",
+   "J507",
+   "Q101",
+   "R101",
+   "R103",
+   "R104",
+   "R105",
+   "R106",
+   "R107",
+   "R111",
+   "R112",
+   "R113",
+   "R114",
+   "R115",
+   "R116",
+   "R121",
+   "R122",
+   "R123",
+   "R553",
+   "TP103",
+   "TP104",
+   "TP105",
+   "TP106",
+   "TP107",
+   "TP108",
+   "TP503",
+   "U102",
+   "U103",
+   "U104",
+   "U106",
+   "U109",
+   "U551",
+   "U553"
+  ],
+  "domain_override_pwr_c_note": "W2 F2C-FALLBACK (gate G1 fired for PWR-A on 6 layers, build/15 W2 PWR-L6-ROUTE): fallback F2-C of the W2 PWR-L6 synthesis, ported from the probe origin/wip/w2-pwrj-f2c 23337c1a. These refs (E1 groups AON і UV, Головний вимикач, Лічильник заряду, Інгібування заряду, Аварійний ADC, Захист USB-PD, Сервісний заряд, Контрольні точки TP103-TP108; E5 Сервіс і зовнішні шини U551/U553/C552/C553/R553/TP503; the harness ends J105, J108, J109, J112-J115, J507 and the new J118-J120) sit on PWR-C, the front-slab board in front of the battery tray; pcb/prepare.py gives them domain PWR_ENTRY (board PWR_C). The probe had 52 refs with pilot placeholders; the INA228 U102 with its shunt R101 and C101/C102, the Pololu #2813 U106 and the harness ends J118/J119 (S42, W-C1) and J120 (S02C, W-C2) are graph refs since GR-F2C (build/kicad/boards/PWR_C/f2c_graph.py); J110/J111 (S06/S07) left the graph.",
   "domain_override_note": "W2 AREA-2: domain_override_pwr_a is what pcb/prepare.py reads now (the radials EEU-FR1H470 C235/C239/C243/C247/C251/C298 and 16SVPC150M C506 are taller than hB in the graph). Removing them here before their swap would put 11.2 mm parts on PWR-B and change the J208/J209 contact map. domain_override_pwr_a_planned is the SHRINK-2 list. In the commit that swaps them to 16SVPG47M (coupled to its refreeze), GR-5B (1) sets domain_override_pwr_a to it, (2) runs pcb/prepare.py and pcb/write_b2b_graph.py (J208/J209 of design/E2.json), (3) sets b2b.budget_chosen to the new pcb/generated/b2b-nets.json totals (b2b.budget_planned is the model expectation), (4) updates the layout of (a) quoted in b2b.pin_map_rule and the rail-node and pin_map_rule assertions of pcb/tests/test_b2b_map.py (the six damper rail nodes stop crossing), and (5) runs the protocol chain and pcb/partition_budget.py. Those hunks of this file and of pcb/tests/test_b2b_map.py are outside the GR-5B paths of the SHRINK-2 plan, so the orchestrator grants them (W2 AREA-2 review R1); pcb/partition_budget.py --check reports the mismatch until then"
  },
  "fallbacks": [
