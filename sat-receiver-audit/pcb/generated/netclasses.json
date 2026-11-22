@@ -362,7 +362,7 @@
     "3V3_Q6A": {
       "class": "SIG",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:536",
+      "source": "tools/assembly_data.py:542",
       "inputs": {
         "continuous_a": 0.1,
         "protective_a": 0.1,
@@ -375,7 +375,7 @@
     "AON3V3": {
       "class": "SIG",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:537",
+      "source": "tools/assembly_data.py:543",
       "inputs": {
         "continuous_a": 0.01,
         "protective_a": 0.01,
@@ -604,7 +604,7 @@
           "segment": "S10",
           "continuous_a": 3.0,
           "protective_a": 7.5,
-          "source": "tools/assembly_data.py:542"
+          "source": "tools/assembly_data.py:548"
         }
       ],
       "required_outer_width_mm": 3.1766
@@ -945,7 +945,7 @@
       "inputs": {
         "continuous_a": 0.5,
         "protective_a": 4.0,
-        "protection": "F102 4 A (ключ Q305 без межі струму)",
+        "protection": "F102 4 A вище; за PTC F303 MF-MSMF110/16-2 (Itrip 2.20 A при 23 °C; W2 CTRL-6)",
         "current_source": "E3-03: 0.25 A тривало / 0.50 A старт"
       },
       "in_graph": true,
@@ -958,7 +958,7 @@
       "inputs": {
         "continuous_a": 0.25,
         "protective_a": 4.0,
-        "protection": "F102 4 A (ключ Q304 без межі струму; лише мідь CTRL до F301)",
+        "protection": "F102 4 A вище; за PTC F301, ключ Q304 за PTC (W2 CTRL-5)",
         "current_source": "бюджет вентилятора — рішення asm, виміряти"
       },
       "in_graph": true,
@@ -993,7 +993,7 @@
     "E3_PICO3V3": {
       "class": "SIG",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:538",
+      "source": "tools/assembly_data.py:544",
       "inputs": {
         "continuous_a": 0.02,
         "protective_a": 0.02,
@@ -1002,6 +1002,19 @@
       },
       "in_graph": true,
       "required_outer_width_mm": 0.0014
+    },
+    "E3_PICO_VLIM": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:539",
+      "inputs": {
+        "continuous_a": 0.209,
+        "protective_a": 0.209,
+        "protection": "U316 TPS2553DBVR, сталий струм (RILIM 150k: 154–209 mA)",
+        "current_source": "VSYS Pico: оцінка ≈0.145 A без прочитаного джерела (build/15), межа — IOSmax U316 (TI SLVS841G); W2 CTRL-6"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0347
     },
     "E4_BENCH": {
       "class": "RF50",
@@ -1888,19 +1901,47 @@
       "in_graph": true,
       "harness_segments": [
         {
-          "segment": "S28",
-          "continuous_a": 0.5,
-          "protective_a": 4.0,
-          "source": "tools/assembly_data.py:543"
-        },
-        {
           "segment": "S13",
           "continuous_a": 0.3,
           "protective_a": 4.0,
-          "source": "tools/assembly_data.py:544"
+          "source": "tools/assembly_data.py:550"
         }
       ],
       "required_outer_width_mm": 1.3348
+    },
+    "LAB5_BLOWER": {
+      "class": "PWR2A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:535",
+      "inputs": {
+        "continuous_a": 0.5,
+        "protective_a": 2.2,
+        "protection": "PTC F303 MF-MSMF110/16-2 (Itrip 2.20 A при 23 °C; Ihold 1.10 A, 0.71 A при 70 °C)",
+        "current_source": "E3-03: 0.25 A тривало / 0.50 A старт; Bourns MF-MSMF REV. BE (прочитано 22.11.2026); W2 CTRL-6"
+      },
+      "in_graph": true,
+      "harness_segments": [
+        {
+          "segment": "S28",
+          "continuous_a": 0.5,
+          "protective_a": 2.2,
+          "source": "tools/assembly_data.py:549"
+        }
+      ],
+      "required_outer_width_mm": 0.5852
+    },
+    "LAB5_PICO": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:537",
+      "inputs": {
+        "continuous_a": 0.209,
+        "protective_a": 1.0,
+        "protection": "PTC F302 MF-MSMF050-2 (Itrip 1.00 A при 23 °C; Ihold 0.50 A, 0.33 A при 70 °C)",
+        "current_source": "тривалий — не більше межі U316 IOSmax 0.209 A (R397 150k, TI SLVS841G); Bourns MF-MSMF REV. BE (прочитано 22.11.2026); W2 CTRL-6"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.1972
     },
     "LAB5_RLY": {
       "class": "PWR1A",
@@ -2058,7 +2099,7 @@
     "VCC_5V_PERI": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:535",
+      "source": "tools/assembly_data.py:541",
       "inputs": {
         "continuous_a": 0.1,
         "protective_a": 4.5,
@@ -2070,17 +2111,17 @@
     }
   },
   "summary": {
-    "nets": 152,
+    "nets": 155,
     "by_class": {
       "BATT": 13,
       "DCTAP": 12,
-      "PWR1A": 33,
-      "PWR2A": 5,
+      "PWR1A": 35,
+      "PWR2A": 6,
       "PWR3A": 14,
       "RF50": 71,
       "SIG": 4
     },
-    "net_current_entries": 37,
+    "net_current_entries": 40,
     "seg_current_entries": 3,
     "not_in_graph": []
   },
@@ -2302,6 +2343,10 @@
       {
         "netclass": "PWR1A",
         "pattern": "E3_GNSS5V"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E3_PICO_VLIM"
       },
       {
         "netclass": "RF50",
@@ -2654,6 +2699,14 @@
       {
         "netclass": "PWR3A",
         "pattern": "LAB5"
+      },
+      {
+        "netclass": "PWR2A",
+        "pattern": "LAB5_BLOWER"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "LAB5_PICO"
       },
       {
         "netclass": "PWR1A",

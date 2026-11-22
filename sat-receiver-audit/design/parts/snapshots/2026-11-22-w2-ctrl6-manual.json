@@ -1,0 +1,79 @@
+{
+ "schema": 1,
+ "date": "2026-11-22",
+ "note": "W2 CTRL-6 source reads of 2026-11-22. Rows keyed web:* are datasheet and fabricator-page reads (facts in the note); no browser User-Agent was sent (curl default, WebFetch), PDFs were read locally with PyMuPDF (figure values read from the PDF vector paths) and are not committed. The LCSC listings of this package (C55266, C14663, C21190, C22807, C114660, C17313, C210834) are in 2026-11-22-w2-ctrl6-lcsc.json, written by the main() of tools/check_parts_availability.py --codes with its query sent through curl (same request body and User-Agent; the portable Python of this host does not verify the JLCPCB certificate chain); C22807, C114660, C17313 and C210834 were found by a JLCPCB parts search by MPN on the same day (exact MPN hits).",
+ "entries": {
+  "web:ti-slvs841g-tps2553-ctrl6": {
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.ti.com/lit/ds/symlink/tps2553.pdf",
+   "read": "2026-11-22",
+   "method": "curl (default User-Agent); text via PyMuPDF",
+   "mpn": "TPS2553DBVR",
+   "manufacturer": "Texas Instruments",
+   "title": "TPS255xx Precision Adjustable Current-Limited Power-Distribution Switches, SLVS841G (November 2008, revised October 2026)",
+   "stock": null,
+   "price": null,
+   "note": "Table 5-1 (SOT-23, TPS2553): 1 IN (connect a 0.1 uF or greater ceramic capacitor from IN to GND as close to the IC as possible), 2 GND, 3 EN (logic high turns on the switch), 4 FAULT (active-low open-drain output, asserted during overcurrent, overtemperature or reverse voltage), 5 ILIM (recommended 15k <= RILIM <= 232k), 6 OUT. Section 8.5.1: IOSmax mA = 22980 V / RILIM^0.94 kOhm (eq. 1), IOSmin mA = 25230 V / RILIM^1.016 kOhm (eq. 3); the equations exclude the resistor tolerance. Constant-current TPS255x and latch-off TPS255x-1 versions; overcurrent deglitch 7.5 ms typical. Used for U316 with R397 150k 1 %: IOS 0.154-0.209 A."
+  },
+  "web:bourns-mf-msmf-ctrl6": {
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf",
+   "read": "2026-11-22",
+   "method": "curl (default User-Agent); text and figure paths via PyMuPDF",
+   "mpn": "MF-MSMF050-2; MF-MSMF110/16-2",
+   "manufacturer": "Bourns",
+   "title": "MF-MSMF Series - PTC Resettable Fuses, REV. BE 09/26",
+   "stock": null,
+   "price": null,
+   "note": "Electrical characteristics at 23 C: MF-MSMF050 Vmax 15 V, Imax 100 A, Ihold 0.50 A, Itrip 1.00 A, Rmin 0.15 ohm, R1max 1.0 ohm, max time to trip 0.15 s at 8.0 A, tripped dissipation 0.8 W typ; MF-MSMF110/16 Vmax 16 V, Imax 100 A, Ihold 1.10 A, Itrip 2.20 A, Rmin 0.04 ohm, R1max 0.21 ohm, 0.3 s at 8.0 A, 0.8 W typ; MF-MSMF075/24 Ihold 0.75 A, Itrip 1.50 A, 0.2 s at 8.0 A. Thermal derating of Ihold (-40/-20/0/23/40/50/60/70/85 C): MF-MSMF050 0.77/0.68/0.59/0.50/0.44/0.40/0.37/0.33/0.29 A; MF-MSMF110/16 1.59/1.43/1.26/1.10/0.95/0.87/0.80/0.71/0.60 A; MF-MSMF075/24 1.15/1.01/0.88/0.75/0.65/0.60/0.55/0.49/0.43 A; MF-MSMF030 Ihold 0.18 A and MF-MSMF035/33X 0.20 A at 70 C. Typical time to trip at 23 C (figure paths, typical, not maximum): MF-MSMF050 about 0.13 s at 4 A, 0.038 s at 6 A, 0.016 s at 8 A; MF-MSMF075/24 about 0.095 s at 4 A, 0.031 s at 6 A, 0.015 s at 8 A, 0.008 s at 10 A; MF-MSMF110/16 about 0.64 s at 4 A, 0.12 s at 6 A, 0.044 s at 8 A, 0.023 s at 10 A. Operating temperature -40 to +85 C; reflow soldering."
+  },
+  "web:aos-ao3401a-ctrl6": {
+   "distributor": "manufacturer datasheet",
+   "url": "https://aosmd.com/sites/default/files/res/datasheets/AO3401A.pdf",
+   "read": "2026-11-22",
+   "method": "curl (default User-Agent); text and figure paths via PyMuPDF",
+   "mpn": "AO3401A",
+   "manufacturer": "Alpha & Omega Semiconductor",
+   "title": "AO3401A 30V P-Channel MOSFET, Rev 3.1 December 2023",
+   "stock": null,
+   "price": null,
+   "note": "VGS(th) -0.5/-0.9/-1.3 V; RDS(on) < 60 mOhm at VGS -4.5 V; Ciss 645 pF typ (VDS -15 V); Qg(4.5V) 7 nC typ; RthJA 100/125 C/W steady state. Figure 2 transfer characteristics (VDS -5 V, typical, 25 C curve): -ID 0.1 A at -1.29 V, 0.5 A at -1.42 V, 1 A at -1.50 V, 2 A at -1.59 V, 4 A at -1.72 V, 6 A at -1.83 V, 8 A at -1.93 V, 10 A at -2.03 V. Figure 10 single pulse power rating junction-to-ambient (TA 25 C): 28 W at 1 ms, 12.9 W at 10 ms, 10.6 W at 15 ms, 9.0 W at 20 ms, 7.1 W at 30 ms, 5.3 W at 50 ms, 3.8 W at 0.1 s, 2.8 W at 0.2 s, 2.4 W at 0.3 s."
+  },
+  "web:aos-ao3400a-ctrl6": {
+   "distributor": "manufacturer datasheet",
+   "url": "https://aosmd.com/sites/default/files/res/datasheets/AO3400A.pdf",
+   "read": "2026-11-22",
+   "method": "curl (default User-Agent); text and figure paths via PyMuPDF",
+   "mpn": "AO3400A",
+   "manufacturer": "Alpha & Omega Semiconductor",
+   "title": "AO3400A 30V N-Channel MOSFET, Rev 3.1 July 2023",
+   "stock": null,
+   "price": null,
+   "note": "RDS(on) < 32 mOhm at VGS 4.5 V, < 48 mOhm at 2.5 V, 38 mOhm max at TJ 125 C (VGS 10 V); RthJA 100/125 C/W steady state. Figure 10 single pulse power rating junction-to-ambient (TA 25 C): 12.9 W at 10 ms, 9.0 W at 20 ms, 7.1 W at 30 ms, 5.3 W at 50 ms, 3.8 W at 0.1 s, 2.8 W at 0.2 s, 2.4 W at 0.3 s."
+  },
+  "web:ti-tpsm63606-ctrl6": {
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+   "read": "2026-11-22",
+   "method": "curl (default User-Agent); text via PyMuPDF",
+   "mpn": "TPSM63606RDLR",
+   "manufacturer": "Texas Instruments",
+   "title": "TPSM63606 6-A synchronous buck power module, SLVSGB4B (October 2021, revised April 2022)",
+   "stock": null,
+   "price": null,
+   "note": "LAB5 source U108 (design/E1.json on the power lane): IOCL output overcurrent (DC) limit threshold 8.3 A typ; IL_HS high-side switch current limit 8.3/9.3/10.3 A (min/typ/max); IL_LS low-side 6.5/7.1/7.7 A; hiccup when FB < 40 % of regulation, 80 ms off before a restart (section 8.3.12). Used as the worst sourced LAB5 source current (10.3 A) for the CTRL fault pulses; the power lane records no final LAB5 source-limit number."
+  },
+  "web:jlcpcb-base-material-ctrl6": {
+   "distributor": "fabricator page",
+   "url": "https://jlcpcb.com/help/article/jlcpcb-base-material",
+   "read": "2026-11-22",
+   "method": "WebFetch",
+   "mpn": null,
+   "manufacturer": "JLCPCB",
+   "title": "JLCPCB base material (help article)",
+   "stock": null,
+   "price": null,
+   "note": "Standard FR-4: 'The TG130 refers to the glass transition temperature and indicates that this material will begin to deform at 130 C'; High TG FR-4 (TG155) is an option. No maximum operating temperature or Td is given. The stack-up page https://jlcpcb.com/impedance (read the same day) names no laminate, Tg or MOT. Used for the fuse-current copper rule (build/15 'Правило струму запобіжника для міді (W2 CTRL-6)'): laminate limit Tg 130 C."
+  }
+ }
+}

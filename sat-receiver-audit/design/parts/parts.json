@@ -36,7 +36,9 @@
   "design/parts/snapshots/2026-11-07-w2-mech6-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src2-manual.json",
   "design/parts/snapshots/2026-11-11-w2-mech5-manual.json",
-  "design/parts/snapshots/2026-11-11-w2-pcb-sb2-manual.json"
+  "design/parts/snapshots/2026-11-11-w2-pcb-sb2-manual.json",
+  "design/parts/snapshots/2026-11-22-w2-ctrl6-manual.json",
+  "design/parts/snapshots/2026-11-22-w2-ctrl6-lcsc.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -998,6 +1000,7 @@
     "C321",
     "C341",
     "C343",
+    "C344",
     "C440",
     "C441",
     "C442",
@@ -1612,12 +1615,38 @@
     "R122",
     "R391",
     "R395",
+    "R398",
     "R440",
     "R441",
     "R442",
     "R443",
     "R444",
     "R445"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1503T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL",
+   "mpn": "0603WAF1503T5E",
+   "sku": {
+    "lcsc": "C22807"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-07150KL",
+     "sku": {
+      "lcsc": "C114660"
+     }
+    }
+   ],
+   "note": "RILIM of U316 (150k 1 %, 100 mW, thick film, LCSC listings 2026-11-22 of both, 2026-11-22-w2-ctrl6-lcsc.json).",
+   "refs": [
+    "R397"
    ]
   },
   {
@@ -4095,9 +4124,10 @@
     "lcsc": "C55266"
    },
    "match": "TPS2553DBVR",
-   "single_source": "Constant-current TPS2553 (no -1) chosen for the IMU pack branch U553 (R-E5-08): it limits a short on the 2 m cable without latching and recovers by itself (TI SLVS841G p.14-15)",
+   "single_source": "Constant-current TPS2553 (no -1) chosen for the IMU pack branch U553 (R-E5-08) and the Pico VSYS limiter U316 (R-E3-18, W2 CTRL-6): it limits a short without latching and recovers by itself (TI SLVS841G p.14-15)",
    "note": "Accept LCSC lots only with marking 2553 (TI SLVS841G package addendum p.29; the latch-off TPS2553DBVR-1 is marked CHZ). Never substitute the -1 part here, and never this part on a -1 channel.",
    "refs": [
+    "U316",
     "U553"
    ]
   },
@@ -4686,6 +4716,36 @@
     "F104",
     "F202",
     "F301"
+   ]
+  },
+  {
+   "id": "F-MF-MSMF050-2",
+   "mount": "pcb_smt",
+   "footprint": "Fuse:Fuse_1812_4532Metric",
+   "manufacturer": "Bourns",
+   "mpn": "MF-MSMF050-2",
+   "sku": {
+    "lcsc": "C17313"
+   },
+   "match": "MF-MSMF050-2",
+   "single_source": "PTC ahead of the Pico VSYS limiter U316 (R-E3-18, W2 CTRL-6): the smallest MF-MSMF whose 70 C Ihold (0.33 A, REV. BE derating table) holds the U316 limit 0.209 A; reflow only",
+   "refs": [
+    "F302"
+   ]
+  },
+  {
+   "id": "F-MF-MSMF110-16-2",
+   "mount": "pcb_smt",
+   "footprint": "Fuse:Fuse_1812_4532Metric",
+   "manufacturer": "Bourns",
+   "mpn": "MF-MSMF110/16-2",
+   "sku": {
+    "lcsc": "C210834"
+   },
+   "match": "MF-MSMF110/16-2",
+   "single_source": "Blower supply PTC (R-E3-19, W2 CTRL-6): the smallest MF-MSMF whose 70 C Ihold (0.71 A, REV. BE derating table) reaches the 0.50 A blower start; reflow only",
+   "refs": [
+    "F303"
    ]
   },
   {

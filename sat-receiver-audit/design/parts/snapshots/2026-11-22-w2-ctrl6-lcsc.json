@@ -1,0 +1,350 @@
+{
+ "date": "2026-11-22",
+ "distributor": "LCSC",
+ "entries": {
+  "C114660": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "150kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07150KL_C114660.pdf",
+   "description": "-55℃~+155℃ 100mW 150kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-22T15:04:25Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RC0603FR-07150KL",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0039
+    ],
+    [
+     1000,
+     0.0031
+    ],
+    [
+     5000,
+     0.0027
+    ],
+    [
+     10000,
+     0.0025
+    ],
+    [
+     50000,
+     0.0023
+    ],
+    [
+     50200,
+     0.0023
+    ]
+   ],
+   "stock": 278529,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-07150kl_C114660.html"
+  },
+  "C14663": {
+   "attributes": {
+    "Capacitance": "100nF",
+    "Temperature Coefficient": "X7R",
+    "Tolerance": "±10%",
+    "Voltage Rating": "50V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf",
+   "description": "100nF 50V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+   "fetched_utc": "2026-11-22T15:04:26Z",
+   "jlc_library": "basic",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0603KRX7R9BB104",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0052
+    ],
+    [
+     1000,
+     0.0041
+    ],
+    [
+     4000,
+     0.0035
+    ],
+    [
+     8000,
+     0.0032
+    ],
+    [
+     48000,
+     0.0029
+    ],
+    [
+     100000,
+     0.0027
+    ]
+   ],
+   "stock": 53131620,
+   "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_yageo-cc0603krx7r9bb104_C14663.html"
+  },
+  "C17313": {
+   "attributes": {
+    "Current - Max": "100A",
+    "Height": "0.85mm",
+    "Hold Current": "500mA",
+    "Length": "5.4mm",
+    "Operating Temperature": "-40℃~+85℃",
+    "Power Dissipation": "800mW",
+    "Resistance - Initial (Ri) (Min)": "150mΩ",
+    "Resistance - Post Trip (R1) (Max)": "1Ω",
+    "Time to Trip(Max)": "150ms",
+    "Trip Current": "1A",
+    "Voltage - Max": "15V",
+    "Width": "3.2mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410010331_BOURNS-MF-MSMF050-2_C17313.pdf",
+   "description": "-40℃~+85℃ 100A 150mΩ 15V 1A 1Ω 3.2mm 5.4mm 500mA 1812 Resettable Fuses ROHS",
+   "fetched_utc": "2026-11-22T15:04:27Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "MF-MSMF050-2",
+   "package": "1812",
+   "price_usd": [
+    [
+     1,
+     0.0853
+    ],
+    [
+     100,
+     0.0673
+    ],
+    [
+     300,
+     0.0585
+    ],
+    [
+     2000,
+     0.0517
+    ],
+    [
+     4000,
+     0.0464
+    ],
+    [
+     10000,
+     0.0437
+    ]
+   ],
+   "stock": 99070,
+   "url": "https://www.lcsc.com/product-detail/resettable-fuses_bourns-mf-msmf050-2_C17313.html"
+  },
+  "C210834": {
+   "attributes": {
+    "Current - Max": "100A",
+    "Height": "0.85mm",
+    "Hold Current": "1.1A",
+    "Length": "5.4mm",
+    "Operating Temperature": "-40℃~+85℃",
+    "Power Dissipation": "800mW",
+    "Resistance - Initial (Ri) (Min)": "40mΩ",
+    "Resistance - Post Trip (R1) (Max)": "210mΩ",
+    "Time to Trip(Max)": "300ms",
+    "Trip Current": "2.2A",
+    "Voltage - Max": "16V",
+    "Width": "3.2mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-MF-MSMF110-16-2_C210834.pdf",
+   "description": "-40℃~+85℃ 100A 16V 210mΩ 3.2mm 40mΩ 5.4mm 800mW 1812 Resettable Fuses ROHS",
+   "fetched_utc": "2026-11-22T15:04:27Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "MF-MSMF110/16-2",
+   "package": "1812",
+   "price_usd": [
+    [
+     1,
+     0.0768
+    ],
+    [
+     100,
+     0.0621
+    ],
+    [
+     300,
+     0.0547
+    ],
+    [
+     2000,
+     0.045
+    ],
+    [
+     4000,
+     0.0406
+    ],
+    [
+     10000,
+     0.0385
+    ]
+   ],
+   "stock": 5628,
+   "url": "https://www.lcsc.com/product-detail/resettable-fuses_bourns-mf-msmf110-16-2_C210834.html"
+  },
+  "C21190": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "1kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1001T5E_C21190.pdf",
+   "description": "-55℃~+155℃ 100mW 1kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-22T15:04:28Z",
+   "jlc_library": "basic",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1001T5E",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0016
+    ],
+    [
+     1000,
+     0.0013
+    ],
+    [
+     5000,
+     0.0011
+    ],
+    [
+     10000,
+     0.0009
+    ],
+    [
+     50000,
+     0.0008
+    ],
+    [
+     50200,
+     0.0008
+    ]
+   ],
+   "stock": 40403182,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1001t5e_C21190.html"
+  },
+  "C22807": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "150kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1503T5E_C22807.pdf",
+   "description": "-55℃~+155℃ 100mW 150kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-22T15:04:29Z",
+   "jlc_library": "basic",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1503T5E",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0017
+    ],
+    [
+     1000,
+     0.0013
+    ],
+    [
+     5000,
+     0.0011
+    ],
+    [
+     10000,
+     0.001
+    ],
+    [
+     50000,
+     0.0008
+    ],
+    [
+     50200,
+     0.0008
+    ]
+   ],
+   "stock": 781608,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1503t5e_C22807.html"
+  },
+  "C55266": {
+   "attributes": {
+    "Control Input Logic": "Active High",
+    "Features": "Overvoltage Protection、Soft-start、Under-voltage lockout、Reverse voltage protection、Integrated charge pump、Overcurrent Protection、Over temperature protection、Latch protection、Short-Circuit  Protection",
+    "Maximum Continuous Current": "1.5A",
+    "Number of Channels": "1",
+    "Operating Temperature\t-": "-40℃~+150℃",
+    "RDS(on)": "85mΩ",
+    "Type": "High Side Switch",
+    "Voltage - Supply": "2.5V~6.5V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810221710_Texas-Instruments-TPS2553DBVR_C55266.pdf",
+   "description": "-40℃~+150℃ 1 1.5A 2.5V~6.5V 85mΩ Active High High Side Switch 过压保护、软启动、欠压锁定、反向电压保护、集成电荷泵、Overcurrent Protection、Over temperature protection、锁存保护、Short-Circuit  Protection SOT-23-6 Power Distribution Switches ROHS",
+   "fetched_utc": "2026-11-22T15:04:30Z",
+   "jlc_library": "extended",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS2553DBVR",
+   "package": "SOT-23-6",
+   "price_usd": [
+    [
+     1,
+     0.5498
+    ],
+    [
+     10,
+     0.4549
+    ],
+    [
+     30,
+     0.3878
+    ],
+    [
+     100,
+     0.3322
+    ],
+    [
+     500,
+     0.3142
+    ],
+    [
+     1000,
+     0.3044
+    ]
+   ],
+   "stock": 43603,
+   "url": "https://www.lcsc.com/product-detail/power-distribution-switches_texas-instruments-tps2553dbvr_C55266.html"
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C114660",
+  "C14663",
+  "C17313",
+  "C210834",
+  "C21190",
+  "C22807",
+  "C55266"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}
