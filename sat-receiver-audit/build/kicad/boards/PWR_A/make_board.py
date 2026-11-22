@@ -74,6 +74,8 @@ EDGE = 0.3            # project copper-to-edge clearance
 VIA_D, VIA_DRILL = 0.7, 0.3   # as PWR_B: router vias at clearance 0.15 keep the 0.5 mm hole-to-hole rule
 HOLE_GAP = 0.55       # drill edge to drill edge, the 0.5 mm hole-to-hole rule plus margin
 W_GND = 0.25          # GND fan-out stub width (as PWR_B)
+GRAZE = 0.2           # mm: a fan-out via that overlaps a GND pad of another part less than this deep gets a bridge (gnd_bridges)
+TOUCH = 0.02          # mm: ... or that touches it within this gap (KiCad's polygon of the via disc reaches past its radius)
 EPS = 1e-6            # mm, rounding tolerance of the clearance tests (a stub as wide as its pad keeps the pad's own gap)
 JOINT_OVERLAP = 0.05  # mm, two scripted tracks of one net count as joined when they overlap at least this much
 
@@ -1099,6 +1101,30 @@ def grid_paths(p, layer, pads, segs, pours, outline):
                 queue.append((ni, nj))
 
 
+def gnd_bridges(inp, vias):
+    """W2 F2C-FALLBACK part 2: a GND stub (W_GND) from a fan-out via to the centre of a GND pad of another part that the via only grazes
+    (it overlaps or touches the pad box, but its centre is more than VIA_D / 2 - GRAZE from it). Without it the via and the pad meet in a sliver
+    narrower than the 0.15 mm minimum connection width (route run 45057258996: the fan-out vias of C291, C264 and C221 on the corners
+    of C230.2, C256.2 and R264.2, KiCad connection_width 0.06-0.09 mm). The stub lies inside the via and the pad it joins."""
+    out, r = [], VIA_D / 2
+    for v in vias:
+        own = v['id'].split('-')[1]
+        vx, vy = v['at']
+        for ref, pa in sorted(inp.parts.items()):
+            if ref == own:
+                continue
+            for q in pa.pads:
+                if q['net'] != 'GND' or q['type'] != 'smd':
+                    continue
+                d = box_dist((vx, vy, vx, vy), q['box'])
+                if r - GRAZE < d < r + TOUCH:
+                    out.append({'id': f'{v["id"]}-B-{ref}-{q["number"]}', 'net': 'GND', 'layer': f'{pa.side}.Cu', 'width_mm': W_GND,
+                                'path': [[r4(vx), r4(vy)], [r4(q['at'][0]), r4(q['at'][1])]], 'locked': True,
+                                'why': f'GND bridge of the fan-out via {v["id"]} to {ref}.{q["number"]}, which it only grazes '
+                                       '(minimum connection width 0.15 mm; W2 F2C-FALLBACK part 2, make_board.py gnd_bridges)'})
+    return out
+
+
 def fixed_refs(study, shrink2=None):
     """Refs place_board.py never moves: the anchors of the SHRINK-2 spec and every part with a PWR-B cut-out."""
     shrink2 = shrink2 or read(HERE / 'PWR_A.spec-shrink2.json')
@@ -1639,6 +1665,7 @@ def build(frozen=True, planned=True):
     problems += script_clearance(inp, pre, {t['id'] for t in SCRIPT_TRACKS} | {v[0] for v in SCRIPT_VIAS} | {z['id'] for z in SCRIPT_ZONES})
     problems += scripted_joined(inp, pre)
     gt, gv, skipped = gnd_fanout(inp, pre, first=fixed_refs(study))
+    gt = gt + gnd_bridges(inp, gv)
     base = {'tracks': pre['tracks'] + gt, 'vias': pre['vias'] + gv, 'zones': pre['zones']}
     for net in CONVERTER_NETS:
         pieces, apart = net_pieces(inp, base, net)

@@ -7,7 +7,7 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "5bbb7aaf9484111de330c746a90c3f9695ed53b9ca95cfe49a4589ba26ab6f93",
+    "spec_sha256": "0c24df672cab8d0814abefc9ca98714cdc620d74aeb0d8140a82e21901f77b46",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
     "lab5_budget_sha256": "d813a2892b7fdcb2d5bd78bbfe8c13c6bdf5809030db2c4e4528e1a114470974"
   },
@@ -194,12 +194,12 @@
         "L205.1"
       ],
       "mohm": {
-        "20C": 8.3211,
-        "50C": 9.3022
+        "20C": 8.3524,
+        "50C": 9.3371
       },
       "joined": true,
       "network": {
-        "tracks": 124,
+        "tracks": 105,
         "vias": 47,
         "pads": 17,
         "zones_not_modelled": [],
@@ -223,12 +223,12 @@
         "J208.14"
       ],
       "mohm": {
-        "20C": 13.3303,
-        "50C": 14.9019
+        "20C": 13.3615,
+        "50C": 14.9369
       },
       "joined": true,
       "network": {
-        "tracks": 124,
+        "tracks": 105,
         "vias": 47,
         "pads": 17,
         "zones_not_modelled": [],
@@ -286,17 +286,17 @@
     },
     "B_total_20C": {
       "U210.1": {
-        "pwr_a_mohm": 13.3303,
+        "pwr_a_mohm": 13.3615,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 3.3152,
-        "total_mohm": 20.3955,
+        "total_mohm": 20.4267,
         "within_10_mohm": false
       },
       "U221.1": {
-        "pwr_a_mohm": 13.3303,
+        "pwr_a_mohm": 13.3615,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 4.3004,
-        "total_mohm": 21.3807,
+        "total_mohm": 21.4119,
         "within_10_mohm": false
       }
     }
@@ -305,48 +305,48 @@
     "label": "MODEL: copper of the drawn (planned or routed) board, IACS copper at 20 degC; E1-05 and its bench stay OPEN",
     "A": {
       "what": "L101.2 -> L205.1 (the LT3045 pair feed)",
-      "mohm_20c": 8.3211,
+      "mohm_20c": 8.3524,
       "limit_mohm": 10.0,
       "met": true
     },
     "B": {
       "what": "L101.2 -> J208 / J209 -> each TPS2553 input on PWR-B at the worst-case concurrent currents (NET_CURRENT protective column), segment by segment",
       "total_current_a": 2.363,
-      "pwr_a_mohm_20c": 13.3303,
+      "pwr_a_mohm_20c": 13.3615,
       "per_destination": {
         "U210.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 31.4995,
+          "pwr_a_mv": 31.5732,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 5.1207,
-          "total_mv": 45.4815,
+          "total_mv": 45.5552,
           "limit_mv": 32.0,
           "met": false
         },
         "U221.1": {
           "current_a": 0.192,
-          "pwr_a_mv": 31.4995,
+          "pwr_a_mv": 31.5732,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 6.0135,
-          "total_mv": 46.3743,
+          "total_mv": 46.448,
           "limit_mv": 32.0,
           "met": false
         },
         "U501.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 31.4995,
+          "pwr_a_mv": 31.5732,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 11.4422,
-          "total_mv": 51.803,
+          "total_mv": 51.8767,
           "limit_mv": 32.0,
           "met": false
         },
         "U502.1": {
           "current_a": 0.825,
-          "pwr_a_mv": 31.4995,
+          "pwr_a_mv": 31.5732,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 8.5056,
-          "total_mv": 48.8664,
+          "total_mv": 48.9401,
           "limit_mv": 32.0,
           "met": false
         }
@@ -530,7 +530,7 @@
   "class_widths": {
     "label": "MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to their outlines)",
     "findings": [],
-    "tracks_checked": 1373,
+    "tracks_checked": 1202,
     "exemption_policy": {
       "branch_roles": [
         "test_point",

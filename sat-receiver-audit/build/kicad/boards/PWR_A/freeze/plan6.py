@@ -478,9 +478,48 @@ class Planner:
                 vias.append([*B(it.at), round(it.size, 4), round(it.drill, 4)])
         tracks = []
         for (lay, w), ss in sorted(segs.items()):
-            for a, b in ss:
+            for a, b in merge_collinear(ss):
                 tracks.append([lay, w, B(a), B(b)])
         return sorted(tracks), sorted(vias)
+
+
+def merge_collinear(segs):
+    """Segments (KiCad mm) of one net, layer and width with the collinear ones that overlap or touch merged into one (W2 F2C-FALLBACK
+    part 2: a planned piece that doubled back over its own track, PL-LIME3V3-031 of route run 45057258996, was a KiCad
+    track_dangling error). Other segments are kept as they are."""
+    groups, out = collections.defaultdict(list), []
+    for a, b in segs:
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        L = math.hypot(dx, dy)
+        if L < 1e-9:
+            continue
+        ux, uy = dx / L, dy / L
+        if ux < -1e-9 or (abs(ux) <= 1e-9 and uy < 0):
+            ux, uy = -ux, -uy
+        ux, uy = round(ux, 6), round(uy, 6)
+        off = round(-uy * a[0] + ux * a[1], 4)
+        t0, t1 = sorted((ux * a[0] + uy * a[1], ux * b[0] + uy * b[1]))
+        groups[(ux, uy, off)].append((t0, t1, a, b))
+    for (ux, uy, off), iv in groups.items():
+        iv.sort(key=lambda r: (r[0], r[1]))
+        run = [iv[0]]
+        for r in iv[1:]:
+            if r[0] <= max(q[1] for q in run) + 1e-6:
+                run.append(r)
+                continue
+            out.append(_merged(run, (ux, uy)))
+            run = [r]
+        out.append(_merged(run, (ux, uy)))
+    return out
+
+
+def _merged(run, u):
+    """One segment over a run of collinear pieces along the direction u: the two extreme end points of the pieces (as they were)."""
+    if len(run) == 1:
+        return run[0][2], run[0][3]
+    ends = [p for r in run for p in (r[2], r[3])]
+    t = lambda p: p[0] * u[0] + p[1] * u[1]  # noqa: E731
+    return min(ends, key=t), max(ends, key=t)
 
 
 def span(m, net):
@@ -664,8 +703,53 @@ def negotiate(pl, plan, rounds, log=print):
     return rows
 
 
+def revalidate(pl, mb, src, out):
+    """W2 F2C-FALLBACK part 2: carry a plan file onto the current scripted copper. Its copper (pin-entry pours, tracks with the
+    collinear pieces merged, vias) is put on the planning board of the current make_board.py inputs, checked at the project clearance
+    0.15 mm (verify) and for its joins; copper that fails the check is dropped (drop_failing). The plan keeps its nets, kinds and
+    branches where the joins still hold; it gets the guard of the current inputs. Returns 0 when nothing failed."""
+    doc = json.loads(Path(src).read_text(encoding='utf-8'))
+    for net, d in sorted(doc['nets'].items()):
+        for z in d['zones']:
+            rects = [(r[0] + 100.0, 210.0 - r[3], r[2] + 100.0, 210.0 - r[1]) for r in z['rects']]
+            pl.add_zone(net, z['layer'], rects, z['id'])
+        segs = collections.defaultdict(list)
+        for lay, w, a, b in d['tracks']:
+            segs[(lay, w)].append((K(*a), K(*b)))
+        for (lay, w), ss in segs.items():
+            for a, b in merge_collinear(ss):
+                pl.m.add_track(net, lay, w, a, b, src='new')
+        for x, y, size, drill in d['vias']:
+            pl.m.add_via(net, K(x, y), size, drill, src='new')
+    bad = verify(pl)
+    dropped = drop_failing(pl) if bad else []
+    changed = {}
+    for net, d in sorted(doc['nets'].items()):
+        d['tracks'], d['vias'] = pl.harvest(net)
+        isl = [g for g in pl.m.islands(net) if any(i.kind == 'pad' for i in g) or len(g) > 1]
+        opened = max(0, len(isl) - 1)
+        if opened != d['open']:
+            changed[net] = (d['open'], opened)
+        d['open'] = opened
+        d['open_islands'] = [sorted(f'{i.ref}.{i.pad}' for i in g if i.kind == 'pad' and i.src == 'pad') for g in isl] if len(isl) > 1 else []
+        d['kind'] = 'power' if opened == 0 else 'link'
+    res = doc['result']
+    res['power'] = sorted(n for n, d in doc['nets'].items() if d['kind'] == 'power')
+    res['link'] = {n: d['open'] for n, d in sorted(doc['nets'].items()) if d['kind'] == 'link'}
+    res['violations'] = len(verify(pl))
+    res['revalidated'] = {'from_guard': doc['guard'], 'dropped': dropped, 'open_changed': {n: list(v) for n, v in changed.items()},
+                          'rule': 'plan6.py --revalidate (W2 F2C-FALLBACK part 2): the plan copper on the current scripted copper, '
+                                  'collinear pieces merged, checked at 0.15 mm'}
+    doc['guard'] = script_guard(mb, pl.inp, pl.pre)
+    Path(out).write_text(json.dumps(doc, ensure_ascii=False, indent=1) + '\n', encoding='utf-8', newline='\n')
+    print('revalidated', src, '->', out, 'violations before', len(bad), 'dropped', dropped, 'open changed', changed,
+          'violations after', res['violations'])
+    return 0 if not bad and not changed else 1
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument('--revalidate', metavar='PLAN', help='W2 F2C-FALLBACK part 2: carry PLAN onto the current scripted copper (revalidate())')
     ap.add_argument('--nets', help='comma-separated nets (default: every power-class net with pads on the board)')
     ap.add_argument('--negotiate', type=int, default=0, metavar='ROUNDS',
                     help='W2 F2C-FALLBACK part 2: rounds of transactional rip-up and re-plan of the nets left open (negotiate())')
@@ -680,6 +764,8 @@ def main(argv=None):
     if not args.verify:
         planning_rules()
     print(f'planning board: {len(pl.m.items)} items ({time.time() - t0:.1f} s)')
+    if args.revalidate:
+        return revalidate(pl, mb, args.revalidate, args.out)
     if args.verify:
         bad = verify(pl)
         print('scripted copper below the project clearance:', len(bad))
