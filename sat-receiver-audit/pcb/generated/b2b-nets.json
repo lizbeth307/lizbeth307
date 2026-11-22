@@ -33,14 +33,14 @@
     "USB_POWER_SW"
   ],
   "totals": {
-    "crossing_nets": 33,
+    "crossing_nets": 24,
     "power_nets": 8,
     "power_pins": 13,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "fits": true,
     "meets_spare_rule": true
   },
@@ -124,30 +124,6 @@
       "prot_A": 0.153,
       "pins": 1,
       "gnd_pins": 1
-    },
-    {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-        "R122"
-      ],
-      "pwr_b": [
-        "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-        "C114",
-        "R111",
-        "R112"
-      ],
-      "pwr_b": [
-        "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
     },
     {
       "net": "E2_LNA4_SHUNT",
@@ -282,28 +258,6 @@
       "pins": 1
     },
     {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-        "J110"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-        "J110"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
       "net": "I2C2_SCL",
       "pwr_a": [
         "U216"
@@ -330,56 +284,20 @@
       "pins": 1
     },
     {
-      "net": "IMU_RX",
-      "pwr_a": [
-        "J507",
-        "U551"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "IMU_TX",
-      "pwr_a": [
-        "J507",
-        "U551"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-        "J110"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
       "net": "LAB5",
       "pwr_a": [
         "C112",
         "C223",
         "C508",
         "C509",
-        "C552",
         "F104",
         "J104",
+        "J106",
         "J206",
         "L101",
         "L205",
         "R110",
-        "U503",
-        "U553"
+        "U503"
       ],
       "pwr_b": [
         "C248",
@@ -479,28 +397,6 @@
       "pins": 1
     },
     {
-      "net": "PICO_OFF",
-      "pwr_a": [
-        "D102"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-        "D103"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
       "net": "VBUS_HFP",
       "pwr_a": [
         "C511",
@@ -529,7 +425,7 @@
     "derivation": "both halves are the same footprint (odd pads in one row, even pads in the other, pads 2k-1 and 2k at the same x); pin 01 meeting contact 02 means the upper half is turned over about the strip axis, so every column k pairs 2k-1 with 2k; pcb/tests/test_b2b_map.py checks it on the vendored footprint",
     "placement": "J209 on the PWR-B bottom over J208 (same centre in the shared PWR-A/PWR-B frame), so that its pad m lies over J208 pad b2b_mate(m): seen from the PWR-A top, J209 is J208 mirrored about the strip axis (y -> -y in the J208 frame); its pin-1 row lies over the even row of J208 and its alignment holes at (+/-13.5, +0.85) against (+/-13.5, -0.85) of J208. A bottom-side footprint flipped top/bottom, or flipped left/right and turned 180 degrees, is that mirror; pcb/check_boards.py b2b with pin_map from b2b-nets.json contacts checks it"
   },
-  "pin_map_rule": "pcb/prepare.py b2b_contacts (W2 B2B, review R2; sense pairs at the end since 11.11.2026): J208 column c = contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last column, a further pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail block of guard_rule in the order rail_order, which lists the rail contacts one by one (a net listed once keeps its contacts together; unlisted rails after it, by name), each rail contact followed by its GND return on the same row; one GND guard after the rail block, in that row; the rails of rail_row_even the same way from contact 2 on the even row; the other crossing nets in name order on the free contacts of the even row, one per column, one contact each; then the moves of signal_moves, in order (a signal net moves to a spare contact, or swaps with the signal net on its target); the rest spare (nc in the graph). For (a) (since W2 GR-5B, when the six damper rail nodes and VBUS_LABPORT stopped crossing): odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the 4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets in name order, then signal_moves (since W2 PWR-L6-PLACE fifth pass, probe Y): 26 <-> 28, 30 -> 86, 42 -> 66, so 30 and 42 spare, the other contacts up to 96 spare, 97-98 guard, 99-100 the LNA4 sense pair (until W2 GR-5B: odd 1-65 the 17 rail contacts with their returns to 67, 69 guard). J209 contact m carries the net of J208 contact b2b_mate(m). python -I pcb/write_b2b_graph.py writes the map into the graph refs (--check compares). Design value. Why the rails take one row and the sense pair the end: on the PWR-B board of record (build/kicad/boards/PWR_B/make_spec.py) J209 lies on the bottom side turned so that column 50 is under the ch4 shunt R246 and column 1 next to the end of the LAB5 trunk; the rail row faces the top-edge headers and the LNA channels, the signal row the harness headers J202/J203 below the strip, the LAB5 contacts sit next to the end of the trunk and the Kelvin pair reaches its shunt, as on the FX8 placeholder map that routed (rails mostly in one row, signals in the other). The checkerboard maps of 07-11.11.2026 (rails in both rows) left 3 to 15 connections open in route runs 43103920112, 43106418931, 43109754670, 43112965018 and 43115627813. PWR-A places J208 under J209 (b2b.mating_map)",
+  "pin_map_rule": "pcb/prepare.py b2b_contacts (W2 B2B, review R2; sense pairs at the end since 11.11.2026): J208 column c = contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last column, a further pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail block of guard_rule in the order rail_order, which lists the rail contacts one by one (a net listed once keeps its contacts together; unlisted rails after it, by name), each rail contact followed by its GND return on the same row; one GND guard after the rail block, in that row; the rails of rail_row_even the same way from contact 2 on the even row; the other crossing nets in name order on the free contacts of the even row, one per column, one contact each; then the moves of signal_moves, in order (a signal net moves to a spare contact, or swaps with the signal net on its target); the rest spare (nc in the graph). For (a) (since W2 GR-5B, when the six damper rail nodes and VBUS_LABPORT stopped crossing): odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the 4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-42 the 13 signal nets in name order, then signal_moves (since W2 F2C-FALLBACK: the 9 S02 signals of the PWR-C groups left the B2B, and the 13 moves put every remaining signal net back on its contact of the routed map of record, all to spare contacts: 22, 24, 26 EN_LIME3V3, 28 EN_HFP, 32-38, 44, 46, 54, 56 and 86 EN_LNB; so 18, 20, 30, 40, 42, 48-52 and 58-66 spare; W2 PWR-L6-PLACE fifth pass, probe Y, had 26 <-> 28, 30 -> 86, 42 -> 66 on the 22-net map), the other contacts up to 96 spare, 97-98 guard, 99-100 the LNA4 sense pair (until W2 GR-5B: odd 1-65 the 17 rail contacts with their returns to 67, 69 guard). J209 contact m carries the net of J208 contact b2b_mate(m). python -I pcb/write_b2b_graph.py writes the map into the graph refs (--check compares). Design value. Why the rails take one row and the sense pair the end: on the PWR-B board of record (build/kicad/boards/PWR_B/make_spec.py) J209 lies on the bottom side turned so that column 50 is under the ch4 shunt R246 and column 1 next to the end of the LAB5 trunk; the rail row faces the top-edge headers and the LNA channels, the signal row the harness headers J202/J203 below the strip, the LAB5 contacts sit next to the end of the trunk and the Kelvin pair reaches its shunt, as on the FX8 placeholder map that routed (rails mostly in one row, signals in the other). The checkerboard maps of 07-11.11.2026 (rails in both rows) left 3 to 15 connections open in route runs 43103920112, 43106418931, 43109754670, 43112965018 and 43115627813. PWR-A places J208 under J209 (b2b.mating_map)",
   "guard_rule": "W2 B2B review R2 (07.11.2026): the pads are 0.30 mm wide at 0.50 mm pitch, so neighbouring pads of a row are 0.20 mm apart (b2b.footprint, Samtec Rev G), and a solder bridge between them is the likely defect at this pitch. So no contact at a supply-rail potential has a neighbour in its row other than GND. (1) Rail contacts are the power contacts, the sense/supply taps and the rail nodes: crossing nets that a resistor below rail_node_max_ohm joins to a net other than GND, such as the 0.22 ohm damper nodes (BIAS_CH1_DAMP: R232 from BIAS_CH1, C235 47 uF to GND; pcb/prepare.py low_ohm_links). They sit on the odd row of J208, each followed by its GND return on the same row (rail, GND, rail, GND, ...; the return is the next contact, 0.5 mm away), in the order rail_order (until 11.11.2026 a checkerboard over both rows with the return in the same column; both keep GND beside every rail contact). (2) One GND guard contact follows the rail block in its row; the rails of rail_row_even (LAB5) start the even row the same way, and the signal nets follow them on the even row. (3) Each declared sense pair (at the potential of its rail) takes one column at the end of the strip, with a GND guard column before it. A bridge from a rail contact can then only short that rail to GND, where its protection (tools/assembly_data.py NET_CURRENT) acts; it cannot join two rails, a rail and a sense line, or a rail and a signal line. rail_order puts 3V3_Q6A first and the 12-13.8 V rails of the net names (the BONI13V8 tap, LNB13V2, AUX12 and BONI13V8_PORT) last; between them, for the PWR-B board of record, the rails that leave to the west (LNA4V5, the LNA bias dampers, E2_SB_DAMP, VBUS_RTLB_DAMP, VBUS_LABPORT), to the top edge (VBUS_HFP) and to the right (LAB5_RLY, BIAS_CH4_DAMP); the four LAB5 contacts sit on the even row (rail_row_even). The damper nodes also get their AC return beside them: the 47 uF capacitor sits on PWR-A and the 0.22 ohm resistor on PWR-B. Cost for (a): 10 GND contacts more than one per power contact (6 rail nodes, 1 tap, 3 guards). Design value; signal nets still neighbour signal nets",
   "rail_order": [
     "3V3_Q6A",
@@ -657,8 +553,8 @@
     {
       "pwr_a_pin": "18",
       "pwr_b_pin": "17",
-      "net": "CHG_INHIBIT",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "19",
@@ -669,8 +565,8 @@
     {
       "pwr_a_pin": "20",
       "pwr_b_pin": "19",
-      "net": "E1_BAT_ADC",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "21",
@@ -789,8 +685,8 @@
     {
       "pwr_a_pin": "40",
       "pwr_b_pin": "39",
-      "net": "I2C0_SCL",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "41",
@@ -837,8 +733,8 @@
     {
       "pwr_a_pin": "48",
       "pwr_b_pin": "47",
-      "net": "IMU_RX",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "49",
@@ -849,8 +745,8 @@
     {
       "pwr_a_pin": "50",
       "pwr_b_pin": "49",
-      "net": "IMU_TX",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "51",
@@ -861,8 +757,8 @@
     {
       "pwr_a_pin": "52",
       "pwr_b_pin": "51",
-      "net": "INA228_ALERT",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "53",
@@ -897,8 +793,8 @@
     {
       "pwr_a_pin": "58",
       "pwr_b_pin": "57",
-      "net": "PICO_OFF",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "59",
@@ -909,8 +805,8 @@
     {
       "pwr_a_pin": "60",
       "pwr_b_pin": "59",
-      "net": "PWR_BUTTON",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "61",
@@ -945,8 +841,8 @@
     {
       "pwr_a_pin": "66",
       "pwr_b_pin": "65",
-      "net": "I2C0_SDA",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "67",

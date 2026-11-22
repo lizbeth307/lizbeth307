@@ -5322,19 +5322,19 @@
           "name": "GND"
         },
         {
+          "ref": "J106",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J107",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
           "ref": "J108",
-          "pin": "1",
-          "sheet": "E1",
-          "name": "GND"
-        },
-        {
-          "ref": "J110",
-          "pin": "1",
-          "sheet": "E1",
-          "name": "GND"
-        },
-        {
-          "ref": "J111",
           "pin": "1",
           "sheet": "E1",
           "name": "GND"
@@ -5347,6 +5347,18 @@
         },
         {
           "ref": "J115",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J118",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J119",
           "pin": "1",
           "sheet": "E1",
           "name": "GND"
@@ -9037,6 +9049,7 @@
         "PWR_BRANCH",
         "PWR_BRANCH_SW",
         "USB_POWER_SW",
+        "PWR_ENTRY",
         "CTRL_HMI",
         "USB_POWER",
         "RF_HMC",
@@ -9072,11 +9085,11 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "1b66154dd72b4e8bf8673968f86758e2f5c2e028c1ed92bce2116e002a57ba99"
+        "sha256": "cf655035fe76deb23d336cac8754f0ba31449c37220ccc4a568d2cddc5d7f406"
       },
       {
         "file": "design/E2.json",
-        "sha256": "f65b08f23e88d25864ddb1fa1016f3eeb1bbc23629d7f4d1cdfd0cddb7d4e640"
+        "sha256": "9e3b73999f923c3093bd180274997277ad181bed0f45c17cf8d10bea79df9582"
       },
       {
         "file": "design/E3.json",
@@ -9088,15 +9101,15 @@
       },
       {
         "file": "design/E5.json",
-        "sha256": "0b594795866dd05e99df4ea42d6548decf45414472e3c4a9475430452f5c4c57"
+        "sha256": "dc4371e97e76603bcdcea53347c94d031fdba4e0826009434f82320ba2fc7b05"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "9d0c2a37d6560239ee95f07c083772c9837a398674d587160d6a3f056c5b208b"
+        "sha256": "f8afd0451851dce7d64b53f3ff32bd8c76fff41c6e5fb44575242e1b2d3608d4"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "187b7d0cd0b1aba9d5e2a632cb883389cdd2d97f8bd3b0e8d7b281a0bda09fec"
+        "sha256": "2ca47bd8f76aa0e6d6f606c8c98c0e2a44fe4b7b71b042860cac328d61988ea7"
       }
     ],
     "source_documents": [

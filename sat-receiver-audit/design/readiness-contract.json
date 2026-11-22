@@ -116,18 +116,8 @@
         "type": "passive"
       },
       {
-        "ref": "J202",
-        "pin": "1",
-        "type": "passive"
-      },
-      {
-        "ref": "J208",
-        "pin": "18",
-        "type": "passive"
-      },
-      {
-        "ref": "J209",
-        "pin": "17",
+        "ref": "J120",
+        "pin": "7",
         "type": "passive"
       },
       {

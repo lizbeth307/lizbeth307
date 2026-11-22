@@ -1,25 +1,25 @@
 {
   "pdf": {
     "file": "build/kicad/sr-rx-v2.pdf",
-    "sha256": "f4a9201439e48e5bf7654feb02ab0ab968afaf2c7bc455f24bb52f4306571178"
+    "sha256": "fcf62a6cd6721ccbf6bbad25f1e3e11b4286a0a04b52870ccde77013b406830d"
   },
   "kicad_sch_sha256": {
-    "build/kicad/E1.kicad_sch": "0a72b6ed59f21dd3a4a7bef4a34da31b3dc5cbc9b57a28ec38e1fcb56a2074ce",
-    "build/kicad/E1_02.kicad_sch": "59f0167212942431a4943cf48c21558765df5b8f0bf75c8cf90946a1dd58e839",
-    "build/kicad/E2.kicad_sch": "69e05b8d3c711d3e7a724d26d06d6eed44cec42ad5467b9bcccb8538e5db4273",
-    "build/kicad/E2_02.kicad_sch": "7364802d0701c3441ad24141ce9efefc1ba54f2a39c8e3741906a7fb6165c79a",
-    "build/kicad/E2_03.kicad_sch": "295e17b5f2c5153ab37d413d08b61b6adff47edc39e7aa04433c6590f694fc6d",
-    "build/kicad/E2_04.kicad_sch": "3ca1cc3c63275276adfdd5d628364fee6cff7d50954a0353bc0bedddfd89bd14",
-    "build/kicad/E2_05.kicad_sch": "a76e6a7b1bbfc1251e17c8026039f15a76c0610e8e51d91771e9ed7b06a0d628",
-    "build/kicad/E3.kicad_sch": "66ad2f6765a8e7f0c48faa89b68ad5a2fe5cd059a66b6c73f67edf08ab91f41a",
-    "build/kicad/E3_02.kicad_sch": "39aba4ed8dc0b85eac48b2a4ef7a5b4929b0f51c5214e0a6027c30b7ad756270",
-    "build/kicad/E3_03.kicad_sch": "44c6d74479c7d3115187b1a0f0ba7c16702b0fdd3df4dce3a683cc4d7a45f970",
-    "build/kicad/E4.kicad_sch": "5dd01065674c3bad6cbb253faa8920ad3556832a1be1684ec8aa95c4afd8e350",
-    "build/kicad/E4_02.kicad_sch": "f35c766323d8829c1da523a5ba32a70cad3cd516a55f5a93054eea0d660c100b",
-    "build/kicad/E4_03.kicad_sch": "44b3cddce92bf66710697aafae4043f2808c4f080639a3d189de52644fa86eed",
-    "build/kicad/E4_04.kicad_sch": "3a32a845e808fcd995bb258444b6658db1a116503141c3101c6e044c85847aa7",
-    "build/kicad/E5.kicad_sch": "8a5a3493828bb597af1936ccb3c5db5bcc3b3c7b0c24487161c45a8d9816d977",
-    "build/kicad/E5_02.kicad_sch": "303c9443b8a68a91322ee96b9acce8d4e1617ea534d51bf509ce10d1fb71073a",
+    "build/kicad/E1.kicad_sch": "a23719de6ca7dfc130190a98e067a863f9fbdab3e76c43ac5402ab3f6b3ce61c",
+    "build/kicad/E1_02.kicad_sch": "5ac91dd55aa6e1e8777e545509640a33b905cc6f9ffb4a32fc196b1020e1c457",
+    "build/kicad/E2.kicad_sch": "6e0f8a80eab730f58da3ac1cce73c13c4774feae375b170225425878dc6f5c44",
+    "build/kicad/E2_02.kicad_sch": "ba9df5119049390e8941b26201ff9ec065d5e38b3b42745f0f1425bb75a490d5",
+    "build/kicad/E2_03.kicad_sch": "7ac803a4457b130d561d74db3df041f4bb1ed003912fb5b336fa2cde0e08f9e9",
+    "build/kicad/E2_04.kicad_sch": "6b9ece2aedd72cb5ebe4873f9ebe8ef8e351c045c4e1709f4665849ccceb78e6",
+    "build/kicad/E2_05.kicad_sch": "1cd66aa6c49f6d5addad3f403efdf38bb24170c44d86b6abf3244209b9ed60ea",
+    "build/kicad/E3.kicad_sch": "699143d7e336bf264d30b4df64cae1df4a418e4c6e32d6e5002ffa66aa6570f0",
+    "build/kicad/E3_02.kicad_sch": "f1329522c4d9c50b08060c1c51b04860d11f108cb526926b1cabdf00bedd7656",
+    "build/kicad/E3_03.kicad_sch": "4220eb5684aa83a668de140c1698849043fd82ee47f883874e75d77b896f6da6",
+    "build/kicad/E4.kicad_sch": "2bc6852f59d86b36617b263bac17c45187f733edc68d36b60efa14b9abe01aaf",
+    "build/kicad/E4_02.kicad_sch": "59800290d6272f838d46dbfe3b5f711435cbb87383899d055e7877e398db38cf",
+    "build/kicad/E4_03.kicad_sch": "7a0c92a5f9d6df2d55d46be37b19dcc14068df780e3e070f809e7287fb8ede3b",
+    "build/kicad/E4_04.kicad_sch": "b99795d4472490b612dad1ee417fcbb00b096b4938c70e53c84817cab084a5a8",
+    "build/kicad/E5.kicad_sch": "17a7d9ff5b536708d5a934c9f4fd824d955871e3de6837bea610a931014ff824",
+    "build/kicad/E5_02.kicad_sch": "07c6a0325f32633645dc7702b71f83f15abded3fb82a891673a704fe3039e30f",
     "build/kicad/sr-rx-v2.kicad_sch": "eab1b5d408eed2b50680f32b41fdc31b75e10b4b1fd21f059cf420216ee7d20e"
   }
 }

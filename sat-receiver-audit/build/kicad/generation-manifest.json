@@ -13,27 +13,27 @@
         "E1-05",
         "E1-02"
       ],
-      "note_wrap_cap": 130,
+      "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E1-06": 130,
-        "E1-05": 130,
-        "E1-02": 130
+        "E1-06": 110,
+        "E1-05": 110,
+        "E1-02": 110
       },
-      "fill": 0.769,
+      "fill": 0.785,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 77,
+        "global_labels": 75,
         "ground_symbols": 47,
-        "junctions": 40,
-        "wire_crossings": 6,
-        "wires": 234
+        "junctions": 41,
+        "wire_crossings": 5,
+        "wires": 232
       }
     },
     {
       "stem": "E1_02",
       "instance": "18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2",
       "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (2/2)",
-      "components": 45,
+      "components": 46,
       "sheet": "E1",
       "notes": [
         "E1-04",
@@ -41,47 +41,28 @@
         "E1-07",
         "E1-01"
       ],
-      "note_wrap_cap": 130,
+      "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E1-04": 130,
-        "E1-03": 130,
-        "E1-07": 130,
-        "E1-01": 130
+        "E1-04": 110,
+        "E1-03": 110,
+        "E1-07": 110,
+        "E1-01": 110
       },
-      "fill": 0.584,
+      "fill": 0.641,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 56,
-        "ground_symbols": 26,
-        "junctions": 21,
+        "global_labels": 63,
+        "ground_symbols": 28,
+        "junctions": 19,
         "wire_crossings": 1,
-        "wires": 127
+        "wires": 128
       }
     },
     {
       "stem": "E2",
       "instance": "81984160-ffc1-5150-93ba-690a49e1cc5c",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (1/5)",
-      "components": 48,
-      "sheet": "E2",
-      "notes": [],
-      "note_wrap_cap": 110,
-      "note_wrap_chars": {},
-      "fill": 0.696,
-      "drawing": {
-        "fallback_labels": 0,
-        "global_labels": 141,
-        "ground_symbols": 33,
-        "junctions": 77,
-        "wire_crossings": 11,
-        "wires": 356
-      }
-    },
-    {
-      "stem": "E2_02",
-      "instance": "def01337-c22c-581d-ab21-3e0f48197e81",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/5)",
-      "components": 55,
+      "components": 63,
       "sheet": "E2",
       "notes": [
         "N-E2-02",
@@ -94,14 +75,37 @@
         "E2-01": 110,
         "E2-04": 110
       },
-      "fill": 0.817,
+      "fill": 0.857,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 36,
-        "ground_symbols": 37,
-        "junctions": 49,
+        "global_labels": 42,
+        "ground_symbols": 41,
+        "junctions": 52,
         "wire_crossings": 3,
-        "wires": 199
+        "wires": 224
+      }
+    },
+    {
+      "stem": "E2_02",
+      "instance": "def01337-c22c-581d-ab21-3e0f48197e81",
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/5)",
+      "components": 44,
+      "sheet": "E2",
+      "notes": [
+        "E2-05"
+      ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E2-05": 110
+      },
+      "fill": 0.695,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 117,
+        "ground_symbols": 31,
+        "junctions": 73,
+        "wire_crossings": 14,
+        "wires": 311
       }
     },
     {
@@ -133,30 +137,7 @@
       "stem": "E2_04",
       "instance": "b86a610c-9540-56eb-9a94-fee3a23ee226",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/5)",
-      "components": 62,
-      "sheet": "E2",
-      "notes": [
-        "E2-05"
-      ],
-      "note_wrap_cap": 110,
-      "note_wrap_chars": {
-        "E2-05": 110
-      },
-      "fill": 0.668,
-      "drawing": {
-        "fallback_labels": 0,
-        "global_labels": 54,
-        "ground_symbols": 31,
-        "junctions": 38,
-        "wire_crossings": 6,
-        "wires": 190
-      }
-    },
-    {
-      "stem": "E2_05",
-      "instance": "3b171c1f-559e-51e7-80e8-e40d3812ba35",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (5/5)",
-      "components": 85,
+      "components": 63,
       "sheet": "E2",
       "notes": [
         "E2-03",
@@ -167,14 +148,33 @@
         "E2-03": 110,
         "N-E2-01": 110
       },
-      "fill": 0.664,
+      "fill": 0.733,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 77,
-        "ground_symbols": 38,
-        "junctions": 24,
-        "wire_crossings": 2,
-        "wires": 190
+        "global_labels": 68,
+        "ground_symbols": 28,
+        "junctions": 33,
+        "wire_crossings": 7,
+        "wires": 202
+      }
+    },
+    {
+      "stem": "E2_05",
+      "instance": "3b171c1f-559e-51e7-80e8-e40d3812ba35",
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (5/5)",
+      "components": 80,
+      "sheet": "E2",
+      "notes": [],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {},
+      "fill": 0.498,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 62,
+        "ground_symbols": 39,
+        "junctions": 23,
+        "wire_crossings": 1,
+        "wires": 163
       }
     },
     {
@@ -435,17 +435,17 @@
       }
     }
   ],
-  "components": 882,
+  "components": 883,
   "supply_annotations": 27,
-  "connected_contacts": 2780,
+  "connected_contacts": 2758,
   "nets": 499,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 1234,
-    "ground_symbols": 553,
-    "junctions": 572,
-    "wire_crossings": 63,
-    "wires": 3375
+    "global_labels": 1220,
+    "ground_symbols": 555,
+    "junctions": 564,
+    "wire_crossings": 65,
+    "wires": 3339
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -1118,10 +1118,10 @@
     ]
   },
   "source_sha256": {
-    "E1.json": "1b66154dd72b4e8bf8673968f86758e2f5c2e028c1ed92bce2116e002a57ba99",
-    "E2.json": "f65b08f23e88d25864ddb1fa1016f3eeb1bbc23629d7f4d1cdfd0cddb7d4e640",
+    "E1.json": "cf655035fe76deb23d336cac8754f0ba31449c37220ccc4a568d2cddc5d7f406",
+    "E2.json": "9e3b73999f923c3093bd180274997277ad181bed0f45c17cf8d10bea79df9582",
     "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
-    "E5.json": "0b594795866dd05e99df4ea42d6548decf45414472e3c4a9475430452f5c4c57"
+    "E5.json": "dc4371e97e76603bcdcea53347c94d031fdba4e0826009434f82320ba2fc7b05"
   }
 }

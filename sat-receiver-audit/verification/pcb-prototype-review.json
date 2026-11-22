@@ -1,7 +1,7 @@
 {
   "status": "ROUTED_INTERNAL_PROTOTYPE_NOT_FOR_FABRICATION",
-  "source_input_sha256": "55b1bb398247c2d34a0acbbeafa0318b4be633b3f518897e377652d9c8829596",
-  "frozen_starter_sha256": "1523e4d1600c8b8dcb7803b3c372206d2e6de21024d95aa288e028aa59ab7895",
+  "source_input_sha256": "bf00a543a3bb1dca2d14d99109798d9b6e6a33107bb9a5fcf6c60acc82dd1c5a",
+  "frozen_starter_sha256": "ee71d0dd670f919a5a814750d77542d399984db8bf8d59e29b9606818c93624e",
   "published_board": true,
   "external_interfaces_selected": false,
   "release": "NOT_FOR_FABRICATION",
@@ -55,6 +55,7 @@
         "PWR_BRANCH",
         "PWR_BRANCH_SW",
         "USB_POWER_SW",
+        "PWR_ENTRY",
         "CTRL_HMI",
         "USB_POWER",
         "RF_HMC",
@@ -93,7 +94,7 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "4e401aef9db70e1713b8f8575242f0254397492520d5340d2295af6c406c87f1",
+    "raw_sha256": "ef9d6e19fc818f92cebc39545096009e52e29f80f29d3bf52be0b00fed7f37ec",
     "suppressed_or_filtered": false
   },
   "track_segments": 753,
@@ -11322,8 +11323,8 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "724793f6f1aa7e42bc1e902901a6d54ebf2e2d1fc09b81f9d991fce54c4efef6"
+    "raw_sha256": "d5b6916616ed68d00a29ebabb5cc8cb168cf35c6c649a6554c3ab611292d8cf0"
   },
-  "board_sha256": "acef2fac15a7da83938b5242e433d5a4d7f392b4675c5ebe0b1e71aa0b3145a0",
+  "board_sha256": "1a6917ac0bb7cd178d62d8878d72d265a3e7fdb9ff0922e904a59addc26c6d0f",
   "frozen_starter_unchanged": true
 }
