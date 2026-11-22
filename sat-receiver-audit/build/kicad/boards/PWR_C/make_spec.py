@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -592,7 +593,67 @@ def branch_exempt(inp, placed):
     return out
 
 
-def build():
+# ------------------------------------------------------------------ frozen route (W2 F2C-FALLBACK, the PWR_B / CTRL-4 toolkit)
+FROZEN = BASE / 'build/kicad/boards/PWR_C/route-frozen.json'
+FREEZE_ONLY = True  # route run with the frozen copper: Freerouting routes no class (router.freeze_only)
+
+
+def frozen_guard(placed, tracks, vias, zones):
+    """SHA256 of what the frozen copper depends on: every copper pad (ref, pad, net, centre, layers), the scripted copper
+    (by geometry: id, net, layer, width, path, via position and size; the 'why' texts may change without a new harvest) and
+    the scripted pours (their outlines decide where the fills leave room)."""
+    pads = sorted(f'{ref}.{p["number"]}|{p["net"]}|{p["at"][0]:.4f},{p["at"][1]:.4f}|{",".join(p["layers"])}'
+                  for ref, pa in placed.items() for p in pa.pads if p['number'] and p['type'] != 'np_thru_hole')
+
+    def geometry(item):
+        return json.dumps({k: v for k, v in item.items() if k != 'why'}, sort_keys=True)
+    scripted = [geometry(t) for t in tracks] + [geometry(v) for v in vias]
+    pours = [geometry(z) for z in zones]
+    return {'pads_sha256': hashlib.sha256('\n'.join(pads).encode()).hexdigest(),
+            'scripted_sha256': hashlib.sha256('\n'.join(scripted).encode()).hexdigest(),
+            'pours_sha256': hashlib.sha256('\n'.join(pours).encode()).hexdigest()}
+
+
+def frozen_guard_of_spec():
+    """The guard of the current inputs (freeze/freeze4.py writes it into route-frozen.json)."""
+    return build(frozen=False)[0]['_guard']
+
+
+def frozen_copper(guard):
+    """The frozen route: the router copper of one route run, harvested and locked, plus the grid A* completion of its open
+    connections (freeze/freeze4.py), from route-frozen.json when present. It goes in after the scripted copper, which it
+    does not change; make_spec's own checks cover the scripted copper only, the frozen copper is checked by freeze4.py
+    (model) and by KiCad DRC in the CI route run. Returns (tracks, vias, note)."""
+    if not FROZEN.is_file():
+        return [], [], None
+    doc = json.loads(FROZEN.read_text(encoding='utf-8'))
+    if not doc.get('guard'):
+        raise SystemExit(f'make_spec: {FROZEN.name} has no guard (a freeze4.py --no-guard trial): harvest again with the guard')
+    for key, value in guard.items():
+        if doc['guard'].get(key) != value:
+            raise SystemExit(f'make_spec: {FROZEN.name} was routed on another {key} ({str(doc["guard"].get(key))[:12]}... != '
+                             f'{value[:12]}...): route again with [pcb-route PWR_C] without the frozen copper and harvest anew')
+    why = (f'completion of the frozen route ({FROZEN.name}): grid A* on the locked copper of route run '
+           f'{doc["source"]["route_run"]} (build/kicad/boards/PWR_C/freeze/freeze4.py), exact clearance check')
+    ft, fv = [], []
+    for prefix, key, text in (('RT', 'router_tracks', None), ('FIN', 'completion_tracks', why)):
+        for k, (net, layer, width, path) in enumerate(doc[key]):
+            tr = {'id': f'{prefix}-{k + 1:04d}', 'net': net, 'layer': layer, 'width_mm': width, 'path': path, 'locked': True}
+            if text:
+                tr['why'] = text
+            ft.append(tr)
+    for prefix, key in (('RV', 'router_vias'), ('FINV', 'completion_vias')):
+        for k, (net, x, y, d, drill) in enumerate(doc[key]):
+            fv.append({'id': f'{prefix}-{k + 1:04d}', 'net': net, 'at': [x, y], 'drill_mm': drill, 'diameter_mm': d, 'locked': True})
+    note = (f'{TAG}: the router copper of route run {doc["source"]["route_run"]} is frozen and locked (RT-/RV- items) and its '
+            'open connections are joined by the grid A* completion (FIN-/FINV- items) of build/kicad/boards/PWR_C/freeze/'
+            'freeze4.py (numpy, offline; model, router and finisher of build/kicad/boards/PWR_B/freeze). Source: '
+            f'build/kicad/boards/PWR_C/{FROZEN.name}; valid only for this placement, netlist, scripted copper and pours (guard: '
+            f'SHA256 of each). Freezer result: {json.dumps(doc.get("result", {}), sort_keys=True)}')
+    return ft, fv, note
+
+
+def build(frozen=True):
     inp = Inputs()
     parts = spec_parts(inp)
     anchors, _rows = plan(inp, parts)
@@ -610,6 +671,12 @@ def build():
     gt, gv, skipped = mb.gnd_fanout(fan_inp, pre)
     pre['tracks'] = tracks + gt
     pre['vias'] = vias + gv
+    guard = frozen_guard(placed, pre['tracks'], pre['vias'], zones)
+    ft, fv, frozen_note = frozen_copper(guard) if frozen else ([], [], None)
+    pre['tracks'] = pre['tracks'] + ft
+    pre['vias'] = pre['vias'] + fv
+    if frozen_note:
+        pre['frozen_route_note'] = frozen_note
     nets = set()
     for ns in inp.nets_of.values():
         nets |= {n for n in ns.values() if n}
@@ -665,7 +732,15 @@ def build():
                               'lab5_min_mm': 1.335, 'lab5_mm': LAB5_W},
         'generator': 'build/kicad/boards/PWR_C/make_spec.py',
     }
+    if FREEZE_ONLY and frozen_note:
+        spec['router']['ignore_net_classes'] = ['Default', 'PWR1A', 'PWRC_BRANCH', 'PWRC_SENSE', 'SCRIPTED_GND']
+        spec['router']['freeze_only'] = ('W2 F2C-FALLBACK freeze-only: the frozen route in pre_route is the whole router copper, '
+                                         'so pcb/board_gen.py does not start Freerouting (router_skip) and the CI run measures '
+                                         'exactly the frozen router copper plus the grid A* completion (Freerouting runs 45039071310 '
+                                         'to 45046240574 left 3 to 13 connections open and moved them with every placement change)')
     bg.validate_spec(spec, BOARD)
+    if not frozen:
+        spec['_guard'] = guard
     return spec, project_json(inp, nets), probs, placed
 
 
