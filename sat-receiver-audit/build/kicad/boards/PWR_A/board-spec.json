@@ -33997,6 +33997,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2: SW pin 10 (0.4 x 2.4 mm between the PGND/VIN pins) up to the L102.1 trunk: 1.5 mm wide inside the pin rows (0.2 mm to the PGND/VIN pins), the BATT trunk 0.8 mm beyond the pin end (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34023,6 +34024,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2: VOUT pins 8/9 joined by a polygon on a lower layer (In4.Cu, over the GND fill) through the three VOUT vias (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34057,6 +34059,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-04: TPS7A4701 IN pins 15 and 16 joined by a pin-group pour round the package corner (pin 15 cannot leave to the right: the E1_SW rise pour / the part beside it; pin 16 has its BATT entry upward); 0.375 mm from the EP, every point within half the BATT width of a pin (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34091,6 +34094,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-04: TPS7A4701 IN pins 15 and 16 joined by a pin-group pour round the package corner (pin 15 cannot leave to the right: the E1_SW rise pour / the part beside it; pin 16 has its BATT entry upward); 0.375 mm from the EP, every point within half the BATT width of a pin (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34133,6 +34137,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS259470 bar-end entry (carve-out CO-EFUSE-BAR-END, TI SLVSFC9C figure 8-22: IN leaves at one bar end, OUT at the other): the bar cross-section at most half the class width long, then a class-width landing; scripted so that the placement keeps its courtyards off it (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34175,6 +34180,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS259470 bar-end entry (carve-out CO-EFUSE-BAR-END, TI SLVSFC9C figure 8-22: IN leaves at one bar end, OUT at the other): the bar cross-section at most half the class width long, then a class-width landing; scripted so that the placement keeps its courtyards off it (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34217,6 +34223,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS259470 bar-end entry (carve-out CO-EFUSE-BAR-END, TI SLVSFC9C figure 8-22: IN leaves at one bar end, OUT at the other): the bar cross-section at most half the class width long, then a class-width landing; scripted so that the placement keeps its courtyards off it (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34259,6 +34266,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS259470 bar-end entry (carve-out CO-EFUSE-BAR-END, TI SLVSFC9C figure 8-22: IN leaves at one bar end, OUT at the other): the bar cross-section at most half the class width long, then a class-width landing; scripted so that the placement keeps its courtyards off it (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34301,6 +34309,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS259470 bar-end entry (carve-out CO-EFUSE-BAR-END, TI SLVSFC9C figure 8-22: IN leaves at one bar end, OUT at the other): the bar cross-section at most half the class width long, then a class-width landing; scripted so that the placement keeps its courtyards off it (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34343,6 +34352,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS259470 bar-end entry (carve-out CO-EFUSE-BAR-END, TI SLVSFC9C figure 8-22: IN leaves at one bar end, OUT at the other): the bar cross-section at most half the class width long, then a class-width landing; scripted so that the placement keeps its courtyards off it (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34385,6 +34395,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS259470 bar-end entry (carve-out CO-EFUSE-BAR-END, TI SLVSFC9C figure 8-22: IN leaves at one bar end, OUT at the other): the bar cross-section at most half the class width long, then a class-width landing; scripted so that the placement keeps its courtyards off it (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34427,6 +34438,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS259470 bar-end entry (carve-out CO-EFUSE-BAR-END, TI SLVSFC9C figure 8-22: IN leaves at one bar end, OUT at the other): the bar cross-section at most half the class width long, then a class-width landing; scripted so that the placement keeps its courtyards off it (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34469,6 +34481,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-04: BATT entry of TPS7A4701 IN pin 16 (0.31 mm pin cross-section 0.45 mm up, 1.6 mm landing); pin 15 joins it through the pin-group pour (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34511,6 +34524,7 @@
         ],
         "priority": 3,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-04: BATT entry of TPS7A4701 IN pin 16 (0.31 mm pin cross-section 0.45 mm up, 1.6 mm landing); pin 15 joins it through the pin-group pour (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)"
       },
       {
@@ -34551,8 +34565,9 @@
             22.3
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of U111.4 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34593,8 +34608,9 @@
             27.0
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of U103.1 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34635,8 +34651,9 @@
             20.025
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of U111.3 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34677,8 +34694,9 @@
             22.4375
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of U111.6 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34719,8 +34737,9 @@
             25.55
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of U220.5 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34761,8 +34780,9 @@
             20.055
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of U213.15 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34803,8 +34823,9 @@
             19.745
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of U204.4 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34845,8 +34866,9 @@
             13.745
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of U205.4 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34887,8 +34909,9 @@
             15.55
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of J208.10 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34929,8 +34952,9 @@
             15.55
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of J208.14 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -34971,8 +34995,9 @@
             17.125
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of J208.2 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
@@ -35013,8 +35038,9 @@
             15.55
           ]
         ],
-        "priority": 3,
+        "priority": 4,
         "pad_connection": "solid",
+        "clearance_mm": 0.15,
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of J208.6 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       }
     ]

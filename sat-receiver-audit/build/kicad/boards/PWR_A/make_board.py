@@ -685,9 +685,17 @@ SCRIPT_VIAS = [  # (id, net, (x, y), why): 0.6 / 0.3 like the other scripted via
 ]
 
 
+# W2 PWR-L6-ROUTE: the KiCad fill clearance of the scripted pours. Without a local clearance KiCad 10.0.7 fills these zones at its
+# zone default 0.3 mm (route run 43591929140: the TPS259470 bar-end entries SC-PE-U109-OUT, SC-PE-U202-OUT, SC-PE-U203-IN/OUT
+# filled nothing, SC-PE-U201-OUT only its landing, SC-U213-IN-GROUP 3 %), so the copper the planner and the checks drew did not
+# exist; at the project clearance (netclasses.json project_defaults 0.15) KiCad fills the outline the planner checked.
+POUR_CLEARANCE = CLEAR
+
+
 def sc_zone(zid, net, layer, outline, why, priority=3):
     return {'id': zid, 'net': net, 'layer': layer, 'outline': [[r4(x), r4(y)] for x, y in outline], 'priority': priority,
-            'pad_connection': 'solid', 'why': why + ' (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than '
+            'pad_connection': 'solid', 'clearance_mm': POUR_CLEARANCE,
+            'why': why + ' (W2 PWR-L6-SCRIPT, make_board.py; a pin-entry pour stays a zone: narrower than '
             'its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)'}
 
 
@@ -1446,7 +1454,8 @@ CONVERTER_NETS = ('E1_SYS12_SW', 'E1_SYS12_CBOOT', 'E1_SYS12_RBOOT', 'E1_SYS12_V
 def script_guard(inp, pre):
     """SHA256 of what the planned copper depends on: the pads, the scripted tracks and vias (frozen_guard) and the pours."""
     g = frozen_guard(inp, pre['tracks'], pre['vias'])
-    zones = sorted(json.dumps({k: v for k, v in z.items() if k != 'why'}, sort_keys=True) for z in pre['zones'])
+    # clearance_mm (W2 PWR-L6-ROUTE) is the KiCad fill clearance of a pour, not planner geometry: the planner drew the outline
+    zones = sorted(json.dumps({k: v for k, v in z.items() if k not in ('why', 'clearance_mm')}, sort_keys=True) for z in pre['zones'])
     g['zones_sha256'] = hashlib.sha256('\n'.join(zones).encode()).hexdigest()
     return g
 
@@ -1478,7 +1487,10 @@ def planned_copper(inp, pre):
             if outline is None:
                 raise SystemExit(f'make_board: the pin-entry pour {z["id"]} of {SCRIPT6.name} is not one rectilinear piece')
             entries[z['id']] = {'pad': z['pad'], 'strip_mm': z['strip_mm'], 'landing_mm': z['landing_mm']}
-            zones.append({'id': z['id'], 'net': net, 'layer': z['layer'], 'outline': outline, 'priority': 3, 'pad_connection': 'solid',
+            # W2 PWR-L6-ROUTE: priority 4, one above the scripted SC- pours (route run 43591929140: zones_intersect of
+            # PE-E2_BONI_IN-U213.15 and SC-U213-IN-ENTRY, both priority 3), and the scripted fill clearance
+            zones.append({'id': z['id'], 'net': net, 'layer': z['layer'], 'outline': outline, 'priority': 4, 'pad_connection': 'solid',
+                          'clearance_mm': POUR_CLEARANCE,
                           'why': f'W2 PWR-L6-SCRIPT pin-entry pour of {z["pad"]} ({SCRIPT6.name}): the pad, its cross-section at most '
                                  'half the class width beyond it, then a class-width landing for the planned track'})
         for b in d['branches']:

@@ -6,6 +6,7 @@ The KiCad side (placement, Freerouting, DRC) runs only in .github/workflows/sr-r
 from __future__ import annotations
 
 import copy
+import importlib.util
 import json
 from pathlib import Path
 import sys
@@ -1118,6 +1119,56 @@ class PwrL6CombinedFreezeTools(unittest.TestCase):
             self.assertEqual(pats.get(net), 'PWR1A', net)
         spec = bg.read_json(bg.spec_path('PWR_B'))
         self.assertNotIn('PWR05A', spec['router'].get('class_layers', {}))
+
+
+class ZoneLocalClearance(unittest.TestCase):
+    """W2 PWR-L6-ROUTE: an optional zone key clearance_mm sets the KiCad fill clearance of that zone (ZONE::SetLocalClearance);
+    without it KiCad 10.0.7 filled the PWR_A scripted pours at its zone default 0.3 mm (route run 43591929140). Only the PWR_A
+    planned pours carry the key, so every other board places and fills exactly as before."""
+
+    def pwr_a(self):
+        return bg.read_json(bg.BASE / 'build/kicad/boards/PWR_A/board-spec.json')
+
+    def test_bad_clearance_is_refused(self):
+        spec = self.pwr_a()
+        zone = next(z for z in spec['pre_route']['zones'] if 'clearance_mm' in z)
+        for bad in (0.1, 0, True, '0.15'):
+            zone['clearance_mm'] = bad
+            with self.assertRaises(SystemExit, msg=repr(bad)):
+                bg.validate_spec(spec, 'PWR_A')
+        zone['clearance_mm'] = 0.15
+        bg.validate_spec(spec, 'PWR_A')
+
+    def test_only_pwr_a_pours_carry_the_key(self):
+        for board in bg.list_boards():
+            spec = bg.read_json(bg.spec_path(board))
+            keyed = [z['id'] for z in spec['post_route_zones'] + spec['pre_route'].get('zones', []) if 'clearance_mm' in z]
+            if board != 'PWR_A':
+                self.assertEqual(keyed, [], board)
+        spec = self.pwr_a()
+        keyed = {z['id']: z['clearance_mm'] for z in spec['pre_route']['zones'] if 'clearance_mm' in z}
+        self.assertTrue(keyed)
+        self.assertEqual(set(keyed.values()), {spec['fab_floor']['min_clearance']})
+        self.assertTrue(all(k.startswith(('SC-', 'PE-')) for k in keyed), sorted(keyed))
+
+    @unittest.skipUnless(importlib.util.find_spec('pcbnew') is not None, 'KiCad pcbnew (sr-rx-pcb checks job only)')
+    def test_kicad_zone_gets_the_local_clearance(self):
+        import pcbnew
+        board = pcbnew.BOARD()
+        net = pcbnew.NETINFO_ITEM(board, 'N1')
+        board.Add(net)
+
+        class Frame:
+            def k(self, x, y):
+                return pcbnew.VECTOR2I(pcbnew.FromMM(x), pcbnew.FromMM(y))
+        zone = {'id': 'Z1', 'net': 'N1', 'layer': 'F.Cu', 'outline': [[0, 0], [2, 0], [2, 1], [0, 1]], 'priority': 4,
+                'pad_connection': 'solid', 'clearance_mm': 0.15}
+        item = bg.add_copper_zone(pcbnew, board, Frame(), {}, {}, zone, {'N1': net})
+        self.assertEqual(item.GetLocalClearance(), pcbnew.FromMM(0.15))
+        self.assertEqual(item.GetAssignedPriority(), 4)
+        plain = bg.add_copper_zone(pcbnew, board, Frame(), {}, {}, {k: v for k, v in zone.items() if k != 'clearance_mm'},
+                                   {'N1': net})
+        self.assertNotEqual(plain.GetLocalClearance(), pcbnew.FromMM(0.15))
 
 
 if __name__ == '__main__':

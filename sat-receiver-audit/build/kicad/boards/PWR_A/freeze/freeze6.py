@@ -24,6 +24,11 @@ nets of script-planned-6l.json) are never routed here, like GND; the necks of ne
 the exemption policy of the board (pcb/check_boards.py exemption_role); router copper of a net without a pad in a converter zone
 3'/4' (board-spec.json converter_zones) on F.Cu or In1.Cu over that zone is removed and the net joined again, and the A* keeps
 such nets off F.Cu there.
+W2 PWR-L6-ROUTE: --spec-zones models the scripted pours (pre_route zones of board-spec.json that carry clearance_mm) by their
+outlines, as plan6.py and make_board.py draw them, in place of the fills of the routed board: route run 43591929140 filled
+them at the KiCad zone default 0.3 mm (several filled nothing), and the spec now fills them at the project clearance. KiCad
+open connections of scripted nets are then not fatal: they are listed (result.scripted_open_in_run) and left to the
+scripted copper, which the next run measures.
 CI/model input only: the CI route run with '[pcb-route PWR_A]' is the check (KiCad 10.0.7 DRC); bench gates stay OPEN.
 """
 import argparse
@@ -302,6 +307,26 @@ LEAVE_OPEN_WHY = {
 }
 
 
+def spec_zones(m):
+    """W2 PWR-L6-ROUTE (--spec-zones): replace the zone items (src 'zone', the fills of the routed board) of every scripted pour
+    that board-spec.json pre_route gives a clearance_mm by its outline polygon (KiCad mm), the copper plan6.py and make_board.py
+    checked and that KiCad fills at that clearance. Returns (zones replaced, fill items removed)."""
+    spec = json.loads((HERE.parent / 'board-spec.json').read_text(encoding='utf-8'))
+    zones = [z for z in spec['pre_route']['zones'] if 'clearance_mm' in z and z['outline'] != 'board' and z['net'] not in M.PLANES]
+    names = {z['id'] for z in zones}
+    gone = 0
+    for it in m.items:
+        if it.alive and it.src == 'zone' and it.pad in names:
+            m.remove(it)
+            gone += 1
+    for z in zones:
+        pts = [K(x, y) for x, y in z['outline']]
+        xs, ys = [q[0] for q in pts], [q[1] for q in pts]
+        m.add(M.Item(kind='pad', net=z['net'], layers=[z['layer']], shape=M.cb.Poly(pts), ref='ZONE', pad=z['id'],
+                     at=((min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2), drill=0.0, locked=True, src='zone'))
+    return len(zones), gone
+
+
 def guard():
     """The guard make_board.py checks: computed by make_board itself on the spec without the frozen copper."""
     loader = importlib.util.spec_from_file_location('pwr_a_make_board', HERE.parent / 'make_board.py')
@@ -336,6 +361,8 @@ def main(argv=None):
     ap.add_argument('--prev', help='W2 PWRJ-LAYERS6 ratchet: the route-frozen-6l.json the run was routed with; its locked copper '
                                    'on the board is harvested again together with the new router copper')
     ap.add_argument('--order', choices=('class', 'short'), default='class', help='completion order of the open nets')
+    ap.add_argument('--spec-zones', action='store_true',
+                    help='W2 PWR-L6-ROUTE: model the scripted pours with clearance_mm by their spec outlines (spec_zones)')
     ap.add_argument('--leave-open', action='append', default=[], metavar='NET',
                     help='W2 PWR-TOOLS: a net the grid A* does not complete in this harvest (its DRC drops and pruning still '
                          'apply); recorded under fixes.left_open with LEAVE_OPEN_WHY')
@@ -370,6 +397,9 @@ def main(argv=None):
         print(f'ratchet: {hit} locked items of {args.prev} harvested again')
     stubs_hit, stubs_all = fix_stubs(m, art)
     print(f'via-centre stubs of the route log held fixed: {stubs_hit} of {stubs_all}')
+    zones_modelled = spec_zones(m) if args.spec_zones else None
+    if zones_modelled:
+        print(f'scripted pours modelled by their spec outlines: {zones_modelled[0]} (fill items removed {zones_modelled[1]})')
     cls, default_w = classes()
     width = lambda n: cls.get(n, ('Default', default_w))[1]
     layers = lambda n: OUTER if cls.get(n, ('Default',))[0] in POWER else ROUTING
@@ -387,8 +417,17 @@ def main(argv=None):
                                      {re.search(r'\[([^\]]+)\]', i.get('description', '')).group(1)
                                       for i in u.get('items', []) if re.search(r'\[([^\]]+)\]', i.get('description', ''))})
     bad_never = sorted(set(kicad_open) & NEVER)
-    if bad_never:
+    if bad_never and (not args.spec_zones or 'GND' in bad_never):
         raise SystemExit(f'freeze6: KiCad reports open connections of {bad_never}: fix the GND fan-out and route again')
+    scripted_split = {}
+    if bad_never:  # W2 PWR-L6-ROUTE (--spec-zones): scripted nets the run left open; their copper is the spec's, never routed here
+        print('KiCad open connections of scripted nets (left to the scripted copper):', bad_never)
+        # with the pours at their outlines the scripted copper must join each such net in the model; a net it still leaves
+        # split stays open in the next run as well (recorded, never routed here)
+        scripted_split = {n: len(m.islands(n)) - 1 for n in bad_never if len(m.islands(n)) > 1}
+        print('scripted nets still split in the model with the spec outlines:', scripted_split)
+    for n in bad_never:
+        del kicad_open[n]
     model_only = {n: k for n, k in fz.unconnected().items() if n not in NEVER and n not in kicad_open}
     print('KiCad open connections:', dict(kicad_open))
     print('model-only islands (joined in KiCad by copper overlap, left as routed):', model_only)
@@ -428,7 +467,7 @@ def main(argv=None):
     else:
         first = sorted(set(kicad_open) | viol, key=lambda n: (layers(n) != OUTER, n))
     left_open = {n: LEAVE_OPEN_WHY.get(n, 'left open on the command line (--leave-open)') for n in sorted(set(args.leave_open))}
-    first = [n for n in first if n not in left_open]
+    first = [n for n in first if n not in left_open and n not in NEVER]
     queue, rounds, t0 = collections.deque(first), 0, time.time()
     touched, failed, necks, branches = set(first), [], [], []
     while queue and rounds < args.rounds:
@@ -498,8 +537,10 @@ def main(argv=None):
                        '0.5 mm hole to hole, keepouts incl. the hole and edge rule areas; through vias 0.65/0.3 mm; BATT, '
                        'PWR1A, PWR2A and PWR3A on F.Cu/B.Cu at their 2 oz widths, signals on F.Cu, In2.Cu, In3.Cu, B.Cu, no '
                        'plane layer) by build/kicad/boards/PWR_A/freeze/freeze6.py'),
-        'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed))},
+        'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed)),
+                   **({'scripted_open_in_run': bad_never, 'scripted_split_in_model': scripted_split} if bad_never else {})},
         'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops,
+                  **({'spec_zones': {'modelled': zones_modelled[0], 'fill_items_removed': zones_modelled[1]}} if zones_modelled else {}),
                   'final_check_dropped': {'items': dropped[0], 'nets': dropped[1]}, 'left_open': left_open},
         'necks': sorted(necks, key=lambda r: (r['ref'], r['pad'], r['to'])),
         'branches': sorted(branches, key=lambda r: (r['net'], r['refs'])),
