@@ -32,7 +32,7 @@
     "sha256": "23100cee2dc38ae286b7a5bd60630579550ac857c109cb2f69c6fa54d936e729"
   },
   "board_file": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pcb",
-  "board_sha256": "05eaba7ba00656f00fa32ff69936549c45d520275dfc58f778353b2de64ec6a8",
+  "board_sha256": "ed5d0e0a8caa35655c18dd758aae803256c877758cf591ee85f20cd281b3d81a",
   "project_file": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pro",
   "fp_lib_table_sha256": "1ce2967209f89966ac934112ddc3253975e04ada72b477e026f62ea96e3f140b",
   "layers": {
@@ -1523,6 +1523,29 @@
             ]
           },
           {
+            "description": "Segment of C340 on F.Silkscreen",
+            "pos": [
+              126.9387,
+              103.865
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of D502",
+            "pos": [
+              128.6,
+              103.9
+            ]
+          },
+          {
             "description": "Segment of D502 on F.Silkscreen",
             "pos": [
               125.09,
@@ -1539,17 +1562,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of C340 on F.Silkscreen",
+            "description": "Reference field of U552",
             "pos": [
-              126.9387,
-              103.865
+              135.4,
+              104.3
             ]
           },
           {
-            "description": "Reference field of D502",
+            "description": "Segment of U552 on F.Silkscreen",
             "pos": [
-              128.6,
-              103.9
+              135.71,
+              103.61
             ]
           }
         ],
@@ -1619,29 +1642,6 @@
             "pos": [
               132.5,
               105.5
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U552 on F.Silkscreen",
-            "pos": [
-              135.71,
-              103.61
-            ]
-          },
-          {
-            "description": "Reference field of U552",
-            "pos": [
-              135.4,
-              104.3
             ]
           }
         ],
@@ -1880,7 +1880,7 @@
               "C520.2",
               "C341.2"
             ],
-            "external_refs": 542,
+            "external_refs": 544,
             "external_sample": [
               "A401",
               "A402",
@@ -1899,14 +1899,14 @@
               "J518.4",
               "U552.6"
             ],
-            "external_refs": 10,
+            "external_refs": 8,
             "external_sample": [
-              "J203",
-              "J208",
-              "J209",
+              "J120",
               "J307",
               "J504",
-              "J507"
+              "J507",
+              "J550",
+              "U305"
             ],
             "status": "connector"
           },
@@ -1918,14 +1918,14 @@
               "J518.3",
               "U552.1"
             ],
-            "external_refs": 10,
+            "external_refs": 8,
             "external_sample": [
-              "J203",
-              "J208",
-              "J209",
+              "J120",
               "J307",
               "J504",
-              "J507"
+              "J507",
+              "J550",
+              "U305"
             ],
             "status": "connector"
           }

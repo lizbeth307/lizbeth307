@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PACK_FUSE/PACK_FUSE.kicad_pcb",
-      "sha256": "bb250b01be958eac4cc32c0eea38ac1b1ba36dadbd211a5d044ed580ef03f06d"
+      "sha256": "7ce8423e1dccb4c2f5f5744b42abeaf5580d50357dab1e85d9831dd51135f5ce"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "c8436a0cff361c10ccdb3ae388ab73194093abb30b4f231a16527f1f48aa8b4f",

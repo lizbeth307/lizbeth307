@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/T7_INSERT/T7_INSERT.kicad_pcb",
-      "sha256": "642eeea75a2dbccc260f4918f31a668c5b16656f587e02bd2b0908204133a771"
+      "sha256": "838655cfa1d8ada0ace4f918a384d93f8b61167a46395cc988df096815af8b03"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "4f8bdf03a9aaef1425b9197860b57bf1346675fcfd5027a49a188b4ffe9db8c2",

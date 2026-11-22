@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/HDMI_INSERT/HDMI_INSERT.kicad_pcb",
-      "sha256": "243d8b6a902b904a9145cb86944128e456c8d70772f6f8d270b30f85891f3108"
+      "sha256": "1abe1e4c8a3885a8bb4c07b371c3f853eadb78cce6f46fd01e1336ea197a1fd6"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "e03ef3fa2c72080f6806e3c6fbe2ff4e933c9dc7e93868e900d19feea2c1fb4e",

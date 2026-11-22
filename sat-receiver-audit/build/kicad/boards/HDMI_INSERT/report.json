@@ -32,7 +32,7 @@
     "sha256": "d67aeb9ea2caa01b218948b5a734c814ca035c258c4667415d21143c1b87e57b"
   },
   "board_file": "build/kicad/boards/HDMI_INSERT/HDMI_INSERT.kicad_pcb",
-  "board_sha256": "243d8b6a902b904a9145cb86944128e456c8d70772f6f8d270b30f85891f3108",
+  "board_sha256": "1abe1e4c8a3885a8bb4c07b371c3f853eadb78cce6f46fd01e1336ea197a1fd6",
   "project_file": "build/kicad/boards/HDMI_INSERT/HDMI_INSERT.kicad_pro",
   "fp_lib_table_sha256": "4587afb7ba0ffb710a9df3bcd16a4e77b8df3ea2d017a21825be536944e99734",
   "layers": {
@@ -688,17 +688,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of C518",
+            "pos": [
+              111.4,
+              106.9
+            ]
+          },
+          {
             "description": "Reference field of U506",
             "pos": [
               108.0,
               106.4
-            ]
-          },
-          {
-            "description": "Reference field of C517",
-            "pos": [
-              104.6,
-              106.9
             ]
           }
         ],
@@ -718,9 +718,9 @@
             ]
           },
           {
-            "description": "Reference field of C518",
+            "description": "Reference field of C517",
             "pos": [
-              111.4,
+              104.6,
               106.9
             ]
           }
@@ -886,7 +886,7 @@
               "C517.2",
               "C518.2"
             ],
-            "external_refs": 547,
+            "external_refs": 549,
             "external_sample": [
               "A401",
               "A402",

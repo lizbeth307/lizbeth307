@@ -32,7 +32,7 @@
     "sha256": "34c9cba099443258a846a287c3474a3330b4486c98df30b08860a8ddf17cbfed"
   },
   "board_file": "build/kicad/boards/PACK_FUSE/PACK_FUSE.kicad_pcb",
-  "board_sha256": "bb250b01be958eac4cc32c0eea38ac1b1ba36dadbd211a5d044ed580ef03f06d",
+  "board_sha256": "7ce8423e1dccb4c2f5f5744b42abeaf5580d50357dab1e85d9831dd51135f5ce",
   "project_file": "build/kicad/boards/PACK_FUSE/PACK_FUSE.kicad_pro",
   "fp_lib_table_sha256": "791f0dc638185b50677e7928a83593f7eaf74bc3a66086498a90534f23c225e0",
   "layers": {
@@ -523,17 +523,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of F101",
-            "pos": [
-              105.35,
-              113.2
-            ]
-          },
-          {
             "description": "Segment of F101 on F.Silkscreen",
             "pos": [
               105.35,
               113.95
+            ]
+          },
+          {
+            "description": "Reference field of F101",
+            "pos": [
+              105.35,
+              113.2
             ]
           }
         ],
@@ -666,10 +666,9 @@
               "F101.2",
               "J117.1"
             ],
-            "external_refs": 4,
+            "external_refs": 3,
             "external_sample": [
               "J105",
-              "J106",
               "R101",
               "U102"
             ],

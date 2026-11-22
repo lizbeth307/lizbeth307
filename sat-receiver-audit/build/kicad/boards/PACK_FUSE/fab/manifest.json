@@ -7,7 +7,7 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/PACK_FUSE/PACK_FUSE.kicad_pcb",
-    "board_sha256": "bb250b01be958eac4cc32c0eea38ac1b1ba36dadbd211a5d044ed580ef03f06d",
+    "board_sha256": "7ce8423e1dccb4c2f5f5744b42abeaf5580d50357dab1e85d9831dd51135f5ce",
     "project_sha256": "d9a60e9c60498e76037aafa247c6f684cebc18c0af0e81278edb87abf456d3d5",
     "spec_projection_sha256": "e8cb1cc850160fe8af5f5bd267181ff66acfa5d2fb56c50206cde5a2c4b6d735",
     "report_projection_sha256": "7927a782f99c79720bd1f60bb53be0f2c9945ee52ac8e7ff7d724cda8e31409c",
@@ -237,12 +237,12 @@
     },
     {
       "path": "PACK_FUSE-fab-notes.pdf",
-      "sha256": "de06c85626c480fa77063214a02e09290029fb724191eca0e255c1a368f77391",
+      "sha256": "eb531990a9d5aacfb465329f08206eb6689bddf8ef21df12509dad831deff9cc",
       "bytes": 7022
     },
     {
       "path": "PACK_FUSE.ipc356",
-      "sha256": "d2a7ea5711b56087e770a34eee127305e28314fd777f7312c7bb39d545dbfbb3",
+      "sha256": "22d422f367ef5f4bc894e29a8988ffffdb77249203e4c7883beee2cdfd78360f",
       "bytes": 1153
     },
     {
@@ -302,12 +302,12 @@
     },
     {
       "path": "gerber/PACK_FUSE-B_Cu.gbl",
-      "sha256": "4bf92247f2f64784e684901549284d4fb57060feedb58e849db3792859a23948",
+      "sha256": "ed02d6a4bae83290dc1693eee8f8c13d6c5dbbde03f7e121d05fb750d4306136",
       "bytes": 3596
     },
     {
       "path": "gerber/PACK_FUSE-B_Mask.gbs",
-      "sha256": "27cd971a7d1d40799677c79331ebd249e1fdc3463f7249e1a49940b0683fafdd",
+      "sha256": "c580b75e05e77e2d4f9f82354c379f9b3e7bf3e651179e2b4654061d6207d547",
       "bytes": 1391
     },
     {
@@ -317,7 +317,7 @@
     },
     {
       "path": "gerber/PACK_FUSE-B_Silkscreen.gbo",
-      "sha256": "e8373e6c4f7f23549b6bb68511c3fb7ef3bc5e849812f19b6db18b8e586d676d",
+      "sha256": "d78e18761d70e0127c2b059f8c4c87571014544d7352eceadbf367044b197f2a",
       "bytes": 1401
     },
     {
@@ -327,12 +327,12 @@
     },
     {
       "path": "gerber/PACK_FUSE-F_Cu.gtl",
-      "sha256": "a94463a6077fc32fc62ebbb95d5fc5890f742de55b9aaf60ac2452c75e3a0e91",
+      "sha256": "7b35c0d5fffbd3bd8a0a8f95565bb995e3b898708d5bcea73836d59ee6d8d297",
       "bytes": 3596
     },
     {
       "path": "gerber/PACK_FUSE-F_Mask.gts",
-      "sha256": "d147ba44b6601aad8fdbf00c39886ca7387c419539b6a4b733dcbb90670833e0",
+      "sha256": "19efeaa3da0802c6fb77ba6131fdf4619af6901be9368286fce1d8390c8be7ff",
       "bytes": 1391
     },
     {
@@ -342,7 +342,7 @@
     },
     {
       "path": "gerber/PACK_FUSE-F_Silkscreen.gto",
-      "sha256": "5ca31a4bb7c9a9440dba6f9a118c14187793b2c439a4cac6cc4380d592408dfa",
+      "sha256": "44718bcb952f1237bb1c72d2ae931f3c035cab2226ee2df705fc521c3da606b1",
       "bytes": 6304
     },
     {

@@ -15,20 +15,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
+          "description": "Reference field of C518",
+          "pos": {
+            "x": 111.4,
+            "y": 106.9
+          },
+          "uuid": "6bc5a4f7-5e72-4ad0-9e14-4c728221edae"
+        },
+        {
           "description": "Reference field of U506",
           "pos": {
             "x": 108.0,
             "y": 106.4
           },
-          "uuid": "1d5f062d-e89e-4427-9bfa-4a628d7f4116"
-        },
-        {
-          "description": "Reference field of C517",
-          "pos": {
-            "x": 104.6,
-            "y": 106.9
-          },
-          "uuid": "b831db27-bf8d-4310-8a2c-4bed2971a024"
+          "uuid": "9abe5482-4ea6-4535-a5c6-6ed47438883e"
         }
       ],
       "severity": "warning",
@@ -43,15 +43,15 @@
             "x": 108.0,
             "y": 106.4
           },
-          "uuid": "1d5f062d-e89e-4427-9bfa-4a628d7f4116"
+          "uuid": "9abe5482-4ea6-4535-a5c6-6ed47438883e"
         },
         {
-          "description": "Reference field of C518",
+          "description": "Reference field of C517",
           "pos": {
-            "x": 111.4,
+            "x": 104.6,
             "y": 106.9
           },
-          "uuid": "6a791ac1-7f50-4af3-8ef4-d2f6869f52a9"
+          "uuid": "c314f48d-6d50-4ba1-8da5-f70121b50f85"
         }
       ],
       "severity": "warning",
@@ -66,7 +66,7 @@
             "x": 104.0,
             "y": 115.8
           },
-          "uuid": "4523557a-181d-4441-87a8-4f6441f04621"
+          "uuid": "527886a0-a557-4288-a1cf-25f839c286fd"
         },
         {
           "description": "PTH pad 2 [GND] of J1",
@@ -74,7 +74,7 @@
             "x": 105.0,
             "y": 115.8
           },
-          "uuid": "abb294ce-4267-4f72-83c8-42d14c2084e6"
+          "uuid": "a4ceb990-bc43-4c7d-bf52-3cb72cd899ea"
         }
       ],
       "severity": "warning",
@@ -89,7 +89,7 @@
             "x": 104.0,
             "y": 102.2
           },
-          "uuid": "0486b369-1d8b-4ee8-b0a0-2af2e037a07c"
+          "uuid": "38bed9ff-6631-4ad1-830c-f632e45a9183"
         },
         {
           "description": "PTH pad 2 [GND] of J2",
@@ -97,7 +97,7 @@
             "x": 105.0,
             "y": 102.2
           },
-          "uuid": "535c08bb-a41d-4a27-b6d9-f52de1f8dd2d"
+          "uuid": "6c86ba33-c95c-4ef4-bac2-42de7f6831e2"
         }
       ],
       "severity": "warning",
