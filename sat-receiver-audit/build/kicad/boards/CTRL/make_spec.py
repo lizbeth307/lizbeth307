@@ -276,8 +276,11 @@ ANCHORS = {
     'R397': (anchor((38.4, 55.15), 180), PICO_NOTE + ': RILIM of U316 below C344, above the Pico courtyard (y 54.4)'),
     # W2 CTRL-6: the blower PTC on the top side in the left edge strip between the J305 and J314 pegs, and the blower capacitors on
     # the top side between the J314 pins and J317 (design/E3.json R-E3-19)
-    'F303': (anchor((6.6, 63.5), 270, 'F'), BLOWER5_NOTE + ': the PTC on the top side between the J314 and J305 pegs, pad 1 '
-             '(LAB5) towards J305.4, pad 2 (LAB5_BLOWER) towards J314.2'),
+    'F303': (anchor((6.6, 63.5005), 270, 'F'), BLOWER5_NOTE + ': the PTC on the top side between the J314 and J305 pegs, pad 1 '
+             '(LAB5) towards J305.4, pad 2 (LAB5_BLOWER) towards J314.2; y 63.5005, not 63.5, puts both pad centres on the '
+             '0.001 mm grid (65.638 and 61.363): Freerouting joins a locked track that ends on a pad centre such as 65.6375 to its '
+             'own rounded centre with a 0.0005 mm wire of the class width, here PWR3A_BRANCH 0.5 mm on LAB5 '
+             '(check_boards class_widths, route run 45058017781)'),
     'C343': (anchor((11.73, 57.125), 90, 'F'), BLOWER5_NOTE + ': decoupling capacitor on the top side (was on the bottom row below '
              'cut-out 1, W2 CTRL-4), pad 1 on the LAB5_BLOWER bar from J314.2 (y 56.35), pad 2 under the E3_BLOWER_GND bar from '
              'J314.1 (y 58.41)'),
