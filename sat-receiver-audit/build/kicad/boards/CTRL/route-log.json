@@ -47,18 +47,18 @@
   "log_tail": [
     "    - U301-23  ->  via",
     "  Net 'FAULT_HFP' (2 unrouted connections):",
-    "    - via  ->  R323-1",
+    "    - R323-1  ->  via",
     "    - via  ->  U303-2",
     "  Net 'FAULT_LABPORT' (2 unrouted connections):",
-    "    - J306-17  ->  via",
-    "    - R308-1  ->  via",
+    "    - via  ->  J306-17",
+    "    - via  ->  R308-1",
     "  Net 'FAULT_LNA1' (1 unrouted connection):",
     "    - via  ->  R309-1",
     "  Net 'I2C0_SDA' (2 unrouted connections):",
     "    - J304-13  ->  via",
-    "    - J307-9  ->  via",
+    "    - via  ->  J307-9",
     "  Net 'I2C2_SCL' (1 unrouted connection):",
-    "    - via  ->  J302-4",
+    "    - J302-4  ->  via",
     "  Net 'I2C2_SDA' (1 unrouted connection):",
     "    - J302-3  ->  via",
     "  Net 'LAB5_PICO' (2 unrouted connections):",
@@ -74,19 +74,19 @@
     "    - via  ->  J307-14",
     "  Net 'PWR_BUTTON' (4 unrouted connections):",
     "    - D303-3  ->  D302-3",
-    "    - J307-19  ->  via",
-    "    - via  ->  D302-3",
+    "    - via  ->  J307-19",
+    "    - via  ->  D303-3",
     "    - J315-2  ->  via",
     "  Net 'UART5_RX' (2 unrouted connections):",
     "    - via  ->  J304-10",
     "    - via  ->  J310-3",
-    "2026-11-22 19:32:20.780 INFO   [9EDB94\\89F699] Auto-routing stage completed: started with 245 unrouted nets, completed in 570.99 seconds, final score: 660.20 (101 unrouted and 696 violations), using 568.70 total CPU seconds, 400.35 GB total allocated, and 418.9 MB peak heap usage.",
-    "2026-11-22 19:32:21.330 INFO   [9EDB94\\89F699] Skipping optimization stage: the board has 101 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-22 19:32:21.387 INFO   [9EDB94\\89F699] Job '9EDB94\\89F699' finished with state: COMPLETED (elapsed: 9 minutes 33.23 seconds, finished at UTC: 2026-11-22T19:32:21.386949713Z).",
-    "2026-11-22 19:32:21.398 INFO   Saving output file '/tmp/sr-rx-CTRL-d1jq2yw0/CTRL.ses' (SES)...",
-    "2026-11-22 19:32:21.398 INFO   Successfully saved output file '/tmp/sr-rx-CTRL-d1jq2yw0/CTRL.ses' (35958 bytes)."
+    "2026-11-22 21:01:10.329 INFO   [546D11\\C6CC72] Auto-routing stage completed: started with 245 unrouted nets, completed in 796.41 seconds, final score: 660.20 (101 unrouted and 696 violations), using 793.65 total CPU seconds, 412.22 GB total allocated, and 425.1 MB peak heap usage.",
+    "2026-11-22 21:01:11.091 INFO   [546D11\\C6CC72] Skipping optimization stage: the board has 101 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-22 21:01:11.204 INFO   [546D11\\C6CC72] Job '546D11\\C6CC72' finished with state: COMPLETED (elapsed: 13 minutes 19.70 seconds, finished at UTC: 2026-11-22T21:01:11.203417426Z).",
+    "2026-11-22 21:01:11.230 INFO   Saving output file '/tmp/sr-rx-CTRL-6inkn272/CTRL.ses' (SES)...",
+    "2026-11-22 21:01:11.230 INFO   Successfully saved output file '/tmp/sr-rx-CTRL-6inkn272/CTRL.ses' (35958 bytes)."
   ],
-  "dsn_sha256": "1e6cb1344da9c4f46b0f7ee01682dbe8748a0f943045833c6abb135ebb7e3b86",
+  "dsn_sha256": "3ca4e65b65a26602ca0732f0a909e005940fb538104d2922268090b44c147785",
   "ses_sha256": "b4ec1cacf5ca9e6841c4d7ffe499d86aee8b71465ce76f0d43ccb8c60995f804",
   "dsn_probe": {
     "resolution": "um 10",
@@ -135,7 +135,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "78ce70c4606470706527a38c8639f8a726c0b5672f85bb3063c9ccc1ea6aadd4",
+  "board_sha256": "62676cc9ee8c0b8f7f40f5081bfd9e733c4d957414fadf28596c2ec96130a85f",
   "previews": [
     "build/kicad/boards/CTRL/CTRL-top.svg",
     "build/kicad/boards/CTRL/CTRL-bottom.svg"
@@ -1062,8 +1062,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "45060196346",
-    "sha": "e3a8288264331564183d94fd8cc4ff251296bf03",
+    "run_id": "45068244974",
+    "sha": "3a96b258dfa54e11b4ac6511e603f89c3e69c780",
     "ref": "refs/heads/wip/w2-ctrl6"
   }
 }

@@ -7,10 +7,10 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/CTRL/CTRL.kicad_pcb",
-    "board_sha256": "78ce70c4606470706527a38c8639f8a726c0b5672f85bb3063c9ccc1ea6aadd4",
+    "board_sha256": "62676cc9ee8c0b8f7f40f5081bfd9e733c4d957414fadf28596c2ec96130a85f",
     "project_sha256": "46ba6efabb46d4ae40fdaf4df37d09573690b9aad3bfbddca39514176c326eef",
     "spec_projection_sha256": "34391f408b95bd045a446934846b9c0e3e8657acc06dd00f73dacfaaed26850b",
-    "report_projection_sha256": "811195d28ad43aa4eb05b90f540e0631618a4e3dc85eb8e9c32aeffb9dbddc69",
+    "report_projection_sha256": "c45f4274c921dda21da86809d1cde74824bf62681c1bbf4974546c1dfbf70307",
     "jlc_bom_rows": [
       {
         "Board": "CTRL",
@@ -46,18 +46,18 @@
       },
       {
         "Board": "CTRL",
-        "Comment": "0603WAF1500T5E",
-        "Designator": "R363",
+        "Comment": "0603WAF1403T5E",
+        "Designator": "R397",
         "Footprint": "R_0603_1608Metric",
-        "LCSC Part #": "C22808",
+        "LCSC Part #": "C22875",
         "Mount": "SMD"
       },
       {
         "Board": "CTRL",
-        "Comment": "0603WAF1503T5E",
-        "Designator": "R397",
+        "Comment": "0603WAF1500T5E",
+        "Designator": "R363",
         "Footprint": "R_0603_1608Metric",
-        "LCSC Part #": "C22807",
+        "LCSC Part #": "C22808",
         "Mount": "SMD"
       },
       {
@@ -357,7 +357,7 @@
         "Mount": "THT"
       }
     ],
-    "jlc_bom_rows_sha256": "f84eb3c68d0a23de20d7dec178b7d88ed30fbfe19c7da3e51cf70ea633ab8f75",
+    "jlc_bom_rows_sha256": "03edfcf7356d6f7fa63a28b1b22348477d1d53121e68e7cd7f7997793dfbbfb1",
     "stackup": {
       "id": "JLC04161H-7628",
       "copper_layers": 4,
@@ -887,12 +887,12 @@
     },
     {
       "path": "CTRL-fab-notes.pdf",
-      "sha256": "c369e069ab30ba9b42823d753fcf51b060b40a9c4e09e40e75ac8dd17ec6fc51",
+      "sha256": "00a7deabc215871f7387473f68848c270cf7db50d30052e44367298b7caf422b",
       "bytes": 30091
     },
     {
       "path": "CTRL.ipc356",
-      "sha256": "d32790278361ce16a2ae8cc02634e0e1071ead06b8b014c8a525c8c2d9162a7e",
+      "sha256": "031d18b06a9405f20692e24a22f7266a37cdfe0f9faca92cb0349313c3aeffcb",
       "bytes": 96728
     },
     {
@@ -907,7 +907,7 @@
     },
     {
       "path": "assembly/CTRL-bom-jlc.csv",
-      "sha256": "08d1c699f68d13cc607c083ad0254e09e4e922d66bf3df31735314b4cea89f05",
+      "sha256": "68f96327c22fc892520313d54c4efddd938f998bff82fa50a3cd4dd36108ae16",
       "bytes": 6941
     },
     {
@@ -927,7 +927,7 @@
     },
     {
       "path": "assembly/CTRL-pos-kicad.csv",
-      "sha256": "fda230e1666e44585a8130349ed8084b114e38248a054e7c8a7e02d325829f49",
+      "sha256": "f2efd81204594aa50b2ef57966aa022055184e3becb5447a8d69cfb4b4d1bd2c",
       "bytes": 12625
     },
     {
@@ -952,22 +952,22 @@
     },
     {
       "path": "gerber/CTRL-B_Cu.gbl",
-      "sha256": "47e5ca2272634797b3f5013122f0f92e78120a187847f888edb38dc21bc187b3",
-      "bytes": 485736
+      "sha256": "773be4da57a9318d3ce32b261c717b3e3b1255955848a6fca55ec203616cb294",
+      "bytes": 485781
     },
     {
       "path": "gerber/CTRL-B_Mask.gbs",
-      "sha256": "66d9671f3bce6d9affa02a432b8d96f6e1a4c50f4d2267a0c55229bc06cf2708",
+      "sha256": "7b959e3c9b065778133100213998f26b9c173e48d49f09ab365eca6ccb9f907e",
       "bytes": 17409
     },
     {
       "path": "gerber/CTRL-B_Paste.gbp",
-      "sha256": "adbff034d1c121c5a6ba1258ef8cebcc2dc1f2596f3a3a891511b1097114c18b",
-      "bytes": 9161
+      "sha256": "eaf3c479075c2431d7c9d5ff03346581000839b91095629d300bb82cba53dafc",
+      "bytes": 9156
     },
     {
       "path": "gerber/CTRL-B_Silkscreen.gbo",
-      "sha256": "7487712415f2147703cb8112d73a35199bda1f432c195f15cfa8d3b2d32a6544",
+      "sha256": "3f79c294246219f2226ec554b6c2a268e72a7f685aa06ac384a44f3ae680d83f",
       "bytes": 253909
     },
     {
@@ -977,33 +977,33 @@
     },
     {
       "path": "gerber/CTRL-F_Cu.gtl",
-      "sha256": "89615d476d08a234757feef328b14a6338d17e12bbb3227a1609277312dd161e",
-      "bytes": 506450
+      "sha256": "3f9d42c0c9b78b617043e94b178b831f50d0d7e599584649952a5853ed50c2e6",
+      "bytes": 506480
     },
     {
       "path": "gerber/CTRL-F_Mask.gts",
-      "sha256": "48bd14c71d5b1256aacb64fa085ef6f3225fa634dc2a8e9a0b9a0f83761eb554",
+      "sha256": "e7ab7a546480496922aa3745f3f4df066ebe0f355c09b338107659040a9ae7ac",
       "bytes": 16610
     },
     {
       "path": "gerber/CTRL-F_Paste.gtp",
-      "sha256": "194ef120192955bd4ffb977769476d3289cf3a7b86eac0f7df468133664c62fb",
-      "bytes": 10952
+      "sha256": "33a226bc1a80bd3cc41dbb80a695d6a45aad7aac2139dbe713b4f51e4fb6a78f",
+      "bytes": 10962
     },
     {
       "path": "gerber/CTRL-F_Silkscreen.gto",
-      "sha256": "3bc70a4c467d0d5b0f75e7ea5887ec82b2ba86fe82b74a7ba992df623110b4d8",
+      "sha256": "b7de8232825c59b798329f8ab65f573ea2f152b16a9bc02d0e27716f213e2810",
       "bytes": 230774
     },
     {
       "path": "gerber/CTRL-In1_Cu.g1",
-      "sha256": "ed549f1aeb25fd66d651aa63f2cebb01fffd11350aa3e77b565a7dd067228e05",
-      "bytes": 760931
+      "sha256": "4d349b07481c3b45d935dac9b212e352ddabfc9999ac1ff6cf3bd9199f202a67",
+      "bytes": 760951
     },
     {
       "path": "gerber/CTRL-In2_Cu.g2",
-      "sha256": "43130b2322cc6024777f60e2e22b47be6edfc1a81cc4cef3676b5891578672ef",
-      "bytes": 382427
+      "sha256": "4fb3593af3dffe9dd5620e56670d2c4f5be9007dc245cdc2a4ae06b85621af72",
+      "bytes": 382467
     },
     {
       "path": "gerber/CTRL-job.gbrjob",
