@@ -7537,6 +7537,11 @@
       "net": "LAB5_PICO",
       "reason": "U316 IN is fed from LAB5 through the PTC F302, whose pins are passive: KiCad needs a powered-net marker on the PTC output (W2 CTRL-6).",
       "source": "E3 F302/U316 connectivity (W2 CTRL-6)."
+    },
+    {
+      "net": "LAB5_BLOWER",
+      "reason": "The blower FAN302 (power_in) is fed from LAB5 through the PTC F303, whose pins are passive: KiCad needs a powered-net marker on the PTC output (W2 CTRL-6).",
+      "source": "E3 F303/FAN302 connectivity (W2 CTRL-6)."
     }
   ],
   "drawing_notes": [
