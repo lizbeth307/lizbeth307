@@ -54,6 +54,8 @@
 "MFJ","4","header_top","Molex","0039288040","C240829","3818","0.3305","Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",""
 "MFJ","4","housing","Molex","0039012040","C277696","43000","0.0584","",""
 "PHD","","terminal","JST","SPHD-001T-P0.5","C246755","347093","0.0103","","AWG 26…22, ⌀ ізоляції 1.0…1.5 мм (каталог JST PHD)"
+"PHD","10","header_side","JST","S10B-PHDSS(LF)(SN)","C161672","8029","0.4639","Connector_JST:JST_PHD_S10B-PHDSS_2x05_P2.00mm_Horizontal","бічний вхід (W2 F2C-FALLBACK): J120 на PWR-C, кінець гілки S02C (W-C2); LCSC C161672, знімок 2026-11-22-w2-f2c-lcsc.json"
+"PHD","10","housing","JST","PHDR-10VS-2","C566504","0","0.2626","","W2 F2C-FALLBACK: розетка 2×5 для J120, як назвав її пошук JLCPCB 22.11.2026 (JST PHDR-10VS-2, LCSC C566504, наявність 0 — закупівля OPEN; знімок 2026-11-22-w2-f2c-lcsc.json)"
 "PHD","20","header_top","JST","B20B-PHDSS(LF)(SN)","C471521","6180","0.589","Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical","верхній вхід (W2 PWR-L6-PLACE, третій прохід): J203 у зоні 2 PWR-B; корпус 6.5 мм над платою, 8.8 мм з розеткою (каталог JST PHD, копія LCSC, прочитано 13.11.2026)"
 "PHD","20","header_side","JST","S20B-PHDSS(LF)(SN)","C2983880","3270","0.6084","Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",""
 "PHD","20","housing","JST","PHDR-20VS","C594794","2908","0.1847","",""

@@ -880,6 +880,26 @@
    },
    "sizes": [
     {
+     "pins": 10,
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S10B-PHDSS(LF)(SN)",
+      "sku": {
+       "lcsc": "C161672"
+      },
+      "footprint": "Connector_JST:JST_PHD_S10B-PHDSS_2x05_P2.00mm_Horizontal",
+      "note": "бічний вхід (W2 F2C-FALLBACK): J120 на PWR-C, кінець гілки S02C (W-C2); LCSC C161672, знімок 2026-11-22-w2-f2c-lcsc.json"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHDR-10VS-2",
+      "sku": {
+       "lcsc": "C566504"
+      },
+      "note": "W2 F2C-FALLBACK: розетка 2×5 для J120, як назвав її пошук JLCPCB 22.11.2026 (JST PHDR-10VS-2, LCSC C566504, наявність 0 — закупівля OPEN; знімок 2026-11-22-w2-f2c-lcsc.json)"
+     }
+    },
+    {
      "pins": 20,
      "header_top": {
       "manufacturer": "JST",

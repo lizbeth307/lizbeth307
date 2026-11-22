@@ -733,14 +733,14 @@ class PlannedCutoutKeyAndFrozenRouter(unittest.TestCase):
         study = bg.read_json(bg.BASE / 'build/kicad/boards/PWR_A/placement-study-shrink2.json')['pwr_b_cutouts']['placed']
         want = [[c['rect'][0], c['rect'][1], round(c['rect'][2] - c['rect'][0], 4), round(c['rect'][3] - c['rect'][1], 4)]
                 for c in study]
-        self.assertEqual(len(pc['rects']), 47)  # 50 until W2 GR-ZONE2-SMD (no C265/C511/C512 windows), W2 PWR-L6-PLACE
+        self.assertEqual(len(pc['rects']), 30)  # 50 until W2 GR-ZONE2-SMD (no C265/C511/C512 windows), 47 until W2 F2C-FALLBACK (PWR-C refs)
         self.assertEqual([r['rect'] for r in pc['rects']], want)
         self.assertEqual([r['id'] for r in pc['rects']], [c['ref'] for c in study])
         self.assertEqual(pc['margin_mm'], 0.33)
         self.assertEqual(pc['layers'], ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu'])
         self.assertEqual(set(pc['blocks']), {'tracks', 'vias', 'zone_fills', 'pads'})
         boxes = bg.planned_cutout_boxes(spec)
-        self.assertEqual(len(boxes), 47)
+        self.assertEqual(len(boxes), 30)
         for (cid, box), r in zip(boxes, pc['rects']):
             self.assertEqual(cid, r['id'])
             self.assertAlmostEqual(box[0], r['rect'][0] - 0.33)
@@ -843,7 +843,8 @@ class PwrL6PlaceEscapeAndAnchors(unittest.TestCase):
         esc = spec['j209_escape']
         self.assertTrue(esc['passed'])
         self.assertEqual(esc['zone2_windows_in_field'], [])
-        self.assertEqual({c['kind'] for c in esc['cutouts_in_field']}, {'header_edge_strip'})
+        # W2 F2C-FALLBACK: the J112/J113/J507 strips left the field with the PWR-C headers; only edge strips may stay there
+        self.assertLessEqual({c['kind'] for c in esc['cutouts_in_field']}, {'header_edge_strip'})
         ids = {r['id'] for r in spec['planned_cutouts']['rects']}
         self.assertFalse(ids & {'C265', 'C511', 'C512'})
         self.assertGreaterEqual(esc['field_free_of_cutouts_mm2'], 400.0)  # third pass: the corridor is the band y 11.75-15.4, the field keeps 430.5 mm2 free

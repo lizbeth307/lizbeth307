@@ -26,7 +26,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S10B-PHDSS-LF-SN_C161672.pdf",
    "description": "-25℃~+85℃ 10P 11.9mm 2 250V 2mm 2mm 2x5P 3A 5 5mm 9mm Copper alloy Glass fiber reinforced PA66 PHD Right Angle Tin UL94V-0 White Push-Pull,P=2mm Wire To Board Connector ROHS",
-   "fetched_utc": "2026-11-22T14:30:19Z",
+   "fetched_utc": "2026-11-22T15:02:12Z",
    "jlc_library": "extended",
    "manufacturer": "JST",
    "mpn": "S10B-PHDSS(LF)(SN)",
@@ -70,7 +70,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-CRA2512-FZ-R015ELF_C2073490.pdf",
    "description": "15mΩ 3W Current Sense Resistor ±1% ±50ppm/℃ 2512 Current Sense Resistors / Shunt Resistors ROHS",
-   "fetched_utc": "2026-11-22T14:30:20Z",
+   "fetched_utc": "2026-11-22T15:02:12Z",
    "jlc_library": "extended",
    "manufacturer": "BOURNS",
    "mpn": "CRA2512-FZ-R015ELF",
@@ -120,7 +120,7 @@
    },
    "datasheet": "https://www.ti.com/cn/lit/gpn/ina228",
    "description": "-300mV~85V -40℃~+125℃ 0.01uV/℃ 10mA 154dB 1uV 2.5nA 2.7V~5.5V 640uA High-side detection、Low-side detection、Bidirectional detection、Input filter、Power monitoring、Programmable threshold alarm、Integrated ADC、Enable/shutdown function ±163.84mV VSSOP-10-0.5mm Current Sense Amplifiers ROHS",
-   "fetched_utc": "2026-11-22T14:30:21Z",
+   "fetched_utc": "2026-11-22T15:02:13Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "INA228AIDGSR",
@@ -153,13 +153,64 @@
    ],
    "stock": 1,
    "url": "https://www.lcsc.com/product-detail/current-sense-amplifiers_texas-instruments-ina228aidgsr_C2887910.html"
+  },
+  "C566504": {
+   "attributes": {
+    "Color": "White",
+    "Holes Structure": "2x5P",
+    "Number of PINs Per Row": "5",
+    "Number of Rows": "2",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PHD",
+    "Row Spacing": "2mm",
+    "With Locker": "Non-Latching",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2008251834_JST-PHDR-10VS-2_C566504.pdf",
+   "description": "-25℃~+85℃ 2 2mm 2mm 2x5P 5 Non-Latching PA66 PHD White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-22T15:02:14Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "PHDR-10VS-2",
+   "package": "P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.2626
+    ],
+    [
+     10,
+     0.2626
+    ],
+    [
+     12,
+     0.2626
+    ],
+    [
+     200,
+     0.1017
+    ],
+    [
+     500,
+     0.0981
+    ],
+    [
+     1000,
+     0.0964
+    ]
+   ],
+   "stock": 0,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phdr-10vs-2_C566504.html"
   }
  },
  "not_found": [],
  "requested_codes": [
   "C161672",
   "C2073490",
-  "C2887910"
+  "C2887910",
+  "C566504"
  ],
  "schema": 1,
  "scope": "partial",

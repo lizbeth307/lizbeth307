@@ -470,9 +470,11 @@ class PwrL6ZoneTwoBranchTests(unittest.TestCase):
 
     def test_s02b_is_a_straight_branch_of_s02(self):  # W2 PWR-L6-PLACE probe C: straight except the J202 <-> J203 pin swap
         self.assertEqual(D.SEGMENT_BRANCHES.get("S02B"), "S02")
-        self.assertEqual((D.HEADERS["J203"][1], D.HEADERS["J307"][1]), ({"S02B": "1-20"}, {"S02B": "1 3-13 16 17 19 20", "S02": "2 14 15 18"}))
+        # W2 F2C-FALLBACK: J203.8-12/.17/.19 are reserve contacts, their J307 contacts run in S02C to PWR-C J120
+        self.assertEqual((D.HEADERS["J203"][1], D.HEADERS["J307"][1]),
+                         ({"S02B": "1-7 13-16 18 20"}, {"S02B": "1 3-7 13 16 20", "S02": "2 14 15 18", "S02C": "8-12 17 19"}))
         branch = [w for w in self.h.wires if w["wire"].startswith("S02-S02B-")]
-        self.assertEqual(len(branch), 20)
+        self.assertEqual(len(branch), 13)
         for w in branch:
             a, b = PIN_RE.match(w["from"]), PIN_RE.match(w["to"])
             swap = {"2": "5", "14": "7", "15": "12", "18": "16"}  # J203 contact -> J306 contact (probe C)
@@ -516,7 +518,7 @@ class PwrL6ProbeCPinSwapTests(unittest.TestCase):
         graph = json.loads((BASE / "design/E2.json").read_text(encoding="utf-8"))
         j203 = next(c for c in graph["components"] if c["ref"] == "J203")
         self.assertEqual(D.SEGMENT_NETS["S02B"], {p["net"] for p in j203["pins"] if p.get("net")})
-        self.assertEqual(D.HEADERS["J306"][1], {"S02": "1-4 6 8-11 13-15 17-20", "S02B": "5 7 12 16"})
+        self.assertEqual(D.HEADERS["J306"][1], {"S02": "3 4 6 8-11 13-15 17-20", "S02B": "5 7 12 16", "S02C": "1 2"})  # W2 F2C-FALLBACK: 1/2 to J120
 
 
 if __name__ == "__main__":

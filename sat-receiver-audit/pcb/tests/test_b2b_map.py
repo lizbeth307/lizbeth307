@@ -221,14 +221,16 @@ class GuardRuleTests(unittest.TestCase):
         role = {int(r['pwr_a_pin']): r['role'] for r in NETS['contacts']}
         # (sense pair at the end of the strip since 11.11.2026, for the PWR-B board of record)
         # (W2 GR-5B: 10 rail contacts instead of 17 once the six damper nodes and VBUS_LABPORT stopped crossing)
+        # (W2 F2C-FALLBACK: 13 signal nets instead of 22 once the 9 S02 signals of the PWR-C groups stopped crossing)
         self.assertIn('odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the '
-                      '4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets in name order, then signal_moves',
+                      '4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-42 the 13 signal nets in name order, then signal_moves',
                       SPEC['pin_map_rule'])
         self.assertTrue({role[p] for p in range(1, 38, 4)} <= set(prepare.B2B_RAIL_KINDS))
         self.assertEqual({role[p] for p in range(3, 40, 4)} | {role[p] for p in range(4, 17, 4)}, {'gnd'})
         self.assertEqual(role[41], 'guard')
         self.assertEqual({role[p] for p in range(2, 15, 4)}, {'power'})
-        self.assertEqual({role[p] for p in set(range(18, 61, 2)) - {30, 42} | {66, 86}}, {'signal'})  # probe Y: 30 -> 86, 42 -> 66
+        # W2 F2C-FALLBACK: the 13 signals back on their contacts of the PWR-B board of record (b2b.signal_moves)
+        self.assertEqual({p for p, r in role.items() if r == 'signal'}, {22, 24, 26, 28, 32, 34, 36, 38, 44, 46, 54, 56, 86})
         self.assertEqual({role[p] for p in set(range(62, 97, 2)) - {66, 86} | {30, 42} | set(range(43, 97, 2))}, {'spare'})
         self.assertEqual([role[p] for p in (97, 98, 99, 100)], ['guard', 'guard', 'sense pair', 'sense pair'])
 
@@ -254,11 +256,17 @@ class PwrL6Place5ProbeYSignalMoves(unittest.TestCase):
     spare J209.85 over its J203.15 and I2C0_SDA to the spare J209.65 beside its J203.9, so the three leave the J209 lower-row
     pocket of the PWR-B board of record. Signals only, never onto a rail, GND, guard or sense contact. MODEL/CI inputs only."""
 
-    WANT_B = {'25': 'EN_LIME3V3', '27': 'EN_HFP', '29': None, '41': None, '65': 'I2C0_SDA', '85': 'EN_LNB', '19': 'E1_BAT_ADC'}
+    # W2 F2C-FALLBACK: I2C0_SDA and E1_BAT_ADC left the B2B with the PWR-C groups (J209.65 and .19 spare); every remaining signal
+    # keeps its contact of the PWR-B board of record, the probe-Y positions of EN_LIME3V3, EN_HFP and EN_LNB included
+    WANT_B = {'25': 'EN_LIME3V3', '27': 'EN_HFP', '29': None, '41': None, '65': None, '85': 'EN_LNB', '19': None,
+              '21': 'EN_AUX12', '23': 'EN_BONI', '31': 'FAULT_HFP', '43': 'I2C2_SCL', '45': 'I2C2_SDA', '55': 'PICO_DISP_EN'}
 
     def test_moves_in_the_spec(self):
         self.assertEqual([(m['net'], m['to_pwr_a'], m['pwr_b']['to']) for m in SPEC['signal_moves']],
-                         [('EN_HFP', 28, 27), ('EN_LNB', 86, 85), ('I2C0_SDA', 66, 65)])
+                         [('EN_LNB', 86, 85), ('PICO_DISP_EN', 56, 55), ('OVP_LNB_N', 54, 53), ('I2C2_SDA', 46, 45),
+                          ('I2C2_SCL', 44, 43), ('FLT_LNB', 38, 37), ('FLT_LIME3V3', 36, 35), ('FLT_BONI', 34, 33),
+                          ('FAULT_HFP', 32, 31), ('EN_HFP', 28, 27), ('EN_LIME3V3', 26, 25), ('EN_BONI', 24, 23),
+                          ('EN_AUX12', 22, 21)])
         for m in SPEC['signal_moves']:
             self.assertEqual(prepare.b2b_mate(m['to_pwr_a']), m['pwr_b']['to'], m['net'])
 

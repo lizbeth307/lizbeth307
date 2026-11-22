@@ -164,10 +164,11 @@ class PartsDatabaseTest(unittest.TestCase):
     def test_snapshot_row_without_mpn_is_not_evidence(self):
         # A vendor page that answered HTTP 200 but whose row records no part number does not confirm the part.
         model = parts.Model()
-        model.manual["web:adafruit-5832"] = {k: v for k, v in model.manual["web:adafruit-5832"].items() if k != "mpn"}
+        # W2 F2C-FALLBACK: the Adafruit 5832 module left the parts database (bare INA228 on PWR-C); the Pololu #2813 row is the web example
+        model.manual["web:pololu-2813"] = {k: v for k, v in model.manual["web:pololu-2813"].items() if k != "mpn"}
         model.check()
-        self.assertTrue(any("web adafruit-5832 snapshot row shows no MPN" in e for e in model.errors), model.errors)
-        self.assertNotEqual(model.availability(part(model.db, "U-ADAFRUIT-5832"))[0], "в наявності")
+        self.assertTrue(any("web pololu-2813 snapshot row shows no MPN" in e for e in model.errors), model.errors)
+        self.assertNotEqual(model.availability(part(model.db, "U-POLOLU-2813"))[0], "в наявності")
 
     def test_every_sku_used_as_evidence_records_an_mpn(self):
         model = parts.Model()

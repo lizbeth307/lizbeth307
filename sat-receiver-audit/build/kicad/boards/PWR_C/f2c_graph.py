@@ -146,8 +146,8 @@ def apply(e1, e2, e5):
     have = {c['ref']: i for i, c in enumerate(e1['components'])}
     at = have['J115'] + 1
     for k, new in enumerate(NEW_E1):
-        if new['ref'] in have:  # refs of an earlier run take the current definition in place
-            e1['components'][have[new['ref']]] = json.loads(json.dumps(new))
+        if new['ref'] in have:  # refs of an earlier run take the current definition in place (the fields that
+            e1['components'][have[new['ref']]].update(json.loads(json.dumps(new)))  # tools/build_parts.py writes stay)
         else:
             e1['components'].insert(at + k, json.loads(json.dumps(new)))
     u102 = c1['U102']
