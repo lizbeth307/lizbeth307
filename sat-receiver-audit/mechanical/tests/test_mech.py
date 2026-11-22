@@ -1232,7 +1232,7 @@ class ModulesW2Mech5Review(unittest.TestCase):
         from srrx_mech import interference
         self.assertEqual(interference.ALLOWED["tripod_boss"], {"rear.tripod_boss"})
         r = self._rule(P, "R-MODULE-MOUNTS")
-        d = [s["to_tripod_pocket_mm"] for item in ("hub_ch334f", "ina228") for s in r["value_mm"][item]["screws"]]
+        d = [s["to_tripod_pocket_mm"] for item in ("hub_ch334f",) for s in r["value_mm"][item]["screws"]]  # ina228: PWR-C (W2 F2C-FALLBACK)
         self.assertGreaterEqual(min(d), P.mech["module_mounts"]["tripod_clear"])
         Q = self._copy()
         mt = [m for m in Q.mech["module_mounts"]["mounts"] if m["item"] == "hub_ch334f"][0]
