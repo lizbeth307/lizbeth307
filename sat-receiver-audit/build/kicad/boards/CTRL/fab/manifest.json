@@ -7,10 +7,10 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/CTRL/CTRL.kicad_pcb",
-    "board_sha256": "4805e0f87cbc1b3d4630e4c09cc8c0ce8ce0f67507e3013798236a07328e3a6d",
-    "project_sha256": "d2d6832ac874781b236a48ee203c48138fa79f6d8de722dc25104164669c9609",
-    "spec_projection_sha256": "635b90afb02a028bb10f7af96c4ba41473cda6aae3f412071e079c5ab693cecf",
-    "report_projection_sha256": "61a6d46a2084697ea7f0e592d10cc76c6135757c79b94d9a07e04550915b2ab6",
+    "board_sha256": "78ce70c4606470706527a38c8639f8a726c0b5672f85bb3063c9ccc1ea6aadd4",
+    "project_sha256": "46ba6efabb46d4ae40fdaf4df37d09573690b9aad3bfbddca39514176c326eef",
+    "spec_projection_sha256": "34391f408b95bd045a446934846b9c0e3e8657acc06dd00f73dacfaaed26850b",
+    "report_projection_sha256": "811195d28ad43aa4eb05b90f540e0631618a4e3dc85eb8e9c32aeffb9dbddc69",
     "jlc_bom_rows": [
       {
         "Board": "CTRL",
@@ -23,7 +23,7 @@
       {
         "Board": "CTRL",
         "Comment": "0603WAF1001T5E",
-        "Designator": "R395",
+        "Designator": "R395,R398",
         "Footprint": "R_0603_1608Metric",
         "LCSC Part #": "C21190",
         "Mount": "SMD"
@@ -50,6 +50,14 @@
         "Designator": "R363",
         "Footprint": "R_0603_1608Metric",
         "LCSC Part #": "C22808",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF1503T5E",
+        "Designator": "R397",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C22807",
         "Mount": "SMD"
       },
       {
@@ -143,7 +151,7 @@
       {
         "Board": "CTRL",
         "Comment": "CC0603KRX7R9BB104",
-        "Designator": "C301,C303,C305,C308,C309,C310,C311,C312,C319,C321,C343",
+        "Designator": "C301,C303,C305,C308,C309,C310,C311,C312,C319,C321,C343,C344",
         "Footprint": "C_0603_1608Metric",
         "LCSC Part #": "C14663",
         "Mount": "SMD"
@@ -206,10 +214,26 @@
       },
       {
         "Board": "CTRL",
+        "Comment": "MF-MSMF050-2",
+        "Designator": "F302",
+        "Footprint": "Fuse_1812_4532Metric",
+        "LCSC Part #": "C17313",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
         "Comment": "MF-MSMF075/24-2",
         "Designator": "F301",
         "Footprint": "Fuse_1812_4532Metric",
         "LCSC Part #": "C208467",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "MF-MSMF110/16-2",
+        "Designator": "F303",
+        "Footprint": "Fuse_1812_4532Metric",
+        "LCSC Part #": "C210834",
         "Mount": "SMD"
       },
       {
@@ -302,6 +326,14 @@
       },
       {
         "Board": "CTRL",
+        "Comment": "TPS2553DBVR",
+        "Designator": "U316",
+        "Footprint": "SOT-23-6",
+        "LCSC Part #": "C55266",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
         "Comment": "TPS2553DBVR-1",
         "Designator": "U315",
         "Footprint": "SOT-23-6",
@@ -325,7 +357,7 @@
         "Mount": "THT"
       }
     ],
-    "jlc_bom_rows_sha256": "177e11c17a65df97197a5e4b3c1bdc781a832305f17e13f060ecde49ae9cf230",
+    "jlc_bom_rows_sha256": "f84eb3c68d0a23de20d7dec178b7d88ed30fbfe19c7da3e51cf70ea633ab8f75",
     "stackup": {
       "id": "JLC04161H-7628",
       "copper_layers": 4,
@@ -470,22 +502,22 @@
   ],
   "coverage": {
     "cpl": {
-      "rows": 146,
+      "rows": 152,
       "placed_by_side_and_mount": {
         "Bottom": {
           "THT": 17,
-          "SMD": 57
+          "SMD": 59
         },
         "Top": {
-          "SMD": 70,
+          "SMD": 74,
           "THT": 2
         }
       },
       "smd_refs_once_per_side": true
     },
     "bom": {
-      "rows": 40,
-      "designators": 146,
+      "rows": 44,
+      "designators": 152,
       "tbd": [
         "BZ301",
         "U305"
@@ -526,6 +558,7 @@
         "E3_FAN5_P",
         "E3_FAN_EN",
         "E3_FAN_NG",
+        "E3_FAN_PD",
         "E3_FAN_PG",
         "E3_FAN_TACH",
         "E3_FAN_TACH_RAW",
@@ -554,6 +587,7 @@
         "E3_PICO_RUN",
         "E3_PICO_SWCLK",
         "E3_PICO_SWDIO",
+        "E3_PICO_VLIM",
         "E3_PICO_VSYS",
         "E3_PIEZO_DRIVE",
         "E3_PIEZO_OUT",
@@ -562,6 +596,7 @@
         "E3_REC",
         "E3_REC_EXT",
         "E3_U315_ILIM",
+        "E3_U316_ILIM",
         "EN_AUX12",
         "EN_BONI",
         "EN_HFP",
@@ -599,6 +634,8 @@
         "K1_ON",
         "K2_ON",
         "LAB5",
+        "LAB5_BLOWER",
+        "LAB5_PICO",
         "MCP_INT",
         "OVP_LNB_N",
         "PG_BONI",
@@ -654,6 +691,7 @@
         "E3_FAN5_P",
         "E3_FAN_EN",
         "E3_FAN_NG",
+        "E3_FAN_PD",
         "E3_FAN_PG",
         "E3_FAN_TACH",
         "E3_FAN_TACH_RAW",
@@ -682,6 +720,7 @@
         "E3_PICO_RUN",
         "E3_PICO_SWCLK",
         "E3_PICO_SWDIO",
+        "E3_PICO_VLIM",
         "E3_PICO_VSYS",
         "E3_PIEZO_DRIVE",
         "E3_PIEZO_OUT",
@@ -690,6 +729,7 @@
         "E3_REC",
         "E3_REC_EXT",
         "E3_U315_ILIM",
+        "E3_U316_ILIM",
         "EN_AUX12",
         "EN_BONI",
         "EN_HFP",
@@ -727,6 +767,8 @@
         "K1_ON",
         "K2_ON",
         "LAB5",
+        "LAB5_BLOWER",
+        "LAB5_PICO",
         "MCP_INT",
         "OVP_LNB_N",
         "PG_BONI",
@@ -781,10 +823,10 @@
     "drill": {
       "pth_file": 1,
       "npth_file": 1,
-      "pth_hits": 608,
+      "pth_hits": 706,
       "npth_hits": 9,
       "board_pth_pads": 138,
-      "board_vias": 470,
+      "board_vias": 568,
       "board_npth_pads": 9,
       "maps": [
         "drill/CTRL-NPTH-drl_map.gbr",
@@ -845,13 +887,13 @@
     },
     {
       "path": "CTRL-fab-notes.pdf",
-      "sha256": "aa92337e7e01c184fbd7a8bb2e2347f6f70f4a9b4e9a4a29b3a632a655be5939",
-      "bytes": 29280
+      "sha256": "c369e069ab30ba9b42823d753fcf51b060b40a9c4e09e40e75ac8dd17ec6fc51",
+      "bytes": 30091
     },
     {
       "path": "CTRL.ipc356",
-      "sha256": "1e887b2dfe4ca9659998b04e1bc7be9c7dc180aee347f085711d94b7e3c81108",
-      "bytes": 87494
+      "sha256": "d32790278361ce16a2ae8cc02634e0e1071ead06b8b014c8a525c8c2d9162a7e",
+      "bytes": 96728
     },
     {
       "path": "CTRL.kicad_jobset",
@@ -865,28 +907,28 @@
     },
     {
       "path": "assembly/CTRL-bom-jlc.csv",
-      "sha256": "012b51dbc351d0e0dbf82ab1914d59978447aaa1f561ae20999df314971f9673",
-      "bytes": 6535
+      "sha256": "08d1c699f68d13cc607c083ad0254e09e4e922d66bf3df31735314b4cea89f05",
+      "bytes": 6941
     },
     {
       "path": "assembly/CTRL-cpl-jlc.csv",
-      "sha256": "1d323143db719e46a20d8644e51a94f98167933f353914a3914e59191a9d404a",
-      "bytes": 7875
+      "sha256": "e37461e94db3a96419407098360537ed98b06de741d98013f8b898a8b3d89c49",
+      "bytes": 8195
     },
     {
       "path": "assembly/CTRL-cpl-rotation-offsets.csv",
-      "sha256": "cdfdc2722dec5bafdabb05047eaec2a71c619dd419151fd79689e4e38d22ac5d",
-      "bytes": 8670
+      "sha256": "36fc107d5f91b9e657062d2e16fe9c0a43c221be7e9f824f36f47e7d8bced9c7",
+      "bytes": 8700
     },
     {
       "path": "assembly/CTRL-instances.csv",
-      "sha256": "d1d89be58261844d9ad0f3702f717d999e46021d8911562768e5d124a6e77dce",
-      "bytes": 5217
+      "sha256": "d7b8e8a1cf7c4a68a6bb6acaa902eb07a3b5b574995324fb9bc6f1739f30d2b5",
+      "bytes": 5427
     },
     {
       "path": "assembly/CTRL-pos-kicad.csv",
-      "sha256": "240d4e76e655c1b63bc16adb06929054495b422110628d77af177d8b744cc9fb",
-      "bytes": 12153
+      "sha256": "fda230e1666e44585a8130349ed8084b114e38248a054e7c8a7e02d325829f49",
+      "bytes": 12625
     },
     {
       "path": "drill/CTRL-NPTH-drl_map.gbr",
@@ -900,33 +942,33 @@
     },
     {
       "path": "drill/CTRL-PTH-drl_map.gbr",
-      "sha256": "3d5fb2648e46106ec8b073012095417e666eca7486dba6ea35babd30ec46d7e3",
-      "bytes": 149243
+      "sha256": "9149d3a49d080e4ee1455afe941ffce48eeab52b0fbe73e70667312f90bf0f8b",
+      "bytes": 160667
     },
     {
       "path": "drill/CTRL-PTH.drl",
-      "sha256": "b97d38e919cf9c311dccb06eb2f3b4c1ed5082e6fddd55b5e01a81ef06551bb6",
-      "bytes": 10451
+      "sha256": "1a4feb268d0ba7fc640d58cb9306f221ea6a10c83033459d4dae587bef6b4425",
+      "bytes": 11868
     },
     {
       "path": "gerber/CTRL-B_Cu.gbl",
-      "sha256": "e0942ef501c4c3b4744f68d9d6b7baa526b4b94a5bf3c5a7e576a36c8b528df8",
-      "bytes": 461988
+      "sha256": "47e5ca2272634797b3f5013122f0f92e78120a187847f888edb38dc21bc187b3",
+      "bytes": 485736
     },
     {
       "path": "gerber/CTRL-B_Mask.gbs",
-      "sha256": "450a13cba4dd3c78276cf62eb7d43ef7e90bd3e17b7524723332a2b2725c9dfc",
-      "bytes": 17363
+      "sha256": "66d9671f3bce6d9affa02a432b8d96f6e1a4c50f4d2267a0c55229bc06cf2708",
+      "bytes": 17409
     },
     {
       "path": "gerber/CTRL-B_Paste.gbp",
-      "sha256": "017cb3943dfd40b6513def371ed55aa7659f97b37f6021551e50c43b980ab8f8",
-      "bytes": 9105
+      "sha256": "adbff034d1c121c5a6ba1258ef8cebcc2dc1f2596f3a3a891511b1097114c18b",
+      "bytes": 9161
     },
     {
       "path": "gerber/CTRL-B_Silkscreen.gbo",
-      "sha256": "7fd0f9c85887b9ba6a8bf667cb2c562e927571eb4627977ea6dac2dd3d9877c2",
-      "bytes": 247218
+      "sha256": "7487712415f2147703cb8112d73a35199bda1f432c195f15cfa8d3b2d32a6544",
+      "bytes": 253909
     },
     {
       "path": "gerber/CTRL-Edge_Cuts.gm1",
@@ -935,33 +977,33 @@
     },
     {
       "path": "gerber/CTRL-F_Cu.gtl",
-      "sha256": "80672ce8bcedeba93fe03655b84ea12cd98fa55441674fecd559efbe23d30663",
-      "bytes": 481449
+      "sha256": "89615d476d08a234757feef328b14a6338d17e12bbb3227a1609277312dd161e",
+      "bytes": 506450
     },
     {
       "path": "gerber/CTRL-F_Mask.gts",
-      "sha256": "c5357c4197ddd79bb5fb7910c9e27bddeec78de38401ecb7c4064891affab6d4",
-      "bytes": 16076
+      "sha256": "48bd14c71d5b1256aacb64fa085ef6f3225fa634dc2a8e9a0b9a0f83761eb554",
+      "bytes": 16610
     },
     {
       "path": "gerber/CTRL-F_Paste.gtp",
-      "sha256": "5ffe682a8f4b7277f430545f3c9fdb6b277d106c106e0cc92146817bf1606d08",
-      "bytes": 10433
+      "sha256": "194ef120192955bd4ffb977769476d3289cf3a7b86eac0f7df468133664c62fb",
+      "bytes": 10952
     },
     {
       "path": "gerber/CTRL-F_Silkscreen.gto",
-      "sha256": "0009252cdf5e6a574a1454e72730049011cf1ef290d501c6db9bc7c3166e85e1",
-      "bytes": 220152
+      "sha256": "3bc70a4c467d0d5b0f75e7ea5887ec82b2ba86fe82b74a7ba992df623110b4d8",
+      "bytes": 230774
     },
     {
       "path": "gerber/CTRL-In1_Cu.g1",
-      "sha256": "b09532da98708f9448f923051bcede09462ceb5c99228e6874f8b7ec28f2c502",
-      "bytes": 719667
+      "sha256": "ed549f1aeb25fd66d651aa63f2cebb01fffd11350aa3e77b565a7dd067228e05",
+      "bytes": 760931
     },
     {
       "path": "gerber/CTRL-In2_Cu.g2",
-      "sha256": "8fc4ff7368f88400f1b44aab948a22c7d73565ac1ae77dc2d40d0a87c1883c27",
-      "bytes": 332712
+      "sha256": "43130b2322cc6024777f60e2e22b47be6edfc1a81cc4cef3676b5891578672ef",
+      "bytes": 382427
     },
     {
       "path": "gerber/CTRL-job.gbrjob",
