@@ -38,7 +38,9 @@
   "design/parts/snapshots/2026-11-11-w2-mech5-manual.json",
   "design/parts/snapshots/2026-11-11-w2-pcb-sb2-manual.json",
   "design/parts/snapshots/2026-11-22-w2-ctrl6-manual.json",
-  "design/parts/snapshots/2026-11-22-w2-ctrl6-lcsc.json"
+  "design/parts/snapshots/2026-11-22-w2-ctrl6-lcsc.json",
+  "design/parts/snapshots/2026-11-22-w2-ctrl6-fix1-manual.json",
+  "design/parts/snapshots/2026-11-22-w2-ctrl6-fix1-lcsc.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -1625,26 +1627,26 @@
    ]
   },
   {
-   "id": "R-0603-0603WAF1503T5E",
+   "id": "R-0603-0603WAF1403T5E",
    "mount": "pcb_smt",
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
    "manufacturer": "UNI-ROYAL",
-   "mpn": "0603WAF1503T5E",
+   "mpn": "0603WAF1403T5E",
    "sku": {
-    "lcsc": "C22807"
+    "lcsc": "C22875"
    },
    "alternates": [
     {
      "manufacturer": "YAGEO",
-     "mpn": "RC0603FR-07150KL",
+     "mpn": "RC0603FR-07140KL",
      "sku": {
-      "lcsc": "C114660"
+      "lcsc": "C185372"
      }
     }
    ],
-   "note": "RILIM of U316 (150k 1 %, 100 mW, thick film, LCSC listings 2026-11-22 of both, 2026-11-22-w2-ctrl6-lcsc.json).",
+   "note": "RILIM of U316 (140k 1 %, 100 mW, thick film; LCSC listings of both read 2026-11-22, 2026-11-22-w2-ctrl6-fix1-lcsc.json). 140k instead of the 150k of W2 CTRL-6 (review RV-CTRL6-E-1): with PTC F302 (R1max 1.0 ohm) and U316 rDS(on) in series the Pico VSYS load model reaches 0.159 A at LAB5 4.80 V, above the 150k IOSmin 0.154 A; 140k gives IOS 0.165-0.223 A (TI SLVS841G eq. 1 and 3), MODEL.",
    "refs": [
     "R397"
    ]
@@ -4712,6 +4714,7 @@
    },
    "match": "MF-MSMF075/24-2",
    "single_source": "PTC named in STACK §2.7; reflow only",
+   "note": "Lifecycle: Bourns marks MF-MSMF075/24 'currently available but not recommended for new designs' (red-triangle legend, MF-MSMF REV. BE 09/26, https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf, read 2026-11-22). Kept: stocked at JLCPCB (C208467, stock 14075 on 2026-11-22); the non-NRND members are MF-MSMF075/24X-2 (not listed at JLCPCB on 2026-11-22; 0.45 A Ihold at 70 C in the REV. BE derating table, below the 0.49 A of /24) and MF-MSMF075/16X-2 (C49303233, stock 0 on 2026-11-22). Review RV-CTRL6-E-2; build/15 row 'PTC: стан життєвого циклу (W2 CTRL-6)'.",
    "refs": [
     "F104",
     "F202",
@@ -4728,7 +4731,8 @@
     "lcsc": "C17313"
    },
    "match": "MF-MSMF050-2",
-   "single_source": "PTC ahead of the Pico VSYS limiter U316 (R-E3-18, W2 CTRL-6): the smallest MF-MSMF whose 70 C Ihold (0.33 A, REV. BE derating table) holds the U316 limit 0.209 A; reflow only",
+   "single_source": "PTC ahead of the Pico VSYS limiter U316 (R-E3-18, W2 CTRL-6): the smallest MF-MSMF whose 70 C Ihold (0.33 A, REV. BE derating table) holds the U316 limit IOSmax 0.223 A (R397 140k); reflow only",
+   "note": "Lifecycle: Bourns marks MF-MSMF050 'currently available but not recommended for new designs' (red-triangle legend, MF-MSMF REV. BE 09/26, https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf, read 2026-11-22). Kept: stocked at JLCPCB (C17313, stock 99054 on 2026-11-22, 2026-11-22-w2-ctrl6-fix1-lcsc.json); the non-NRND MF-MSMF050/16X-2 is C49303322 with stock 0 on 2026-11-22 and has R1max 1.3 ohm (against 1.0), which lowers the Pico VSYS margin of R-E3-18 further (MODEL 0.161 A load at LAB5 4.80 V against IOSmin 0.165 A). Review RV-CTRL6-E-2; build/15 row 'PTC: стан життєвого циклу (W2 CTRL-6)'.",
    "refs": [
     "F302"
    ]
@@ -4744,6 +4748,7 @@
    },
    "match": "MF-MSMF110/16-2",
    "single_source": "Blower supply PTC (R-E3-19, W2 CTRL-6): the smallest MF-MSMF whose 70 C Ihold (0.71 A, REV. BE derating table) reaches the 0.50 A blower start; reflow only",
+   "note": "Lifecycle: Bourns marks MF-MSMF110/16 'currently available but not recommended for new designs' (red-triangle legend, MF-MSMF REV. BE 09/26, https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf, read 2026-11-22). Kept: stocked at JLCPCB (C210834, stock 5618 on 2026-11-22); the non-NRND MF-MSMF110/16X (Ihold 1.58 / 0.71 A at -40 / 70 C, R1max 0.20 ohm, REV. BE) is not listed at JLCPCB on 2026-11-22 (search MF-MSMF110/16X). Review RV-CTRL6-E-2; build/15 row 'PTC: стан життєвого циклу (W2 CTRL-6)'.",
    "refs": [
     "F303"
    ]

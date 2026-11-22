@@ -1,0 +1,43 @@
+{
+ "schema": 1,
+ "date": "2026-11-22",
+ "note": "W2 CTRL-6 review fixes (round 1) source reads of 2026-11-22. Rows keyed web:* are datasheet and parts-search reads (facts in the note); no browser User-Agent was sent (curl default for the PDFs; the JLCPCB parts search with the User-Agent of tools/check_parts_availability.py), PDFs were read locally with PyMuPDF (page 1 of the Bourns datasheet rendered to an image for the legend) and are not committed. The LCSC listings of this fix (C22875, C185372, C17313, C210834, C208467, C49303322, C49303233) are in 2026-11-22-w2-ctrl6-fix1-lcsc.json, written by the main() of tools/check_parts_availability.py --codes with its query sent through curl (same request body and User-Agent; the portable Python of this host does not verify the JLCPCB certificate chain); C22875 and C185372 were found by a JLCPCB parts search by MPN on the same day (exact MPN hits).",
+ "entries": {
+  "web:bourns-mf-msmf-nrnd-ctrl6fix1": {
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf",
+   "read": "2026-11-22",
+   "method": "curl (default User-Agent); page 1 rendered with PyMuPDF; text via PyMuPDF",
+   "mpn": "MF-MSMF050-2; MF-MSMF075/24-2; MF-MSMF110/16-2",
+   "manufacturer": "Bourns",
+   "title": "MF-MSMF Series - PTC Resettable Fuses, REV. BE, 09/26 (revision mark on page 14)",
+   "stock": null,
+   "price": null,
+   "note": "Page 1: a red-triangle legend 'Some models are currently available but not recommended for new designs.'; the triangle stands next to MF-MSMF010, MF-MSMF014, MF-MSMF020, MF-MSMF020/60, MF-MSMF030, MF-MSMF050, MF-MSMF075, MF-MSMF075/24 and MF-MSMF110/16 (the three parts of this project: F302 MF-MSMF050-2, F301/F104/F202 MF-MSMF075/24-2, F303 MF-MSMF110/16-2). Non-NRND members at 23 C: MF-MSMF050/16X Vmax 16 V, Ihold 0.50 A, Itrip 1.00 A, Rmin 0.15 ohm, R1max 1.3 ohm, 8.0 A in 0.20 s max; MF-MSMF110/16X Vmax 16 V, Ihold 1.10 A, Itrip 2.20 A, Rmin 0.06 ohm, R1max 0.20 ohm, 8.0 A in 0.3 s max; derating table: MF-MSMF110/16X 1.58 / 0.71 A at -40 / 70 C, MF-MSMF075/24X 1.06 / 0.45 A at -40 / 70 C, MF-MSMF075/24 0.49 A at 70 C. MF-MSMF050 (NRND) Rmin 0.15 ohm, R1max 1.0 ohm; 8.0 A in 0.15 s max."
+  },
+  "web:jlcpcb-search-mf-msmf-nrnd-alternates-ctrl6fix1": {
+   "distributor": "JLCPCB parts search",
+   "url": "https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList",
+   "read": "2026-11-22",
+   "method": "curl, request body {keyword, currentPage 1, pageSize 10} and User-Agent sr-rx-parts-snapshot as tools/check_parts_availability.py",
+   "mpn": "MF-MSMF050/16X-2; MF-MSMF110/16X-2; MF-MSMF075/24X-2; MF-MSMF075/16X-2",
+   "manufacturer": "Bourns",
+   "title": "JLCPCB parts search by MPN keyword",
+   "stock": null,
+   "price": null,
+   "note": "Keyword MF-MSMF050/16X: one hit, C49303322 MF-MSMF050/16X-2, stock 0. Keyword MF-MSMF110/16X: no hit (empty list). Keyword MF-MSMF075/24X: no hit. Keyword MF-MSMF075/16X: one hit, C49303233 MF-MSMF075/16X-2, stock 0. Keyword MF-MSMF050-2: C17313 stock 99063 at the search, 99054 at the C-code read of 2026-11-22-w2-ctrl6-fix1-lcsc.json minutes later (C17190 and C3040235 stock 0). Keyword MF-MSMF110/16-2: C210834 stock 5618. Keyword MF-MSMF075/24-2: C208467 stock 14075. Keyword 0603WAF1403T5E: C22875 UNI-ROYAL 140 kOhm 1 % 100 mW 0603, stock 57151. Keyword RC0603FR-07140KL: C185372 YAGEO 140 kOhm 1 % 100 mW 0603, stock 282297."
+  },
+  "web:ti-slvs841g-tps2553-ctrl6fix1": {
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.ti.com/lit/ds/symlink/tps2553.pdf",
+   "read": "2026-11-22",
+   "method": "curl (default User-Agent); text via PyMuPDF",
+   "mpn": "TPS2553DBVR",
+   "manufacturer": "Texas Instruments",
+   "title": "TPS255xx Precision Adjustable Current-Limited Power-Distribution Switches, SLVS841G (November 2008, revised October 2026)",
+   "stock": null,
+   "price": null,
+   "note": "Re-read for R397 140k: IOSmax mA = 22980 V / RILIM^0.94 kOhm (eq. 1), IOSnom mA = 23950 V / RILIM^0.977 (eq. 2), IOSmin mA = 25230 V / RILIM^1.016 (eq. 3), 15k <= RILIM <= 232k; with 140k +-1 %: IOSmin 0.165 A (141.4k), IOSnom 0.192 A, IOSmax 0.223 A (138.6k). rDS(on) DBV package 85 mOhm typ / 95 mOhm max at TJ 25 C, 135 mOhm max at -40 to 125 C. Recommended operating conditions: input de-coupling capacitance IN to GND 0.1 uF (minimum column). Layout: 'The traces routing the RILIM resistor to the TPS255x and TPS255x-1 must be as short as possible'."
+  }
+ }
+}

@@ -1,0 +1,325 @@
+{
+ "date": "2026-11-22",
+ "distributor": "LCSC",
+ "entries": {
+  "C17313": {
+   "attributes": {
+    "Current - Max": "100A",
+    "Height": "0.85mm",
+    "Hold Current": "500mA",
+    "Length": "5.4mm",
+    "Operating Temperature": "-40℃~+85℃",
+    "Power Dissipation": "800mW",
+    "Resistance - Initial (Ri) (Min)": "150mΩ",
+    "Resistance - Post Trip (R1) (Max)": "1Ω",
+    "Time to Trip(Max)": "150ms",
+    "Trip Current": "1A",
+    "Voltage - Max": "15V",
+    "Width": "3.2mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410010331_BOURNS-MF-MSMF050-2_C17313.pdf",
+   "description": "-40℃~+85℃ 100A 150mΩ 15V 1A 1Ω 3.2mm 5.4mm 500mA 1812 Resettable Fuses ROHS",
+   "fetched_utc": "2026-11-22T20:33:41Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "MF-MSMF050-2",
+   "package": "1812",
+   "price_usd": [
+    [
+     1,
+     0.0853
+    ],
+    [
+     100,
+     0.0673
+    ],
+    [
+     300,
+     0.0585
+    ],
+    [
+     2000,
+     0.0517
+    ],
+    [
+     4000,
+     0.0464
+    ],
+    [
+     10000,
+     0.0437
+    ]
+   ],
+   "stock": 99054,
+   "url": "https://www.lcsc.com/product-detail/resettable-fuses_bourns-mf-msmf050-2_C17313.html"
+  },
+  "C185372": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "140kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07140KL_C185372.pdf",
+   "description": "-55℃~+155℃ 100mW 140kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-22T20:33:42Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RC0603FR-07140KL",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0045
+    ],
+    [
+     1000,
+     0.0034
+    ],
+    [
+     5000,
+     0.0028
+    ],
+    [
+     10000,
+     0.0026
+    ],
+    [
+     50000,
+     0.0023
+    ],
+    [
+     50200,
+     0.0023
+    ]
+   ],
+   "stock": 282297,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-07140kl_C185372.html"
+  },
+  "C208467": {
+   "attributes": {
+    "Current - Max": "40A",
+    "Height": "0.85mm",
+    "Hold Current": "750mA",
+    "Length": "5.4mm",
+    "Operating Temperature": "-40℃~+85℃",
+    "Power Dissipation": "800mW",
+    "Resistance - Initial (Ri) (Min)": "110mΩ",
+    "Resistance - Post Trip (R1) (Max)": "450mΩ",
+    "Time to Trip(Max)": "200ms",
+    "Trip Current": "1.5A",
+    "Voltage - Max": "24V",
+    "Width": "3.2mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-MF-MSMF075-24-2_C208467.pdf",
+   "description": "-40℃~+85℃ 110mΩ 24V 3.2mm 40A 450mΩ 5.4mm 800mW 1812 Resettable Fuses ROHS",
+   "fetched_utc": "2026-11-22T20:33:43Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "MF-MSMF075/24-2",
+   "package": "1812",
+   "price_usd": [
+    [
+     1,
+     0.0805
+    ],
+    [
+     100,
+     0.0609
+    ],
+    [
+     300,
+     0.0511
+    ],
+    [
+     2000,
+     0.0437
+    ],
+    [
+     4000,
+     0.0378
+    ],
+    [
+     10000,
+     0.0349
+    ]
+   ],
+   "stock": 14075,
+   "url": "https://www.lcsc.com/product-detail/resettable-fuses_bourns-mf-msmf075-24-2_C208467.html"
+  },
+  "C210834": {
+   "attributes": {
+    "Current - Max": "100A",
+    "Height": "0.85mm",
+    "Hold Current": "1.1A",
+    "Length": "5.4mm",
+    "Operating Temperature": "-40℃~+85℃",
+    "Power Dissipation": "800mW",
+    "Resistance - Initial (Ri) (Min)": "40mΩ",
+    "Resistance - Post Trip (R1) (Max)": "210mΩ",
+    "Time to Trip(Max)": "300ms",
+    "Trip Current": "2.2A",
+    "Voltage - Max": "16V",
+    "Width": "3.2mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-MF-MSMF110-16-2_C210834.pdf",
+   "description": "-40℃~+85℃ 100A 16V 210mΩ 3.2mm 40mΩ 5.4mm 800mW 1812 Resettable Fuses ROHS",
+   "fetched_utc": "2026-11-22T20:33:44Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "MF-MSMF110/16-2",
+   "package": "1812",
+   "price_usd": [
+    [
+     1,
+     0.0768
+    ],
+    [
+     100,
+     0.0621
+    ],
+    [
+     300,
+     0.0547
+    ],
+    [
+     2000,
+     0.045
+    ],
+    [
+     4000,
+     0.0406
+    ],
+    [
+     10000,
+     0.0385
+    ]
+   ],
+   "stock": 5618,
+   "url": "https://www.lcsc.com/product-detail/resettable-fuses_bourns-mf-msmf110-16-2_C210834.html"
+  },
+  "C22875": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "140kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1403T5E_C22875.pdf",
+   "description": "-55℃~+155℃ 100mW 140kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-22T20:33:44Z",
+   "jlc_library": "extended",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1403T5E",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0015
+    ],
+    [
+     1000,
+     0.0012
+    ],
+    [
+     5000,
+     0.001
+    ],
+    [
+     10000,
+     0.0009
+    ],
+    [
+     50000,
+     0.0008
+    ],
+    [
+     50200,
+     0.0008
+    ]
+   ],
+   "stock": 57151,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1403t5e_C22875.html"
+  },
+  "C49303233": {
+   "attributes": {},
+   "datasheet": null,
+   "description": "- HWDG ROHS",
+   "fetched_utc": "2026-11-22T20:33:45Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "MF-MSMF075/16X-2",
+   "package": "1812",
+   "price_usd": [
+    [
+     1,
+     0.0398
+    ],
+    [
+     100,
+     0.0205
+    ]
+   ],
+   "stock": 0,
+   "url": null
+  },
+  "C49303322": {
+   "attributes": {},
+   "datasheet": null,
+   "description": "- HWDG ROHS",
+   "fetched_utc": "2026-11-22T20:33:46Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "MF-MSMF050/16X-2",
+   "package": "-",
+   "price_usd": [
+    [
+     1,
+     0.535
+    ],
+    [
+     10,
+     0.535
+    ],
+    [
+     30,
+     0.535
+    ],
+    [
+     200,
+     0.2144
+    ],
+    [
+     500,
+     0.2062
+    ],
+    [
+     1000,
+     0.2029
+    ]
+   ],
+   "stock": 0,
+   "url": null
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C17313",
+  "C185372",
+  "C208467",
+  "C210834",
+  "C22875",
+  "C49303233",
+  "C49303322"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}

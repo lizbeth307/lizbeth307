@@ -206,7 +206,7 @@ BLOWER_NOTE = ('blower switch on the bottom band y 54.5-58.1 between the Pico an
 BLOWER2_NOTE = ('bottom row below cut-out 1 left of the LAB5 feed vias, x 11-20 y 64-68.2 (W2 CTRL-4; was group BLOWER2: '
                 'C342/C343 now sit between a 1.85 mm LAB5 bar at y 67.01 and a 1.85 mm E3_BLOWER_GND bar at y 64.95)')
 PICO_NOTE = ('W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, '
-             'RILIM R397 150k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304')
+             'RILIM R397 140k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304')
 BLOWER5_NOTE = ('W2 CTRL-6 (orchestrator decision on the W2 CTRL-5 blower-switch row, option (2)): blower supply LAB5 -> PTC F303 -> '
                 'LAB5_BLOWER (J314.2, C342.1, C343.1, D306.1)')
 ANCHORS = {
@@ -672,7 +672,7 @@ PICO_WHY = ('W2 CTRL-6 (design/E3.json R-E3-18): LAB5_PICO behind the PTC F302 (
 VLIM_W = 0.4
 VLIM_VIAS = [(35.4, 60.15), (34.4, 60.15)]  # E3_PICO_VLIM B.Cu -> F.Cu, left of U316, below the D301 cathode pad
 VLIM_WHY = ('W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax '
-            '0.209 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL)')
+            '0.223 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL)')
 
 
 def pico_vsys(cu):

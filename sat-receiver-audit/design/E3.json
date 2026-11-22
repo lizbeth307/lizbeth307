@@ -2523,7 +2523,8 @@
         }
       ],
       "notes": [
-        "W2 CTRL-6 (recipe of build/15 \"Захист VSYS Pico за D301\", reviews RV4-E-3/RV4-S-1): PTC ahead of the Pico VSYS limiter U316, so that the IN/EN copper of U316 and an IN-GND bridge of its SOT-23-6 (pin 1 IN next to pin 2 GND) are limited by the PTC and never by F102 4 A alone; on CTRL its LAB5 pad 1 sits on the 1.85 mm LAB5 feed, so no LAB5 copper narrower than the class width reaches a SOT-23-6 pin. Bourns MF-MSMF050: Vmax 15 V, Imax 100 A, Ihold 0.50 A / Itrip 1.00 A at 23 C, Ihold 0.77 A at -40 C, 0.68 A at -20 C, 0.33 A at 70 C, Rmin 0.15 ohm, R1max 1.0 ohm, 8.0 A trips in 0.15 s max, tripped dissipation 0.8 W typ (REV. BE 09/26, read 2026-11-22). The smallest family member whose 70 C Ihold (0.33 A) holds the U316 maximum limit IOSmax 0.209 A: a VSYS short is handled by U316 alone, the PTC trips only on a fault ahead of U316.",
+        "W2 CTRL-6 (recipe of build/15 \"Захист VSYS Pico за D301\", reviews RV4-E-3/RV4-S-1): PTC ahead of the Pico VSYS limiter U316, so that the IN/EN copper of U316 and an IN-GND bridge of its SOT-23-6 (pin 1 IN next to pin 2 GND) are limited by the PTC and never by F102 4 A alone; on CTRL its LAB5 pad 1 sits on the 1.85 mm LAB5 feed, so no LAB5 copper narrower than the class width reaches a SOT-23-6 pin. Bourns MF-MSMF050: Vmax 15 V, Imax 100 A, Ihold 0.50 A / Itrip 1.00 A at 23 C, Ihold 0.77 A at -40 C, 0.68 A at -20 C, 0.33 A at 70 C, Rmin 0.15 ohm, R1max 1.0 ohm, 8.0 A trips in 0.15 s max, tripped dissipation 0.8 W typ (REV. BE 09/26, read 2026-11-22). The smallest family member whose 70 C Ihold (0.33 A) holds the U316 maximum limit IOSmax 0.223 A (R397 140k): a VSYS short is handled by U316 alone, the PTC trips only on a fault ahead of U316. Its series resistance (Rmin 0.15 ohm to R1max 1.0 ohm) is in the Pico VSYS path: with U316 rDS(on) (135 mOhm max) it lowers VSYS by 0.04-0.17 V at 0.15 A, and the constant-power Pico load model of build/15 (0.145 A at VSYS 4.5 V) rises to 0.146-0.151 A at LAB5 5.02 V and 0.154-0.159 A at LAB5 4.80 V (MODEL); hence R397 140k (IOSmin 0.165 A) instead of 150k (IOSmin 0.154 A), review RV-CTRL6-E-1.",
+        "Lifecycle: MF-MSMF050 is marked 'currently available but not recommended for new designs' in Bourns MF-MSMF REV. BE 09/26 (page 1 legend, read 2026-11-22). Kept because it is stocked (JLCPCB C17313, 99054 on 2026-11-22) while the non-NRND MF-MSMF050/16X-2 (C49303322) had stock 0 on 2026-11-22 and its R1max 1.3 ohm would lower the VSYS margin further (0.161 A load at LAB5 4.80 V against IOSmin 0.165 A, MODEL); review RV-CTRL6-E-2, build/15 row 'PTC: стан життєвого циклу (W2 CTRL-6)'.",
         "Reflow soldering only, as F301 (Bourns MF-MSMF REV. BE solder reflow recommendations, read 2026-11-22)."
       ]
     },
@@ -2577,23 +2578,23 @@
         }
       ],
       "notes": [
-        "W2 CTRL-6 (W2 CTRL-5 decision, build/15 \"Захист VSYS Pico за D301\"; reviews RV4-E-3, RV4-S-1): constant-current TPS2553DBVR (no -1) ahead of D301, so a short of the Pico VSYS, of C307 or inside the Pico module is limited to IOS 0.154-0.209 A with RILIM R397 150k 1 % (SLVS841G Rev. G, Oct 2026, eq. 1 and 3, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-22) and the 0.15 mm E3_PICO_VSYS copper (0.224-0.248 A at +20 C on L2/L3, MODEL) never carries more than its rating; it recovers by itself when the fault clears (a -1 part could latch off on the start into the VSYS capacitance). EN tied to IN: on whenever LAB5 is present, like U553 in design/E5.json.",
+        "W2 CTRL-6 (W2 CTRL-5 decision, build/15 \"Захист VSYS Pico за D301\"; reviews RV4-E-3, RV4-S-1): constant-current TPS2553DBVR (no -1) ahead of D301, so a short of the Pico VSYS, of C307 or inside the Pico module is limited to IOS 0.165-0.223 A with RILIM R397 140k 1 % (SLVS841G Rev. G, Oct 2026, eq. 1 and 3, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-22; 150k of the first W2 CTRL-6 commit replaced after review RV-CTRL6-E-1) and the 0.15 mm E3_PICO_VSYS copper (0.224-0.248 A at +20 C on L2/L3, +19.8 C at 0.223 A on 0.0152 mm foil, MODEL) never carries more than its rating; it recovers by itself when the fault clears (a -1 part could latch off on the start into the VSYS capacitance). EN tied to IN: on whenever LAB5 is present, like U553 in design/E5.json.",
         "DBV SOT-23-6 per SLVS841G pin functions: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. FAULT is an active-low open-drain output and is left unconnected (no input reads it; a VSYS fault shows as a Pico brown-out). IN takes the 0.1 uF ceramic C344 to GND as close to the IC as possible (pin function table).",
         "Accept LCSC lots only with marking 2553 (parts.json U-TPS2553DBVR); never the latch-off -1 part here."
       ]
     },
     {
       "ref": "R397",
-      "value": "150k 1%",
+      "value": "140k 1%",
       "kind": "resistor",
       "group": "Pico HMI",
       "source": "https://www.ti.com/lit/ds/symlink/tps2553.pdf",
       "status": "design",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "mpn": "0603WAF1503T5E",
+      "mpn": "0603WAF1403T5E",
       "manufacturer": "UNI-ROYAL",
-      "lcsc": "C22807",
-      "alt_mpn": "YAGEO RC0603FR-07150KL",
+      "lcsc": "C22875",
+      "alt_mpn": "YAGEO RC0603FR-07140KL",
       "pins": [
         {
           "number": "1",
@@ -2609,7 +2610,7 @@
         }
       ],
       "notes": [
-        "RILIM of U316: 150k +-1 % gives IOS 0.154-0.209 A (SLVS841G eq. 1, IOSmax = 22980/R^0.94 at 148.5k; eq. 3, IOSmin = 25230/R^1.016 at 151.5k; recommended 15-232k): above the about 0.145 A Pico VSYS estimate of build/15 and below the 0.224 A of the 0.15 mm inner E3_PICO_VSYS copper (MODEL). Bench gate: Pico VSYS current (OPEN)."
+        "RILIM of U316: 140k +-1 % gives IOS 0.165-0.223 A (SLVS841G eq. 1, IOSmax = 22980/R^0.94 at 138.6k; eq. 3, IOSmin = 25230/R^1.016 at 141.4k; recommended 15-232k, re-read 2026-11-22): above the Pico VSYS load model with the F302 and U316 series drops (0.146-0.151 A at LAB5 5.02 V, 0.154-0.159 A at LAB5 4.80 V; margin +3.5 % in the worst corner) and within the 0.224 A of the 0.15 mm inner E3_PICO_VSYS copper at +20 C (+19.8 C at 0.223 A, 0.0152 mm foil; MODEL). 140k instead of the 150k of the first W2 CTRL-6 commit (IOSmin 0.154 A: margin -3 % at LAB5 4.80 V; review RV-CTRL6-E-1, build/15 row 'Запас VSYS Pico з F302: RILIM 140 кОм (W2 CTRL-6)'). Bench gate: Pico VSYS current (OPEN)."
       ]
     },
     {
@@ -5464,6 +5465,7 @@
       ],
       "notes": [
         "W2 CTRL-6 (reviews RV-CTRL5-S-1/E-4 and RV-CTRL5-E2-2/S2-2; orchestrator decision: option (2) of build/15 \"Ключ повітродувки Q305 при КЗ\"): PTC in the blower supply, LAB5 -> F303 -> LAB5_BLOWER (J314.2, C342.1, C343.1, D306.1), so a short of the S28 lead, C342, C343 or D306 with Q305 on is limited by the PTC, not by F102 4 A (which passes 4.4 A indefinitely). Bourns MF-MSMF110/16: Vmax 16 V, Imax 100 A, Ihold 1.10 A / Itrip 2.20 A at 23 C, Ihold 1.59 A at -40 C, 1.43 A at -20 C, 0.71 A at 70 C, Rmin 0.04 ohm, R1max 0.21 ohm, 8.0 A trips in 0.3 s max, tripped dissipation 0.8 W typ (REV. BE 09/26, https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf, read 2026-11-22). The smallest MF-MSMF whose 70 C Ihold reaches the 0.50 A blower start (E3-03); MF-MSMF075/24 holds only 0.49 A at 70 C.",
+        "Lifecycle: MF-MSMF110/16 is marked 'currently available but not recommended for new designs' in Bourns MF-MSMF REV. BE 09/26 (page 1 legend, read 2026-11-22). Kept because it is stocked (JLCPCB C210834, 5618 on 2026-11-22) while the non-NRND MF-MSMF110/16X (Ihold 1.58 / 0.71 A at -40 / 70 C, R1max 0.20 ohm, same derating) was not listed at JLCPCB on 2026-11-22; review RV-CTRL6-E-2, build/15 row 'PTC: стан життєвого циклу (W2 CTRL-6)'.",
         "Reflow soldering only, as F301 (Bourns MF-MSMF REV. BE solder reflow recommendations, read 2026-11-22)."
       ]
     },
@@ -7508,7 +7510,7 @@
     },
     {
       "id": "R-E3-18",
-      "description": "W2 CTRL-6: the Pico VSYS branch is LAB5 -> PTC F302 (MF-MSMF050-2) -> limiter U316 TPS2553DBVR (constant current, RILIM R397 150k 1 %: IOS 0.154-0.209 A) -> D301 -> E3_PICO_VSYS; EN tied to IN, FAULT not connected.",
+      "description": "W2 CTRL-6: the Pico VSYS branch is LAB5 -> PTC F302 (MF-MSMF050-2) -> limiter U316 TPS2553DBVR (constant current, RILIM R397 140k 1 %: IOS 0.165-0.223 A; review RV-CTRL6-E-1) -> D301 -> E3_PICO_VSYS; EN tied to IN, FAULT not connected.",
       "source": "TI SLVS841G Rev. G (read 2026-11-22); Bourns MF-MSMF REV. BE (read 2026-11-22); build/15 rows (W2 CTRL-5) and (W2 CTRL-6). The PTC carries the U316 input because every LAB5 copper piece on CTRL stays at the 1.85 mm class width (one 0.65 mm entry at U315.1, pinned by pcb/tests CtrlLab5OuterFeedAndFan5p), which a SOT-23-6 IN or EN pin cannot take."
     },
     {

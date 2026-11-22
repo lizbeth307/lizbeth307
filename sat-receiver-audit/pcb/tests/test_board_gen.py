@@ -1211,7 +1211,7 @@ class CtrlFaultPathsCtrl6(unittest.TestCase):
         self.assertEqual(self.graph['U316']['mpn'], 'TPS2553DBVR')  # constant current, never the -1 latch-off part
         self.assertEqual((u['1'], u['2'], u['3'], u['4'], u['6']), ('LAB5_PICO', 'GND', 'LAB5_PICO', None, 'E3_PICO_VLIM'))
         self.assertEqual(self.pins('R397'), {'1': u['5'], '2': 'GND'})
-        self.assertEqual(self.graph['R397']['mpn'], '0603WAF1503T5E')  # 150k 1 %: IOS 0.154-0.209 A (SLVS841G eq. 1, 3)
+        self.assertEqual(self.graph['R397']['mpn'], '0603WAF1403T5E')  # 140k 1 %: IOS 0.165-0.223 A (SLVS841G eq. 1, 3; review RV-CTRL6-E-1)
         self.assertEqual(self.pins('C344'), {'1': 'LAB5_PICO', '2': 'GND'})
         self.assertEqual(self.pins('D301'), {'1': 'E3_PICO_VSYS', '2': 'E3_PICO_VLIM'})
 
@@ -1233,7 +1233,7 @@ class CtrlFaultPathsCtrl6(unittest.TestCase):
         pre = self.spec['pre_route']
         k = self.nc['formulas']['ipc2221']['k_external']
         cu = {l['kicad']: l['copper_mm'] for l in self.nc['stackup']['layers'] if 'kicad' in l}
-        for net, amps in (('LAB5_PICO', self.COLD_F302), ('LAB5_BLOWER', self.COLD_F303), ('E3_PICO_VLIM', 0.209)):
+        for net, amps in (('LAB5_PICO', self.COLD_F302), ('LAB5_BLOWER', self.COLD_F303), ('E3_PICO_VLIM', 0.223)):
             tracks = [t for t in pre['tracks'] if t['net'] == net]
             self.assertTrue(tracks, net)
             for t in tracks:
