@@ -437,7 +437,7 @@
         "id": "SL2",
         "rect": [115.5, 73.6, 18.0, 8.2],
         "use": "front layer (PWR top edge, CTRL harness along y 74-77) <-> rear layer above the hatch: S03, S04, S13, S14, S15, S17, S18, S20-S22, S24, S25, S30, S35 (build/16); C-T7 stays in the rear layer (Q6A J5 at the plate rear, T7 gland in the rear wall)",
-        "segments": ["S03", "S04", "S13", "S14", "S15", "S17", "S18", "S20", "S21", "S22", "S24", "S25", "S30", "S35", "S06", "S07", "S36"],
+        "segments": ["S03", "S04", "S13", "S14", "S15", "S17", "S18", "S20", "S21", "S22", "S24", "S25", "S30", "S35", "S36"],
         "trim": {"bottom": "tape", "top": "grommet", "left": "tape", "right": "tape"},
         "_trim_note": "W2 MECH-6: grows upwards from the PWR-A top edge (y 73.5) under the HDMI board (z 45); the bottom edge is 0.1 mm from the PWR-A edge, whose board stands only 0.4 mm above the plate front face (shim gap), so it takes the tape; x1 133.5 keeps the PWR3 clinch nut 6 mm away (R-CLINCH-EDGE); the left end is 0.9 mm from the HF+ can (rear face), so the short ends take the tape too"
       },
@@ -522,6 +522,11 @@
       {
         "id": "board_ctrl",
         "board": "CTRL",
+        "mount": "front_wall"
+      },
+      {
+        "id": "board_pwrc",
+        "board": "PWR_C",
         "mount": "front_wall"
       },
       {
@@ -760,20 +765,6 @@
         "mount": "plate_rear"
       },
       {
-        "id": "ina228",
-        "part": "adafruit_ina228_5832",
-        "box": [28.5, 44.48, 6.0, 25.8, 20.32, 10.1],
-        "mount": "rear_wall",
-        "_note": "W2 MECH-3 (CC-06): INA228 5832 no longer 'over PWR' (PWR-B covers the PWR-A L): rear layer between the LC76G (x 71.6), the HF+ can (z >= 17.5) and the tripod boss (z <= 4.8), next to the battery tray; on stand-offs from the rear wall (z 2.5 -> 5.5); free volume of fallback F2b reduced accordingly (build/15). W2 MECH-5 review (B-13 / F09, CC-36 item 11): the maker's board file puts the 3-way terminal block VIN-/VBUS/VIN+ on a long edge with the wire entries out of it (parts.json adafruit_ina228_5832 terminal). After W2 MECH-6 moved the LC76G to x 58-88.5, y 71-96.5, the rear layer x 3-58, y 38.5-71 under the HF+ can is free: board x 28.7-54.1 (u along +x), y 44.48-64.8 (v along +y), terminal edge on the +y face, where S06 ends (route end at the middle of the +y face = the terminal, u 12.7), wire side free to the RF-bay wall (R-MODULE-MOUNTS counts envelopes and harness bundles); header JP2 on the -y edge, 6.5 above the battery tray for the I2C0/ALERT/VS wires; 1.0 left of the CH334F hub, 3.7 left of the LC76G x range, 1.4 under the HF+ can; on 2 bosses + 2 rests (module_mounts ina228, seat z 6.0)"
-      },
-      {
-        "id": "swm_2813",
-        "part": "pololu_2813",
-        "box": [93.3, 39.0, 5.5, 20.32, 25.4, 10.1],
-        "mount": "rear_wall",
-        "_note": "W2 MECH-3 (CC-06): Pololu #2813 U106 beside the INA228 in the same rear-layer zone (x 93.3-113.6, clear of the hatch bay at x 116), partly over the tripod boss (boss top z 4.8, module bottom 5.5); fixing MECH-5 B-13 / F05"
-      },
-      {
         "id": "gx16",
         "part": "gx16_socket",
         "box": [165.0, 15.0, 2.5, 20.0, 20.0, 22.0],
@@ -859,15 +850,11 @@
     "tripod_clear": 3.0,
     "_tripod_clear_src": "design value of this package (W2 MECH-5 review): every rear-wall insert hole keeps >= 3.0 mm in plan from the captive 1/4-20 nut pocket (rear_face.tripod hex, taken as its circumscribed circle), the same 3 mm STACK D15 asks behind the nut, so the 100 % infill tripod boss is not weakened and heat-setting does not distort the pocket",
     "bundle_clear": 0.5,
-    "bundle_items": {"hub_ch334f": "HUB", "ina228": "INA", "veml7700": "VEML", "t7_insert": "T7A", "pack_fuse": "PACK", "pack_fuse_board": "PACK", "boni_a406": "BONI"},
+    "bundle_items": {"hub_ch334f": "HUB", "veml7700": "VEML", "t7_insert": "T7A", "pack_fuse": "PACK", "pack_fuse_board": "PACK", "boni_a406": "BONI"},
     "_bundle_src": "W2 MECH-5 review: the envelopes placed by this package keep bundle_od_mm / 2 + bundle_clear from every harness route centreline (generated/harness-routes.json) that does not end at their own unit; R-ROUTE-CLEAR itself stays centreline-only",
     "mounts": [
       {"item": "hub_ch334f", "on": "rear_wall", "seat_z": 6.0, "screws": [[84.38, 41.54], [84.38, 56.78], [58.98, 41.54], [58.98, 56.78]],
        "screw": "M2.5 x 6 ISO 14580 A2 TX8 (board 1.6 + 4.4: the 4.0 insert, tip 0.6 above the hole bottom)", "_src": "holes (2.54, 2.54), (17.78, 2.54), (2.54, 27.94), (17.78, 27.94) of parts.json adafruit_5997 with the board v axis towards -x from the JP5 end x 86.92 and u towards +y from y 39.0"},
-      {"item": "ina228", "on": "rear_wall", "seat_z": 6.0, "screws": [[31.24, 62.26], [51.56, 62.26]], "rests": [[33.3, 53.48], [49.3, 53.48]], "terminal_side": "+y",
-       "screw": "M2.5 x 6 ISO 14580 A2 TX8 (board 1.6 + 4.4: the 4.0 insert, tip 0.6 above the hole bottom)", "_src": "holes (2.54, 17.78), (22.86, 17.78) of parts.json adafruit_ina228_5832 with u towards +x from x 28.7 (board 25.4 centred in the 25.8 envelope) and v towards +y from y 44.48, so the terminal edge (v 20.32) is the +y face at y 64.8; the rests sit under the board between the header and the terminal pins (u 4.6 / 20.6, v 9.0), clear of their solder tails"},
-      {"item": "swm_2813", "on": "rear_wall", "pad": [97.46, 44.0, 12.0, 14.0], "pad_top_z": 4.5, "tape_t": 1.0,
-       "_src": "the #2813 has no mounting hole (parts.json pololu_2813): pad under the middle of the board, clear of the pin rows (1.27 from the long edges) and of the power holes at the +y end, board bottom 4.5 + tape 1.0 = 5.5"},
       {"item": "veml7700", "on": "top_wall", "pocket": [106.8, 48.78, 31.4, 19.3, 1.1], "seat_y": 159.1, "tape_t": 1.0,
        "rests": [[109.84, 51.824], [130.16, 51.824], [109.84, 64.524], [130.16, 64.524]], "spigots": [[109.84, 64.524], [130.16, 51.824]], "spigot_d": 2.2, "spigot_len": 2.0,
        "_src": "holes (2.54, 2.54), (22.86, 2.54), (2.54, 15.24), (22.86, 15.24) of parts.json adafruit_4162 (board u along x from 107.3, v along z from 49.284); pocket [x, z, w, h, depth] in the inner face of the top wall (running 0.5 into the front-wall inner face at the corner): the 3.0 mm parts + 0.3 air leave the board parts face at y 159.1, the wall keeps 1.4 over the pocket. W2 MECH-5 review: no insert joint fits here (an insert hole 1 mm deeper than the 4.0 insert would leave the outer top face -0.3; the M2.5 x 4 that fits engages 2.4 = 0.96 d), so the board is taped (VHB 4910 discs D6 with a D2.5 hole, 1.0 thick) to 4 printed rests D6 at its holes, the rest faces at y 160.1; two diagonal spigots D2.2 x 2.0 stand on two rests and enter the D2.5 holes 1.0 deep (board located +-0.15 under the D4 window)"},
@@ -1013,6 +1000,20 @@
     "barrier": 1.0,
     "notch": 11.0
   },
+  "pwr_c_cells": {
+    "_note": "W2 F2C-FALLBACK (MECH-F2C), rule R-PWRC-CELLS: the PWR-C parts face the battery tray front face; inputs of the heat estimate in front of the cells (MODEL)",
+    "clearance_mm": 0.5,
+    "_clearance_src": "the 0.5 mm keep-clear of the envelope checks (R-PWRB-EXIT bundle clearance, f101_access clearance); the F2-C record gives 0.58 mm (board face 65.48 - parts 6.5 - tray front face 58.4)",
+    "i_cont_a": 4.6,
+    "i_prot_a": 7.5,
+    "_i_src": "tools/assembly_data.py NET_CURRENT E1_N / E1_SHUNT_P: 4.6 A continuous (build/02 section 3, model 4.6 A with the Lime), F101 7.5 A",
+    "shunt_ref": "R101",
+    "shunt_mohm": 15.0,
+    "_shunt_src": "design/E1.json R101: Bourns CRA2512-FZ-R015ELF 15 mOhm 1 % 3 W 2512 (datasheet CRA2512 REV. 07/26, https://www.bourns.com/docs/product-datasheets/cra.pdf, read 2026-11-22 in W2 GR-F2C)",
+    "unread": {"U106": "Pololu #2813 MOSFET on-resistance (TBD: not read)", "U109": "TPS259470 on-resistance at the USB-PD current (TBD: not read)", "F103": "service fuse cold resistance (TBD: not read)"},
+    "cell_max_c": 45,
+    "_cell_src": "build/05-mekhanika.md item 7 and build/08-zbyrannia.md P18: cells <= 45 C in the 45 min noon run (bench acceptance); build/02-zhyvlennia.md: charging blocked outside 0-45 C at the cell NTC"
+  },
   "q6a_mount": {
     "origin": [142.0, 38.5],
     "standoff": 6.0,
@@ -1129,48 +1130,29 @@
         "note": "PWR-B top span (J204, W2 MECH-7 part 2: x 58-107, left of J207), down in front of the edge and east along the y 74.25 channel at z 42.5 to SL2 (x 124), rear layer, notch N4, RF bottom edge"
       },
       "S05": {
-        "ends": ["PACK", "PWR"],
+        "ends": ["PACK", "PWRC"],
         "via": [
-          {"edge": "PWR", "zone": 0, "s": 14},
+          {"edge": "PWR_C", "zone": 0, "s": 2.6},
           {"box": "battery_pack", "at": [0.5, 1.0, 0.5], "keep": "xz"}
         ],
         "touch": ["battery_tray"],
         "end_status": [{"unit": "PACK", "provisional": "F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face"}],
-        "note": "shortest: PWR bottom edge straight down into the battery tray"
+        "note": "W2 F2C-FALLBACK (MECH-F2C): PWR-C right edge (J105 S05 lands, enclosure x 160) down to the pack top face; the PACK_FUSE J117 end beside it (x 161.7-172.4) is not modelled"
       },
-      "S06": {
-        "ends": ["PWR", "INA"],
+      "S42": {
+        "ends": ["PWR", "PWRC"],
         "via": [
-          {"edge": "PWR", "zone": 3, "s": 8},
-          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
-          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
-          {"box": "hfplus", "at": [1.0, 0.5, 0.5], "off": [0.7, 0, 0], "keep": "yz"},
-          {"box": "ina228", "at": [0.5, 1.0, 0.5], "keep": "xy"},
-          {"box": "ina228", "at": [0.5, 1.0, 0.5], "off": [0, 3.2, 0], "keep": "xz"},
-          {"box": "ina228", "at": [0.5, 1.0, 0.5], "off": [0, 3.2, 0], "keep": "z"},
-          {"box": "ina228", "at": [0.5, 1.0, 0.5]}
+          {"edge": "PWR_C", "zone": 1, "s": 61.3},
+          {"edge": "PWR_C", "zone": 1, "s": 61.3, "off": [0, 0.7, -1.0]},
+          {"edge": "PWR", "zone": 0, "s": 40.0, "keep": "yz"},
+          {"edge": "PWR", "zone": 0, "s": 40.0}
         ],
-        "end_status": [{"unit": "INA", "provisional": "INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope"}],
-        "note": "SL2, rear layer: shaft between the HF+ can and the hatch bay, west along y 68 under the HF+ can (between the INA228 top and the LC76G, W2 MECH-6), down to the INA228 envelope (W2 MECH-3)"
-      },
-      "S07": {
-        "ends": ["PWR", "SWM"],
-        "via": [
-          {"edge": "PWR", "zone": 3, "s": 12},
-          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
-          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
-          {"box": "hfplus", "at": [1.0, 0.5, 0.5], "off": [0.7, 0, 0], "keep": "yz"},
-          {"box": "swm_2813", "at": [0.5, 1.0, 0.5], "keep": "xy"},
-          {"box": "swm_2813", "at": [0.5, 1.0, 0.5], "keep": "y"},
-          {"box": "swm_2813", "at": [0.5, 1.0, 0.5]}
-        ],
-        "end_status": [{"unit": "SWM", "provisional": "#2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope"}],
-        "note": "SL2, rear layer: shaft between the HF+ can and the hatch bay, west along y 74.25, down to the #2813 envelope (W2 MECH-3)"
+        "note": "W2 F2C-FALLBACK (MECH-F2C): W-C1, 18 AWG: from the PWR-C top edge (J118/J119 lands, enclosure y 37.5, front slab) over the tray front edge to the PWR-A bottom edge (J106/J107 Mini-Fit Jr. 2x1, through their PWR-B edge strips); model centreline, the bend over the tray edge is OPEN for the CAD"
       },
       "S10": {
-        "ends": ["PWR", "CHG"],
+        "ends": ["PWRC", "CHG"],
         "via": [
-          {"edge": "PWR", "zone": 0, "s": 124},
+          {"edge": "PWR_C", "zone": 1, "s": 135.0},
           {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
           {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
           {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
@@ -1181,34 +1163,34 @@
           {"box": "ip2368", "at": [0.5, 0.05, 0.5], "keep": "xz"},
           {"box": "ip2368", "at": [0.5, 0.5, 1.0], "keep": "xy"}
         ],
-        "note": "PWR bottom edge, along y 38.2 and up the gap right of PWR at plate level, east along y 74.25 under the HDMI cable run, up between the display edge and the CTRL over the Lime to the IP2368"
+        "note": "W2 F2C-FALLBACK (MECH-F2C): re-ended at PWR-C (its edge zone 1); PWR bottom edge, along y 38.2 and up the gap right of PWR at plate level, east along y 74.25 under the HDMI cable run, up between the display edge and the CTRL over the Lime to the IP2368"
       },
       "S11": {
-        "ends": ["USBC", "PWR"],
+        "ends": ["USBC", "PWRC"],
         "via": [
           {"port": "USB_C_IN"},
           {"slot": "SL3", "at": [0.5, 0.7, 0.5], "keep": "xz"},
           {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
           {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
           {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
-          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
-          {"box": "PWR.r0", "at": [1.0, 0.33, 0.5], "off": [1.0, 0, 0], "keep": "xz"},
-          {"edge": "PWR", "zone": 1, "s": 11.5}
+          {"edge": "PWR_C", "zone": 1, "s": 6.2, "keep": "yz"},
+          {"edge": "PWR_C", "zone": 1, "s": 6.2, "off": [0, 0.7, -1.0]},
+          {"edge": "PWR_C", "zone": 1, "s": 6.2}
         ],
         "end_status": [{"unit": "USBC", "provisional": "behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall"}],
-        "note": "bottom-face port, under the plate extension at y 17.55 (W2 MECH-7 part 2: between the LAB BUS nut envelope, y <= 13.3, and the HDMI flex rise, y >= 21.6) to SL3, front layer over the BMS, along y 38.2 to the PWR right edge (J113/J114 in the corner columns, no FFC)"
+        "note": "W2 F2C-FALLBACK (MECH-F2C): re-ended at PWR-C (its edge zone 1); bottom-face port, under the plate extension at y 17.55 (W2 MECH-7 part 2: between the LAB BUS nut envelope, y <= 13.3, and the HDMI flex rise, y >= 21.6) to SL3, front layer over the BMS, along y 38.2 to the PWR right edge (J113/J114 in the corner columns, no FFC)"
       },
       "S12": {
-        "ends": ["PWR", "XT30"],
+        "ends": ["PWRC", "XT30"],
         "via": [
-          {"edge": "PWR", "zone": 1, "s": 16.8},
+          {"edge": "PWR_C", "zone": 1, "s": 122.6},
           {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
           {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
           {"box": "battery_pack", "at": [0.5, 1.0, 0.5], "keep": "xz"}
         ],
         "touch": ["battery_tray"],
         "end_status": [{"unit": "XT30", "provisional": "XT30 pigtail place in the battery compartment TBD: end on the pack top face"}],
-        "note": "W2 MECH-7 part 2: J115 stays in the third column of the PWR-A bottom-right corner and leaves by the right edge (no S02 FFC, boards PWR edge_zones[1]); down the gap at x 143 between PWR and the blower to y 38.2, then the service XT30 pigtail into the battery compartment"
+        "note": "W2 F2C-FALLBACK (MECH-F2C): re-ended at PWR-C (its edge zone 1); W2 MECH-7 part 2: J115 stays in the third column of the PWR-A bottom-right corner and leaves by the right edge (no S02 FFC, boards PWR edge_zones[1]); down the gap at x 143 between PWR and the blower to y 38.2, then the service XT30 pigtail into the battery compartment"
       },
       "S13": {
         "ends": ["PWR", "HUB"],
@@ -1479,9 +1461,9 @@
         "note": "rear layer: PV6 terminals of SW501 to the Q6A board edge over the RJ45"
       },
       "S32": {
-        "ends": ["PWR", "GX16"],
+        "ends": ["PWRC", "GX16"],
         "via": [
-          {"edge": "PWR", "zone": 1, "s": 4.5},
+          {"edge": "PWR_C", "zone": 1, "s": 43.05},
           {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
           {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
           {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
@@ -1490,7 +1472,7 @@
           {"box": "gx16", "at": [0.5, 0.5, 0.8], "keep": "xy"},
           {"box": "gx16", "at": [1.0, 0.1, 0.8]}
         ],
-        "note": "PWR right edge (J507 in the corner column, no S02 FFC: W2 MECH-7 part 2), along y 38.2 over the BMS to SL3, rear layer to the GX16 socket"
+        "note": "W2 F2C-FALLBACK (MECH-F2C): re-ended at PWR-C (its edge zone 1); PWR right edge (J507 in the corner column, no S02 FFC: W2 MECH-7 part 2), along y 38.2 over the BMS to SL3, rear layer to the GX16 socket"
       },
       "S33": {
         "kind": "external",
@@ -1633,24 +1615,41 @@
                        {"unit": "GNSS", "provisional": "P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm", "bound_mm": 6.6}],
         "note": "PPS (J20.7), UART6 (J20.16/18) and one GND leave the S01 ribbon right after the socket and run along the SL1 row in the rear layer, west to the shaft beside the LC76G and down to its MX1.25 P1 edge (W2 MECH-6)"
       },
+      "S02C": {
+        "from_segment": "S02",
+        "ends": ["CTRL", "PWRC"],
+        "nets": ["CHG_INHIBIT", "E1_BAT_ADC", "I2C0_SCL", "I2C0_SDA", "IMU_RX", "IMU_TX", "INA228_ALERT", "PICO_OFF", "PWR_BUTTON"],
+        "wires": 9,
+        "awg": 22,
+        "replaces": "the 9 E1/E5 signals of S02 that ran CTRL - PWR-B J202/J203 - B2B - PWR-A until F2-C (design/E3.json unchanged: the same J306/J307 contacts)",
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 26.0, "dz": 2.4},
+          {"edge": "PWR_C", "zone": 1, "s": 149.1, "off": [0, 1.5, 0], "keep": "z"},
+          {"edge": "PWR_C", "zone": 1, "s": 149.1}
+        ],
+        "note": "W2 F2C-FALLBACK (MECH-F2C): W-C2: from the CTRL left edge (J306/J307, zone 0 s 26) west along y 39.0 at the CTRL exit height z 62.98, south of the display clamp boss (163.8, 46: 1.08 mm, not along y 42-43, which runs through it) and over the PACK_FUSE carrier (y <= 32.7), to the PWR-C top edge at its right end (J120, JST PHD 2x5 side entry, opening up, its face 2.1 mm inside the edge beside the corner notch); model centreline; it shares the passage south of the boss with S02B (bundle-to-bundle room not modelled, MECH proof-fit OPEN)"
+      },
       "S02B": {
         "from_segment": "S02",
         "ends": ["CTRL", "PWR"],
-        "nets": ["FAULT_LNA4", "FAULT_RTLA", "FAULT_RTLB", "FLT_BONI", "FLT_LIME3V3", "FLT_LNB", "FLT_SB_LNA", "I2C0_SCL", "I2C0_SDA", "IMU_RX", "IMU_TX", "INA228_ALERT", "OVP_LNB_N", "PG_BONI", "PG_LNB", "PICO_DISP_EN", "PICO_OFF", "PTC_AUX", "PWR_BUTTON", "SLED_DET"],
-        "wires": 20,
+        "nets": ["FAULT_LNA4", "FAULT_RTLA", "FAULT_RTLB", "FLT_BONI", "FLT_LIME3V3", "FLT_LNB", "FLT_SB_LNA", "OVP_LNB_N", "PG_BONI", "PG_LNB", "PICO_DISP_EN", "PTC_AUX", "SLED_DET"],
+        "wires": 13,
         "awg": 22,
         "_awg_src": "build/16-dzhgut.csv rows S02-S02B-01..20: PHD-PHD, 22 AWG (SPHD-001T-P0.5, AWG 26-22, insulation 1.0-1.5 mm: parts.json harness_families PHD); bundle OD from parts.json hookup_wire_ptfe 22 AWG (2845/7, 1.07 + 0.05) x sqrt(20 / fill 0.6) = 6.47 mm (MODEL, srrx_mech.routes)",
         "replaces": "the J203 conductors of S02 (W2 PWR-L6-PLACE third pass: J203 left PWR-B edge zone 0 for the top-entry exit of zone 2; J307.k <-> J203.k except J306.5/7/12/16 <-> J203.2/14/15/18 since the probe C pin swap of the fourth pass, tools/assembly_data.py HEADERS)",
         "via": [
           {"edge": "CTRL", "zone": 0, "s": 47, "dz": 2.4},
           {"edge": "CTRL", "zone": 0, "s": 47, "dz": 2.4, "off": [-0.8, 0, 0]},
-          {"box": "battery_tray", "at": [0.5, 1.0, 0.5], "off": [0, -0.95, 0], "keep": "xz"},
+          {"edge": "CTRL", "zone": 0, "s": 47, "dz": 2.92, "off": [-0.8, 0, 0]},
+          {"box": "battery_tray", "at": [0.5, 1.0, 0.5], "off": [0, 1.1, 0], "keep": "xz"},
+          {"box": "PWR_C.r4", "at": [1.0, 1.0, 0.5], "off": [-0.65, 0, 0], "keep": "yz"},
+          {"box": "PWR_C.r5", "at": [1.0, 1.0, 0.5], "off": [0, 3.15, 0], "keep": "xz"},
           {"edge": "PWR_B", "zone": 2, "s": 12.3, "keep": "yz"},
           {"edge": "PWR_B", "zone": 2, "s": 12.3, "off": [0, 8.0, 0], "keep": "z"},
           {"edge": "PWR_B", "zone": 2, "s": 12.3, "dz": 8.8, "off": [0, 8.0, 0]},
           {"edge": "PWR_B", "zone": 2, "s": 12.3, "dz": 8.8, "off": [0, 8.75, 0]}
         ],
-        "note": "W2 PWR-L6-PLACE third pass: the 20 S02-SIG-2 wires leave S02 at the CTRL left edge (zone 0, s 47) and run at the CTRL exit height z 62.98 down x 175.2 (right of the display, x <= 170.52, and of the blower) to y 37.0 over the battery tray (top z 58.4), west along y 37.0 to x 108.3 (clear of the display clamp boss (163.8, 46) and the display, y >= 50.3, by >= 0.5 mm plus the bundle radius), north to y 46.5 and down onto the PHDR plug top of J203 (rows board y 9.75 / 7.75, PHD_top h_mated 8.8; the last 0.75 mm in y at the housing top); not along y 46: that leg crosses the clamp boss; with the 22 AWG PTFE bundle (OD 6.47) the leg keeps >= 0.5 mm to the front wall (67.58) and to the tray top; it runs beside the S23/S34 bundle at the zone-2 exit (dressing, bend radius over J203 and proof-fit OPEN)"
+        "note": "W2 PWR-L6-PLACE third pass: the 20 S02-SIG-2 wires leave S02 at the CTRL left edge (zone 0, s 47) and run at the CTRL exit height z 62.98 down x 175.2 (right of the display, x <= 170.52, and of the blower) to y 37.0 over the battery tray (top z 58.4), west along y 37.0 to x 108.3 (clear of the display clamp boss (163.8, 46) and the display, y >= 50.3, by >= 0.5 mm plus the bundle radius), north to y 46.5 and down onto the PHDR plug top of J203 (rows board y 9.75 / 7.75, PHD_top h_mated 8.8; the last 0.75 mm in y at the housing top); not along y 46: that leg crosses the clamp boss; with the 22 AWG PTFE bundle (OD 6.47) the leg keeps >= 0.5 mm to the front wall (67.58) and to the tray top; it runs beside the S23/S34 bundle at the zone-2 exit (dressing, bend radius over J203 and proof-fit OPEN); W2 F2C-FALLBACK (MECH-F2C): 13 wires (OD 5.21), and the PWR-C board fills the slab over the tray up to y 37.5, so the leg rises to z 63.5 at x 175.2, runs west along y 39.05 (clamp boss (163.8, 46) >= 0.5 mm: 0.595) to x 159.35, through the PWR-C corner notch (enclosure x 156.1-160, y 35.8-37.5) north to y 40.65 and west along y 40.65 (PWR-C top edge 37.5: 0.54 mm) to x 108.3, then down onto J203 as before; z 63.5 keeps it over the S23/S34 leg (y 40.5, z 59.0); it crosses the PWR-C top-edge exits J120 (W-C2), J108 (S10) and J115 (S12) and shares the passage south of the boss with W-C2: bundle-to-bundle room is not modelled, the pair side by side does not fit there with 0.5 mm (MECH proof-fit OPEN, build/15 W2 F2C-FALLBACK)"
       }
     }
   }

@@ -311,6 +311,7 @@ def evaluate(P):
     out += w2_mech5_rules(P)
     out += w2_mech7_rules(P)
     out += w2_mech8_rules(P)
+    out += w2_f2c_rules(P)
     return out
 
 
@@ -1398,14 +1399,15 @@ def module_mounts_rule(P):
     res = routes.evaluate(P)
     allr = (list(res["segments"].items()) + list(res["branches"].items()) + list(res.get("coax", {}).items())) if res else []
     # INA228: free length in front of the terminal-block wire entries (envelopes and harness bundles) and the 18 AWG range
-    ina, term = boxes["ina228"], P.parts["adafruit_ina228_5832"]["terminal"]
-    side = next((mt.get("terminal_side", "-y") for mt in mm["mounts"] if mt["item"] == "ina228"), "-y")
-    env_room, room, lim = _terminal_room(P, ina, side, allr, "INA", t)
-    awg = 18
-    val["ina228"]["terminal"] = {"wire_side": side, "free_mm": room, "free_envelopes_only_mm": env_room, "limited_by": lim, "need_mm": term["wire_room"],
-                                 "awg_range": term["wire_awg"], "vin_awg": awg}
-    if room < term["wire_room"] or not (term["wire_awg"][0] <= awg <= term["wire_awg"][1]):
-        bad.append("ina228 terminal wire side")
+    if "ina228" in boxes:  # W2 F2C-FALLBACK: the INA228 5832 left the layout (bare INA228 on PWR-C), so the check stays for a layout that has it
+        ina, term = boxes["ina228"], P.parts["adafruit_ina228_5832"]["terminal"]
+        side = next((mt.get("terminal_side", "-y") for mt in mm["mounts"] if mt["item"] == "ina228"), "-y")
+        env_room, room, lim = _terminal_room(P, ina, side, allr, "INA", t)
+        awg = 18
+        val["ina228"]["terminal"] = {"wire_side": side, "free_mm": room, "free_envelopes_only_mm": env_room, "limited_by": lim,
+                                     "need_mm": term["wire_room"], "awg_range": term["wire_awg"], "vin_awg": awg}
+        if room < term["wire_room"] or not (term["wire_awg"][0] <= awg <= term["wire_awg"][1]):
+            bad.append("ina228 terminal wire side")
     # this package's envelopes against the harness bundles of the routes that do not end at them
     margin = mm.get("bundle_clear", 0.5)
     bc = {}
@@ -1450,16 +1452,19 @@ def module_mounts_rule(P):
              for iid in [it["id"]] if iid == "boni_a406"]
     vr = val["veml7700"]["rests"]
     gaps = [rw["gap_mm"] for rows in val["plate_standoffs"].values() for rw in rows]
+    ina_txt = (f"; INA228 terminal wire side {side} with {room:g} mm free of envelopes and harness bundles (limit: {lim}), 18 AWG inside "
+               f"{term['wire_awg'][1]}-{term['wire_awg'][0]} AWG (4UCON 19963; block identity inferred, confirm at incoming inspection)"
+               if "ina228" in boxes else "; the INA228 5832 and the #2813 left the layout (W2 F2C-FALLBACK: bare INA228 and the #2813 on PWR-C)")
+    mods = ("CH334F 4 x M2.5 and INA228 2 x M2.5 (+2 rests)" if "ina228" in boxes else "CH334F 4 x M2.5")
+    pad = (", #2813 on a printed pad with acrylic foam tape (no mounting hole on the Pololu drawing)" if "swm_2813" in boxes else "")
     return dict(rule, result=(
-        "PASS (model): CH334F 4 x M2.5 and INA228 2 x M2.5 (+2 rests) into TC-M2,5x4 inserts in rear-wall bosses (hole "
+        f"PASS (model): {mods} into TC-M2,5x4 inserts in rear-wall bosses (hole "
         f"{mm['insert'].get('hole_depth', mm['insert']['len']):g} deep, skin {min(v['skin_mm'] for v in val['hub_ch334f']['screws']):g}, "
-        f"{min(tri):g} from the tripod nut pocket >= {mm.get('tripod_clear', 0.0):g}), #2813 on a printed pad with acrylic foam tape (no mounting "
-        f"hole on the Pololu drawing), VEML7700 taped to {len(vr)} rests (+{len(val['veml7700'].get('spigots', []))} locating spigots) in a "
+        f"{min(tri):g} from the tripod nut pocket >= {mm.get('tripod_clear', 0.0):g}){pad}, VEML7700 taped to {len(vr)} rests "
+        f"(+{len(val['veml7700'].get('spigots', []))} locating spigots) in a "
         f"{vm['pocket'][4]:g} mm pocket of the top wall (skin {val['veml7700']['pocket_skin_mm']:g}; no insert joint fits that wall), PACK_FUSE on "
-        f"2 PEM SO-M2.5-6ZI (M-07 PF; barrels {min(gaps):g} from the nearest envelope); INA228 terminal wire side {side} with {room:g} mm free of "
-        f"envelopes and harness bundles (limit: {lim}), 18 AWG inside {term['wire_awg'][1]}-{term['wire_awg'][0]} AWG (4UCON 19963; block identity "
-        f"inferred, confirm at incoming inspection); this package's envelopes keep bundle OD / 2 + {margin:g} from the other route centrelines; "
-        "torques coupon-defined (build/17 section 2)" + ("; OPEN: " + "; ".join(opens) if opens else "")))
+        f"2 PEM SO-M2.5-6ZI (M-07 PF; barrels {min(gaps):g} from the nearest envelope){ina_txt}; this package's envelopes keep bundle OD / 2 + "
+        f"{margin:g} from the other route centrelines; torques coupon-defined (build/17 section 2)" + ("; OPEN: " + "; ".join(opens) if opens else "")))
 
 
 def w2_mech5_rules(P):
@@ -2162,3 +2167,68 @@ def pwr_stack_rule(P):
 def w2_mech8_rules(P):
     """Rows added by W2 MECH-8 (registration list, append-only)."""
     return [pwr_stack_rule(P)]
+
+
+def w2_f2c_rules(P):
+    """Rows added by W2 F2C-FALLBACK (MECH-F2C, registration list, append-only)."""
+    return [pwrc_cells_rule(P)]
+
+
+def pwrc_cells_rule(P):
+    """R-PWRC-CELLS (W2 F2C-FALLBACK, MECH-F2C): the PWR-C board of fallback F2-C hangs its parts over the battery tray front face.
+    Geometry: the part envelope bottom (PWR-C component face - max_height) against the tray front face (battery_tray box top)
+    over the overlap of the PWR-C outline with the tray, at least mechanical.json pwr_c_cells clearance_mm. Heat (MODEL): the
+    shunt loss I^2 R at the continuous and the protective current of tools/assembly_data.py NET_CURRENT E1_N; the switch
+    #2813, the USB-PD protection and the service fuse have no read resistance (TBD), so the sum is a lower bound. FAIL (model)
+    when the gap is under the clearance or the board misses the tray; else PASS (model) on the geometry and OPEN on the heat:
+    the cell limit (cell_max_c, bench acceptance P18 with the pack NTC) is a bench gate."""
+    from .layout import item_boxes
+    c = P.mech["pwr_c_cells"]
+    b = P.boards["boards"].get("PWR_C")
+    rule = {"id": "R-PWRC-CELLS",
+            "rule": "PWR-C parts (component face - max_height) >= clearance over the battery tray front face, and the heat of "
+                    "the PWR-C power parts in front of the cells (shunt I^2 R, MODEL; switch, USB-PD protection and fuse TBD)",
+            "source": "boards.json PWR_C place, outline, max_height; battery_tray envelope; mechanical.json pwr_c_cells "
+                      "(design/E1.json R101, tools/assembly_data.py NET_CURRENT E1_N, build/05 P18)"}
+    if b is None:
+        rule.update(value_mm={}, result="N/A: no PWR_C board in boards.json (fallback F2-C not adopted)")
+        return rule
+    tray = [bx for i, n, bx, it in item_boxes(P) if i == "battery_tray"]
+    pl = b["place"]
+    ox, oy = pl["origin"]
+    xs, ys = [p[0] + ox for p in b["outline"]], [p[1] + oy for p in b["outline"]]
+    face = round(pl["z_bottom"] - P.board_t("PWR_C"), 3) if pl["facing"] == "-z" else None
+    parts_z = round(face - b["max_height"], 3) if face is not None else None
+    val = {"component_face_z": face, "parts_bottom_z": parts_z, "clearance_min_mm": c["clearance_mm"]}
+    bad = []
+    if face is None:
+        bad.append("PWR_C does not face the tray (-z)")
+    if not tray:
+        bad.append("no battery_tray envelope")
+    else:
+        t = tray[0]
+        ov = [round(max(min(xs), t[0]), 3), round(max(min(ys), t[1]), 3), round(min(max(xs), t[3]), 3), round(min(max(ys), t[4]), 3)]
+        val["tray_front_z"] = t[5]
+        val["overlap_xy"] = ov
+        if ov[2] <= ov[0] or ov[3] <= ov[1]:
+            bad.append("the PWR-C outline does not lie over the tray")
+        if parts_z is not None:
+            gap = round(parts_z - t[5], 3)
+            val["gap_mm"] = gap
+            if gap < c["clearance_mm"] - 1e-9:
+                bad.append(f"gap {gap} mm < {c['clearance_mm']}")
+    r = c["shunt_mohm"] / 1000.0
+    val["heat_w"] = {c["shunt_ref"]: {"at_cont": round(c["i_cont_a"] ** 2 * r, 3), "at_prot": round(c["i_prot_a"] ** 2 * r, 3)},
+                     **{k: "TBD" for k in c["unread"]}}
+    val["cell_max_c"] = c["cell_max_c"]
+    rule["value_mm"] = val
+    if bad:
+        rule["result"] = "FAIL (model): " + "; ".join(bad)
+        return rule
+    h = val["heat_w"][c["shunt_ref"]]
+    rule["result"] = (f"PASS (model) on the geometry: the PWR-C parts end at z {parts_z}, {val['gap_mm']} mm over the tray front face "
+                      f"z {val['tray_front_z']} (>= {c['clearance_mm']}); OPEN on the heat: the shunt {c['shunt_ref']} "
+                      f"{c['shunt_mohm']:g} mOhm gives {h['at_cont']} W at {c['i_cont_a']:g} A and {h['at_prot']} W at "
+                      f"{c['i_prot_a']:g} A (MODEL); " + ", ".join(f"{k} {v}" for k, v in c["unread"].items())
+                      + f"; the cells stay <= {c['cell_max_c']} C in the bench acceptance (P18, pack NTC): bench gate, no model")
+    return rule

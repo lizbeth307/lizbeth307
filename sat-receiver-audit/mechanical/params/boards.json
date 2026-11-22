@@ -82,7 +82,7 @@
           "edge": "top",
           "at": 35,
           "span": [108, 128],
-          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22, S35 and S36 leave from PWR-B J204/J207 on the PWR-B top span x 58-107 (boards PWR_B edge_zones[1], W2 MECH-7 part 2) and reach SL2 along the y 74.25 channel; PWR-B leaves a window over this span",
+          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path leads (S06/S07 until W2 F2C-FALLBACK, deleted) to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22, S35 and S36 leave from PWR-B J204/J207 on the PWR-B top span x 58-107 (boards PWR_B edge_zones[1], W2 MECH-7 part 2) and reach SL2 along the y 74.25 channel; PWR-B leaves a window over this span",
           "headers": ["J206"]
         }
       ],
@@ -361,6 +361,24 @@
         }
       ],
       "notes": "PEC11R rear-facing pins (type 4); bushing M7x0.75 through the 2.6 mm boss with an O-ring (STACK 5.8). pcb/prepare.py domain ENC (ENC301/ENC302); harness S37/S38 to CTRL with side-entry JST PH."
+    },
+    "PWR_C": {
+      "name": "power-entry board PWR-C (PWR_ENTRY; fallback F2-C after gate G1, W2 F2C-FALLBACK)",
+      "domains": ["PWR_ENTRY"],
+      "_domains_note": "pcb/prepare.py domain PWR_ENTRY = pcb/partition-spec.json partition.domain_override_pwr_c (60 refs: the E1 battery front end with the INA228 U102, the shunt R101 and the Pololu #2813 U106 on its land, UV/AON, USB-PD protection, service charge, test points TP103-TP108, the E5 IMU service group and the harness ends J105, J108, J109, J112-J115, J118-J120, J507); tools/assembly_data.py unit PWRC, tools/build_parts.py BOARD3 PWR_C",
+      "outline": [[5.5, 0], [156, 0], [156, 31.8], [152.1, 31.8], [152.1, 33.5], [0, 33.5], [0, 5.5]],
+      "_outline_note": "156 x 33.5 = enclosure x 4-160, y 4-37.5 in the front slab in front of the battery tray, with a 5.5 mm chamfer at the lower-left inner-wall arc (centre (14, 14), R 11.5: chamfer midpoint 10.25 mm from it), and a 3.9 x 1.7 mm corner notch at enclosure x 156.1-160, y 35.8-37.5 (W2 F2C-FALLBACK, MECH-F2C): the passage of the harness branch S02B (13 x 22 AWG, OD 5.21) between this corner and the display clamp boss (163.8, 46) is 5.56 mm wide without it (bundle + 2 x 0.5 = 6.21); with it the S02B leg keeps >= 0.5 mm (rule R-PWRB-EXIT); rects r4 / r5 split at y 31.8 for it. Frame: like RF (facing -z) the model places the board by origin + board x/y (layout.board_boxes), so these coordinates are the enclosure view from the front; the PCB draws the component side, the mirror (build/kicad/boards/PWR_C/contract-proposal.json, x_pcb = 156 - x here; make_spec.py mirror_check)",
+      "rects": [[0, 5.5, 67.0, 28.0], [5.5, 0, 61.5, 5.5], [67.0, 0, 18.0, 8.0], [67.0, 26.0, 18.0, 7.5], [85.0, 0, 71.0, 31.8], [85.0, 31.8, 67.1, 1.7]],
+      "cutouts": [[67.0, 8.0, 18.0, 18.0]],
+      "_cutouts_note": "the V2 vent passage: enclosure (80, 21) = board (76, 17), an 18 x 18 mm milled cut-out around the 16 mm vent pad",
+      "place": {"origin": [4.0, 4.0], "z_bottom": 67.08, "facing": "-z", "mount": "five M3 positions on front-shell standoff pads (fixing OPEN: the board back lies 0.5 mm from the front-wall inner face z 67.58, which leaves no insert depth; build/15 W2 F2C-FALLBACK); fitted before the battery tray"},
+      "holes": [[151.5, 4.5], [76.0, 30.0], [11.0, 4.5], [3.0, 12.0]],
+      "hole_d": 3.2,
+      "hole_keepout_d": 7.0,
+      "max_height": 6.5,
+      "_max_height_note": "parts face the tray: component face z 65.48, parts down to 58.98, 0.58 mm above the tray front face z 58.4 (the slab z 58.4-67.58 leaves 7.08 mm; F2-C record); THT pin tails trimmed flush towards the front wall",
+      "edge_zones": [{"edge": "right", "span": [0, 33.5], "use": "S05 from PACK_FUSE J117 (J105 lands) only: enclosure x 160, the PACK_FUSE carrier at x 161.7-172.4 leaves 1.7 mm, no room for another bundle (W-C2 left this edge for the top edge)"}, {"edge": "top", "span": [0, 156], "use": "W-C2 = harness branch S02C to CTRL J306/J307 (J120, JST PHD 2x5 side entry, opening up, at the right end), S10 to the IP2368 (J108, J112), S12 service XT30 (J115), W-C1 = harness S42 to PWR-A J106/J107 (J118/J119 lands; PWR-A bottom edge at enclosure y 38.5), S32 to the GX16 (J507), S05 NTC (J109), S11 from the USB-C panel (J113, J114)"}],
+      "notes": "W2 F2C-FALLBACK (MECH-F2C): the third power board of fallback F2-C (gate G1 fired for PWR-A on 6 layers, build/15 W2 PWR-L6-ROUTE); 4 layers 1.6 mm (the shared stackup), parts on the component side only; pcb/boards/PWR_C.json routes it (build/kicad/boards/PWR_C). Thermal check in front of the cells: rule R-PWRC-CELLS (MODEL; the 45 degC cell limit is a bench gate). MODEL FIT ONLY."
     }
   },
   "small_boards": {

@@ -266,8 +266,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          92.0,
-          21.0
+          99.0,
+          22.0
         ],
         "align": "origin",
         "rotation": 0,
@@ -310,7 +310,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          60.0,
+          66.0,
           24.5
         ],
         "align": "origin",
@@ -324,7 +324,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          28.0,
+          33.0,
           25.1
         ],
         "align": "origin",
@@ -352,12 +352,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          10.2,
+          15.6,
           30.8
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            18.3,
+            27.9
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "W2 F2C-FALLBACK (PCB-PWRC-2): make_spec.py ANCHORS (design choice)"
     },
@@ -366,7 +373,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          122.95,
+          134.95,
           26.5
         ],
         "align": "origin",
@@ -380,7 +387,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          115.45,
+          127.45,
           26.5
         ],
         "align": "origin",
@@ -394,7 +401,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          130.45,
+          142.45,
           26.5
         ],
         "align": "origin",
@@ -408,12 +415,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          138.5,
+          147.1,
           30.8
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            149.8,
+            27.9
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "W2 F2C-FALLBACK (PCB-PWRC-2): make_spec.py ANCHORS (design choice)"
     },
@@ -422,12 +436,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          25.4,
+          30.7,
           30.8
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            27.9,
+            27.4
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "W2 F2C-FALLBACK (PCB-PWRC-2): make_spec.py ANCHORS (design choice)"
     },
@@ -436,12 +457,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          77.7,
+          92.0,
           30.8
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            94.7,
+            27.9
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "W2 F2C-FALLBACK (PCB-PWRC-2): make_spec.py ANCHORS (design choice)"
     },
@@ -450,7 +478,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          64.6,
+          68.5,
           30.8
         ],
         "align": "origin",
@@ -464,11 +492,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.8,
-          18.55
+          10.9,
+          21.9
         ],
         "align": "origin",
-        "rotation": 270,
+        "rotation": 180,
         "side": "F"
       },
       "anchor_source": "W2 F2C-FALLBACK (PCB-PWRC-2): make_spec.py ANCHORS (design choice)"
@@ -478,7 +506,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          103.95,
+          115.95,
           26.5
         ],
         "align": "origin",
@@ -620,7 +648,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          44.16,
+          50.16,
           18.16
         ],
         "align": "origin",
@@ -652,7 +680,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          94.0,
+          101.0,
           18.0
         ],
         "align": "origin",
@@ -743,7 +771,7 @@
     {
       "id": "SWITCH",
       "region": [
-        55.0,
+        60.9,
         5.5,
         70.6,
         21.6
@@ -772,10 +800,10 @@
     {
       "id": "E5",
       "region": [
-        96.6,
+        103.4,
         8.0,
         112.4,
-        23.4
+        23.6
       ],
       "side": "F",
       "gap_mm": 0.4,
@@ -940,8 +968,8 @@
             10.31
           ],
           [
-            28.855,
-            11.335
+            29.855,
+            10.31
           ]
         ],
         "locked": true,
@@ -958,8 +986,8 @@
             12.42
           ],
           [
-            29.25,
-            13.695
+            30.3,
+            12.42
           ]
         ],
         "locked": true,
@@ -994,8 +1022,8 @@
             9.92
           ],
           [
-            18.91,
-            11.195
+            19.96,
+            9.92
           ]
         ],
         "locked": true,
@@ -1044,12 +1072,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            109.155,
-            22.67
+            108.555,
+            19.07
           ],
           [
-            110.155,
-            22.67
+            109.555,
+            19.07
           ]
         ],
         "locked": true,
@@ -1116,12 +1144,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            92.775,
-            21.0
+            99.775,
+            22.0
           ],
           [
-            93.775,
-            21.0
+            100.775,
+            22.0
           ]
         ],
         "locked": true,
@@ -1134,12 +1162,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            98.855,
-            18.87
+            105.655,
+            16.17
           ],
           [
-            98.855,
-            19.895
+            105.655,
+            17.195
           ]
         ],
         "locked": true,
@@ -1188,12 +1216,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            102.265,
-            18.87
+            109.065,
+            16.17
           ],
           [
-            102.265,
-            19.895
+            110.015,
+            16.17
           ]
         ],
         "locked": true,
@@ -1260,12 +1288,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            105.625,
-            18.87
+            105.705,
+            14.31
           ],
           [
-            106.575,
-            18.87
+            106.655,
+            14.31
           ]
         ],
         "locked": true,
@@ -1278,12 +1306,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            102.35,
-            22.15
+            109.15,
+            22.35
           ],
           [
-            103.65,
-            22.15
+            110.45,
+            22.35
           ]
         ],
         "locked": true,
@@ -1300,7 +1328,7 @@
             8.6
           ],
           [
-            22.75,
+            22.4,
             8.6
           ]
         ],
@@ -1318,7 +1346,7 @@
             8.1
           ],
           [
-            19.45,
+            19.8,
             8.1
           ]
         ],
@@ -1336,7 +1364,7 @@
             7.1
           ],
           [
-            26.6,
+            24.0,
             7.1
           ]
         ],
@@ -1408,12 +1436,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            97.5125,
-            21.7
+            104.3125,
+            21.9
           ],
           [
-            96.3,
-            21.7
+            103.1,
+            21.9
           ]
         ],
         "locked": true,
@@ -1426,16 +1454,16 @@
         "width_mm": 0.25,
         "path": [
           [
-            92.8625,
+            99.8625,
             18.0
           ],
           [
-            93.925,
+            100.925,
             18.0
           ],
           [
-            93.925,
-            15.8
+            100.925,
+            20.2
           ]
         ],
         "locked": true,
@@ -1471,7 +1499,7 @@
         "id": "PC-GND-D105-V1",
         "net": "GND",
         "at": [
-          62.15,
+          68.15,
           26.55
         ],
         "drill_mm": 0.3,
@@ -1483,7 +1511,7 @@
         "id": "PC-GND-D105-V2",
         "net": "GND",
         "at": [
-          62.15,
+          68.15,
           27.55
         ],
         "drill_mm": 0.3,
@@ -1567,8 +1595,8 @@
         "id": "GND-C101-2-V",
         "net": "GND",
         "at": [
-          28.855,
-          11.335
+          29.855,
+          10.31
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1579,8 +1607,8 @@
         "id": "GND-C102-2-V",
         "net": "GND",
         "at": [
-          29.25,
-          13.695
+          30.3,
+          12.42
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1603,8 +1631,8 @@
         "id": "GND-C104-2-V",
         "net": "GND",
         "at": [
-          18.91,
-          11.195
+          19.96,
+          9.92
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1639,8 +1667,8 @@
         "id": "GND-C114-2-V",
         "net": "GND",
         "at": [
-          110.155,
-          22.67
+          109.555,
+          19.07
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1687,8 +1715,8 @@
         "id": "GND-C552-2-V",
         "net": "GND",
         "at": [
-          93.775,
-          21.0
+          100.775,
+          22.0
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1699,8 +1727,8 @@
         "id": "GND-C553-2-V",
         "net": "GND",
         "at": [
-          98.855,
-          19.895
+          105.655,
+          17.195
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1735,8 +1763,8 @@
         "id": "GND-R112-2-V",
         "net": "GND",
         "at": [
-          102.265,
-          19.895
+          110.015,
+          16.17
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1783,8 +1811,8 @@
         "id": "GND-R553-2-V",
         "net": "GND",
         "at": [
-          106.575,
-          18.87
+          106.655,
+          14.31
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1795,8 +1823,8 @@
         "id": "GND-TP107-1-V",
         "net": "GND",
         "at": [
-          103.65,
-          22.15
+          110.45,
+          22.35
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1807,7 +1835,7 @@
         "id": "GND-U102-1-V",
         "net": "GND",
         "at": [
-          22.75,
+          22.4,
           8.6
         ],
         "drill_mm": 0.3,
@@ -1819,7 +1847,7 @@
         "id": "GND-U102-2-V",
         "net": "GND",
         "at": [
-          19.45,
+          19.8,
           8.1
         ],
         "drill_mm": 0.3,
@@ -1831,7 +1859,7 @@
         "id": "GND-U102-7-V",
         "net": "GND",
         "at": [
-          26.6,
+          24.0,
           7.1
         ],
         "drill_mm": 0.3,
@@ -1879,8 +1907,8 @@
         "id": "GND-U551-2-V",
         "net": "GND",
         "at": [
-          96.3,
-          21.7
+          103.1,
+          21.9
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1891,8 +1919,8 @@
         "id": "GND-U553-2-V",
         "net": "GND",
         "at": [
-          93.925,
-          15.8
+          100.925,
+          20.2
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1907,188 +1935,106 @@
         "layer": "F.Cu",
         "outline": [
           [
-            25.3125,
-            1.0
-          ],
-          [
-            33.6,
-            1.0
-          ],
-          [
-            33.6,
-            4.2
-          ],
-          [
-            25.3125,
-            4.2
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT 3.2 mm: shunt R101.2 to the E1_N bus (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-E1N-BUS",
-        "net": "E1_N",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            30.4,
-            1.0
-          ],
-          [
-            33.6,
-            1.0
-          ],
-          [
-            33.6,
-            25.05
-          ],
-          [
-            30.4,
-            25.05
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT 3.2 mm: the E1_N bus up the left of the #2813 (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-E1N-VIN",
-        "net": "E1_N",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            33.0,
-            21.75
-          ],
-          [
-            38.66,
-            21.75
-          ],
-          [
-            38.66,
-            29.97
-          ],
-          [
-            33.0,
-            29.97
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT: the #2813 VIN group (two 0.1 in pins and the large hole, Pololu: above 5 A both pins or the large hole per node) (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-E1N-WEST",
-        "net": "E1_N",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            14.0,
-            18.0
-          ],
-          [
-            31.0,
-            18.0
-          ],
-          [
-            31.0,
+            22.6,
             21.2
           ],
           [
-            14.0,
-            21.2
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT 3.2 mm: E1_N west to the J108.2 spur, F103 and D104 (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-E1N-F103",
-        "net": "E1_N",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            26.4,
-            20.6
-          ],
-          [
-            29.6,
-            20.6
-          ],
-          [
-            29.6,
-            23.725
-          ],
-          [
-            26.4,
-            23.725
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT 3.2 mm: up to the fuse F103.1 (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-E1N-J108",
-        "net": "E1_N",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            14.0,
-            20.6
-          ],
-          [
-            17.2,
-            20.6
-          ],
-          [
-            17.2,
+            22.6,
             32.225
           ],
           [
-            14.0,
+            19.4,
             32.225
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT 3.2 mm: up to the S10 land J108.2 (IP2368 BAT+) (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-E1N-D104",
-        "net": "E1_N",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            18.0,
-            20.6
           ],
           [
-            21.2,
-            20.6
-          ],
-          [
-            21.2,
+            19.4,
             24.75
           ],
           [
             18.0,
             24.75
+          ],
+          [
+            18.0,
+            21.2
+          ],
+          [
+            14.0,
+            21.2
+          ],
+          [
+            14.0,
+            18.0
+          ],
+          [
+            35.4,
+            18.0
+          ],
+          [
+            35.4,
+            4.2
+          ],
+          [
+            25.3125,
+            4.2
+          ],
+          [
+            25.3125,
+            1.0
+          ],
+          [
+            38.6,
+            1.0
+          ],
+          [
+            38.6,
+            21.75
+          ],
+          [
+            44.66,
+            21.75
+          ],
+          [
+            44.66,
+            29.97
+          ],
+          [
+            38.0,
+            29.97
+          ],
+          [
+            38.0,
+            25.05
+          ],
+          [
+            35.4,
+            25.05
+          ],
+          [
+            35.4,
+            21.2
+          ],
+          [
+            34.6,
+            21.2
+          ],
+          [
+            34.6,
+            23.725
+          ],
+          [
+            31.4,
+            23.725
+          ],
+          [
+            31.4,
+            21.2
           ]
         ],
         "priority": 2,
         "pad_connection": "solid",
         "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT 3.2 mm: the TVS D104 cathode at the class width (make_spec.py power_copper)"
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT 3.2 mm: shunt R101.2 to the E1_N bus; BATT 3.2 mm: the E1_N bus up the left of the #2813; BATT: the #2813 VIN group (two 0.1 in pins and the large hole, Pololu: above 5 A both pins or the large hole per node); BATT 3.2 mm: E1_N west to the J108.2 spur, F103 and D104; BATT 3.2 mm: up to the fuse F103.1; BATT 3.2 mm: up to the S10 land J108.2 (IP2368 BAT+); BATT 3.2 mm: the TVS D104 cathode at the class width (make_spec.py power_copper; pieces PC-E1N-SHUNT, PC-E1N-BUS, PC-E1N-VIN, PC-E1N-WEST, PC-E1N-F103, PC-E1N-J108, PC-E1N-D104)"
       },
       {
         "id": "PC-SERVICE",
@@ -2096,26 +2042,26 @@
         "layer": "F.Cu",
         "outline": [
           [
-            27.075,
+            32.6,
             27.055
           ],
           [
-            31.725,
+            37.025,
             27.055
           ],
           [
-            31.725,
+            37.025,
             31.725
           ],
           [
-            27.075,
+            32.6,
             31.725
           ]
         ],
-        "priority": 2,
+        "priority": 3,
         "pad_connection": "solid",
         "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm: F103.2 to the S12 land J115.2 (service XT30) (make_spec.py power_copper)"
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm: F103.2 to the S12 land J115.2 (service XT30) (make_spec.py power_copper; pieces PC-SERVICE)"
       },
       {
         "id": "PC-E1SW-VOUT",
@@ -2123,53 +2069,42 @@
         "layer": "F.Cu",
         "outline": [
           [
-            49.66,
-            21.75
-          ],
-          [
-            59.2,
-            21.75
-          ],
-          [
-            59.2,
+            57.9,
             29.97
           ],
           [
-            49.66,
+            55.66,
             29.97
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT: the #2813 VOUT group and the TVS D105 cathode (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-E1SW-J119",
-        "net": "E1_SW",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            51.9,
-            28.0
           ],
           [
-            60.625,
-            28.0
+            55.66,
+            21.75
           ],
           [
-            60.625,
+            65.2,
+            21.75
+          ],
+          [
+            65.2,
+            29.97
+          ],
+          [
+            64.525,
+            29.97
+          ],
+          [
+            64.525,
             32.225
           ],
           [
-            51.9,
+            57.9,
             32.225
           ]
         ],
-        "priority": 2,
+        "priority": 4,
         "pad_connection": "solid",
         "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT 3.2 mm: to the W-C1 land J119.2 (E1_SW to PWR-A J107) (make_spec.py power_copper)"
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT: the #2813 VOUT group and the TVS D105 cathode; BATT 3.2 mm: to the W-C1 land J119.2 (E1_SW to PWR-A J107) (make_spec.py power_copper; pieces PC-E1SW-VOUT, PC-E1SW-J119)"
       },
       {
         "id": "PC-GND-D104",
@@ -2193,10 +2128,10 @@
             27.25
           ]
         ],
-        "priority": 2,
+        "priority": 5,
         "pad_connection": "solid",
         "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): GND of the TVS D104 anode at the pad width and two stacked plane vias above it (make_spec.py power_copper)"
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): GND of the TVS D104 anode at the pad width and two stacked plane vias above it (make_spec.py power_copper; pieces PC-GND-D104)"
       },
       {
         "id": "PC-GND-D105",
@@ -2204,26 +2139,26 @@
         "layer": "F.Cu",
         "outline": [
           [
-            60.85,
+            66.85,
             23.25
           ],
           [
-            63.5,
+            69.5,
             23.25
           ],
           [
-            63.5,
+            69.5,
             28.25
           ],
           [
-            60.85,
+            66.85,
             28.25
           ]
         ],
-        "priority": 2,
+        "priority": 6,
         "pad_connection": "solid",
         "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): GND of the TVS D105 anode at the pad width and two stacked plane vias above it (make_spec.py power_copper)"
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): GND of the TVS D105 anode at the pad width and two stacked plane vias above it (make_spec.py power_copper; pieces PC-GND-D105)"
       },
       {
         "id": "PC-PDRAW-BAR",
@@ -2231,6 +2166,50 @@
         "layer": "F.Cu",
         "outline": [
           [
+            153.425,
+            16.4
+          ],
+          [
+            153.425,
+            32.225
+          ],
+          [
+            151.575,
+            32.225
+          ],
+          [
+            151.575,
+            18.25
+          ],
+          [
+            139.7,
+            18.25
+          ],
+          [
+            139.7,
+            20.275
+          ],
+          [
+            136.4,
+            20.275
+          ],
+          [
+            136.4,
+            18.2
+          ],
+          [
+            137.85,
+            18.2
+          ],
+          [
+            137.85,
+            16.4
+          ],
+          [
+            138.6,
+            16.4
+          ],
+          [
             138.6,
             13.8
           ],
@@ -2241,124 +2220,12 @@
           [
             138.9,
             16.4
-          ],
-          [
-            138.6,
-            16.4
           ]
         ],
-        "priority": 2,
+        "priority": 7,
         "pad_connection": "solid",
         "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): the U109 IN bar poured along its length (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-PDRAW-LAND",
-        "net": "E1_USB_PD_RAW",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            137.85,
-            16.4
-          ],
-          [
-            139.7,
-            16.4
-          ],
-          [
-            139.7,
-            18.25
-          ],
-          [
-            137.85,
-            18.25
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm landing at the IN bar end (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-PDRAW-C116",
-        "net": "E1_USB_PD_RAW",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            136.4,
-            18.2
-          ],
-          [
-            139.7,
-            18.2
-          ],
-          [
-            139.7,
-            20.275
-          ],
-          [
-            136.4,
-            20.275
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A: the input capacitor C116.1 on the landing (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-PDRAW-EAST",
-        "net": "E1_USB_PD_RAW",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            137.85,
-            16.4
-          ],
-          [
-            144.825,
-            16.4
-          ],
-          [
-            144.825,
-            18.25
-          ],
-          [
-            137.85,
-            18.25
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm: east to the J114 column (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-PDRAW-J114",
-        "net": "E1_USB_PD_RAW",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            142.975,
-            16.4
-          ],
-          [
-            144.825,
-            16.4
-          ],
-          [
-            144.825,
-            32.225
-          ],
-          [
-            142.975,
-            32.225
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm: up to the S11 land J114.2 (USB-C VBUS) (make_spec.py power_copper)"
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): the U109 IN bar poured along its length; PWR3A 1.85 mm landing at the IN bar end; PWR3A: the input capacitor C116.1 on the landing; PWR3A 1.85 mm: east to the J114 column; PWR3A 1.85 mm: up to the S11 land J114.2 (USB-C VBUS) (make_spec.py power_copper; pieces PC-PDRAW-BAR, PC-PDRAW-LAND, PC-PDRAW-C116, PC-PDRAW-EAST, PC-PDRAW-J114)"
       },
       {
         "id": "PC-PDSAFE-BAR",
@@ -2366,7 +2233,15 @@
         "layer": "F.Cu",
         "outline": [
           [
-            139.1,
+            136.4,
+            5.4
+          ],
+          [
+            140.2,
+            5.4
+          ],
+          [
+            140.2,
             13.6
           ],
           [
@@ -2380,55 +2255,17 @@
           [
             139.1,
             16.2
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): the U109 OUT bar poured along its length (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-PDSAFE-LAND",
-        "net": "E1_USB_PD_SAFE",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            138.35,
-            11.75
           ],
           [
-            140.2,
-            11.75
-          ],
-          [
-            140.2,
+            139.1,
             13.6
           ],
           [
             138.35,
             13.6
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm landing at the OUT bar end (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-PDSAFE-DOWN",
-        "net": "E1_USB_PD_SAFE",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            136.4,
-            5.4
           ],
           [
-            140.2,
-            5.4
-          ],
-          [
-            140.2,
+            138.35,
             11.75
           ],
           [
@@ -2436,10 +2273,10 @@
             11.75
           ]
         ],
-        "priority": 2,
+        "priority": 8,
         "pad_connection": "solid",
         "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A: C117.1 and the via cluster to B.Cu (make_spec.py power_copper)"
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): the U109 OUT bar poured along its length; PWR3A 1.85 mm landing at the OUT bar end; PWR3A: C117.1 and the via cluster to B.Cu (make_spec.py power_copper; pieces PC-PDSAFE-BAR, PC-PDSAFE-LAND, PC-PDSAFE-DOWN)"
       },
       {
         "id": "PC-PDSAFE-B-VIAS",
@@ -2447,7 +2284,7 @@
         "layer": "B.Cu",
         "outline": [
           [
-            137.35,
+            25.475,
             2.075
           ],
           [
@@ -2461,93 +2298,28 @@
           [
             137.35,
             7.4
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): B.Cu under the via cluster (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-PDSAFE-B-RUN",
-        "net": "E1_USB_PD_SAFE",
-        "layer": "B.Cu",
-        "outline": [
-          [
-            20.075,
-            2.075
           ],
           [
-            141.15,
-            2.075
-          ],
-          [
-            141.15,
+            137.35,
             3.925
           ],
           [
-            20.075,
+            27.325,
             3.925
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm on B.Cu along the bottom edge, under the shunt and the #2813 (outer layer, power class allowed) (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-PDSAFE-B-UP",
-        "net": "E1_USB_PD_SAFE",
-        "layer": "B.Cu",
-        "outline": [
-          [
-            20.075,
-            3.0
           ],
           [
-            21.925,
-            3.0
-          ],
-          [
-            21.925,
+            27.325,
             32.225
           ],
           [
-            20.075,
+            25.475,
             32.225
           ]
         ],
-        "priority": 2,
+        "priority": 9,
         "pad_connection": "solid",
         "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm on B.Cu up to the S10 land J108.3 (THT, so no via at this end) (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-LAB5-TOP",
-        "net": "LAB5",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            82.175,
-            29.875
-          ],
-          [
-            91.45,
-            29.875
-          ],
-          [
-            91.45,
-            32.225
-          ],
-          [
-            82.175,
-            32.225
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm (>= 1.335 mm for F102 4 A on 1 oz): W-C1 land J118.2 east (make_spec.py power_copper)"
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): B.Cu under the via cluster; PWR3A 1.85 mm on B.Cu along the bottom edge, under the shunt and the #2813 (outer layer, power class allowed); PWR3A 1.85 mm on B.Cu up to the S10 land J108.3 (THT, so no via at this end) (make_spec.py power_copper; pieces PC-PDSAFE-B-VIAS, PC-PDSAFE-B-RUN, PC-PDSAFE-B-UP)"
       },
       {
         "id": "PC-LAB5-DOWN",
@@ -2555,80 +2327,58 @@
         "layer": "F.Cu",
         "outline": [
           [
-            89.6,
+            96.475,
             18.35
           ],
           [
-            91.45,
+            98.325,
             18.35
           ],
           [
-            91.45,
-            31.725
-          ],
-          [
-            89.6,
-            31.725
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm: down beside the vent cut-out to U553 (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-LAB5-U553",
-        "net": "LAB5",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            91.4,
+            98.325,
             18.6
           ],
           [
-            93.575,
+            100.575,
             18.6
           ],
           [
-            93.575,
+            100.575,
             19.3
           ],
           [
-            91.4,
+            98.325,
             19.3
+          ],
+          [
+            98.325,
+            21.475
+          ],
+          [
+            98.725,
+            21.475
+          ],
+          [
+            98.725,
+            22.525
+          ],
+          [
+            98.325,
+            22.525
+          ],
+          [
+            98.325,
+            32.225
+          ],
+          [
+            96.475,
+            32.225
           ]
         ],
-        "priority": 2,
+        "priority": 10,
         "pad_connection": "solid",
         "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): the U553 IN pin entry: one pin pitch tall, within half the class width of the pin (make_spec.py power_copper)"
-      },
-      {
-        "id": "PC-LAB5-C552",
-        "net": "LAB5",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            89.6,
-            20.475
-          ],
-          [
-            91.725,
-            20.475
-          ],
-          [
-            91.725,
-            21.525
-          ],
-          [
-            89.6,
-            21.525
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A: C552.1 beside U553 IN (make_spec.py power_copper)"
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): PWR3A 1.85 mm (>= 1.335 mm for F102 4 A on 1 oz): the W-C1 land J118.2 straight down to U553; the U553 IN pin entry: one pin pitch tall, within half the class width of the pin; PWR3A: C552.1 on the column beside U553 IN (make_spec.py power_copper; pieces PC-LAB5-DOWN, PC-LAB5-U553, PC-LAB5-C552)"
       },
       {
         "id": "GND-In1",

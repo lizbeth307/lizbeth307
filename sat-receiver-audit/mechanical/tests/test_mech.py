@@ -51,7 +51,8 @@ class Params_(unittest.TestCase):
     def test_three_boards_and_the_encoder_daughterboard(self):
         # build/15: three boards (power, RF/detector, control/HMI); the encoder board is the replaceable
         # daughterboard STACK 5.8 asks for. W2 AREA / MECH-3: the power board is PWR-A plus the PWR-B mezzanine.
-        self.assertEqual(set(P.boards["boards"]), {"PWR", "PWR_B", "RF", "CTRL", "ENC"})
+        # W2 F2C-FALLBACK: plus PWR-C, the third power board of fallback F2-C (front slab, after gate G1)
+        self.assertEqual(set(P.boards["boards"]), {"PWR", "PWR_B", "RF", "CTRL", "ENC", "PWR_C"})
         self.assertEqual(P.boards["stackup"]["layers"], 4)
 
     def test_board_domains_are_the_pcb_partition_domains(self):
@@ -776,7 +777,9 @@ class EnvelopeW2Mech3(unittest.TestCase):
 
     def test_ina_swm_and_j551_are_in_the_collision_set(self):
         names = {n for _, n, _, _ in layout.item_boxes(P)}
-        self.assertTrue({"ina228", "swm_2813", "nut.J551", "usb_socket_a", "usb_socket_b"} <= names)
+        # W2 F2C-FALLBACK: the INA228 5832 and the #2813 left the layout (PWR-C parts); the PWR-C board envelope takes the front slab
+        self.assertTrue({"PWR_C.r0", "nut.J551", "usb_socket_a", "usb_socket_b"} <= names)
+        self.assertFalse({"ina228", "swm_2813"} & names)
         coll, outside = layout.fit_checks(P)
         self.assertEqual([c for c in coll if c["gap_mm"] < 0], [])
         r = [x for x in rules.evaluate(P) if x["id"] == "R-J551"][0]
@@ -992,7 +995,7 @@ class RoutesW2Mech4Review(unittest.TestCase):
 class ModulesW2Mech5(unittest.TestCase):
     """W2 MECH-5: module envelopes with part keys, module fixing (bosses, pad, pocket, plate PEM standoffs) and the INA228 terminal side."""
 
-    ITEMS = ("hub_ch334f", "veml7700", "t7_insert", "hdmi_insert", "pack_fuse", "boni_a406", "ina228", "swm_2813")
+    ITEMS = ("hub_ch334f", "veml7700", "t7_insert", "hdmi_insert", "pack_fuse", "boni_a406")  # ina228 / swm_2813: PWR-C since W2 F2C-FALLBACK
 
     def _copy(self):
         import copy
@@ -1024,10 +1027,11 @@ class ModulesW2Mech5(unittest.TestCase):
         dv = hub["holes"]["uv"][2][1] - hub["holes"]["uv"][0][1]
         self.assertEqual(sorted([round(sx[1] - sx[0], 2), round(sy[1] - sy[0], 2)]), sorted([round(du, 2), round(dv, 2)]))   # either board orientation
         self.assertEqual(P.parts["pololu_2813"]["mount_holes"], 0)
-        self.assertIn("pad", mt["swm_2813"])
-        self.assertGreaterEqual(r["value_mm"]["ina228"]["terminal"]["free_mm"], P.parts["adafruit_ina228_5832"]["terminal"]["wire_room"])
+        self.assertFalse({"ina228", "swm_2813"} & set(mt))    # W2 F2C-FALLBACK: both on PWR-C, no rear-wall fixing
 
     def test_ina228_terminal_blocked_again_fails(self):
+        if not any(it["id"] == "ina228" for it in P.mech["layout"]["items"]):
+            self.skipTest("the INA228 5832 and the #2813 left the layout: bare INA228 and the #2813 on PWR-C (W2 F2C-FALLBACK)")
         Q = self._copy()
         ina = [it for it in Q.mech["layout"]["items"] if it["id"] == "ina228"][0]
         mt = [m for m in Q.mech["module_mounts"]["mounts"] if m["item"] == "ina228"][0]
@@ -1247,7 +1251,7 @@ class ModulesW2Mech5Review(unittest.TestCase):
         J = {j["id"]: j for j in fasteners.stacks(P)["joints"]}
         ins = P.mech["module_mounts"]["insert"]
         self.assertGreaterEqual(ins["hole_depth"], ins["len"] + 0.5)
-        for jid in ("INA228", "HUB-5997"):
+        for jid in ("HUB-5997",):  # INA228 (F09) left with the module (W2 F2C-FALLBACK)
             j = J[jid]
             self.assertTrue(j["result"].startswith("PASS (model)"), j["result"])
             self.assertIn(6, j["orderable_lengths"]["in_window"])
@@ -1255,11 +1259,12 @@ class ModulesW2Mech5Review(unittest.TestCase):
         for g in rules.module_mount_geometry(P):
             if g["on"] == "rear_wall" and g.get("insert"):
                 self.assertGreaterEqual(g["seat"] - g["hole_depth"], 1.0)    # rear-wall skin under the hole
-        for jid in ("SWM-2813", "VEML7700"):
+        for jid in ("VEML7700",):  # SWM-2813 (F05) left with the module (W2 F2C-FALLBACK)
             self.assertTrue(J[jid]["result"].startswith("OPEN: tape joint"), J[jid]["result"])
             self.assertIsNone(J[jid]["length_window_mm"])
         self.assertIn("PCB-SB2", J["PACK-FUSE"]["result"])
-        self.assertNotIn("fixing not designed", " ".join(J[j]["result"] for j in ("INA228", "HUB-5997", "SWM-2813", "PACK-FUSE")))
+        self.assertNotIn("fixing not designed", " ".join(J[j]["result"] for j in ("HUB-5997", "PACK-FUSE")))
+        self.assertFalse({"INA228", "SWM-2813"} & set(J))
 
     def test_veml_is_taped_on_rests_with_locating_spigots(self):
         mt = [m for m in P.mech["module_mounts"]["mounts"] if m["item"] == "veml7700"][0]
@@ -1271,6 +1276,8 @@ class ModulesW2Mech5Review(unittest.TestCase):
         self.assertEqual(len([x for x in g if x["kind"] == "spigot"]), 2)
 
     def test_terminal_room_counts_harness_bundles(self):
+        if not any(i == "ina228" for i, n, b, it in layout.item_boxes(P)):
+            self.skipTest("the INA228 5832 and the #2813 left the layout: bare INA228 and the #2813 on PWR-C (W2 F2C-FALLBACK)")
         ina = [b for i, n, b, it in layout.item_boxes(P) if i == "ina228"][0]
         fake = [("SX", {"ends": ["A", "B"], "bundle_od_mm": 4.0, "points_mm": [[ina[0], ina[4] + 5.0, ina[2] + 3.0], [ina[3], ina[4] + 5.0, ina[2] + 3.0]]}),
                 ("S06", {"ends": ["PWR", "INA"], "bundle_od_mm": 6.0, "points_mm": [[ina[0], ina[4] + 1.0, ina[2] + 3.0], [ina[3], ina[4] + 1.0, ina[2] + 3.0]]})]
@@ -1281,7 +1288,7 @@ class ModulesW2Mech5Review(unittest.TestCase):
     def test_new_envelopes_keep_the_bundle_clearance(self):
         r = self._rule(P, "R-MODULE-MOUNTS")
         bc = r["value_mm"]["bundle_clearance"]
-        self.assertTrue({"hub_ch334f", "ina228", "t7_insert", "pack_fuse", "boni_a406"} <= set(bc))
+        self.assertTrue({"hub_ch334f", "t7_insert", "pack_fuse", "boni_a406"} <= set(bc))  # ina228: PWR-C since W2 F2C-FALLBACK
         for iid, v in bc.items():
             self.assertGreaterEqual(v["centreline_mm"], v["need_mm"] - 1e-6, iid)
         Q = self._copy()
@@ -1393,7 +1400,7 @@ class ContractW2Mech7(unittest.TestCase):
         self.assertTrue(j104["under_display"])
         self.assertTrue(j104["verdict"].startswith("FAIL as specified"), j104["verdict"])   # vertical 43650: 42.5 + 17.27 = 59.77
         self.assertTrue(j104["alternative"]["fits"])                                       # right-angle 43650: 49.48
-        self.assertFalse(rows["J105"]["under_display"])                                    # bottom edge strip below the display
+        self.assertFalse(rows["J107"]["under_display"])                                    # bottom edge strip below the display (J105: PWR-C, W2 F2C-FALLBACK)
         self.assertFalse(r["result"].startswith("FAIL"))
         Q = self._copy()
         Q.mech["stack_z"]["module_back"] += 5.0                                            # a deeper display stack lets J104 pass
@@ -1502,7 +1509,7 @@ class ContractW2Mech7Part2(unittest.TestCase):
             self.assertIn("SL3", segs[sid]["through"], sid)
         for sid in ("S23", "S34"):
             self.assertEqual((hr[sid]["via"][0]["edge"], hr[sid]["via"][0]["zone"]), ("PWR_B", 2), sid)
-        self.assertEqual((hr["S12"]["via"][0]["edge"], hr["S12"]["via"][0]["zone"]), ("PWR", 1))   # J115 on the right edge (no FFC)
+        self.assertEqual((hr["S12"]["via"][0]["edge"], hr["S12"]["via"][0]["zone"]), ("PWR_C", 1))   # J115 on the PWR-C top edge (W2 F2C-FALLBACK)
         fill = self._rule(P, "R-PLATE-SLOT-FILL")
         self.assertTrue(fill["result"].startswith("PASS (model)"), fill["result"])
 
@@ -1787,13 +1794,13 @@ class ContractW2PwrL6Place3(unittest.TestCase):
         self.assertLess(z["plug_top_z"], fw)
         self.assertTrue(z["room_ok"], z["verdict"])
         self.assertEqual(sorted(z["segments"]), ["S02B", "S23", "S34"])
-        self.assertAlmostEqual(z["bundle_od_max_mm"], 6.47, places=2)            # S02B, 20 x 22 AWG PTFE at fill 0.6
+        self.assertAlmostEqual(z["bundle_od_max_mm"], 5.21, places=2)            # S02B, 13 x 22 AWG PTFE at fill 0.6 (20 until W2 F2C-FALLBACK)
 
     def test_s02b_is_routed_and_clear(self):
         br = self.res["branches"]["S02B"]
         self.assertEqual(br["crossings"], [])
-        self.assertEqual((br["wires"], br["from_segment"]), (20, "S02"))
-        self.assertAlmostEqual(br["bundle_od_mm"], 6.47, places=2)
+        self.assertEqual((br["wires"], br["from_segment"]), (13, "S02"))          # 20 until W2 F2C-FALLBACK (7 to S02C)
+        self.assertAlmostEqual(br["bundle_od_mm"], 5.21, places=2)
         pts = br["points_mm"]
         self.assertAlmostEqual(pts[-1][0], 108.3, places=3)
         self.assertAlmostEqual(pts[-1][1], 47.25, places=3)
@@ -1826,3 +1833,79 @@ class ContractW2PwrL6Place3(unittest.TestCase):
         rc = self.rows["R-ROUTE-CLEAR"]
         self.assertEqual(rc["value_mm"]["crossing"], ["S26"])                          # unchanged: only S26 crosses
         self.assertEqual(P.boards["stackup"]["t"], 1.6)                                 # D-ENV and the shared stackup untouched
+
+
+class ContractW2F2C(unittest.TestCase):
+    """W2 F2C-FALLBACK (MECH-F2C): the PWR-C board of fallback F2-C in the front slab: its corner notch keeps the S02B passage
+    south of the display clamp boss, the W-C2 branch S02C passes south of the boss, and R-PWRC-CELLS checks the parts over
+    the battery tray front face (geometry PASS model, heat OPEN)."""
+
+    @classmethod
+    def setUpClass(cls):
+        from srrx_mech import routes
+        cls.res = routes.evaluate(P)
+
+    def _rule(self, Q):
+        return [x for x in rules.evaluate(Q) if x["id"] == "R-PWRC-CELLS"][0]
+
+    def test_cells_rule_geometry_and_heat(self):
+        r = self._rule(P)
+        v = r["value_mm"]
+        self.assertTrue(r["result"].startswith("PASS (model) on the geometry"), r["result"])
+        self.assertIn("OPEN on the heat", r["result"])
+        self.assertAlmostEqual(v["parts_bottom_z"], 58.98, places=3)                 # face 65.48 - max_height 6.5
+        self.assertAlmostEqual(v["gap_mm"], 0.58, places=3)                          # the F2-C record: 0.58 over the tray front face
+        self.assertAlmostEqual(v["heat_w"]["R101"]["at_cont"], 0.317, places=3)      # 4.6^2 x 0.015
+        self.assertAlmostEqual(v["heat_w"]["R101"]["at_prot"], 0.844, places=3)      # 7.5^2 x 0.015
+        self.assertEqual({k for k, x in v["heat_w"].items() if x == "TBD"}, {"U106", "U109", "F103"})
+
+    def test_cells_rule_inputs_follow_the_graph(self):
+        c = P.mech["pwr_c_cells"]
+        e1 = json.loads((HERE.parents[0] / "design" / "E1.json").read_text(encoding="utf-8"))
+        refs = {}
+
+        def walk(o):
+            if isinstance(o, dict):
+                if "ref" in o and "value" in o:
+                    refs[o["ref"]] = o
+                for x in o.values():
+                    walk(x)
+            elif isinstance(o, list):
+                for x in o:
+                    walk(x)
+        walk(e1)
+        self.assertTrue(refs[c["shunt_ref"]]["value"].startswith(f"{c['shunt_mohm']:g} m"), refs[c["shunt_ref"]]["value"])
+        spec = importlib.util.spec_from_file_location("assembly_data", HERE.parents[0] / "tools" / "assembly_data.py")
+        ad = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(ad)
+        self.assertEqual(ad.NET_CURRENT["E1_N"][:2], (c["i_cont_a"], c["i_prot_a"]))
+
+    def test_cells_rule_fails_when_the_parts_reach_the_tray(self):
+        Q = __import__("copy").deepcopy(P)
+        Q.boards["boards"]["PWR_C"]["max_height"] = 7.0                              # parts down to 58.48: 0.08 over the tray
+        self.assertTrue(self._rule(Q)["result"].startswith("FAIL (model)"))
+
+    def test_corner_notch_and_mirror(self):
+        b = P.boards["boards"]["PWR_C"]
+        self.assertIn([152.1, 31.8], b["outline"])
+        self.assertIn([152.1, 33.5], b["outline"])
+        self.assertEqual(b["rects"][4], [85.0, 0, 71.0, 31.8])
+        self.assertEqual(b["rects"][5], [85.0, 31.8, 67.1, 1.7])
+        pc = json.loads((HERE.parents[0] / "build" / "kicad" / "boards" / "PWR_C" / "contract-proposal.json").read_text(encoding="utf-8"))
+        prop = pc["boards"]["PWR_C"]["outline_mm"]
+        W = max(p[0] for p in prop)
+        self.assertEqual(sorted((round(W - x, 4), round(y, 4)) for x, y in prop), sorted((round(x, 4), round(y, 4)) for x, y in b["outline"]))
+
+    def test_s02c_passes_south_of_the_clamp_boss(self):
+        r = self.res["branches"]["S02C"]
+        self.assertEqual(r["crossings"], [])
+        gap, boss = rules.clamp_boss_clearance(P, r["points_mm"], r["bundle_od_mm"])
+        self.assertGreaterEqual(gap, 0.5, (gap, boss))                               # not along y 42-43 (through the boss)
+        self.assertEqual(r["wires"], 9)
+
+    def test_s02b_passage_needs_the_notch(self):
+        Q = __import__("copy").deepcopy(P)                                            # without the notch the S02B leg meets PWR-C
+        b = Q.boards["boards"]["PWR_C"]
+        b["rects"][4] = [85.0, 0, 71.0, 33.5]                                         # r5 kept: the S02B waypoint box
+        self.assertLess(rules._pwr_b_exit_legs(Q)["S02B"]["clear_mm"], 0.5)
+        self.assertGreaterEqual(rules._pwr_b_exit_legs(P)["S02B"]["clear_mm"], 0.5)

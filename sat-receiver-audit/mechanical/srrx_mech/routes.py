@@ -132,7 +132,7 @@ def _header_rows(root):
     return out
 
 
-EDGE_UNIT = {"PWR": "PWR", "PWR_B": "PWR", "CTRL": "CTRL", "RF": "RF", "ENC": {"main": "ENCM", "volume": "ENCV"}}
+EDGE_UNIT = {"PWR": "PWR", "PWR_B": "PWR", "PWR_C": "PWRC", "CTRL": "CTRL", "RF": "RF", "ENC": {"main": "ENCM", "volume": "ENCV"}}
 
 
 def edge_end_text(sid, wp, root=None):

@@ -67,21 +67,20 @@ LAB5_W = 1.85                   # PWR3A; >= 1.335 mm (F102 4 A at +20 degC, 1 oz
 # J113 (S11), J112 (S10 signals) and J109 (S05 NTC).
 ANCHORS = {
     'J105': (11.0, 2.6, 0), 'R101': (23.6, 2.6, 0), 'U102': (23.2, 7.6, 0),
-    'F103': (28.0, 25.1, 90), 'J115': (25.4, 30.8, 0), 'J108': (10.2, 30.8, 0),
-    'D104': (22.0, 23.5, 0), 'J120': (9.8, 18.55, 270),
-    'U106': (44.16, 18.16, 0),
-    'J119': (64.6, 30.8, 180), 'D105': (60.0, 24.5, 0),
-    'J118': (77.7, 30.8, 0),
-    'U553': (94.0, 18.0, 0), 'C552': (92.0, 21.0, 0),
-    'J507': (103.95, 26.5, 180), 'J112': (115.45, 26.5, 180), 'J109': (122.95, 26.5, 180), 'J113': (130.45, 26.5, 180),
-    'J114': (138.5, 30.8, 0), 'U109': (139.0, 15.0, 0), 'C116': (136.0, 19.5, 180), 'C117': (136.0, 9.0, 180),
+    'J120': (10.9, 21.9, 180), 'J108': (15.6, 30.8, 0), 'J115': (30.7, 30.8, 0),
+    'F103': (33.0, 25.1, 90), 'D104': (22.0, 23.5, 0),
+    'U106': (50.16, 18.16, 0),
+    'D105': (66.0, 24.5, 0), 'J119': (68.5, 30.8, 180),
+    'J118': (92.0, 30.8, 0), 'U553': (101.0, 18.0, 0), 'C552': (99.0, 22.0, 0),
+    'J507': (115.95, 26.5, 180), 'J112': (127.45, 26.5, 180), 'J109': (134.95, 26.5, 180), 'J113': (142.45, 26.5, 180),
+    'J114': (147.1, 30.8, 0), 'U109': (139.0, 15.0, 0), 'C116': (136.0, 19.5, 180), 'C117': (136.0, 9.0, 180),
 }
 # Placement groups (region [x0, y0, x1, y1], members); pcb/board_gen.py packs them in this order (CI computes the same).
 GROUPS = [
     ('INA', [26.6, 5.2, 30.1, 13.4], ['C101', 'C102']),
     ('AON', [11.3, 5.0, 19.9, 17.6], ['U103', 'C103', 'C104', 'C105', 'R103', 'TP104', 'TP106']),
-    ('SWITCH', [55.0, 5.5, 70.6, 21.6], ['D102', 'D103', 'R111', 'TP105']),
-    ('E5', [96.6, 8.0, 112.4, 23.4], ['U551', 'C553', 'R553', 'TP503', 'R112', 'C114', 'TP107']),
+    ('SWITCH', [60.9, 5.5, 70.6, 21.6], ['D102', 'D103', 'R111', 'TP105']),
+    ('E5', [103.4, 8.0, 112.4, 23.6], ['U551', 'C553', 'R553', 'TP503', 'R112', 'C114', 'TP107']),
     ('UV', [112.8, 6.0, 128.0, 22.0], ['U104', 'R104', 'R105', 'R106', 'R107', 'C106', 'D101', 'TP108', 'Q101',
                                        'R121', 'R122', 'R123']),
     ('USBPD', [128.4, 6.0, 134.0, 22.0], ['C115', 'R113', 'R114', 'R115', 'R116', 'TP103']),
@@ -125,8 +124,16 @@ class Inputs:
             self.geo[r] = {**geo, 'pads': keep}
 
 
-def anchor_of(at, rot):
-    return {'at': [r4(at[0]), r4(at[1])], 'align': 'origin', 'rotation': rot, 'side': 'F'}
+# Reference texts moved inside the outline (route run 45039071310: silk_edge_clearance on the default legends of the top-edge
+# lands): ref -> board mm
+REF_TEXT = {'J108': [18.3, 27.9], 'J114': [149.8, 27.9], 'J115': [27.9, 27.4], 'J118': [94.7, 27.9]}
+
+
+def anchor_of(at, rot, ref=None):
+    a = {'at': [r4(at[0]), r4(at[1])], 'align': 'origin', 'rotation': rot, 'side': 'F'}
+    if ref in REF_TEXT:
+        a['ref_text'] = {'at': REF_TEXT[ref], 'angle': 0}
+    return a
 
 
 def spec_parts(inp):
@@ -134,7 +141,7 @@ def spec_parts(inp):
     parts = []
     for r in inp.refs:
         if r in ANCHORS:
-            parts.append({'ref': r, 'source': 'graph', 'anchor': anchor_of(ANCHORS[r][:2], ANCHORS[r][2]),
+            parts.append({'ref': r, 'source': 'graph', 'anchor': anchor_of(ANCHORS[r][:2], ANCHORS[r][2], r),
                           'anchor_source': f'{TAG}: make_spec.py ANCHORS (design choice)'})
         elif r in grouped:
             parts.append({'ref': r, 'source': 'graph'})
@@ -178,15 +185,83 @@ def bbox_of(pads_):
 
 
 # ------------------------------------------------------------------ scripted power copper
+def rect_union(rects):
+    """The outline of the union of axis-aligned rectangles [x0, y0, x1, y1] that overlap into one piece without holes, as a
+    counter-clockwise rectilinear polygon (coordinate compression and boundary tracing; standard library). KiCad removes a zone
+    fill island that holds no pad of its net and does not join overlapping zones of one net (route run 45039071310: zones_intersect
+    and island removal), so each connected piece of scripted copper is one zone."""
+    xs = sorted({r[0] for r in rects} | {r[2] for r in rects})
+    ys = sorted({r[1] for r in rects} | {r[3] for r in rects})
+    cov = set()
+    for x0, y0, x1, y1 in rects:
+        for i in range(len(xs) - 1):
+            if xs[i] >= x0 - 1e-9 and xs[i + 1] <= x1 + 1e-9:
+                for j in range(len(ys) - 1):
+                    if ys[j] >= y0 - 1e-9 and ys[j + 1] <= y1 + 1e-9:
+                        cov.add((i, j))
+    edges = {}
+    for i, j in cov:
+        # counter-clockwise edges of the cell that border an uncovered cell, keyed by their start vertex
+        for (a, b, n) in (((i, j), (i + 1, j), (i, j - 1)), ((i + 1, j), (i + 1, j + 1), (i + 1, j)),
+                          ((i + 1, j + 1), (i, j + 1), (i, j + 1)), ((i, j + 1), (i, j), (i - 1, j))):
+            if n not in cov:
+                edges.setdefault(a, []).append(b)
+    loops = []
+    while edges:
+        start = next(iter(edges))
+        loop, cur = [start], start
+        while True:
+            nxt = edges[cur].pop()
+            if not edges[cur]:
+                del edges[cur]
+            if nxt == start:
+                break
+            loop.append(nxt)
+            cur = nxt
+        loops.append(loop)
+    if len(loops) != 1:
+        raise SystemExit(f'make_spec: a scripted pour is {len(loops)} loops (a hole or two pieces): {rects}')
+    pts = [(xs[i], ys[j]) for i, j in loops[0]]
+    out = []
+    for k, p in enumerate(pts):  # drop collinear vertices
+        a, c = pts[k - 1], pts[(k + 1) % len(pts)]
+        if not ((abs(a[0] - p[0]) < 1e-9 and abs(c[0] - p[0]) < 1e-9) or (abs(a[1] - p[1]) < 1e-9 and abs(c[1] - p[1]) < 1e-9)):
+            out.append([r4(p[0]), r4(p[1])])
+    return out
+
+
+def merge_pours(pieces):
+    """pieces [(id, net, layer, rect, why)] -> one zone per connected group of overlapping rectangles of one net and layer, each with
+    its own priority (no two scripted zones share one: KiCad zones_intersect)."""
+    groups = []
+    for pid, net, layer, rc, why in pieces:
+        rc = [r4(v) for v in rc]
+        hit = [g for g in groups if g['net'] == net and g['layer'] == layer and any(
+            rc[0] < q[2] + 1e-9 and q[0] < rc[2] + 1e-9 and rc[1] < q[3] + 1e-9 and q[1] < rc[3] + 1e-9 for q in g['rects'])]
+        g = {'net': net, 'layer': layer, 'ids': [pid], 'rects': [rc], 'why': [why]}
+        for h in hit:
+            g['ids'] = h['ids'] + g['ids']
+            g['rects'] = h['rects'] + g['rects']
+            g['why'] = h['why'] + g['why']
+            groups.remove(h)
+        groups.append(g)
+    zones = []
+    for k, g in enumerate(groups):
+        zones.append({'id': g['ids'][0], 'net': g['net'], 'layer': g['layer'], 'outline': rect_union(g['rects']),
+                      'priority': 2 + k, 'pad_connection': 'solid', 'clearance_mm': CLEAR,
+                      'why': f'{TAG}: ' + '; '.join(g['why']) + ' (make_spec.py power_copper; pieces ' + ', '.join(g['ids']) + ')',
+                      '_rects': g['rects']})
+    return zones
+
+
 def power_copper(placed):
     """(zones, tracks, vias) of the scripted power copper: rectilinear F.Cu pours at the class width of their net, each
     covering the pads it joins (solid pad connection), and the TVS anode GND pours with their plane vias."""
-    zones, tracks, vias = [], [], []
+    pieces, tracks, vias = [], [], []
 
-    def zone(zid, net, outline, why, priority=2):
-        zones.append({'id': zid, 'net': net, 'layer': 'F.Cu', 'outline': [[r4(x), r4(y)] for x, y in outline],
-                      'priority': priority, 'pad_connection': 'solid', 'clearance_mm': CLEAR,
-                      'why': f'{TAG}: {why} (make_spec.py power_copper)'})
+    def zone(zid, net, outline, why, priority=2, layer='F.Cu'):
+        xs, ys = [q[0] for q in outline], [q[1] for q in outline]
+        pieces.append((zid, net, layer, [min(xs), min(ys), max(xs), max(ys)], why))
 
     def track(tid, net, width, path, why):
         tracks.append({'id': tid, 'net': net, 'layer': 'F.Cu', 'width_mm': width, 'path': [[r4(x), r4(y)] for x, y in path],
@@ -204,7 +279,7 @@ def power_copper(placed):
     gnd_pin = min((p for p in pad(placed, 'U106', 'GND') if abs(p['at'][0] - vin[0] - 0.85) < 2.0),
                   key=lambda p: -p['at'][1])  # the GND pin of the VIN column next to the VIN pins
     y_low = r4(gnd_pin['box'][3] + CLEAR + 0.05)
-    xs0, xs1 = 30.4, 33.6
+    xs0, xs1 = 35.4, 38.6
     zone('PC-E1N-SHUNT', 'E1_N', rect(r2[0] - 1.25, r2[1] - BATT_W / 2, xs1, r2[1] + BATT_W / 2),
          'BATT 3.2 mm: shunt R101.2 to the E1_N bus')
     zone('PC-E1N-BUS', 'E1_N', rect(xs0, r2[1] - BATT_W / 2, xs1, y_low + 3.3), 'BATT 3.2 mm: the E1_N bus up the left of the #2813')
@@ -227,7 +302,7 @@ def power_copper(placed):
     zone('PC-E1N-D104', 'E1_N', rect(k104['box'][0] - 0.6, y_h1 - 0.6, k104['box'][0] - 0.6 + BATT_W, k104['box'][3] + 0.1),
          'BATT 3.2 mm: the TVS D104 cathode at the class width')
     j115 = pad(placed, 'J115', '2')[0]
-    zone('PC-SERVICE', 'E1_SERVICE_P', rect(min(svc_pad['at'][0], j115['at'][0]) - PWR3A_W / 2, svc_pad['at'][1] - 0.5,
+    zone('PC-SERVICE', 'E1_SERVICE_P', rect(svc_pad['at'][0] - 0.4, svc_pad['at'][1] - 0.5,
                                             max(svc_pad['at'][0], j115['at'][0]) + PWR3A_W / 2, j115['at'][1] + PWR3A_W / 2),
          'PWR3A 1.85 mm: F103.2 to the S12 land J115.2 (service XT30)')
     # E1_SW: the VOUT group (pins VOUT, VOUT and the VOUT large hole) -> J119.2 (W-C1 to PWR-A J107), the TVS D105 cathode
@@ -278,27 +353,24 @@ def power_copper(placed):
     y_safe = 3.0
 
     def bzone(zid, outline, why):
-        zones.append({'id': zid, 'net': 'E1_USB_PD_SAFE', 'layer': 'B.Cu', 'outline': [[r4(x), r4(y)] for x, y in outline],
-                      'priority': 2, 'pad_connection': 'solid', 'clearance_mm': CLEAR,
-                      'why': f'{TAG}: {why} (make_spec.py power_copper)'})
+        zone(zid, 'E1_USB_PD_SAFE', outline, why, layer='B.Cu')
     bzone('PC-PDSAFE-B-VIAS', rect(vx[0] - 0.9, y_safe - PWR3A_W / 2, vx[-1] + 0.9, y_via + 1.0), 'B.Cu under the via cluster')
     bzone('PC-PDSAFE-B-RUN', rect(j108_3['at'][0] - PWR3A_W / 2, y_safe - PWR3A_W / 2, vx[-1] + 0.9, y_safe + PWR3A_W / 2),
           'PWR3A 1.85 mm on B.Cu along the bottom edge, under the shunt and the #2813 (outer layer, power class allowed)')
     bzone('PC-PDSAFE-B-UP', rect(j108_3['at'][0] - PWR3A_W / 2, y_safe, j108_3['at'][0] + PWR3A_W / 2, j108_3['box'][3] + 0.05),
           'PWR3A 1.85 mm on B.Cu up to the S10 land J108.3 (THT, so no via at this end)')
-    # LAB5: J118.2 (W-C1 from PWR-A J106) -> down beside the vent cut-out -> U553 IN (pin 1) and C552.1
+    # LAB5: J118.2 (W-C1 from PWR-A J106) -> straight down to U553 IN (pin 1) and C552.1 beside the column
     j118 = pad(placed, 'J118', '2')[0]
     u553 = pad(placed, 'U553', '1')[0]
     c552 = pad(placed, 'C552', '1')[0]
-    xl0 = 89.6
-    zone('PC-LAB5-TOP', 'LAB5', rect(j118['at'][0] - LAB5_W / 2, j118['at'][1] - LAB5_W / 2, xl0 + LAB5_W, j118['box'][3] + 0.05),
-         'PWR3A 1.85 mm (>= 1.335 mm for F102 4 A on 1 oz): W-C1 land J118.2 east')
-    zone('PC-LAB5-DOWN', 'LAB5', rect(xl0, u553['box'][1] - 0.3, xl0 + LAB5_W, j118['at'][1] + LAB5_W / 2),
-         'PWR3A 1.85 mm: down beside the vent cut-out to U553')
+    xl0 = j118['at'][0] - LAB5_W / 2
+    zone('PC-LAB5-DOWN', 'LAB5', rect(xl0, u553['box'][1] - 0.3, xl0 + LAB5_W, j118['box'][3] + 0.05),
+         'PWR3A 1.85 mm (>= 1.335 mm for F102 4 A on 1 oz): the W-C1 land J118.2 straight down to U553')
     zone('PC-LAB5-U553', 'LAB5', rect(xl0 + LAB5_W - 0.05, u553['box'][1] - 0.05, u553['box'][2] + 0.05, u553['box'][3] + 0.05),
          'the U553 IN pin entry: one pin pitch tall, within half the class width of the pin')
     zone('PC-LAB5-C552', 'LAB5', rect(xl0, c552['box'][1] - 0.05, c552['box'][2] + 0.05, c552['box'][3] + 0.05),
-         'PWR3A: C552.1 beside U553 IN')
+         'PWR3A: C552.1 on the column beside U553 IN')
+    zones = merge_pours(pieces)  # each zone carries its piece rectangles in '_rects' for problems() (not written to the spec)
     return zones, tracks, vias
 
 
@@ -311,6 +383,10 @@ def zone_box(z):
     xs = [p[0] for p in z['outline']]
     ys = [p[1] for p in z['outline']]
     return (min(xs), min(ys), max(xs), max(ys))
+
+
+def zone_rects(z):
+    return [tuple(r) for r in z.get('_rects') or [zone_box(z)]]
 
 
 def problems(inp, placed, zones, tracks, vias):
@@ -336,7 +412,7 @@ def problems(inp, placed, zones, tracks, vias):
                 out.append(f'{a} / {b}: courtyards overlap')
     pads = [(ref, p) for ref, pa in placed.items() for p in pa.pads if p['number']]
     for z in zones:
-        zb = zone_box(z)
+      for zb in zone_rects(z):
         for c in cuts:
             if box_overlap(zb, c, CLEAR):
                 out.append(f'{z["id"]}: in the vent cut-out')
@@ -355,8 +431,9 @@ def problems(inp, placed, zones, tracks, vias):
         for o in zones:
             if o is z or o['net'] == z['net'] or o['layer'] != z['layer']:
                 continue
-            if mb.box_dist(zb, zone_box(o)) < CLEAR + MARGIN - 1e-6 and z['id'] < o['id']:
-                out.append(f'{z["id"]} / {o["id"]}: different-net pours {round(mb.box_dist(zb, zone_box(o)), 3)} mm apart')
+            for ob in zone_rects(o):
+                if mb.box_dist(zb, ob) < CLEAR + MARGIN - 1e-6 and z['id'] < o['id']:
+                    out.append(f'{z["id"]} / {o["id"]}: different-net pours {round(mb.box_dist(zb, ob), 3)} mm apart')
     for t in tracks:
         r = t['width_mm'] / 2
         for (x1, y1), (x2, y2) in zip(t['path'], t['path'][1:]):
@@ -369,7 +446,7 @@ def problems(inp, placed, zones, tracks, vias):
             for z in zones:
                 if z['net'] == t['net'] or z['layer'] != t['layer']:
                     continue
-                d = mb.seg_box_dist((x1, y1), (x2, y2), zone_box(z))
+                d = min(mb.seg_box_dist((x1, y1), (x2, y2), zb) for zb in zone_rects(z))
                 if d - r < CLEAR + MARGIN - 1e-6:
                     out.append(f'{t["id"]}: {round(d - r, 3)} mm to pour {z["id"]} ({z["net"]})')
             for q in ((x1, y1), (x2, y2)):
@@ -384,7 +461,8 @@ def problems(inp, placed, zones, tracks, vias):
         for z in zones:
             if z['net'] == v['net']:
                 continue
-            if mb.box_dist((v['at'][0], v['at'][1], v['at'][0], v['at'][1]), zone_box(z)) - v['diameter_mm'] / 2 < CLEAR + MARGIN - 1e-6:
+            if min(mb.box_dist((v['at'][0], v['at'][1], v['at'][0], v['at'][1]), zb) for zb in zone_rects(z)) - v['diameter_mm'] / 2 \
+                    < CLEAR + MARGIN - 1e-6:
                 out.append(f'{v["id"]}: too close to pour {z["id"]}')
     return out
 
@@ -485,6 +563,9 @@ def build():
     anchors, _rows = plan(inp, parts)
     placed = placed_all(inp, parts, anchors)
     zones, tracks, vias = power_copper(placed)
+    probs = problems(inp, placed, zones, tracks, vias)
+    for z in zones:
+        z.pop('_rects', None)
     pre = {'tracks': list(tracks), 'vias': list(vias), 'zones': zones + [
         {'id': 'GND-In1', 'net': 'GND', 'layer': 'In1.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
          'why': 'GND plane (layer type power: a plane in the DSN); joined by the scripted via of every SMD GND pad'},
@@ -497,7 +578,6 @@ def build():
     nets = set()
     for ns in inp.nets_of.values():
         nets |= {n for n in ns.values() if n}
-    probs = problems(inp, placed, zones, tracks, vias)
     mirror = mirror_check(inp)
     pwra = read(PWRA_SPEC)
     spec = {
