@@ -79,17 +79,16 @@ ANCHORS = {
     'J507': (115.95, 26.5, 180), 'J112': (127.45, 26.5, 180), 'J109': (134.95, 26.5, 180), 'J113': (142.45, 26.5, 180),
     'J114': (147.1, 30.8, 0), 'U109': (139.0, 15.0, 0), 'C116': (136.0, 19.5, 180), 'C117': (136.0, 9.0, 180),
     # route run 45044664444 (3 unconnected): R116 (ILM) and C115 (dV/dt) right of U109, beside its pins 9 and 7, which the
-    # IN/OUT bar pours and the pin-8 GND via boxed in from the left group; Q101 out of the U104 - D101 row (E1_UV_OFF);
-    # D102 / D103 left of the #2813 beside J120 (PICO_OFF, PWR_BUTTON short; E1_MASTER_OFF and E1_SWITCH_A reach the
-    # #2813 OFF / A pins under the module on B.Cu instead of two runs across the board)
+    # IN/OUT bar pours and the pin-8 GND via boxed in from the left group; Q101 out of the U104 - D101 row (E1_UV_OFF).
+    # (D102 / D103 left of the #2813, run 45045714001, closed the F.Cu channel between the INA group and the E1_N pours that
+    # the J120 nets take across the board: 13 unconnected; they stay right of the #2813.)
     'R116': (144.6, 15.6, 0), 'C115': (144.6, 13.3, 0), 'Q101': (120.0, 9.5, 0),
-    'D102': (29.5, 15.6, 0), 'D103': (22.5, 15.6, 180),
 }
 # Placement groups (region [x0, y0, x1, y1], members); pcb/board_gen.py packs them in this order (CI computes the same).
 GROUPS = [
     ('INA', [26.6, 5.2, 30.1, 13.4], ['C101', 'C102']),
     ('AON', [11.3, 5.0, 19.9, 17.6], ['U103', 'C103', 'C104', 'C105', 'R103', 'TP104', 'TP106']),
-    ('SWITCH', [60.9, 5.5, 70.6, 21.6], ['R111', 'TP105']),
+    ('SWITCH', [60.9, 5.5, 70.6, 21.6], ['D102', 'D103', 'R111', 'TP105']),
     ('E5', [103.4, 8.0, 112.4, 23.6], ['U551', 'C553', 'R553', 'TP503', 'R112', 'C114', 'TP107']),
     ('UV', [112.8, 12.0, 128.0, 22.0], ['U104', 'R104', 'R105', 'R106', 'R107', 'C106', 'D101', 'TP108',
                                         'R121', 'R122', 'R123']),
