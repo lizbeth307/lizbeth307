@@ -1174,5 +1174,135 @@ class CtrlFaultPathsCtrl5(unittest.TestCase):
             self.assertIn('reproduced byte for byte', run.stdout)
 
 
+
+class CtrlFaultPathsCtrl6(unittest.TestCase):
+    """W2 CTRL-6 (the CTRL-5 items the orchestrator moved to CTRL-6): the Pico VSYS limiter U316 behind the PTC F302 ahead of D301,
+    the blower supply behind the PTC F303, the 1 kohm gate pull-down R398 of the fan switch, and the GND via clusters of the fault
+    loops at the currents the fuse rule of build/15 names (MODEL, DC share of the scripted spurs and barrels to a common plane node,
+    in the star model of CtrlFaultPathsCtrl5 and with joined spurs: a spur is split at every via of its cluster it passes closer than
+    its half width plus the 0.325 mm via annulus). Currents: F102 4 A at 110 % (4.4 A, held for at least 360000 s) and 135 % (5.4 A,
+    copper limit of the fuse rule: +40 degC on a via, laminate Tg 130 degC less 20 degC at 70 degC ambient); the PTC loops at the
+    cold-ambient trip scaled by the Ihold ratio of Bourns MF-MSMF REV. BE (an assumption, build/15). Skipped on a tree without the
+    CTRL spec."""
+    COLD_F301 = 2.02  # MF-MSMF075/24 at -20 degC (Ihold 1.01/0.75 x Itrip 1.50), the case CtrlFaultPathsCtrl5 names
+    COLD_F302 = 1.54  # MF-MSMF050 at -40 degC (Ihold 0.77/0.50 x Itrip 1.00)
+    COLD_F303 = 3.18  # MF-MSMF110/16 at -40 degC (Ihold 1.59/1.10 x Itrip 2.20)
+    F102_110, F102_135 = 4.4, 5.4
+    # pad: (current A, least vias reached, the protective element)
+    CASES = {'U315.2': (F102_110, 5, 'F102'), 'C321.2': (F102_110, 5, 'F102'), 'C320.2': (F102_110, 5, 'F102'),
+             'C322.2': (F102_110, 5, 'F102'), 'C319.2': (COLD_F301, 3, 'F301'), 'C318.2': (COLD_F301, 3, 'F301'),
+             'D305.2': (COLD_F301, 3, 'F301'), 'U316.2': (COLD_F302, 3, 'F302'), 'C344.2': (COLD_F302, 2, 'F302'),
+             'Q305.2': (COLD_F303, 5, 'F303')}
+    LAMINATE_DT = 40.0  # fuse rule at 135 %: via and copper rise at most +40 degC (Tg 130 degC - 20 degC margin - 70 degC ambient)
+
+    def setUp(self):
+        if not bg.spec_path('CTRL').is_file():
+            self.skipTest('no CTRL spec')
+        self.spec = bg.read_json(bg.spec_path('CTRL'))
+        self.nc = bg.read_json(bg.BASE / 'pcb/generated/netclasses.json')
+        self.graph = bg.load_graph()
+
+    def pins(self, ref):
+        return {p['number']: (None if p.get('nc') else p.get('net')) for p in self.graph[ref]['pins']}
+
+    def test_pico_vsys_branch_in_the_graph(self):
+        self.assertEqual(self.pins('F302'), {'1': 'LAB5', '2': 'LAB5_PICO'})
+        u = self.pins('U316')
+        self.assertEqual(self.graph['U316']['mpn'], 'TPS2553DBVR')  # constant current, never the -1 latch-off part
+        self.assertEqual((u['1'], u['2'], u['3'], u['4'], u['6']), ('LAB5_PICO', 'GND', 'LAB5_PICO', None, 'E3_PICO_VLIM'))
+        self.assertEqual(self.pins('R397'), {'1': u['5'], '2': 'GND'})
+        self.assertEqual(self.graph['R397']['mpn'], '0603WAF1503T5E')  # 150k 1 %: IOS 0.154-0.209 A (SLVS841G eq. 1, 3)
+        self.assertEqual(self.pins('C344'), {'1': 'LAB5_PICO', '2': 'GND'})
+        self.assertEqual(self.pins('D301'), {'1': 'E3_PICO_VSYS', '2': 'E3_PICO_VLIM'})
+
+    def test_blower_supply_behind_its_ptc(self):
+        self.assertEqual(self.pins('F303'), {'1': 'LAB5', '2': 'LAB5_BLOWER'})
+        for ref, pin in (('J314', '2'), ('C342', '1'), ('C343', '1'), ('D306', '1'), ('FAN302', 'RED')):
+            self.assertEqual(self.pins(ref)[pin], 'LAB5_BLOWER', ref)
+        self.assertEqual(self.pins('Q305')['3'], 'E3_BLOWER_GND')
+
+    def test_fan_gate_pull_down_through_one_kohm(self):
+        self.assertEqual(self.pins('R398'), {'1': 'E3_FAN_PG', '2': 'E3_FAN_PD'})
+        self.assertEqual(self.pins('Q303')['3'], 'E3_FAN_PD')
+        self.assertEqual(self.pins('Q304')['1'], 'E3_FAN_PG')
+        self.assertEqual(set(self.pins('R367').values()), {'E3_FAN_PG', 'LAB5'})
+        self.assertEqual(self.graph['R398']['value'], '1k')
+
+    def test_new_power_copper_is_scripted_outer_copper_within_its_ptc(self):
+        import math
+        pre = self.spec['pre_route']
+        k = self.nc['formulas']['ipc2221']['k_external']
+        cu = {l['kicad']: l['copper_mm'] for l in self.nc['stackup']['layers'] if 'kicad' in l}
+        for net, amps in (('LAB5_PICO', self.COLD_F302), ('LAB5_BLOWER', self.COLD_F303), ('E3_PICO_VLIM', 0.209)):
+            tracks = [t for t in pre['tracks'] if t['net'] == net]
+            self.assertTrue(tracks, net)
+            for t in tracks:
+                self.assertIn(t['layer'], ('F.Cu', 'B.Cu'), t['id'])
+                area = (t['width_mm'] / 0.0254) * (cu[t['layer']] / 0.0254)
+                rise = (amps / (k * area ** 0.725)) ** (1 / 0.44)  # IPC-2221 external, MODEL
+                self.assertLessEqual(rise, 20.0, (t['id'], t['width_mm'], amps, round(rise, 1)))
+        project = bg.read_json(bg.BASE / self.spec['project'])
+        patterns = {p['pattern']: p['netclass'] for p in project['net_settings']['netclass_patterns']}
+        for net in ('LAB5_PICO', 'LAB5_BLOWER', 'E3_PICO_VLIM', 'E3_FAN_PD'):
+            self.assertEqual(patterns.get(net), 'SCRIPTED_PWR3A', net)
+
+    def network(self, joined):
+        import math
+        copper = {l['kicad']: l['copper_mm'] for l in self.nc['stackup']['layers'] if 'kicad' in l}
+        pre = self.spec['pre_route']
+        tracks = [t for t in pre['tracks'] if t['net'] == 'GND' and t['id'].startswith('GNDC-')]
+        vias = [v for v in pre['vias'] if v['net'] == 'GND' and v['id'].startswith('GNDC-')]
+        key = lambda p: (round(p[0], 4), round(p[1], 4))
+        barrel = CtrlFaultPathsCtrl5.barrel(self)
+        edges = []
+        for t in tracks:
+            cid = t['id'].split('-')[1]
+            near = [key(v['at']) for v in vias if v['id'].split('-')[1] == cid]
+            for a, b in zip(t['path'], t['path'][1:]):
+                a, b = key(a), key(b)
+                cuts = [a, b]
+                if joined:
+                    for v in near:
+                        if v in (a, b):
+                            continue
+                        dx, dy = b[0] - a[0], b[1] - a[1]
+                        ln2 = dx * dx + dy * dy
+                        s = ((v[0] - a[0]) * dx + (v[1] - a[1]) * dy) / ln2 if ln2 else 0.0
+                        if 0 < s < 1 and math.dist(v, (a[0] + s * dx, a[1] + s * dy)) < t['width_mm'] / 2 + 0.325:
+                            cuts.append(v)
+                    cuts.sort(key=lambda q: math.dist(q, a))
+                for p, q in zip(cuts, cuts[1:]):
+                    edges.append((p, q, max(math.dist(p, q), 1e-6) / (t['width_mm'] * copper[t['layer']])))
+        for v in vias:
+            edges.append((key(v['at']), 'PLANE', barrel))
+        return tracks, {key(v['at']) for v in vias}, edges, barrel
+
+    def flows(self, pad, amps, joined):
+        tracks, vias, edges, barrel = self.network(joined)
+        ends = [t['path'][0] for t in tracks if f'-{pad}-' in t['id']]
+        self.assertTrue(ends, pad)
+        src = (round(ends[0][0], 4), round(ends[0][1], 4))
+        u, seen = CtrlFaultPathsCtrl5.solve(edges, src, amps)
+        return {n: u[n] / barrel for n in vias if n in seen and u[n] > 1e-9}
+
+    def test_gnd_clusters_within_the_via_fit_star_and_joined(self):
+        fit = self.nc['formulas']['via']['current_a_dt20']
+        for pad, (amps, least, src) in self.CASES.items():
+            for joined in (False, True):
+                f = self.flows(pad, amps, joined)
+                self.assertGreaterEqual(len(f), least, (pad, joined))
+                self.assertAlmostEqual(sum(f.values()), amps, places=6, msg=pad)
+                self.assertLessEqual(max(f.values()), fit, (pad, src, amps, joined, sorted(round(i, 3) for i in f.values())))
+
+    def test_f102_clusters_keep_the_laminate_limit_at_135_percent(self):
+        fit = self.nc['formulas']['via']['current_a_dt20']
+        cap = fit * (self.LAMINATE_DT / 20.0) ** 0.44  # the via fit scaled to +40 degC by the IPC-2221 exponent
+        for pad, (amps, least, src) in self.CASES.items():
+            if src != 'F102':
+                continue
+            f = self.flows(pad, self.F102_135, True)
+            self.assertLessEqual(max(f.values()), cap, (pad, sorted(round(i, 3) for i in f.values())))
+
+
 if __name__ == '__main__':
     unittest.main()

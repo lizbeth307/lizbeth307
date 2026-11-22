@@ -205,8 +205,12 @@ BLOWER_NOTE = ('blower switch on the bottom band y 54.5-58.1 between the Pico an
                'and above D306.1 (LAB5)')
 BLOWER2_NOTE = ('bottom row below cut-out 1 left of the LAB5 feed vias, x 11-20 y 64-68.2 (W2 CTRL-4; was group BLOWER2: '
                 'C342/C343 now sit between a 1.85 mm LAB5 bar at y 67.01 and a 1.85 mm E3_BLOWER_GND bar at y 64.95)')
+PICO_NOTE = ('W2 CTRL-6 (W2 CTRL-5 decision, reviews RV4-E-3/RV4-S-1): Pico VSYS branch LAB5 -> PTC F302 -> limiter U316 (TPS2553DBVR, '
+             'RILIM R397 150k, C344 on IN) -> D301 -> E3_PICO_VSYS, bottom column x 35.9-40.05 y 54.4-67.6 between BZ301 and J304')
+BLOWER5_NOTE = ('W2 CTRL-6 (orchestrator decision on the W2 CTRL-5 blower-switch row, option (2)): blower supply LAB5 -> PTC F303 -> '
+                'LAB5_BLOWER (J314.2, C342.1, C343.1, D306.1)')
 ANCHORS = {
-    'J313': (anchor((40.43, 75.7), 90), 'bottom, vertical KK over the plate zones x 37-46 y 68.5-83 (15.98 / 17.98 mm); '
+    'J313':(anchor((40.43, 75.7), 90), 'bottom, vertical KK over the plate zones x 37-46 y 68.5-83 (15.98 / 17.98 mm); '
              'courtyard y 73.93-82.55, below the lime band (y >= 83, 4.98 mm); its pin field + 1.0 mm (x <= 42.53) stays clear '
              'of the top TR3B parts; next to the fan switch'),
     'D304': (anchor((48.04, 68.81), 0), 'bottom over the zones x 43.5-50 y 65.6-72 (15.98 / 17.98 mm >= 9.85 mm LED, worst '
@@ -233,24 +237,55 @@ ANCHORS = {
              'E3_FAN5_P pad joins C318.1 and Q304.3 (W2 CTRL-5; was F301.2) on B.Cu without a layer change'),
     'D306': (anchor((14.5, 56.3), 0), BLOWER_NOTE),
     'Q305': (anchor((20.23, 56.4), 0), BLOWER_NOTE),
-    # W2 CTRL-4: the blower supply capacitors with pad 1 (LAB5) on a 1.85 mm LAB5 bar from J305.4 and pad 2
-    # (E3_BLOWER_GND) on a 1.85 mm E3_BLOWER_GND bar and riser to the return rail; the BLOWER2 resistors move right
-    'C343': (anchor((11.73, 66.235), 270), BLOWER2_NOTE + ': decoupling capacitor, pad 1 at (11.73, 67.01) on the LAB5 bar'),
-    'C342': (anchor((13.65, 66.06), 270), BLOWER2_NOTE + ': bulk capacitor, pad 1 at (13.65, 67.01) on the LAB5 bar'),
+    # W2 CTRL-4: the BLOWER2 resistors moved right of the blower capacitors; W2 CTRL-6: the capacitors moved to the top side next
+    # to J314 (anchors below), behind the PTC F303
     'R363': (anchor((15.45, 66.92), 90), BLOWER2_NOTE + ': piezo series resistor, right of C342'),
     'R370': (anchor((17.31, 66.92), 90), BLOWER2_NOTE + ': blower gate series resistor'),
     'R371': (anchor((19.17, 66.92), 90), BLOWER2_NOTE + ': blower gate pull-down, left of the LAB5 feed vias'),
     'U315': (anchor((23.0505, 95.7), 0), 'bottom strip between the cut-outs, above cut-out 1 (GNSS 5 V switch next to its '
              'capacitors); W2 CTRL-4: x 23.0505 (0.5 um right) puts the U315 pad centres on the 1 um grid of the Specctra '
-             'export, so the LAB5 pad escape ends where Freerouting sees the U315.1 centre'),
+             'export, so the LAB5 pad escape ends where Freerouting sees the U315.1 centre; W2 CTRL-6 (band re-placement): U315 stays, '
+             'the LAB5 feed now reaches U315.1 from above and the old feed place right of U315 holds the GND via cluster of U315.2 '
+             'and C321.2'),
     # W2 CTRL-4 (FEED4): right-group LAB5 parts on the 1.85 mm outer feed (out of their placement groups)
-    'D301': (anchor((37.6, 64.8), 90), 'W2 CTRL-4: Pico VSYS diode below cut-out 1, its LAB5 pad 2 on the 1.85 mm B.Cu LAB5 feed '
-             '(y 66.8), right of the BZ301 courtyard; was the first shelf of group PICO (the group region top moves down by that '
-             'shelf, so the other PICO parts keep their places)'),
-    'C321': (anchor((26.0, 98.075), 90), 'W2 CTRL-4: U315 input capacitor above U315, the centre of its LAB5 pad 1 on the '
-             '1.85 mm B.Cu LAB5 feed (y 97.3) that ends above U315.1; was group GNSS_IN'),
+    'D301': (anchor((35.6, 61.8), 0, 'F'), 'W2 CTRL-6: Pico VSYS diode on the top side over U316 (its old bottom place on the LAB5 '
+             'feed is F302), anode pad 2 (E3_PICO_VLIM) at (37.6, 61.8) next to the OUT vias of U316, cathode pad 1 (E3_PICO_VSYS) at '
+             '(33.6, 61.8); W2 CTRL-4: was the first shelf of group PICO (the group region top moves down by that shelf, so the other '
+             'PICO parts keep their places)'),
+    'C321': (anchor((29.125, 97.6), 0), 'W2 CTRL-4: U315 input capacitor (was group GNSS_IN); W2 CTRL-6 (band re-placement): '
+             'right of the GND via cluster of U315.2, the centre of its LAB5 pad 1 on the 1.85 mm B.Cu feed where it rises at x 29.9, '
+             'its GND pad 2 in the cluster'),
+    # W2 CTRL-6 (band re-placement): group R4A becomes anchors at the places its packing gave (unchanged) except Q301, which moves
+    # up out of the way of the LAB5 feed that now rises at x 29.9 and runs along y 99.5 to U315.1
+    'Q301': (anchor((30.0, 102.4), 0), 'W2 CTRL-6 (band re-placement): GNSS reset FET above the LAB5 feed (y 99.5), below the R4B '
+             'row (y >= 105.9); was group R4A at (29.93, 98.9)'),
+    'U312': (anchor((34.21, 98.9), 0), 'W2 CTRL-6: the place group R4A packing gave it (group R4A replaced by anchors)'),
+    'TP301': (anchor((16.8, 95.0), 0), 'W2 CTRL-6: GNSS-switch FAULT test point left of U315 (was the R4A place (41.33, 99.35)): '
+             'E3_GNSS_FAULT (U315.4 -> TP301.1) is a short scripted B.Cu piece instead of a router path across the band and the LAB5 '
+             'feed'),
+    'R326': (anchor((37.29, 99.12), 90), 'W2 CTRL-6: the place group R4A packing gave it (group R4A replaced by anchors)'),
+    'R396': (anchor((39.05, 99.12), 90), 'W2 CTRL-6: the place group R4A packing gave it (group R4A replaced by anchors)'),
     'C322': (anchor((45.95, 93.4), 180), 'W2 CTRL-4: GNSS-switch input bulk capacitor on the 1.85 mm B.Cu LAB5 feed column '
              '(x 45.0) at the top of the right strip; was the second shelf of group R4A (the shelf above keeps its places)'),
+    # W2 CTRL-6: the Pico VSYS branch LAB5 -> F302 -> U316 -> D301 (design/E3.json R-E3-18) in the column between BZ301 and J304
+    'F302': (anchor((37.85, 64.6625), 270), PICO_NOTE + ': the PTC where D301 was, its LAB5 pad 1 at (37.85, 66.8) on the 1.85 mm '
+             'B.Cu LAB5 feed under cut-out 1, pad 2 (LAB5_PICO) down towards U316'),
+    'U316': (anchor((38.0, 59.7), 0), PICO_NOTE + ': the limiter below F302, IN/GND/EN (pins 1-3) towards J304, OUT/ILIM (6, 5) '
+             'towards BZ301'),
+    'C344': (anchor((38.4, 56.9), 0), PICO_NOTE + ': U316 input capacitor below U316, pad 1 (LAB5_PICO) under U316.3'),
+    'R397': (anchor((38.4, 55.15), 180), PICO_NOTE + ': RILIM of U316 below C344, above the Pico courtyard (y 54.4)'),
+    # W2 CTRL-6: the blower PTC on the top side in the left edge strip between the J305 and J314 pegs, and the blower capacitors on
+    # the top side between the J314 pins and J317 (design/E3.json R-E3-19)
+    'F303': (anchor((6.6, 63.5), 270, 'F'), BLOWER5_NOTE + ': the PTC on the top side between the J314 and J305 pegs, pad 1 '
+             '(LAB5) towards J305.4, pad 2 (LAB5_BLOWER) towards J314.2'),
+    'C343': (anchor((11.73, 57.125), 90, 'F'), BLOWER5_NOTE + ': decoupling capacitor on the top side (was on the bottom row below '
+             'cut-out 1, W2 CTRL-4), pad 1 on the LAB5_BLOWER bar from J314.2 (y 56.35), pad 2 under the E3_BLOWER_GND bar from '
+             'J314.1 (y 58.41)'),
+    'C342': (anchor((13.65, 57.3), 90, 'F'), BLOWER5_NOTE + ': bulk capacitor on the top side (was on the bottom row below '
+             'cut-out 1, W2 CTRL-4), pad 1 on the LAB5_BLOWER bar (y 56.35), pad 2 on the E3_BLOWER_GND bar end (y 58.41)'),
+    # W2 CTRL-6: the series resistor of the Q304 gate pull-down above Q303 (design/E3.json R-E3-20)
+    'R398': (anchor((42.3, 88.3), 270), FAN_NOTE + '; W2 CTRL-6: R398 above Q303, pad 2 (E3_FAN_PD) over the Q303 drain, pad 1 '
+             '(E3_FAN_PG) towards the gate copper'),
 }
 PICO_TOP = 47.45  # group PICO region top without the D301 shelf (54.9 - 6.95 courtyard - 0.5 gap): the other members do not move
 BZ301_SOURCE = ('bottom, y 55-68 below cut-out 1 (courtyard x 22.7-35.8, y 54.98-68.03): over the bms zone (x 0-34, y 0-57; '
@@ -260,7 +295,40 @@ BZ301_SOURCE = ('bottom, y 55-68 below cut-out 1 (courtyard x 22.7-35.8, y 54.98
                 'and below free_mm 7.98: OPEN for MECH (W2 CTRL-R, review CTRL-8); it cannot move up, cut-out 1 starts at y 68.5')
 
 
+NEW_REFS = ('F302', 'U316', 'R397', 'C344', 'F303', 'R398')  # W2 CTRL-6 graph additions (design/E3.json R-E3-18..20)
+
+
+def sync_members(spec):
+    """W2 CTRL-6: the parts the graph added on CTRL (NEW_REFS) join the spec part list and the one instance; every net of a spec
+    part joins template_nets and the instance net map (template nets are the graph nets on this board)."""
+    graph = bg.load_graph()
+    parts = {p['ref'] for p in spec['parts']}
+    for ref in NEW_REFS:
+        if ref not in parts:
+            spec['parts'].append({'ref': ref, 'source': 'graph'})
+    spec['parts'].sort(key=lambda p: bg.sort_ref(p['ref']))
+    inst = spec['instances']
+    nets = set(inst['template_nets'])
+    for item in inst['list']:
+        for p in spec['parts']:
+            item['refs'].setdefault(p['ref'], p['ref'])
+        item['refs'] = {k: item['refs'][k] for k in sorted(item['refs'], key=bg.sort_ref)}
+        for p in spec['parts']:
+            if p['source'] != 'graph':
+                continue
+            for pin in graph[item['refs'][p['ref']]]['pins']:
+                if pin.get('net') and not pin.get('nc'):
+                    nets.add(pin['net'])
+        for n in nets:
+            item['nets'].setdefault(n, n)
+        item['nets'] = {k: item['nets'][k] for k in sorted(item['nets'])}
+        # the partition count includes the two DNP refs R303/R304, which are not on the board
+        item['source'] = re.sub(r'\(\d+ refs,', f'({len(item["refs"]) + 2} refs,', item['source'])
+    inst['template_nets'] = sorted(nets)
+
+
 def edit_placement(spec):
+    sync_members(spec)
     for p in spec['parts']:
         if p['ref'] in ANCHORS:
             p['anchor'], p['anchor_source'] = copy.deepcopy(ANCHORS[p['ref']][0]), ANCHORS[p['ref']][1]
@@ -268,7 +336,7 @@ def edit_placement(spec):
             p['anchor_source'] = BZ301_SOURCE
     groups = []
     for g in spec['groups']:
-        if g['id'] in ('FAN', 'FAN2', 'BLOWER', 'GNSS_IN', 'BLOWER2'):
+        if g['id'] in ('FAN', 'FAN2', 'BLOWER', 'GNSS_IN', 'BLOWER2', 'R4A'):  # W2 CTRL-6: R4A members are anchors
             continue
         if g['id'] == 'PICO' and any(m['ref'] == 'D301' for m in g['members']):
             g['members'] = [m for m in g['members'] if m['ref'] != 'D301']
@@ -460,7 +528,7 @@ class Copper:
 
 
 # ------------------------------------------------------------------ scripted copper
-HARD = ('U310', 'U311', 'U315')  # middle GND pins of SOT-23-6 parts: placed first, they have the fewest via spots
+HARD = ('U310', 'U311')  # middle GND pins of SOT-23-6 parts: placed first, they have the fewest via spots (W2 CTRL-6: U315.2 has a cluster)
 FEED_W = 1.85      # W2 CTRL-4: the LAB5 copper at the PWR3A class width of netclasses.json (outer layers only)
 FEED_VIAS = [(x, y) for x in (20.55, 21.52, 22.49) for y in (64.0, 65.0)]  # F.Cu -> B.Cu transition of the feed
 CLR_0603 = 0.17    # a 1.85 mm track through the centre of one 0603 pad passes 0.175 mm from the other pad (board rule 0.15)
@@ -468,7 +536,7 @@ FAN_LEAD = ('a fan-lead (S27) fault behind F301 is limited only by the PTC: betw
             'may flow indefinitely, Itrip about 2.0 A at -20 degC (Bourns MF-MSMF REV. BE, tabulated Ihold 1.01 A at -20 degC, '
             'scaled; an assumption); that current flows LAB5 -> F301 -> Q304 -> E3_FAN5_P (review RV-CTRLR-2; the PTC sits '
             'ahead of the switch since W2 CTRL-5, review RV4-E-5)')
-FEED_WHY = ('W2 CTRL-4: LAB5 feed of the right group (D301, F301/C320/R367, U315/C321/C322) at the PWR3A class width 1.85 mm '
+FEED_WHY = ('W2 CTRL-4: LAB5 feed of the right group (F302 since W2 CTRL-6, was D301; F301/C320/R367, U315/C321/C322) at the PWR3A class width 1.85 mm '
             'on the outer layers, sized for the F102 4 A protective current (netclasses.json LAB5: 1.0 A continuous, 4.0 A '
             'protective, required outer width 1.3348 mm at +20 degC; IPC-2221 external, k 0.048: 5.07 A at +20 degC, +11.7 degC '
             'at 4 A, MODEL); ' + FAN_LEAD + ': +1.3 degC at 1.5 A here; replaces the 0.6 mm L3 run of CTRL-4 (+153 degC at 1.5 A, '
@@ -479,17 +547,17 @@ FEED_WHY = ('W2 CTRL-4: LAB5 feed of the right group (D301, F301/C320/R367, U315
 def lab5_feed(cu):
     """W2 CTRL-4: the right-group LAB5 feed, 1.85 mm on F.Cu/B.Cu, through the centre of every LAB5 pad it feeds.
     F.Cu from the trunk at (12.2, 64.5) above the J317 pins to six 0.65/0.3 mm vias at x 20.55-22.49 (each about 1.0 A at
-    +20 degC, pcb/stackup.py barrel model: 6.0 A), B.Cu along y 66.8 under cut-out 1 (above the BZ301 pins) through the D301
+    +20 degC, pcb/stackup.py barrel model: 6.0 A), B.Cu along y 66.8 under cut-out 1 (above the BZ301 pins) through the F302 (W2 CTRL-6; was D301)
     LAB5 pad, left of D304 and up the right strip at x 45.0 between J313 and F301; at y 87.33 a branch through R367.2 and
     C320.1 turns down into the centre of F301.1 (W2 CTRL-5; was Q304.2), the column goes on through C322.1 up to y 95.0, along the lower edge of the
     band between the cut-outs, round the GND via of U315.2 and back above U315 through the centre of C321.1;
     U315.1 itself (SOT-23-6, 0.6 mm pad below the feed end) is entered by a 0.6 mm, 0.65 mm pad escape (neck_exempt U315)."""
     P = cu.pad
     W = FEED_W
-    d301, c320, r367, f301 = P('D301', '2')['c'], P('C320', '1')['c'], P('R367', '2')['c'], P('F301', '1')['c']
+    f302, c320, r367, f301 = P('F302', '1')['c'], P('C320', '1')['c'], P('R367', '2')['c'], P('F301', '1')['c']  # W2 CTRL-6: F302 where D301.2 was
     c322, c321, u315 = P('C322', '1')['c'], P('C321', '1')['c'], P('U315', '1')['c']
     XC, YR, YU, YH = 45.0, 66.8, 95.0, 87.33  # column, run under cut-out 1, band, fan branch (W2 CTRL-5: 87.15 -> 87.33)
-    assert abs(c320[1] - YH) < 1e-3 and abs(r367[1] - YH) < 1e-3 and abs(c322[0] - XC) < 1e-3 and abs(d301[1] - YR) < 1e-3
+    assert abs(c320[1] - YH) < 1e-3 and abs(r367[1] - YH) < 1e-3 and abs(c322[0] - XC) < 1e-3 and abs(f302[1] - YR) < 1e-3
     xs = sorted({x for x, _ in FEED_VIAS})
     cu.track('LAB5-FEED-F', 'LAB5', 'F.Cu', W, [(12.2, 64.5)] + [(x, 64.5) for x in xs], FEED_WHY)
     for k, (x, y) in enumerate(FEED_VIAS):
@@ -497,20 +565,24 @@ def lab5_feed(cu):
         for lay in ('F', 'B'):
             cu.track(f'LAB5-FEED-{lay}V{k + 1}', 'LAB5', f'{lay}.Cu', W, [(x, 64.5), (x, y)], FEED_WHY + ': spur to a via')
     cu.track('LAB5-FEED-B1', 'LAB5', 'B.Cu', W,
-             [(x, 64.5) for x in xs] + [(24.75, YR), d301, (43.3, YR), (43.3, 71.2), (XC, 72.9), (XC, YH), r367, c320, f301],
-             FEED_WHY + ': trunk side under cut-out 1 through D301.2, left of D304 and up the right strip between J313 and F301, '
+             [(x, 64.5) for x in xs] + [(24.75, YR), f302, (43.3, YR), (43.3, 71.2), (XC, 72.9), (XC, YH), r367, c320, f301],
+             FEED_WHY + ': trunk side under cut-out 1 through F302.1 (W2 CTRL-6, the PTC of the Pico VSYS branch; was D301.2), left of D304 and up the right strip between J313 and F301, '
              'over to R367.2 and C320.1 and down to the centre of F301.1, the PTC ahead of the fan switch (W2 CTRL-5; in W2 '
              'CTRL-4 the drop ended at Q304.2, 0.355 mm from the board edge)')
-    XT, YT = 28.9, 97.3  # right of the GND via of U315.2 (27.312, 95.7), below the Q301 pads; above U315.1
-    assert abs(c321[1] - YT) < 1e-6
-    cu.track('LAB5-FEED-B2', 'LAB5', 'B.Cu', W, [(XC, YH), c322, (XC, YU), (XT, YU), (XT, YT), (27.2, YT)],
-             FEED_WHY + ': up the right strip at x 45.0, along the lower edge of the band between the cut-outs and round the GND '
-             'via of U315.2')
-    cu.track('LAB5-FEED-B3', 'LAB5', 'B.Cu', W, [(27.2, YT), c321, (u315[0], YT)],
-             FEED_WHY + ': above U315 through the centre of C321.1 (0.175 mm from C321.2, board rule 0.15 mm)', clr=CLR_0603)
-    cu.track('LAB5-U315', 'LAB5', 'B.Cu', 0.6, [(u315[0], YT), u315],
-             'W2 CTRL-4: pad escape of U315.1 (0.6 mm pad between U315.2 and the 1.85 mm feed end above it), 0.65 mm long '
-             '(neck_exempt U315), ending at the pad centre')
+    # W2 CTRL-6 (band re-placement, build/15 row of W2 CTRL-5 recipe steps (1) and (3)): the feed runs along y 95.0 below the
+    # moved U315 and ends in the centre of C321.1; U315.1 is entered from the bar by the 0.6 mm escape, and the GND pads U315.2 and
+    # C321.2 share a via cluster above the U301 pad row (GND_CLUSTERS 'UB')
+    XV, YB, XD, YD = 29.9, 99.5, 23.8, 97.15  # rise right of the GND cluster, run above it, drop left of it to U315.1
+    assert abs(c321[0] - XV) < 1e-6 and YU < c321[1] < YB
+    cu.track('LAB5-FEED-B2', 'LAB5', 'B.Cu', W, [(XC, YH), c322, (XC, YU)],
+             FEED_WHY + ': up the right strip at x 45.0 through C322.1 to the band between the cut-outs')
+    cu.track('LAB5-FEED-B3', 'LAB5', 'B.Cu', W, [(XC, YU), (XV, YU), c321, (XV, YB), (XD, YB), (XD, YD)],
+             FEED_WHY + ': along the lower edge of the band between the cut-outs to x 29.9, up past the GND via cluster of U315.2 '
+             'and C321.2 (W2 CTRL-6 band re-placement: that cluster holds the old feed place) through the centre of C321.1 (0.175 mm '
+             'from C321.2, board rule 0.15 mm), along y 99.5 and down to just above U315.1', clr=CLR_0603)
+    cu.track('LAB5-U315', 'LAB5', 'B.Cu', 0.6, [(XD, YD), u315],
+             f'W2 CTRL-4/CTRL-6: pad escape of U315.1 (0.6 mm pad, 0.95 mm pitch next to U315.2) from the end of the 1.85 mm feed '
+             f'above it, {((u315[0] - XD) ** 2 + (u315[1] - YD) ** 2) ** 0.5:.2f} mm long (neck_exempt U315), ending at the pad centre')
 
 
 def power_copper(cu):
@@ -518,13 +590,23 @@ def power_copper(cu):
     J305_3, J305_4, J314_2, J314_1 = P('J305', '3')['c'], P('J305', '4')['c'], P('J314', '2')['c'], P('J314', '1')['c']
     D306_2, Q305_3 = P('D306', '2')['c'], P('Q305', '3')['c']
     F301_2, Q304_2 = P('F301', '2')['c'], P('Q304', '2')['c']
+    F303_1, F303_2 = P('F303', '1')['c'], P('F303', '2')['c']
     YB = J314_1[1]  # E3_BLOWER_GND return rail at the J314.1 height
     XL = 12.2  # LAB5 trunk column on F.Cu
     cu.track('LAB5-TRUNK-F', 'LAB5', 'F.Cu', 1.85,
-             [J305_3, J305_4, (XL, J305_4[1]), (XL, 64.5), (XL, J314_2[1]), J314_2],
-             'LAB5 feed of the blower: J305.3/J305.4 (input pair) to J314.2 on F.Cu at the PWR3A width; it crosses the B.Cu '
-             'E3_BLOWER_GND return; locked, pad centre to pad centre; every other LAB5 pad is joined by scripted copper too '
-             '(W2 CTRL-4), so Freerouting has no LAB5 connection to route')
+             [J305_3, J305_4, (XL, J305_4[1]), (XL, 64.5)],
+             'LAB5 input on F.Cu at the PWR3A width: J305.3/J305.4 (input pair) to the start of the right-group feed at (12.2, 64.5); '
+             'locked, pad centre to pad centre; every other LAB5 pad is joined by scripted copper too (W2 CTRL-4), so Freerouting '
+             'has no LAB5 connection to route; W2 CTRL-6: the trunk no longer goes on down to J314.2, the blower takes LAB5 '
+             'through the PTC F303')
+    cu.track('LAB5-F303', 'LAB5', 'F.Cu', 1.85, [J305_4, F303_1],
+             BLOWER5_WHY + ': LAB5 from the J305.4 input pin into the centre of F303.1 on the top side, between the J305 and J314 '
+             'pegs (PWR3A width)')
+    cu.track('BLOWER5-F303-J314', 'LAB5_BLOWER', 'F.Cu', BLOWER5_W,
+             [F303_2, (BLOWER5_X, round(F303_2[1] - 0.75, 4)), (BLOWER5_X, J314_2[1]), J314_2],
+             BLOWER5_WHY + f': F303.2 down to J314.2 at {BLOWER5_W} mm between the J314 peg (NPTH 3.0 mm) and J314.1; the PTC limits '
+             'this copper (MF-MSMF110/16 Itrip 2.20 A at 23 degC, about 3.18 A at -40 degC by the Ihold ratio, an assumption): '
+             f'IPC-2221 external, k 0.048, 1 oz: {BLOWER5_W} mm carries 3.48 A at +20 degC, +16.3 degC at 3.18 A (MODEL)')
     cu.track('BLOWER-GND-RAIL', 'E3_BLOWER_GND', 'B.Cu', 1.85,
              [J314_1, (D306_2[0], YB), (Q305_3[0], YB), Q305_3],
              'blower return J314.1 to the low-side switch Q305 drain at the PWR3A width (pad centre to pad centre)')
@@ -534,45 +616,91 @@ def power_copper(cu):
              'W2 CTRL-5 (review RV4-E-5): the PTC F301 ahead of the fan switch, F301.2 to the Q304 source at the PWR3A width '
              '(pad centre to pad centre; the copper ends 0.355 mm from the board edge); a short of this node is limited by the PTC')
 
-    # LAB5 branches on the trunk side (W2 CTRL-4: the right group has its own 1.85 mm outer feed, lab5_feed() below)
+    # the blower supply behind the PTC F303 (W2 CTRL-6; W2 CTRL-4: these pieces were LAB5 at F102 4 A)
     D306_1 = P('D306', '1')['c']
     YD = 54.2  # below D306 and its 1.85 mm E3_BLOWER_GND piece (y >= 55.375), above the Pico pads
-    cu.track('LAB5-D306', 'LAB5', 'B.Cu', 1.85, [J314_2, (10.6, YD), (D306_1[0], YD), D306_1],
-             'LAB5 to the flyback diode D306 cathode at the PWR3A width (W2 CTRL-4): a D306 short with Q305 on puts the F102 '
-             '4 A protective current on this piece; J314.2 to D306.1 below the D306 body')
+    cu.track('BLOWER5-D306', 'LAB5_BLOWER', 'B.Cu', 1.85, [J314_2, (10.6, YD), (D306_1[0], YD), D306_1],
+             BLOWER5_WHY + ': J314.2 to the flyback diode D306 cathode below the D306 body at 1.85 mm (the W2 CTRL-4 piece LAB5-D306)')
     blower_caps(cu)
     return {'D306_1': D306_1, 'YD': YD}
 
 
-C343_ENTRY = (0.9, 0.31)  # width, length of the E3_BLOWER_GND pad entry of C343 (inside C343.2 and the 1.85 mm bar end)
-CAP_WHY = ('W2 CTRL-4: the blower supply capacitors C343 (decoupling) and C342 (bulk) sit between a 1.85 mm LAB5 bar and a '
-           '1.85 mm E3_BLOWER_GND bar: a capacitor short with Q305 on drives the F102 4 A protective current through both '
-           '(IPC-2221 external, k 0.048: 1.85 mm +11.7 degC at 4 A, MODEL; the 0.4/0.3 mm branches they replace: +146/+234 '
-           'degC)')
+BLOWER5_W = 1.1  # LAB5_BLOWER between the J314 peg and J314.1 (a 1.81 mm gap: 0.35 mm to the NPTH edge, 0.36 mm to the pad)
+BLOWER5_X = 7.55  # its column between the J314 peg (NPTH 3.0 mm at x 5.15) and J314.1 (pad x >= 8.46)
+BLOWER5_WHY = ('W2 CTRL-6 (orchestrator decision on the W2 CTRL-5 blower-switch row, option (2); design/E3.json R-E3-19): the blower '
+               'supply LAB5_BLOWER behind the PTC F303 (MF-MSMF110/16-2): a short of the S28 lead, C342, C343 or D306 with Q305 on is '
+               'limited by the PTC, not by F102 4 A')
+C343_ENTRY = (0.9, 0.31)  # width, length of the E3_BLOWER_GND pad entry of C343 (inside C343.2 and the 1.85 mm bar)
+CAP_WHY = ('W2 CTRL-4: the blower supply capacitors C343 (decoupling) and C342 (bulk) sit between a 1.85 mm supply bar and a '
+           '1.85 mm E3_BLOWER_GND bar (IPC-2221 external, k 0.048: 1.85 mm +11.7 degC at 4 A, MODEL; the 0.4/0.3 mm branches they '
+           'replaced: +146/+234 degC); W2 CTRL-6: on the top side next to J314, the supply bar is LAB5_BLOWER behind the PTC F303, '
+           'so a capacitor short with Q305 on is limited by the PTC (Itrip 2.20 A at 23 degC, about 3.18 A at -40 degC)')
 
 
 def blower_caps(cu):
-    """W2 CTRL-4: LAB5 bar J305.4 -> C343.1 -> C342.1 (B.Cu, y 67.01, through both pad centres) and the E3_BLOWER_GND bar
-    C343.2 -> C342.2 (y 64.95) with a riser at x 12.5 down to the return rail (J314.1 -> D306.2 vertex at x 12.5).
-    C342 (0805, 1.9 mm pad pitch): the bar ends 0.16 mm beyond the C342.2 centre, inside the pad, 0.21 mm from the LAB5 bar.
-    C343 (0603, 1.55 mm pitch): a 1.85 mm end inside C343.2 cannot keep 0.15 mm from the LAB5 bar through C343.1, so C343.2
-    is entered by a 0.9 x 0.31 mm piece from the 1.85 mm bar end (inside the pad and the bar end; branch_exempt C343)."""
+    """W2 CTRL-6: the W2 CTRL-4 capacitor bars moved to the top side next to J314, the same geometry mirrored: the LAB5_BLOWER bar
+    J314.2 -> C343.1 -> C342.1 (F.Cu, y 56.35, through both pad centres) and the E3_BLOWER_GND bar J314.1 -> C343.2 -> C342.2
+    (y 58.41, 0.16 mm beyond the C342.2 centre, inside the pad, 0.21 mm from the supply bar); C343 (0603, 1.55 mm pitch) is
+    entered by a 0.9 x 0.31 mm piece from the bar (inside the pad and the bar; branch_exempt C343). J314.1 and J314.2 are
+    through-hole pins, so the bars join the B.Cu return rail and the B.Cu piece to D306 there; the B.Cu bars, the riser and the
+    J305.4 bar of W2 CTRL-4 are gone."""
     P = cu.pad
-    j305_4, c343_1, c343_2 = P('J305', '4')['c'], P('C343', '1')['c'], P('C343', '2')['c']
+    j314_1, j314_2 = P('J314', '1')['c'], P('J314', '2')['c']
+    c343_1, c343_2 = P('C343', '1')['c'], P('C343', '2')['c']
     c342_1, c342_2 = P('C342', '1')['c'], P('C342', '2')['c']
-    YL, YG, XR = 67.01, 64.95, 12.5
-    assert abs(j305_4[1] - YL) < 1e-6 and abs(c343_1[1] - YL) < 1e-6 and abs(c342_1[1] - YL) < 1e-6
-    assert abs(c343_1[0] - c343_2[0]) < 1e-6 and abs(c342_1[0] - c342_2[0]) < 1e-6 and c342_2[1] - 0.5 < YG < c342_2[1]
-    cu.track('LAB5-CAPS', 'LAB5', 'B.Cu', FEED_W, [j305_4, c343_1, c342_1],
-             CAP_WHY + ': LAB5 bar from the J305.4 input pin through the centres of C343.1 and C342.1 (0.175 mm from C343.2, '
-             'board rule 0.15 mm)', clr=CLR_0603)
-    cu.track('BLOWER-GND-CAPS', 'E3_BLOWER_GND', 'B.Cu', FEED_W, [(c343_2[0], YG), (XR, YG), (c342_2[0], YG)],
-             CAP_WHY + ': E3_BLOWER_GND bar below the capacitors, into C342.2')
-    cu.track('BLOWER-GND-RISER', 'E3_BLOWER_GND', 'B.Cu', FEED_W, [(XR, YG), (XR, P('J314', '1')['c'][1])],
-             CAP_WHY + ': riser from the bar down to the return rail (its vertex above D306.2), left of the J317 pins')
+    YL, YG, XR = 56.35, 58.41, 10.6
+    assert abs(c343_1[1] - YL) < 1e-6 and abs(c342_1[1] - YL) < 1e-6
+    assert abs(c343_1[0] - c343_2[0]) < 1e-6 and abs(c342_1[0] - c342_2[0]) < 1e-6 and c342_2[1] < YG < c342_2[1] + 0.5
+    cu.track('BLOWER5-CAPS', 'LAB5_BLOWER', 'F.Cu', FEED_W, [j314_2, c343_1, c342_1],
+             CAP_WHY + ': supply bar from the J314.2 pin through the centres of C343.1 and C342.1 (0.175 mm from C343.2, board rule '
+             '0.15 mm)', clr=CLR_0603)
+    cu.track('BLOWER-GND-CAPS', 'E3_BLOWER_GND', 'F.Cu', FEED_W, [j314_1, (XR, YG), (c343_2[0], YG), (c342_2[0], YG)],
+             CAP_WHY + ': E3_BLOWER_GND bar from the J314.1 pin above the capacitors, into C342.2')
     w, ln = C343_ENTRY
-    cu.track('BLOWER-GND-C343', 'E3_BLOWER_GND', 'B.Cu', w, [(c343_2[0], YG), (c343_2[0], round(YG + ln, 4))],
-             CAP_WHY + f': pad entry of C343.2, {w} x {ln} mm, inside the pad and the 1.85 mm bar end (branch_exempt C343)')
+    cu.track('BLOWER-GND-C343', 'E3_BLOWER_GND', 'F.Cu', w, [(c343_2[0], YG), (c343_2[0], round(YG - ln, 4))],
+             CAP_WHY + f': pad entry of C343.2, {w} x {ln} mm, inside the pad and the 1.85 mm bar (branch_exempt C343)')
+
+
+# W2 CTRL-6: the Pico VSYS branch LAB5 -> F302 -> LAB5_PICO -> U316 -> E3_PICO_VLIM -> D301 (top side) -> E3_PICO_VSYS
+PICO_W = 0.5  # LAB5_PICO: PTC F302 (MF-MSMF050) Itrip 1.00 A at 23 degC, about 1.54 A at -40 degC by the Ihold ratio (assumption)
+PICO_WHY = ('W2 CTRL-6 (design/E3.json R-E3-18): LAB5_PICO behind the PTC F302 (MF-MSMF050-2) to U316 IN and EN and C344.1; netclasses.json '
+            'PWR1A (0.35 mm outer); 0.5 mm outer 1 oz carries 1.96 A at +20 degC (IPC-2221, k 0.048), +11.5 degC at the assumed '
+            '-40 degC trip 1.54 A (MODEL)')
+VLIM_W = 0.4
+VLIM_VIAS = [(35.4, 60.15), (34.4, 60.15)]  # E3_PICO_VLIM B.Cu -> F.Cu, left of U316, below the D301 cathode pad
+VLIM_WHY = ('W2 CTRL-6: E3_PICO_VLIM from U316.6 (OUT) up to the D301 anode on the top side, netclasses.json PWR1A (U316 IOSmax '
+            '0.209 A): 0.4 mm outer and two 0.65/0.3 mm vias (one via 1.0 A at +20 degC, MODEL)')
+
+
+def pico_vsys(cu):
+    P = cu.pad
+    f302_2 = P('F302', '2')['c']
+    u1, u3, u6 = P('U316', '1')['c'], P('U316', '3')['c'], P('U316', '6')['c']
+    uc = (round((u1[0] + u6[0]) / 2, 4), round((u1[1] + u3[1]) / 2, 4))  # body centre
+    c344_1, d301_2 = P('C344', '1')['c'], P('D301', '2')['c']
+    cu.track('PICO-F302-U316', 'LAB5_PICO', 'B.Cu', PICO_W, [f302_2, (u1[0], round(f302_2[1] - 0.925, 4)), u1],
+             PICO_WHY + ': F302.2 to U316.1 (IN) at 0.5 mm')
+    cu.track('PICO-EN', 'LAB5_PICO', 'B.Cu', 0.4, [u1, (uc[0], u1[1]), (uc[0], u3[1]), u3],
+             PICO_WHY + ': EN tied to IN under the SOT-23-6 body between the pad rows (0.275 mm from U316.2/U316.5), 0.4 mm: it '
+             'carries the PTC current only with an EN-GND bridge (1.67 A at +20 degC, +16.6 degC at 1.54 A, MODEL)')
+    cu.track('PICO-C344', 'LAB5_PICO', 'B.Cu', PICO_W, [u3, (c344_1[0], round(u3[1] - 0.6, 4)), c344_1],
+             PICO_WHY + ': U316.3 to C344.1')
+    for k, at in enumerate(VLIM_VIAS):
+        cu.via(f'VLIM-V{k + 1}', 'E3_PICO_VLIM', at, VLIM_WHY)
+    v1, v2 = VLIM_VIAS
+    cu.track('VLIM-B', 'E3_PICO_VLIM', 'B.Cu', VLIM_W, [u6, (v1[0], u6[1]), v1, v2], VLIM_WHY + ': U316.6 left to the two vias')
+    cu.track('VLIM-F', 'E3_PICO_VLIM', 'F.Cu', VLIM_W, [v2, v1, d301_2], VLIM_WHY + ': the two vias to the D301 anode on the top side')
+
+
+FANPD_WHY = ('W2 CTRL-6 (review RV-CTRL5-S2-4, option (a); design/E3.json R-E3-20): E3_FAN_PD, the Q303 drain to R398.2; the gate node '
+             'E3_FAN_PG (R398.1, Q304.1, R367.1) reaches the Q303 drain only through 1 kohm, so a Q304 gate-oxide breakdown or an R367 '
+             'solder bridge drives at most about 5 mA here')
+
+
+def fan_pd(cu):
+    P = cu.pad
+    q3, r2 = P('Q303', '3')['c'], P('R398', '2')['c']
+    cu.track('FANPD-Q303-R398', 'E3_FAN_PD', 'B.Cu', 0.25, [q3, (r2[0], q3[1]), r2], FANPD_WHY)
 
 
 def pico_covers(cu):
@@ -704,9 +832,22 @@ def q6a_copper(cu):
         p9, p16 = P(ref, '9')['c'], P(ref, '16')['c']
         path = [p9, (24.0, p9[1]), (24.0, p16[1]), p16] + ([P(ref, '15')['c']] if '15' in pins else [])
         cu.track(f'V33-{ref}', '3V3_Q6A', 'F.Cu', 0.25, path, f'3V3_Q6A of {ref}: VDD pin 9 to the address pins tied high, under the body')
-    # U315 pin 3 (3V3_Q6A) is boxed in by the cut-out edge, U315 pin 2's GND stub and the U301 pads above
-    cu.via('V33-U315', '3V3_Q6A', (27.5, 94.45), '3V3_Q6A via for U315 pin 3, right of the U301 pads')
-    cu.track('V33-U315', '3V3_Q6A', 'B.Cu', 0.25, [P('U315', '3')['c'], (27.5, 94.45)], '3V3_Q6A stub, U315.3 to its via')
+    # W2 CTRL-6: U315 pin 3 (3V3_Q6A) is boxed in by the cut-out edge, U315.4, the GND spur of U315.2 to the UB cluster and the
+    # cluster vias; its only exit is a B.Cu stub along the cut-out edge to a via right of the U301 pads, below the cluster. The
+    # old pair V33-U315 (via at (27.5, 94.45), dropped by the frozen route since W2 CTRL-R for the completion via at
+    # (27.245, 94.2)) gives way to this pair, scripted so that the re-freeze joins the via on F.Cu/L3 instead of searching
+    # the whole board for the boxed pad (the grid search of the freeze tool gave up on it in W2 CTRL-6)
+    u315_3 = P('U315', '3')['c']
+    cu.via('V33-U315-ESC', '3V3_Q6A', (27.9, 94.35), '3V3_Q6A via of U315 pin 3: below the UB cluster, right of the U301 pads '
+           '(W2 CTRL-6)')
+    cu.track('V33-U315-ESC', '3V3_Q6A', 'B.Cu', 0.2, [u315_3, (24.85, 94.55), (27.9, 94.35)],
+             '3V3_Q6A stub of U315 pin 3 along the cut-out edge to its via, below the GND spurs of the UB cluster (W2 CTRL-6)')
+    # W2 CTRL-6: U315 pin 4 (FAULT) reaches its test point TP301 left of U315 by a short scripted B.Cu piece (TP301 moved there
+    # from the R4A block), so its router path no longer crosses the band over the LAB5 feed and the UB cluster
+    u315_4, tp301 = P('U315', '4')['c'], P('TP301', '1')['c']
+    cu.track('FAULT-U315-TP301', 'E3_GNSS_FAULT', 'B.Cu', 0.25,
+             [u315_4, (21.2, 94.85), (17.3, 94.85), tp301],
+             'GNSS-switch FAULT, U315 pin 4 to the test point TP301 below RILIM R396 (W2 CTRL-6)')
 
 
 P33 = 'E3_PICO3V3'
@@ -882,16 +1023,33 @@ GND_CLUSTERS = {
                   'vertical channel along the right board edge (x >= 48.9) and of the PWR_ON_KEY via',
            'vias': [(48.25, 92.8), (47.45, 92.2), (48.35, 91.8), (47.95, 93.8), (46.55, 94.55), (48.25, 90.8), (47.35, 91.2)]},
     'Q5': {'pads': {'Q305.2': [0, 1, 2, 3, 4]}, 'links': [], 'amps': 4.0, 'w': 0.6,
-           'src': 'F102: a blower-lead, C342, C343 or D306 short with Q305 on, out of the Q305 source',
+           'src': 'F102: a blower-lead, C342, C343 or D306 short with Q305 on, out of the Q305 source (W2 CTRL-6: that loop is now behind '
+                   'the PTC F303 on LAB5_BLOWER, 3.18 A cold trip by the Ihold ratio; 4.0 A kept as the sizing current)',
            'vias': [(24.7, 56.7), (23.9, 58.5), (24.9, 58.3), (25.6, 57.1), (25.6, 59.5)]},
-    'FS': {'pads': {'C319.2': [0, 1]}, 'links': [('C318.2', 'C319.2')], 'amps': 1.5, 'w': 0.6,
+    'FS': {'pads': {'C319.2': [0, 1, 2]}, 'links': [('C318.2', 'C319.2')], 'amps': 1.5, 'w': 0.6,
            'src': 'PTC F301 (Itrip 1.5 A at 23 degC, the protective current of the class; about 2.02 A at -20 degC, an '
                   'assumption): a C318 or C319 short; C318.2 reaches the vias through C319.2',
-           'vias': [(46.2, 71.9), (46.9, 71.2)]},
-    'D5': {'pads': {'D305.2': [0, 1]}, 'links': [], 'amps': 1.5, 'w': 0.6,
+           'vias': [(46.2, 71.9), (46.9, 71.2), (47.55, 73.7)]},  # W2 CTRL-6: third via for the cold 2.02 A case
+    'D5': {'pads': {'D305.2': [0, 1, 2]}, 'links': [], 'amps': 1.5, 'w': 0.6,
            'src': 'PTC F301 (Itrip 1.5 A at 23 degC, the protective current of the class; about 2.02 A at -20 degC, an '
                   'assumption): a D305 short',
-           'vias': [(37.75, 89.45), (40.05, 89.6)]},
+           'vias': [(37.75, 89.45), (40.05, 89.6), (40.34, 88.6)]},  # W2 CTRL-6: third via for the cold 2.02 A case
+    # W2 CTRL-6: the GND pads of the Pico VSYS branch behind the PTC F302 (MF-MSMF050: Itrip 1.00 A at 23 degC, about 1.54 A at
+    # -40 degC by the Ihold ratio, an assumption): an IN-GND bridge of U316 (pin 1 next to pin 2) or a C344 short
+    'U16': {'pads': {'U316.2': [0, 1, 2]}, 'hub': {'U316.2': (40.15, 59.7)}, 'links': [], 'amps': 1.54, 'w': 0.6,
+            'src': 'PTC F302 (Itrip 1.00 A at 23 degC, about 1.54 A at -40 degC, an assumption): a U316 IN-GND or EN-GND bridge; '
+                   'the spurs leave the SOT-23-6 middle pad straight out past its end',
+            'vias': [(40.75, 59.7), (41.55, 60.5), (41.55, 58.9)]},
+    # W2 CTRL-6 (band re-placement; orchestrator decision: C321.2 and U315.2 at 4.4 A, 110 % of F102, on >= 5 vias): the LAB5 feed
+    # leaves its old place right of U315 (it now rises at x 29.9 and comes down to U315.1 from above), so U315.2 and C321.2 reach a
+    # shared cluster there, above the U301 pad row (no via fits between those F.Cu pads) and clear of the L1/L3 signal routes
+    'UB': {'pads': {'U315.2': [0, 1, 2, 3, 4, 5, 6], 'C321.2': [1, 3, 4, 5, 6]}, 'hub': {'U315.2': (25.45, 95.7)}, 'links': [], 'amps': 4.4,
+           'w': 0.6, 'src': 'F102 at 110 % (4.4 A, the Littelfuse MINI holds it for 360000 s): a U315 IN-GND bridge (SOT-23-6 pin 1 '
+                            'next to pin 2) or a C321 short, one at a time; both pads reach the shared cluster',
+           'vias': [(25.75, 96.95), (26.75, 96.95), (25.75, 97.95), (26.75, 97.95), (27.4, 95.15), (28.4, 95.15), (27.9, 96.3)]},
+    'C44': {'pads': {'C344.2': [0, 1]}, 'links': [], 'amps': 1.54, 'w': 0.6,
+            'src': 'PTC F302 (Itrip 1.00 A at 23 degC, about 1.54 A at -40 degC, an assumption): a C344 short',
+            'vias': [(36.45, 56.45), (36.45, 57.45)]},
 }
 GND_CLUSTER_PADS = {pad for c in GND_CLUSTERS.values() for pad in list(c['pads']) + [a for a, _b in c['links']]}
 
@@ -907,9 +1065,11 @@ def gnd_clusters(cu):
             pad = cu.pad(ref, num)
             assert pad['net'] == 'GND' and pad['kind'] == 'smd', name
             why = GND_CLUSTER_WHY.format(amps=c['amps'], src=c['src'], w=c['w'], n=len(idx))
+            hub = c.get('hub', {}).get(name)  # W2 CTRL-6: a spur may leave a SOT-23-6 middle pad straight out first
             for k in idx:
-                cu.track(f'GNDC-{cid}-{name}-S{k + 1}', 'GND', pad['layers'][0], c['w'], [pad['c'], c['vias'][k]],
-                         why + f': {name} spur to via {k + 1}')
+                path = [pad['c']] + ([hub] if hub else []) + [c['vias'][k]]
+                cu.track(f'GNDC-{cid}-{name}-S{k + 1}', 'GND', pad['layers'][0], c['w'], path,
+                         why + f': {name} spur to via {k + 1}' + (f' through {hub}, past the pad end' if hub else ''))
         for a, b in c['links']:
             pa, pb = (cu.pad(*n.split('.', 1)) for n in (a, b))
             assert pa['net'] == pb['net'] == 'GND' and pa['layers'] == pb['layers'], (a, b)
@@ -939,6 +1099,8 @@ def scripted_copper(inp, log):
     lab5_feed(cu)
     fan5p_copper(cu)
     q304_gate_escape(cu)
+    pico_vsys(cu)  # W2 CTRL-6
+    fan_pd(cu)  # W2 CTRL-6
     gnd_clusters(cu)
     gnd_vias(cu, [p for p in gnd_smd if p['ref'] not in HARD and f"{p['ref']}.{p['number']}" not in GND_CLUSTER_PADS], centroid,
              skipped)
@@ -990,7 +1152,11 @@ CLASSES = [('PWR1A', 0.35, 0), ('PWR3A', 1.85, 1), ('PWR3A_BRANCH', 0.5, 2), ('S
 DEFAULT_WIDTH = 0.15
 PATTERNS = [('PWR3A_BRANCH', 'LAB5'), ('SCRIPTED_PWR3A', 'E3_BLOWER_GND'), ('SCRIPTED_PWR3A', 'E3_FAN5'),
             ('SCRIPTED_PWR3A', 'E3_FAN5_P'),  # W2 CTRL-4: scripted, not routed
-            ('PWR1A', 'E3_GNSS5V'), ('SCRIPTED_GND', 'GND')]
+            ('PWR1A', 'E3_GNSS5V'), ('SCRIPTED_GND', 'GND'),
+            # W2 CTRL-6: scripted, not routed (the PTC branches LAB5_BLOWER and LAB5_PICO, the limiter output E3_PICO_VLIM and the
+            # 1 kohm gate pull-down node E3_FAN_PD)
+            ('SCRIPTED_PWR3A', 'LAB5_BLOWER'), ('SCRIPTED_PWR3A', 'LAB5_PICO'), ('SCRIPTED_PWR3A', 'E3_PICO_VLIM'),
+            ('SCRIPTED_PWR3A', 'E3_FAN_PD')]
 # W2 CTRL-5 (review RV4-E-4): PWR3A joins the outer-only classes, so a net ever put in PWR3A is joined on F.Cu/B.Cu only by
 # the re-freeze tool and by Freerouting; no CTRL net is in PWR3A now, so the DSN carries no PWR3A class and board_gen skips
 # it (router.class_layers_reserved)
@@ -1071,17 +1237,18 @@ def frozen_copper(cu, log):
 # W2 CTRL-4: every LAB5 and E3_BLOWER_GND piece is 1.85 mm outer copper, measured by check_boards; the one exemption is the
 # 0.9 x 0.31 mm E3_BLOWER_GND pad entry of C343.2 (max_mm keeps every LAB5 piece at C343.1, each longer, measured)
 BRANCH = {'C343': {'max_mm': 0.4, 'min_width_mm': C343_ENTRY[0], 'reason': (
-    f'E3_BLOWER_GND pad entry of the 0603 decoupling capacitor C343 (W2 CTRL-4): one {C343_ENTRY[0]} x {C343_ENTRY[1]} mm '
-    'piece from the end of the 1.85 mm E3_BLOWER_GND bar (y 64.95) into C343.2, wholly inside the pad and the bar end; '
-    'C343.1 sits on a vertex of the 1.85 mm LAB5 bar (y 67.01) and the 0603 pad pitch of 1.55 mm leaves no place inside '
-    'C343.2 for a 1.85 mm end 0.15 mm from that bar. A C343 short with Q305 on drives the F102 4 A protective current '
-    'through it; the long-trace IPC-2221 formula does not apply to a 0.31 mm piece within pad and bar copper (MODEL). '
-    'max_mm 0.4 keeps every LAB5 piece at C343.1 (each longer than 0.4 mm) in the class width check. Not a bench gate')}}
+    f'E3_BLOWER_GND pad entry of the 0603 decoupling capacitor C343 (W2 CTRL-4; on the top side next to J314 since W2 CTRL-6): one '
+    f'{C343_ENTRY[0]} x {C343_ENTRY[1]} mm piece from the 1.85 mm E3_BLOWER_GND bar (y 58.41) into C343.2, wholly inside the pad and '
+    'the bar; C343.1 sits on a vertex of the 1.85 mm LAB5_BLOWER bar (y 56.35) and the 0603 pad pitch of 1.55 mm leaves no place '
+    'inside C343.2 for a 1.85 mm vertex 0.15 mm from that bar. A C343 short with Q305 on drives the PTC F303 current through it '
+    '(Itrip 2.20 A at 23 degC; W2 CTRL-4: F102 4 A before the PTC); the long-trace IPC-2221 formula does not apply to a 0.31 mm piece '
+    'within pad and bar copper (MODEL). max_mm 0.4 keeps every LAB5 piece in the class width check (each longer than 0.4 mm). Not a '
+    'bench gate')}}
 NECK = ['J311', 'U315']  # E3_GNSS5V pad escapes (router copper); E3_FAN5_P is scripted at 0.6/0.8 mm since W2 CTRL-4
 NECK_LAB5 = {  # W2 CTRL-4: the one LAB5 pad entry narrower than the 1.85 mm feed
-    'U315': ('LAB5 pad escape of U315.1 (SOT-23-6, 0.6 mm pad between U315.2 (GND) and the feed, 0.95 mm pitch): the 1.85 mm '
-             'feed passes 0.65 mm above the pad centre and a 0.6 mm, 0.65 mm piece enters it at the centre, wholly inside the '
-             'pad and the feed (W2 CTRL-4)'),
+    'U315': ('LAB5 pad escape of U315.1 (SOT-23-6, 0.6 mm pad next to U315.2 (GND), 0.95 mm pitch): the 1.85 mm feed passes '
+             'below the pad and a 0.6 mm, 0.65 mm piece enters it at the centre, wholly inside the pad and the feed (W2 CTRL-4; W2 '
+             'CTRL-6: the feed passes below U315 since the band re-placement)'),
 }
 ROUTER_WHY = (
     'route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors '
@@ -1133,8 +1300,11 @@ ROUTER_WHY = (
     'not the pads, nets or scripted copper, and is re-routed with the same frozen copper (W2 CTRL-4 integration). W2 CTRL-5: '
     'the PTC F301 ahead of the fan switch Q304 (graph change), the GND via clusters of the fault loops, the far-via exit of '
     'the left E3_FAN5_P group and the scripted Q304/R367 gate vias are re-frozen by freeze_route.py --from-frozen on the board '
-    'of route run 43355370368 (increment recorded in route-frozen.json) and routed once. Job timeout 34 min inside the 45 min '
-    'CI job')
+    'of route run 43355370368 (increment recorded in route-frozen.json) and routed once. W2 CTRL-6: the Pico VSYS branch '
+    '(F302/U316/R397/C344, D301 on the top side), the blower PTC F303 with the blower capacitors on the top side, R398, the band '
+    're-placement (Q301 moved up, the LAB5 feed rising at x 29.9 to U315.1 from above) and the GND via clusters are re-frozen by '
+    'freeze_route.py --from-frozen --renet --l2-touched --plane-guard --retry on the board of route run 43389430702 (increment '
+    'recorded in route-frozen.json) and routed once. Job timeout 34 min inside the 45 min CI job')
 
 
 def l2_plan():
@@ -1177,9 +1347,11 @@ def spec_texts(spec, inp, cu, skipped):
         'zones': [{'id': 'GND-L2', 'net': 'GND', 'layer': 'In1.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
                    'why': 'solid GND plane L2 (build/15 "План шарів"); every SMD GND pad joins it through its scripted via, every THT '
                           'GND pin directly (solid connection)'}],
-        'gnd_vias_note': ('W2 CTRL-5: the GND pads of the fault loops (C320.2, C321.2, C322.2, Q305.2, C318.2, C319.2, D305.2) have '
-                          'scripted via clusters instead (GND_CLUSTERS in make_spec.py), and R394.2, whose via place went to the Q304 '
-                          'gate via, joins the Q306.2 GND pad. Otherwise '
+        'gnd_vias_note': ('W2 CTRL-5/CTRL-6: the GND pads of the fault loops have scripted via clusters instead (GND_CLUSTERS in '
+                          'make_spec.py): C320.2/C322.2 7 vias and Q305.2 5 at F102 4 A, U315.2/C321.2 8 at 4.4 A (110 % of F102, W2 '
+                          'CTRL-6 band re-placement), C319.2 with C318.2 and D305.2 3 each (W2 CTRL-6: third via for the assumed cold '
+                          '2.02 A trip of F301), U316.2 3 and C344.2 2 behind the PTC F302 (W2 CTRL-6); R394.2, whose via place went '
+                          'to the Q304 gate via, joins the Q306.2 GND pad. Otherwise '
                           'one locked 0.65/0.3 mm through via and a 0.25 mm stub per SMD GND pad, placed by a deterministic search '
                           '(24 directions, growing radius, directions away from the part first) on the exact pad shapes: 0.2 mm to '
                           'other-net copper on every layer the via spans, no via in a pad, 0.55 mm hole-to-hole margin, 0.95 mm '
@@ -1273,17 +1445,17 @@ def spec_texts(spec, inp, cu, skipped):
         '(track 0.15 / clearance 0.15, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) with router vias '
         '0.7 / 0.3 (0.6 mm vias at 0.15 mm clearance sit 0.45 mm hole to hole, PCB-PWRB lesson), and the classes PWR1A (0.35 mm: '
         'E3_GNSS5V), PWR3A_BRANCH (LAB5: every LAB5 pad sits on a vertex of the scripted 1.85 mm copper since W2 CTRL-4, so '
-        'the router has no LAB5 connection left), SCRIPTED_GND (GND) and SCRIPTED_PWR3A (E3_FAN5, E3_FAN5_P, E3_BLOWER_GND), '
-        'the last two not autorouted (E3_FAN5_P is a PWR1A net of netclasses.json scripted at 0.6/0.8 mm, W2 CTRL-4). '
-        'check_boards widths follow netclasses.json (LAB5, E3_BLOWER_GND, E3_FAN5: PWR3A 1.85 mm outer; E3_FAN5_P, E3_GNSS5V: '
-        'PWR1A 0.35 mm outer; the C343.2 pad entry in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru '
-        'files yet).')
+        'the router has no LAB5 connection left), SCRIPTED_GND (GND) and SCRIPTED_PWR3A (E3_FAN5, E3_FAN5_P, E3_BLOWER_GND; W2 '
+        'CTRL-6: LAB5_BLOWER, LAB5_PICO, E3_PICO_VLIM, E3_FAN_PD), the last two not autorouted (E3_FAN5_P is a PWR1A net of '
+        'netclasses.json scripted at 0.6/0.8 mm, W2 CTRL-4). check_boards widths follow netclasses.json (LAB5, E3_BLOWER_GND, '
+        'E3_FAN5: PWR3A 1.85 mm outer; LAB5_BLOWER: PWR2A 0.8 mm outer, scripted at 1.85 and 1.1 mm; E3_FAN5_P, E3_GNSS5V, LAB5_PICO, '
+        'E3_PICO_VLIM: PWR1A 0.35 mm outer; the C343.2 pad entry in branch_exempt). rules_file stays null (board_gen does not copy '
+        '.kicad_dru files yet).')
     spec['layers']['plan'] = {
-        'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and the first 10 mm of the right-group LAB5 feed (1.85 mm, y 64.5, to its six vias; W2 CTRL-4), the scripted E3_FAN5_P hop (0.8 mm, from its three vias below Q304 over the LAB5 column to three vias left of it; W2 CTRL-4/CTRL-5), scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368, up the right board edge to R395, the HMI pull-up row to C312 and U306, R361/R362), the frozen router copper of route run 43136394379 and its completion and increments (route-frozen.json), GND pour after routing',
+        'F.Cu': 'L1: top parts, signals, scripted LAB5 from J305.3/J305.4 (1.85 mm) into the PTC F303 (W2 CTRL-6; J314.2 now on LAB5_BLOWER behind it, 1.1 mm between the J314 peg and J314.1) and the LAB5_BLOWER and E3_BLOWER_GND bars of the blower capacitors C343/C342 next to J314 (1.85 mm, W2 CTRL-6), E3_PICO_VLIM from its two vias to the D301 anode (0.4 mm, W2 CTRL-6), the first 10 mm of the right-group LAB5 feed (1.85 mm, y 64.5, to its six vias; W2 CTRL-4), the scripted E3_FAN5_P hop (0.8 mm, from its three vias below Q304 over the LAB5 column to three vias left of it; W2 CTRL-4/CTRL-5), scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368, up the right board edge to R395, the HMI pull-up row to C312 and U306, R361/R362), the frozen router copper of route run 43136394379 and its completion and increments (route-frozen.json), GND pour after routing',
         'In1.Cu': l2_plan(),
         'In2.Cu': 'L3: signals (no LAB5 copper since W2 CTRL-4: the 0.6 mm L3 run to the right group is replaced by outer copper), the scripted 3V3_Q6A bus of the left pull-up column, the frozen router copper and its completion, GND pour after routing',
-        'B.Cu': 'L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm), the 1.85 mm LAB5 bar from J305.4 and '
-                'E3_BLOWER_GND bar and riser of the blower capacitors C343/C342 (W2 CTRL-4), the scripted 1.85 mm LAB5 pieces (J314.2 -> D306, and the right-group feed: y 66.8 under cut-out 1 through D301.2, up the right strip through C320.1/R367.2 to F301.1 (W2 CTRL-5: the PTC ahead of the fan switch) and through C322.1 to the band between the cut-outs and C321.1/U315.1; W2 CTRL-4), scripted E3_FAN5 (F301.2 -> Q304.2, 1.85 mm) and E3_FAN5_P (C319.1 -> C318.1 -> Q304.3 and three vias right of the LAB5 column; three vias left of it, the B.Cu exit from the far one, J313.2 and D305.1 at 0.6 mm; W2 CTRL-4/CTRL-5), the GND via clusters of the fault loops (0.6/0.8 mm spurs from C320.2/C322.2, C321.2, Q305.2, C319.2 with C318.2, D305.2 to 5-9 or 3 vias; W2 CTRL-5), scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top '
+        'B.Cu': 'L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm), the scripted 1.85 mm LAB5_BLOWER piece J314.2 -> D306.1 (W2 CTRL-6; W2 CTRL-4: LAB5), the scripted 1.85 mm right-group LAB5 feed (y 66.8 under cut-out 1 through F302.1 (W2 CTRL-6; was D301.2), up the right strip through C320.1/R367.2 to F301.1 (W2 CTRL-5: the PTC ahead of the fan switch) and through C322.1 to the band between the cut-outs, along its lower edge to x 29.9, up past the UB GND cluster, along y 99.5 through C321.1 and down to just above U315.1, with the 0.6 mm escape into U315.1; W2 CTRL-4, band re-placement W2 CTRL-6), LAB5_PICO (F302.2 -> U316.1, EN under the U316 body, C344.1; 0.4/0.5 mm, W2 CTRL-6), E3_PICO_VLIM (U316.6 -> two vias; W2 CTRL-6), E3_FAN_PD (Q303.3 -> R398.2, W2 CTRL-6), scripted E3_FAN5 (F301.2 -> Q304.2, 1.85 mm) and E3_FAN5_P (C319.1 -> C318.1 -> Q304.3 and three vias right of the LAB5 column; three vias left of it, the B.Cu exit from the far one, J313.2 and D305.1 at 0.6 mm; W2 CTRL-4/CTRL-5), the GND via clusters of the fault loops (0.6/0.8 mm spurs: C320.2/C322.2 7 vias, Q305.2 5, U315.2/C321.2 8, C319.2 with C318.2 3, D305.2 3, U316.2 3, C344.2 2; W2 CTRL-5/CTRL-6), scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top '
                 'edge to J312.4, branch to R362; Pico pin 36 escape via, R330/R327/C308), '
                 'locked GND copper over the custom Pico GND pads, the frozen router copper and its completion, GND pour after routing'}
     ce = spec['cable_exits']

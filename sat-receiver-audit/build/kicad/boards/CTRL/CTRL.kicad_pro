@@ -245,6 +245,22 @@
       {
         "netclass": "SCRIPTED_GND",
         "pattern": "GND"
+      },
+      {
+        "netclass": "SCRIPTED_PWR3A",
+        "pattern": "LAB5_BLOWER"
+      },
+      {
+        "netclass": "SCRIPTED_PWR3A",
+        "pattern": "LAB5_PICO"
+      },
+      {
+        "netclass": "SCRIPTED_PWR3A",
+        "pattern": "E3_PICO_VLIM"
+      },
+      {
+        "netclass": "SCRIPTED_PWR3A",
+        "pattern": "E3_FAN_PD"
       }
     ]
   }
