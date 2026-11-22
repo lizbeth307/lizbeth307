@@ -57,6 +57,10 @@ TAG = 'W2 F2C-FALLBACK (PCB-PWRC-2)'
 CLEAR, MARGIN, EDGE = mb.CLEAR, mb.MARGIN, mb.EDGE
 BATT_W, PWR3A_W = 3.2, 1.85     # netclasses.json BATT / PWR3A outer_min_width_mm (1 oz outer, 4 layers)
 LAB5_W = 1.85                   # PWR3A; >= 1.335 mm (F102 4 A at +20 degC, 1 oz outer, IPC-2221 MODEL)
+# class width per scripted net (pcb/generated/netclasses.json nets: BATT E1_SHUNT_P / E1_N / E1_SW, PWR3A E1_SERVICE_P /
+# E1_USB_PD_RAW / E1_USB_PD_SAFE / LAB5; GND has no power class, SIG 0.15)
+NET_W = {'E1_SHUNT_P': BATT_W, 'E1_N': BATT_W, 'E1_SW': BATT_W, 'E1_SERVICE_P': PWR3A_W, 'E1_USB_PD_RAW': PWR3A_W,
+         'E1_USB_PD_SAFE': PWR3A_W, 'LAB5': LAB5_W, 'GND': 0.15}
 
 # Anchors (board mm, y up, origin align; design choice, component-side frame of contract-proposal.json): ref -> (x, y, rot).
 # Left: the battery entry (J105 S05 from PACK_FUSE, shunt R101, INA228 U102), the E1_N bus up the left side of the #2813, the
@@ -263,8 +267,8 @@ def power_copper(placed):
         xs, ys = [q[0] for q in outline], [q[1] for q in outline]
         pieces.append((zid, net, layer, [min(xs), min(ys), max(xs), max(ys)], why))
 
-    def track(tid, net, width, path, why):
-        tracks.append({'id': tid, 'net': net, 'layer': 'F.Cu', 'width_mm': width, 'path': [[r4(x), r4(y)] for x, y in path],
+    def track(tid, net, width, path, why, layer='F.Cu'):
+        tracks.append({'id': tid, 'net': net, 'layer': layer, 'width_mm': width, 'path': [[r4(x), r4(y)] for x, y in path],
                        'locked': True, 'why': f'{TAG}: {why} (make_spec.py power_copper)'})
 
     def via(vid, net, at, why):
@@ -370,6 +374,24 @@ def power_copper(placed):
          'the U553 IN pin entry: one pin pitch tall, within half the class width of the pin')
     zone('PC-LAB5-C552', 'LAB5', rect(xl0, c552['box'][1] - 0.05, c552['box'][2] + 0.05, c552['box'][3] + 0.05),
          'PWR3A: C552.1 on the column beside U553 IN')
+    # Locked skeleton tracks (route run 45043947453: Freerouting led other nets across the pours and KiCad then cut them into
+    # islands: 5 unconnected PC-E1N-SHUNT pieces, D105.K off the E1_SW pour, the E1_USB_PD_SAFE B.Cu run apart from its vias;
+    # PWR_A met the same in run 43287918183): every piece at least its class width wide carries one locked track of its net
+    # along its long axis, as wide as its short side and inside it, which the router keeps as fixed copper; the pour still
+    # fills the piece and joins the pieces. Narrower pin-entry pieces (the U109 bars, the U553 / C552 entries) stay pours.
+    for zid, net, layer, r, why in pieces:
+        need = NET_W.get(net, NET_W['GND'])
+        w, h = r[2] - r[0], r[3] - r[1]
+        short = min(w, h)
+        if short + 1e-9 < need:
+            continue
+        if w >= h:
+            a, b = (r[0] + h / 2, (r[1] + r[3]) / 2), (max(r[2] - h / 2, r[0] + h / 2 + 0.002), (r[1] + r[3]) / 2)
+        else:
+            a, b = ((r[0] + r[2]) / 2, r[1] + w / 2), ((r[0] + r[2]) / 2, max(r[3] - w / 2, r[1] + w / 2 + 0.002))
+        track(f'{zid}-SK', net, r4(math.floor(short * 1000) / 1000), [a, b],
+              f'locked skeleton of the pour {zid} (its short side, >= the {net} class width {need} mm): the router keeps '
+              'other nets off the pour', layer=layer)
     zones = merge_pours(pieces)  # each zone carries its piece rectangles in '_rects' for problems() (not written to the spec)
     return zones, tracks, vias
 

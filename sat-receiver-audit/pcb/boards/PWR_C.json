@@ -958,6 +958,384 @@
         "why": "W2 F2C-FALLBACK (PCB-PWRC-2): BATT 3.2 mm: S05 land J105.2 to the shunt R101.1 (battery side) (make_spec.py power_copper)"
       },
       {
+        "id": "PC-E1N-SHUNT-SK",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 3.2,
+        "path": [
+          [
+            26.9125,
+            2.6
+          ],
+          [
+            37.0,
+            2.6
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-E1N-SHUNT (its short side, >= the E1_N class width 3.2 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-E1N-BUS-SK",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 3.2,
+        "path": [
+          [
+            37.0,
+            2.6
+          ],
+          [
+            37.0,
+            23.45
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-E1N-BUS (its short side, >= the E1_N class width 3.2 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-E1N-VIN-SK",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 6.659,
+        "path": [
+          [
+            41.33,
+            25.08
+          ],
+          [
+            41.33,
+            26.64
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-E1N-VIN (its short side, >= the E1_N class width 3.2 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-E1N-WEST-SK",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 3.199,
+        "path": [
+          [
+            15.6,
+            19.6
+          ],
+          [
+            34.4,
+            19.6
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-E1N-WEST (its short side, >= the E1_N class width 3.2 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-E1N-J108-SK",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 3.2,
+        "path": [
+          [
+            21.0,
+            22.2
+          ],
+          [
+            21.0,
+            30.625
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-E1N-J108 (its short side, >= the E1_N class width 3.2 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-E1N-D104-SK",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 3.199,
+        "path": [
+          [
+            19.6,
+            22.2
+          ],
+          [
+            19.6,
+            23.15
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-E1N-D104 (its short side, >= the E1_N class width 3.2 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-SERVICE-SK",
+        "net": "E1_SERVICE_P",
+        "layer": "F.Cu",
+        "width_mm": 4.424,
+        "path": [
+          [
+            34.8125,
+            29.2675
+          ],
+          [
+            34.8125,
+            29.5125
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-SERVICE (its short side, >= the E1_SERVICE_P class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-E1SW-VOUT-SK",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 8.22,
+        "path": [
+          [
+            59.77,
+            25.86
+          ],
+          [
+            61.09,
+            25.86
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-E1SW-VOUT (its short side, >= the E1_SW class width 3.2 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-E1SW-J119-SK",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 4.224,
+        "path": [
+          [
+            60.0125,
+            30.1125
+          ],
+          [
+            62.4125,
+            30.1125
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-E1SW-J119 (its short side, >= the E1_SW class width 3.2 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-GND-D104-SK",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 2.65,
+        "path": [
+          [
+            24.175,
+            23.575
+          ],
+          [
+            24.175,
+            25.925
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-GND-D104 (its short side, >= the GND class width 0.15 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-GND-D105-SK",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 2.649,
+        "path": [
+          [
+            68.175,
+            24.575
+          ],
+          [
+            68.175,
+            26.925
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-GND-D105 (its short side, >= the GND class width 0.15 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-PDRAW-LAND-SK",
+        "net": "E1_USB_PD_RAW",
+        "layer": "F.Cu",
+        "width_mm": 1.849,
+        "path": [
+          [
+            138.775,
+            17.325
+          ],
+          [
+            138.775,
+            17.327
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-PDRAW-LAND (its short side, >= the E1_USB_PD_RAW class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-PDRAW-C116-SK",
+        "net": "E1_USB_PD_RAW",
+        "layer": "F.Cu",
+        "width_mm": 2.075,
+        "path": [
+          [
+            137.4375,
+            19.2375
+          ],
+          [
+            138.6625,
+            19.2375
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-PDRAW-C116 (its short side, >= the E1_USB_PD_RAW class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-PDRAW-EAST-SK",
+        "net": "E1_USB_PD_RAW",
+        "layer": "F.Cu",
+        "width_mm": 1.85,
+        "path": [
+          [
+            138.775,
+            17.325
+          ],
+          [
+            152.5,
+            17.325
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-PDRAW-EAST (its short side, >= the E1_USB_PD_RAW class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-PDRAW-J114-SK",
+        "net": "E1_USB_PD_RAW",
+        "layer": "F.Cu",
+        "width_mm": 1.85,
+        "path": [
+          [
+            152.5,
+            17.325
+          ],
+          [
+            152.5,
+            31.3
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-PDRAW-J114 (its short side, >= the E1_USB_PD_RAW class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-PDSAFE-LAND-SK",
+        "net": "E1_USB_PD_SAFE",
+        "layer": "F.Cu",
+        "width_mm": 1.849,
+        "path": [
+          [
+            139.275,
+            12.675
+          ],
+          [
+            139.275,
+            12.677
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-PDSAFE-LAND (its short side, >= the E1_USB_PD_SAFE class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-PDSAFE-DOWN-SK",
+        "net": "E1_USB_PD_SAFE",
+        "layer": "F.Cu",
+        "width_mm": 3.8,
+        "path": [
+          [
+            138.3,
+            7.3
+          ],
+          [
+            138.3,
+            9.85
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-PDSAFE-DOWN (its short side, >= the E1_USB_PD_SAFE class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-PDSAFE-B-VIAS-SK",
+        "net": "E1_USB_PD_SAFE",
+        "layer": "B.Cu",
+        "width_mm": 3.8,
+        "path": [
+          [
+            139.25,
+            3.975
+          ],
+          [
+            139.25,
+            5.5
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-PDSAFE-B-VIAS (its short side, >= the E1_USB_PD_SAFE class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-PDSAFE-B-RUN-SK",
+        "net": "E1_USB_PD_SAFE",
+        "layer": "B.Cu",
+        "width_mm": 1.849,
+        "path": [
+          [
+            26.4,
+            3.0
+          ],
+          [
+            140.225,
+            3.0
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-PDSAFE-B-RUN (its short side, >= the E1_USB_PD_SAFE class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-PDSAFE-B-UP-SK",
+        "net": "E1_USB_PD_SAFE",
+        "layer": "B.Cu",
+        "width_mm": 1.85,
+        "path": [
+          [
+            26.4,
+            3.925
+          ],
+          [
+            26.4,
+            31.3
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-PDSAFE-B-UP (its short side, >= the E1_USB_PD_SAFE class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
+        "id": "PC-LAB5-DOWN-SK",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.849,
+        "path": [
+          [
+            97.4,
+            19.275
+          ],
+          [
+            97.4,
+            31.3
+          ]
+        ],
+        "locked": true,
+        "why": "W2 F2C-FALLBACK (PCB-PWRC-2): locked skeleton of the pour PC-LAB5-DOWN (its short side, >= the LAB5 class width 1.85 mm): the router keeps other nets off the pour (make_spec.py power_copper)"
+      },
+      {
         "id": "GND-C101-2-S",
         "net": "GND",
         "layer": "F.Cu",
