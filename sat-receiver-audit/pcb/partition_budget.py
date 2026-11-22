@@ -55,10 +55,12 @@ OUT = ROOT / "pcb" / "partition-budget.json"
 SHEETS = ("E1", "E2", "E3", "E4", "E5")
 # the last two are the PWR-B domains that GR-3 adds to pcb/prepare.py (partition-spec domains.PWR_B); listing them
 # here keeps the PWR part set the same before and after that change
-PWR_DOMAINS = ("PWR_MAIN", "PWR_BRANCH", "USB_POWER", "PWR_BRANCH_SW", "USB_POWER_SW",
-               "PWR_ENTRY")  # PWR_ENTRY: PWR-C of W2 F2C-FALLBACK (pcb/prepare.py, fallback F2-C after gate G1)
+PWR_DOMAINS = ("PWR_MAIN", "PWR_BRANCH", "USB_POWER", "PWR_BRANCH_SW", "USB_POWER_SW")
 PWR_B_DOMAINS = ("PWR_BRANCH_SW", "USB_POWER_SW")
-CURRENT_BOARDS = {"PWR": PWR_DOMAINS, "RF": ("RF_HMC", "RF_HF", "RF_INJECTOR", "DC_CORE"), "CTRL": ("CTRL_HMI",)}
+# W2 F2C-FALLBACK: PWR-C (domain PWR_ENTRY of pcb/prepare.py, partition.domain_override_pwr_c; fallback F2-C after gate G1) is a
+# third power board of its own: its parts leave the PWR-A/PWR-B budget (test points included) and are summed as board PWR_C
+PWR_C_DOMAINS = ("PWR_ENTRY",)
+CURRENT_BOARDS = {"PWR": PWR_DOMAINS, "PWR_C": PWR_C_DOMAINS, "RF": ("RF_HMC", "RF_HF", "RF_INJECTOR", "DC_CORE"), "CTRL": ("CTRL_HMI",)}
 
 
 def rel(path):
@@ -389,7 +391,8 @@ class Evaluator:
         self.S = design.spec
         self.P = self.S["parameters"]
         self.pwr_parts = {r: p for r, p in design.parts.items() if p["domain"] in PWR_DOMAINS or
-                          (p["tp"] and p["sheet"] in ("E1", "E2", "E5") and self.group_domain(p) in PWR_DOMAINS)}
+                          (p["tp"] and p["domain"] not in PWR_C_DOMAINS and p["sheet"] in ("E1", "E2", "E5")
+                           and self.group_domain(p) in PWR_DOMAINS)}
         self.ctrl_parts = {r: p for r, p in design.parts.items() if p["domain"] == "CTRL_HMI" or
                            (p["tp"] and self.group_domain(p) == "CTRL_HMI")}
         n_tp = sum(1 for p in self.pwr_parts.values() if p["tp"])

@@ -28,10 +28,16 @@
  },
  "current_boards_raw": {
   "PWR": {
-   "refs": 387,
-   "parts_raw_mm2": 7267.4,
+   "refs": 340,
+   "parts_raw_mm2": 6266.6,
    "modules_mm2": 0.0,
-   "total_raw_mm2": 7267.4
+   "total_raw_mm2": 6266.6
+  },
+  "PWR_C": {
+   "refs": 53,
+   "parts_raw_mm2": 1078.7,
+   "modules_mm2": 539.2,
+   "total_raw_mm2": 1618.0
   },
   "RF": {
    "refs": 171,
@@ -47,15 +53,6 @@
   }
  },
  "pwr_groups": [
-  {
-   "sheet": "E1",
-   "group": "AON і UV",
-   "refs": 12,
-   "raw_mm2": 94.5,
-   "tall_refs": [],
-   "tht_refs": [],
-   "headers_only": false
-  },
   {
    "sheet": "E1",
    "group": "LAB5",
@@ -84,85 +81,16 @@
   },
   {
    "sheet": "E1",
-   "group": "Інгібування заряду",
-   "refs": 4,
-   "raw_mm2": 26.1,
-   "tall_refs": [],
-   "tht_refs": [],
-   "headers_only": false
-  },
-  {
-   "sheet": "E1",
-   "group": "Аварійний ADC",
-   "refs": 3,
-   "raw_mm2": 13.0,
-   "tall_refs": [],
-   "tht_refs": [],
-   "headers_only": false
-  },
-  {
-   "sheet": "E1",
-   "group": "Головний вимикач",
-   "refs": 4,
-   "raw_mm2": 91.9,
-   "tall_refs": [],
-   "tht_refs": [],
-   "headers_only": false
-  },
-  {
-   "sheet": "E1",
-   "group": "Захист USB-PD",
-   "refs": 9,
-   "raw_mm2": 49.6,
-   "tall_refs": [],
-   "tht_refs": [],
-   "headers_only": false
-  },
-  {
-   "sheet": "E1",
-   "group": "Контрольні точки",
-   "refs": 5,
-   "raw_mm2": 31.2,
-   "tall_refs": [],
-   "tht_refs": [],
-   "headers_only": false
-  },
-  {
-   "sheet": "E1",
    "group": "Роз'єми джгутів PWR",
-   "refs": 12,
-   "raw_mm2": 870.5,
-   "tall_refs": [
-    "J109",
-    "J110",
-    "J111",
-    "J112",
-    "J113"
-   ],
+   "refs": 3,
+   "raw_mm2": 266.4,
+   "tall_refs": [],
    "tht_refs": [
     "J104",
-    "J105",
     "J106",
-    "J107",
-    "J108",
-    "J109",
-    "J110",
-    "J111",
-    "J112",
-    "J113",
-    "J114",
-    "J115"
+    "J107"
    ],
    "headers_only": true
-  },
-  {
-   "sheet": "E1",
-   "group": "Сервісний заряд",
-   "refs": 1,
-   "raw_mm2": 27.0,
-   "tall_refs": [],
-   "tht_refs": [],
-   "headers_only": false
   },
   {
    "sheet": "E2",
@@ -410,26 +338,15 @@
   {
    "sheet": "E5",
    "group": "Роз'єми джгутів PWR і HATCH",
-   "refs": 2,
-   "raw_mm2": 174.9,
+   "refs": 1,
+   "raw_mm2": 114.9,
    "tall_refs": [
-    "J506",
-    "J507"
+    "J506"
    ],
    "tht_refs": [
-    "J506",
-    "J507"
+    "J506"
    ],
    "headers_only": true
-  },
-  {
-   "sheet": "E5",
-   "group": "Сервіс і зовнішні шини",
-   "refs": 6,
-   "raw_mm2": 47.1,
-   "tall_refs": [],
-   "tht_refs": [],
-   "headers_only": false
   }
  ],
  "pwr_heights_above_hA": {
@@ -473,36 +390,6 @@
     "F102"
    ],
    "lower_bound": true
-  },
-  "B2B-PH-K-S(LF)(SN)": {
-   "h": 8.0,
-   "src": "harness header PH_top: courtyard and heights: mechanical/params/parts.json harness_headers (JST ePH, read 2026-11-07); pin field from the vendored KiCad JST_PH_B3B-PH-K footprint pads",
-   "refs": [
-    "J109",
-    "J113"
-   ]
-  },
-  "B5B-PH-K-S(LF)(SN)": {
-   "h": 8.0,
-   "src": "harness header PH_top: courtyard and heights: mechanical/params/parts.json harness_headers (JST ePH, read 2026-11-07); pin field from the vendored KiCad JST_PH_B3B-PH-K footprint pads",
-   "refs": [
-    "J110"
-   ]
-  },
-  "B3B-PH-K-S(LF)(SN)": {
-   "h": 8.0,
-   "src": "harness header PH_top: courtyard and heights: mechanical/params/parts.json harness_headers (JST ePH, read 2026-11-07); pin field from the vendored KiCad JST_PH_B3B-PH-K footprint pads",
-   "refs": [
-    "J111"
-   ]
-  },
-  "B4B-PH-K-S(LF)(SN)": {
-   "h": 8.0,
-   "src": "harness header PH_top: courtyard and heights: mechanical/params/parts.json harness_headers (JST ePH, read 2026-11-07); pin field from the vendored KiCad JST_PH_B3B-PH-K footprint pads",
-   "refs": [
-    "J112",
-    "J507"
-   ]
   },
   "S5B-PH-K-S(LF)(SN)": {
    "h": 4.8,
@@ -590,26 +477,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 279,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3559.8,
-     "headers_raw_mm2": 1170.4,
+     "refs": 225,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 3223.2,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.707,
-     "demand_1_mm2": 5404.5,
-     "ratio_1": 1.414,
-     "demand_1.5_mm2": 7927.3,
-     "ratio_1.5": 0.964,
-     "demand_1.8_mm2": 9441.0,
-     "ratio_1.8": 0.809,
-     "fits_at_1_8": false
+     "raw_fill": 0.571,
+     "demand_1_mm2": 4360.0,
+     "ratio_1": 1.752,
+     "demand_1.5_mm2": 6360.6,
+     "ratio_1.5": 1.201,
+     "demand_1.8_mm2": 7560.9,
+     "ratio_1.8": 1.011,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5056.2,
+     "usable_mm2": 5906.6,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -619,13 +506,13 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.549,
+     "raw_fill": 0.47,
      "demand_1_mm2": 2777.4,
-     "ratio_1": 1.82,
+     "ratio_1": 2.127,
      "demand_1.5_mm2": 4166.2,
-     "ratio_1.5": 1.214,
+     "ratio_1.5": 1.418,
      "demand_1.8_mm2": 4999.4,
-     "ratio_1.8": 1.011,
+     "ratio_1.8": 1.181,
      "fits_at_1_8": true
     }
    },
@@ -649,8 +536,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -770,14 +657,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -794,70 +673,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -871,14 +686,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -963,30 +770,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -1122,28 +905,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -1170,56 +931,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -1319,28 +1044,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -1359,12 +1062,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -1776,26 +1479,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 221,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 2995.0,
-     "headers_raw_mm2": 1170.4,
+     "refs": 167,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 2658.3,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 87.5,
+     "tps_raw_mm2": 43.8,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.628,
-     "demand_1_mm2": 4802.1,
-     "ratio_1": 1.591,
-     "demand_1.5_mm2": 7023.7,
-     "ratio_1.5": 1.088,
-     "demand_1.8_mm2": 8356.7,
-     "ratio_1.8": 0.914,
-     "fits_at_1_8": false
+     "raw_fill": 0.492,
+     "demand_1_mm2": 3757.6,
+     "ratio_1": 2.033,
+     "demand_1.5_mm2": 5457.0,
+     "ratio_1.5": 1.4,
+     "demand_1.8_mm2": 6476.7,
+     "ratio_1.8": 1.18,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5110.2,
+     "usable_mm2": 5960.6,
      "refs": 194,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -1805,13 +1508,13 @@
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.661,
+     "raw_fill": 0.567,
      "demand_1_mm2": 3379.8,
-     "ratio_1": 1.512,
+     "ratio_1": 1.764,
      "demand_1.5_mm2": 5069.7,
-     "ratio_1.5": 1.008,
+     "ratio_1.5": 1.176,
      "demand_1.8_mm2": 6083.6,
-     "ratio_1.8": 0.84,
+     "ratio_1.8": 0.98,
      "fits_at_1_8": false
     }
    },
@@ -1835,8 +1538,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 126.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 63.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -1956,14 +1659,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -1980,70 +1675,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -2057,14 +1688,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -2152,17 +1775,6 @@
       "pins": 1
      },
      {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "DISP12",
       "pwr_a": [
        "J205"
@@ -2176,19 +1788,6 @@
       "prot_A": 1.7,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 2
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
      },
      {
       "net": "E2_DISP_IN_DAMP",
@@ -2300,28 +1899,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -2343,41 +1920,6 @@
        "J201",
        "U215",
        "U507"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
       ],
       "kind": "signal",
       "pins": 1
@@ -2419,15 +1961,14 @@
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -2531,28 +2072,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "SYS12",
       "pwr_a": [
        "C123",
@@ -2610,12 +2129,12 @@
      }
     ],
     "power_nets": 12,
-    "signal_pins": 24,
+    "signal_pins": 15,
     "power_pins": 32,
     "gnd_pins": 39,
     "guard_pins": 3,
-    "contacts_needed": 95,
-    "contacts_with_spare": 114,
+    "contacts_needed": 86,
+    "contacts_with_spare": 104,
     "contacts_available": 100,
     "meets_spare_rule": false,
     "fits": true,
@@ -3085,26 +2604,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 279,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3559.8,
-     "headers_raw_mm2": 1170.4,
+     "refs": 225,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 3223.2,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.707,
-     "demand_1_mm2": 5404.5,
-     "ratio_1": 1.414,
-     "demand_1.5_mm2": 7927.3,
-     "ratio_1.5": 0.964,
-     "demand_1.8_mm2": 9441.0,
-     "ratio_1.8": 0.809,
-     "fits_at_1_8": false
+     "raw_fill": 0.571,
+     "demand_1_mm2": 4360.0,
+     "ratio_1": 1.752,
+     "demand_1.5_mm2": 6360.6,
+     "ratio_1.5": 1.201,
+     "demand_1.8_mm2": 7560.9,
+     "ratio_1.8": 1.011,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5056.2,
+     "usable_mm2": 5906.6,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -3114,13 +2633,13 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.549,
+     "raw_fill": 0.47,
      "demand_1_mm2": 2777.4,
-     "ratio_1": 1.82,
+     "ratio_1": 2.127,
      "demand_1.5_mm2": 4166.2,
-     "ratio_1.5": 1.214,
+     "ratio_1.5": 1.418,
      "demand_1.8_mm2": 4999.4,
-     "ratio_1.8": 1.011,
+     "ratio_1.8": 1.181,
      "fits_at_1_8": true
     }
    },
@@ -3144,8 +2663,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -3265,14 +2784,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -3289,70 +2800,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -3366,14 +2813,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -3458,30 +2897,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -3617,28 +3032,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -3665,56 +3058,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -3814,28 +3171,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -3854,12 +3189,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -4271,26 +3606,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 279,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3559.8,
-     "headers_raw_mm2": 1170.4,
+     "refs": 225,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 3223.2,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.707,
-     "demand_1_mm2": 5404.5,
-     "ratio_1": 1.414,
-     "demand_1.5_mm2": 7927.3,
-     "ratio_1.5": 0.964,
-     "demand_1.8_mm2": 9441.0,
-     "ratio_1.8": 0.809,
-     "fits_at_1_8": false
+     "raw_fill": 0.571,
+     "demand_1_mm2": 4360.0,
+     "ratio_1": 1.752,
+     "demand_1.5_mm2": 6360.6,
+     "ratio_1.5": 1.201,
+     "demand_1.8_mm2": 7560.9,
+     "ratio_1.8": 1.011,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5056.2,
+     "usable_mm2": 5906.6,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -4300,13 +3635,13 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.549,
+     "raw_fill": 0.47,
      "demand_1_mm2": 2777.4,
-     "ratio_1": 1.82,
+     "ratio_1": 2.127,
      "demand_1.5_mm2": 4166.2,
-     "ratio_1.5": 1.214,
+     "ratio_1.5": 1.418,
      "demand_1.8_mm2": 4999.4,
-     "ratio_1.8": 1.011,
+     "ratio_1.8": 1.181,
      "fits_at_1_8": true
     }
    },
@@ -4330,8 +3665,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -4451,14 +3786,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -4475,70 +3802,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -4552,14 +3815,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -4644,30 +3899,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -4803,28 +4034,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -4851,56 +4060,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -5000,28 +4173,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -5040,12 +4191,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -5477,26 +4628,26 @@
     },
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 267,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3245.2,
-     "headers_raw_mm2": 1170.4,
+     "refs": 213,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 2908.5,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.666,
-     "demand_1_mm2": 5089.9,
-     "ratio_1": 1.501,
-     "demand_1.5_mm2": 7455.4,
-     "ratio_1.5": 1.025,
-     "demand_1.8_mm2": 8874.6,
-     "ratio_1.8": 0.861,
-     "fits_at_1_8": false
+     "raw_fill": 0.529,
+     "demand_1_mm2": 4045.4,
+     "ratio_1": 1.889,
+     "demand_1.5_mm2": 5888.6,
+     "ratio_1.5": 1.298,
+     "demand_1.8_mm2": 6994.6,
+     "ratio_1.8": 1.092,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5252.2,
+     "usable_mm2": 6102.6,
      "refs": 94,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -5506,13 +4657,13 @@
      "tps_raw_mm2": 37.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.414,
+     "raw_fill": 0.356,
      "demand_1_mm2": 2173.0,
-     "ratio_1": 2.417,
+     "ratio_1": 2.808,
      "demand_1.5_mm2": 3259.5,
-     "ratio_1.5": 1.611,
+     "ratio_1.5": 1.872,
      "demand_1.8_mm2": 3911.4,
-     "ratio_1.8": 1.343,
+     "ratio_1.8": 1.56,
      "fits_at_1_8": true
     }
    },
@@ -5557,8 +4708,8 @@
     "VBUS_RTLA",
     "VBUS_RTLB"
    ],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -5678,14 +4829,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -5702,70 +4845,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -5779,14 +4858,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -5866,30 +4937,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -6002,28 +5049,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -6043,41 +5068,6 @@
       "pwr_b": [
        "J201",
        "U215"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
       ],
       "kind": "signal",
       "pins": 1
@@ -6161,37 +5151,15 @@
       ],
       "kind": "signal",
       "pins": 1
-     },
-     {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
      }
     ],
     "power_nets": 6,
-    "signal_pins": 23,
+    "signal_pins": 14,
     "power_pins": 8,
     "gnd_pins": 12,
     "guard_pins": 3,
-    "contacts_needed": 43,
-    "contacts_with_spare": 52,
+    "contacts_needed": 34,
+    "contacts_with_spare": 41,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -6616,26 +5584,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 279,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3559.8,
-     "headers_raw_mm2": 1170.4,
+     "refs": 225,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 3223.2,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.707,
-     "demand_1_mm2": 5404.5,
-     "ratio_1": 1.414,
-     "demand_1.5_mm2": 7927.3,
-     "ratio_1.5": 0.964,
-     "demand_1.8_mm2": 9441.0,
-     "ratio_1.8": 0.809,
-     "fits_at_1_8": false
+     "raw_fill": 0.571,
+     "demand_1_mm2": 4360.0,
+     "ratio_1": 1.752,
+     "demand_1.5_mm2": 6360.6,
+     "ratio_1.5": 1.201,
+     "demand_1.8_mm2": 7560.9,
+     "ratio_1.8": 1.011,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5056.2,
+     "usable_mm2": 5906.6,
      "refs": 164,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -6645,14 +5613,14 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.575,
+     "raw_fill": 0.492,
      "demand_1_mm2": 2905.5,
-     "ratio_1": 1.74,
+     "ratio_1": 2.033,
      "demand_1.5_mm2": 4358.2,
-     "ratio_1.5": 1.16,
+     "ratio_1.5": 1.355,
      "demand_1.8_mm2": 5229.9,
-     "ratio_1.8": 0.967,
-     "fits_at_1_8": false
+     "ratio_1.8": 1.129,
+     "fits_at_1_8": true
     }
    },
    "windows_mm2": 1032.2,
@@ -6675,8 +5643,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -6796,14 +5764,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -6820,70 +5780,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -6897,14 +5793,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -7017,30 +5905,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -7180,28 +6044,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -7228,56 +6070,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -7377,28 +6183,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -7417,12 +6201,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -7862,26 +6646,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 279,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3559.8,
-     "headers_raw_mm2": 1170.4,
+     "refs": 225,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 3223.2,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.707,
-     "demand_1_mm2": 5404.5,
-     "ratio_1": 1.414,
-     "demand_1.5_mm2": 7927.3,
-     "ratio_1.5": 0.964,
-     "demand_1.8_mm2": 9441.0,
-     "ratio_1.8": 0.809,
-     "fits_at_1_8": false
+     "raw_fill": 0.571,
+     "demand_1_mm2": 4360.0,
+     "ratio_1": 1.752,
+     "demand_1.5_mm2": 6360.6,
+     "ratio_1.5": 1.201,
+     "demand_1.8_mm2": 7560.9,
+     "ratio_1.8": 1.011,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5056.2,
+     "usable_mm2": 5906.6,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -7891,13 +6675,13 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.549,
+     "raw_fill": 0.47,
      "demand_1_mm2": 2777.4,
-     "ratio_1": 1.82,
+     "ratio_1": 2.127,
      "demand_1.5_mm2": 4166.2,
-     "ratio_1.5": 1.214,
+     "ratio_1.5": 1.418,
      "demand_1.8_mm2": 4999.4,
-     "ratio_1.8": 1.011,
+     "ratio_1.8": 1.181,
      "fits_at_1_8": true
     }
    },
@@ -7921,8 +6705,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -8042,14 +6826,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -8066,70 +6842,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -8143,14 +6855,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -8235,30 +6939,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -8394,28 +7074,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -8442,56 +7100,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -8591,28 +7213,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -8631,12 +7231,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -9048,26 +7648,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 217,
-     "harness_headers": 15,
-     "tht_pads": 58,
-     "parts_raw_mm2": 2784.0,
-     "headers_raw_mm2": 1170.4,
+     "refs": 163,
+     "harness_headers": 5,
+     "tht_pads": 28,
+     "parts_raw_mm2": 2447.3,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 87.5,
+     "tps_raw_mm2": 43.8,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 414.5,
-     "raw_fill": 0.608,
-     "demand_1_mm2": 4646.8,
-     "ratio_1": 1.644,
-     "demand_1.5_mm2": 6762.9,
-     "ratio_1.5": 1.13,
-     "demand_1.8_mm2": 8032.6,
-     "ratio_1.8": 0.951,
-     "fits_at_1_8": false
+     "raw_fill": 0.471,
+     "demand_1_mm2": 3602.3,
+     "ratio_1": 2.121,
+     "demand_1.5_mm2": 5196.2,
+     "ratio_1.5": 1.47,
+     "demand_1.8_mm2": 6152.5,
+     "ratio_1.8": 1.242,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5382.9,
+     "usable_mm2": 6233.4,
      "refs": 198,
      "harness_headers": 6,
      "tht_pads": 82,
@@ -9077,13 +7677,13 @@
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.667,
+     "raw_fill": 0.576,
      "demand_1_mm2": 3590.8,
-     "ratio_1": 1.499,
+     "ratio_1": 1.736,
      "demand_1.5_mm2": 5386.2,
-     "ratio_1.5": 0.999,
+     "ratio_1.5": 1.157,
      "demand_1.8_mm2": 6463.4,
-     "ratio_1.8": 0.833,
+     "ratio_1.8": 0.964,
      "fits_at_1_8": false
     }
    },
@@ -9103,8 +7703,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 126.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 63.0,
    "pwr_a_keepouts_mm2": 414.5,
    "pwr_a_keepout_items": [
     {
@@ -9220,14 +7820,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -9244,70 +7836,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -9321,14 +7849,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -9399,17 +7919,6 @@
       "pins": 1
      },
      {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "DISP12",
       "pwr_a": [
        "J205"
@@ -9423,19 +7932,6 @@
       "prot_A": 1.7,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 2
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
      },
      {
       "net": "E2_LNA4_SHUNT",
@@ -9535,28 +8031,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -9578,41 +8052,6 @@
        "J201",
        "U215",
        "U507"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
       ],
       "kind": "signal",
       "pins": 1
@@ -9642,15 +8081,14 @@
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -9754,28 +8192,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "SYS12",
       "pwr_a": [
        "C123",
@@ -9833,14 +8249,14 @@
      }
     ],
     "power_nets": 12,
-    "signal_pins": 21,
+    "signal_pins": 12,
     "power_pins": 32,
     "gnd_pins": 36,
     "guard_pins": 3,
-    "contacts_needed": 89,
-    "contacts_with_spare": 107,
+    "contacts_needed": 80,
+    "contacts_with_spare": 96,
     "contacts_available": 100,
-    "meets_spare_rule": false,
+    "meets_spare_rule": true,
     "fits": true,
     "errors": []
    },
@@ -10312,26 +8728,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 279,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3559.8,
-     "headers_raw_mm2": 1170.4,
+     "refs": 225,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 3223.2,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.707,
-     "demand_1_mm2": 5404.5,
-     "ratio_1": 1.414,
-     "demand_1.5_mm2": 7927.3,
-     "ratio_1.5": 0.964,
-     "demand_1.8_mm2": 9441.0,
-     "ratio_1.8": 0.809,
-     "fits_at_1_8": false
+     "raw_fill": 0.571,
+     "demand_1_mm2": 4360.0,
+     "ratio_1": 1.752,
+     "demand_1.5_mm2": 6360.6,
+     "ratio_1.5": 1.201,
+     "demand_1.8_mm2": 7560.9,
+     "ratio_1.8": 1.011,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5404.6,
+     "usable_mm2": 6255.0,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -10341,13 +8757,13 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.514,
+     "raw_fill": 0.444,
      "demand_1_mm2": 2777.4,
-     "ratio_1": 1.946,
+     "ratio_1": 2.252,
      "demand_1.5_mm2": 4166.2,
-     "ratio_1.5": 1.297,
+     "ratio_1.5": 1.501,
      "demand_1.8_mm2": 4999.4,
-     "ratio_1.8": 1.081,
+     "ratio_1.8": 1.251,
      "fits_at_1_8": true
     }
    },
@@ -10368,8 +8784,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -10489,14 +8905,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -10513,70 +8921,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -10590,14 +8934,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -10682,30 +9018,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -10841,28 +9153,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -10889,56 +9179,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -11038,28 +9292,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -11078,12 +9310,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -11515,26 +9747,26 @@
     },
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 267,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3245.2,
-     "headers_raw_mm2": 1170.4,
+     "refs": 213,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 2908.5,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.666,
-     "demand_1_mm2": 5089.9,
-     "ratio_1": 1.501,
-     "demand_1.5_mm2": 7455.4,
-     "ratio_1.5": 1.025,
-     "demand_1.8_mm2": 8874.6,
-     "ratio_1.8": 0.861,
-     "fits_at_1_8": false
+     "raw_fill": 0.529,
+     "demand_1_mm2": 4045.4,
+     "ratio_1": 1.889,
+     "demand_1.5_mm2": 5888.6,
+     "ratio_1.5": 1.298,
+     "demand_1.8_mm2": 6994.6,
+     "ratio_1.8": 1.092,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5404.6,
+     "usable_mm2": 6255.0,
      "refs": 94,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -11544,13 +9776,13 @@
      "tps_raw_mm2": 37.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.402,
+     "raw_fill": 0.347,
      "demand_1_mm2": 2173.0,
-     "ratio_1": 2.487,
+     "ratio_1": 2.879,
      "demand_1.5_mm2": 3259.5,
-     "ratio_1.5": 1.658,
+     "ratio_1.5": 1.919,
      "demand_1.8_mm2": 3911.4,
-     "ratio_1.8": 1.382,
+     "ratio_1.8": 1.599,
      "fits_at_1_8": true
     }
    },
@@ -11593,8 +9825,8 @@
     "VBUS_RTLA",
     "VBUS_RTLB"
    ],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -11714,14 +9946,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -11738,70 +9962,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -11815,14 +9975,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -11902,30 +10054,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -12038,28 +10166,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -12079,41 +10185,6 @@
       "pwr_b": [
        "J201",
        "U215"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
       ],
       "kind": "signal",
       "pins": 1
@@ -12197,37 +10268,15 @@
       ],
       "kind": "signal",
       "pins": 1
-     },
-     {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
      }
     ],
     "power_nets": 6,
-    "signal_pins": 23,
+    "signal_pins": 14,
     "power_pins": 8,
     "gnd_pins": 12,
     "guard_pins": 3,
-    "contacts_needed": 43,
-    "contacts_with_spare": 52,
+    "contacts_needed": 34,
+    "contacts_with_spare": 41,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -12652,26 +10701,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 279,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3559.8,
-     "headers_raw_mm2": 1170.4,
+     "refs": 225,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 3223.2,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 159.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.703,
-     "demand_1_mm2": 5373.5,
-     "ratio_1": 1.422,
-     "demand_1.5_mm2": 7880.8,
-     "ratio_1.5": 0.97,
-     "demand_1.8_mm2": 9385.2,
-     "ratio_1.8": 0.814,
-     "fits_at_1_8": false
+     "raw_fill": 0.567,
+     "demand_1_mm2": 4329.0,
+     "ratio_1": 1.765,
+     "demand_1.5_mm2": 6314.1,
+     "ratio_1.5": 1.21,
+     "demand_1.8_mm2": 7505.1,
+     "ratio_1.8": 1.018,
+     "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5056.2,
+     "usable_mm2": 5906.6,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -12681,13 +10730,13 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.543,
+     "raw_fill": 0.465,
      "demand_1_mm2": 2746.4,
-     "ratio_1": 1.841,
+     "ratio_1": 2.151,
      "demand_1.5_mm2": 4119.7,
-     "ratio_1.5": 1.227,
+     "ratio_1.5": 1.434,
      "demand_1.8_mm2": 4943.6,
-     "ratio_1.8": 1.023,
+     "ratio_1.8": 1.195,
      "fits_at_1_8": true
     }
    },
@@ -12711,8 +10760,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -12832,14 +10881,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -12856,70 +10897,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -12933,14 +10910,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -13025,30 +10994,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -13184,28 +11129,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -13232,56 +11155,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -13381,28 +11268,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -13421,12 +11286,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 80,
     "meets_spare_rule": true,
     "fits": true,
@@ -13838,26 +11703,26 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 279,
-     "harness_headers": 17,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3559.8,
-     "headers_raw_mm2": 1817.7,
+     "refs": 225,
+     "harness_headers": 7,
+     "tht_pads": 36,
+     "parts_raw_mm2": 3223.2,
+     "headers_raw_mm2": 1153.7,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.792,
-     "demand_1_mm2": 6051.7,
-     "ratio_1": 1.263,
-     "demand_1.5_mm2": 8898.2,
-     "ratio_1.5": 0.859,
-     "demand_1.8_mm2": 10606.0,
-     "ratio_1.8": 0.72,
+     "raw_fill": 0.655,
+     "demand_1_mm2": 5007.3,
+     "ratio_1": 1.526,
+     "demand_1.5_mm2": 7331.5,
+     "ratio_1.5": 1.042,
+     "demand_1.8_mm2": 8726.0,
+     "ratio_1.8": 0.876,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4332.4,
+     "usable_mm2": 5182.8,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -13867,14 +11732,14 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.641,
+     "raw_fill": 0.536,
      "demand_1_mm2": 2777.4,
-     "ratio_1": 1.56,
+     "ratio_1": 1.866,
      "demand_1.5_mm2": 4166.2,
-     "ratio_1.5": 1.04,
+     "ratio_1.5": 1.244,
      "demand_1.8_mm2": 4999.4,
-     "ratio_1.8": 0.867,
-     "fits_at_1_8": false
+     "ratio_1.8": 1.037,
+     "fits_at_1_8": true
     }
    },
    "windows_mm2": 1032.2,
@@ -13900,8 +11765,8 @@
     "J313"
    ],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 2096.1,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 1308.6,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
@@ -14021,14 +11886,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -14045,70 +11902,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -14122,14 +11915,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     },
     {
@@ -14230,30 +12015,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -14389,28 +12150,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -14437,56 +12176,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -14586,28 +12289,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -14626,12 +12307,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -15042,46 +12723,46 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 185,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3063.6,
-     "headers_raw_mm2": 1170.4,
+     "refs": 152,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 2823.7,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.595,
-     "demand_1_mm2": 4549.4,
-     "ratio_1": 1.679,
-     "demand_1.5_mm2": 6824.1,
-     "ratio_1.5": 1.12,
-     "demand_1.8_mm2": 8188.9,
-     "ratio_1.8": 0.933,
-     "fits_at_1_8": false
+     "raw_fill": 0.471,
+     "demand_1_mm2": 3601.7,
+     "ratio_1": 2.121,
+     "demand_1.5_mm2": 5402.5,
+     "ratio_1.5": 1.414,
+     "demand_1.8_mm2": 6483.0,
+     "ratio_1.8": 1.179,
+     "fits_at_1_8": true
     },
     "PWR_A_BOTTOM": {
-     "usable_mm2": 3227.5,
-     "refs": 94,
+     "usable_mm2": 3688.8,
+     "refs": 73,
      "harness_headers": 0,
      "tht_pads": 0,
-     "parts_raw_mm2": 496.2,
+     "parts_raw_mm2": 399.5,
      "headers_raw_mm2": 0.0,
      "b2b_raw_mm2": 0.0,
      "tps_raw_mm2": 0.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.154,
-     "demand_1_mm2": 496.2,
-     "ratio_1": 6.504,
-     "demand_1.5_mm2": 744.3,
-     "ratio_1.5": 4.336,
-     "demand_1.8_mm2": 893.1,
-     "ratio_1.8": 3.614,
+     "raw_fill": 0.108,
+     "demand_1_mm2": 399.5,
+     "ratio_1": 9.234,
+     "demand_1.5_mm2": 599.2,
+     "ratio_1.5": 6.156,
+     "demand_1.8_mm2": 719.0,
+     "ratio_1.8": 5.13,
      "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5056.2,
+     "usable_mm2": 5906.6,
      "refs": 135,
      "harness_headers": 5,
      "tht_pads": 74,
@@ -15091,13 +12772,13 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.519,
+     "raw_fill": 0.445,
      "demand_1_mm2": 2626.3,
-     "ratio_1": 1.925,
+     "ratio_1": 2.249,
      "demand_1.5_mm2": 3939.5,
-     "ratio_1.5": 1.283,
+     "ratio_1.5": 1.499,
      "demand_1.8_mm2": 4727.3,
-     "ratio_1.8": 1.07,
+     "ratio_1.8": 1.249,
      "fits_at_1_8": true
     }
    },
@@ -15121,8 +12802,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 0.0,
    "pwr_a_keepout_items": [
     {
@@ -15235,14 +12916,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -15259,70 +12932,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -15336,14 +12945,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -15428,30 +13029,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -15587,28 +13164,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -15635,56 +13190,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -15784,28 +13303,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -15824,12 +13321,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -15965,14 +13462,14 @@
      "height_overrides_to_pwr_a": [],
      "b2b": {
       "power_pins": 13,
-      "signal_pins": 25,
+      "signal_pins": 16,
       "gnd_pins": 17,
-      "contacts_needed": 55,
-      "contacts_with_spare": 66,
+      "contacts_needed": 46,
+      "contacts_with_spare": 56,
       "meets_spare_rule": true,
       "fits": true,
       "errors": [],
-      "crossing_nets": 33
+      "crossing_nets": 24
      }
     }
    },
@@ -16006,10 +13503,10 @@
     "bond_zones_mm2": 3272.0,
     "hole_keepouts_mm2": 269.4,
     "outline_minus_holes_and_bond_mm2": 4368.6,
-    "top_tht_fields_plus_margin_mm2": 1141.2,
-    "top_tht_items": 23,
+    "top_tht_fields_plus_margin_mm2": 679.9,
+    "top_tht_items": 13,
     "tht_margin_mm": 1.0,
-    "refs": 94,
+    "refs": 73,
     "chip_refs_left_on_top": [
      "C121",
      "C122",
@@ -16437,46 +13934,46 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 185,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3063.6,
-     "headers_raw_mm2": 1170.4,
+     "refs": 152,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 2823.7,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 332.6,
-     "raw_fill": 0.639,
-     "demand_1_mm2": 4882.0,
-     "ratio_1": 1.565,
-     "demand_1.5_mm2": 7156.7,
-     "ratio_1.5": 1.068,
-     "demand_1.8_mm2": 8521.5,
-     "ratio_1.8": 0.897,
-     "fits_at_1_8": false
+     "raw_fill": 0.515,
+     "demand_1_mm2": 3934.3,
+     "ratio_1": 1.942,
+     "demand_1.5_mm2": 5735.1,
+     "ratio_1.5": 1.332,
+     "demand_1.8_mm2": 6815.6,
+     "ratio_1.8": 1.121,
+     "fits_at_1_8": true
     },
     "PWR_A_BOTTOM": {
-     "usable_mm2": 3227.5,
-     "refs": 94,
+     "usable_mm2": 3688.8,
+     "refs": 73,
      "harness_headers": 0,
      "tht_pads": 0,
-     "parts_raw_mm2": 496.2,
+     "parts_raw_mm2": 399.5,
      "headers_raw_mm2": 0.0,
      "b2b_raw_mm2": 0.0,
      "tps_raw_mm2": 0.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.154,
-     "demand_1_mm2": 496.2,
-     "ratio_1": 6.504,
-     "demand_1.5_mm2": 744.3,
-     "ratio_1.5": 4.336,
-     "demand_1.8_mm2": 893.1,
-     "ratio_1.8": 3.614,
+     "raw_fill": 0.108,
+     "demand_1_mm2": 399.5,
+     "ratio_1": 9.234,
+     "demand_1.5_mm2": 599.2,
+     "ratio_1.5": 6.156,
+     "demand_1.8_mm2": 719.0,
+     "ratio_1.8": 5.13,
      "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5056.2,
+     "usable_mm2": 5906.6,
      "refs": 135,
      "harness_headers": 5,
      "tht_pads": 74,
@@ -16486,13 +13983,13 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.519,
+     "raw_fill": 0.445,
      "demand_1_mm2": 2626.3,
-     "ratio_1": 1.925,
+     "ratio_1": 2.249,
      "demand_1.5_mm2": 3939.5,
-     "ratio_1.5": 1.283,
+     "ratio_1.5": 1.499,
      "demand_1.8_mm2": 4727.3,
-     "ratio_1.8": 1.07,
+     "ratio_1.8": 1.249,
      "fits_at_1_8": true
     }
    },
@@ -16516,8 +14013,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 332.6,
    "pwr_a_keepout_items": [
     {
@@ -16630,14 +14127,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -16654,70 +14143,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -16731,14 +14156,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -16823,30 +14240,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -16982,28 +14375,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -17030,56 +14401,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -17179,28 +14514,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -17219,12 +14532,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -17360,14 +14673,14 @@
      "height_overrides_to_pwr_a": [],
      "b2b": {
       "power_pins": 13,
-      "signal_pins": 25,
+      "signal_pins": 16,
       "gnd_pins": 17,
-      "contacts_needed": 55,
-      "contacts_with_spare": 66,
+      "contacts_needed": 46,
+      "contacts_with_spare": 56,
       "meets_spare_rule": true,
       "fits": true,
       "errors": [],
-      "crossing_nets": 33
+      "crossing_nets": 24
      }
     }
    },
@@ -17401,10 +14714,10 @@
     "bond_zones_mm2": 3272.0,
     "hole_keepouts_mm2": 269.4,
     "outline_minus_holes_and_bond_mm2": 4368.6,
-    "top_tht_fields_plus_margin_mm2": 1141.2,
-    "top_tht_items": 23,
+    "top_tht_fields_plus_margin_mm2": 679.9,
+    "top_tht_items": 13,
     "tht_margin_mm": 1.0,
-    "refs": 94,
+    "refs": 73,
     "chip_refs_left_on_top": [
      "C121",
      "C122",
@@ -17832,46 +15145,46 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 185,
-     "harness_headers": 15,
-     "tht_pads": 66,
-     "parts_raw_mm2": 3063.6,
-     "headers_raw_mm2": 1170.4,
+     "refs": 152,
+     "harness_headers": 5,
+     "tht_pads": 36,
+     "parts_raw_mm2": 2823.7,
+     "headers_raw_mm2": 506.4,
      "b2b_raw_mm2": 190.3,
-     "tps_raw_mm2": 125.0,
+     "tps_raw_mm2": 81.2,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.595,
-     "demand_1_mm2": 4549.4,
-     "ratio_1": 1.679,
-     "demand_1.5_mm2": 6824.1,
-     "ratio_1.5": 1.12,
-     "demand_1.8_mm2": 8188.9,
-     "ratio_1.8": 0.933,
-     "fits_at_1_8": false
+     "raw_fill": 0.471,
+     "demand_1_mm2": 3601.7,
+     "ratio_1": 2.121,
+     "demand_1.5_mm2": 5402.5,
+     "ratio_1.5": 1.414,
+     "demand_1.8_mm2": 6483.0,
+     "ratio_1.8": 1.179,
+     "fits_at_1_8": true
     },
     "PWR_A_BOTTOM": {
-     "usable_mm2": 3227.5,
-     "refs": 94,
+     "usable_mm2": 3688.8,
+     "refs": 73,
      "harness_headers": 0,
      "tht_pads": 0,
-     "parts_raw_mm2": 496.2,
+     "parts_raw_mm2": 399.5,
      "headers_raw_mm2": 0.0,
      "b2b_raw_mm2": 0.0,
      "tps_raw_mm2": 0.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.154,
-     "demand_1_mm2": 496.2,
-     "ratio_1": 6.504,
-     "demand_1.5_mm2": 744.3,
-     "ratio_1.5": 4.336,
-     "demand_1.8_mm2": 893.1,
-     "ratio_1.8": 3.614,
+     "raw_fill": 0.108,
+     "demand_1_mm2": 399.5,
+     "ratio_1": 9.234,
+     "demand_1.5_mm2": 599.2,
+     "ratio_1.5": 6.156,
+     "demand_1.8_mm2": 719.0,
+     "ratio_1.8": 5.13,
      "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 5056.2,
+     "usable_mm2": 5906.6,
      "refs": 163,
      "harness_headers": 5,
      "tht_pads": 74,
@@ -17881,13 +15194,13 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.545,
+     "raw_fill": 0.466,
      "demand_1_mm2": 2754.3,
-     "ratio_1": 1.836,
+     "ratio_1": 2.144,
      "demand_1.5_mm2": 4131.5,
-     "ratio_1.5": 1.224,
+     "ratio_1.5": 1.43,
      "demand_1.8_mm2": 4957.8,
-     "ratio_1.8": 1.02,
+     "ratio_1.8": 1.191,
      "fits_at_1_8": true
     }
    },
@@ -17911,8 +15224,8 @@
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
-   "edge_strips_mm2": 1372.3,
-   "tp_probe_windows_mm2": 180.0,
+   "edge_strips_mm2": 584.8,
+   "tp_probe_windows_mm2": 117.0,
    "pwr_a_keepouts_mm2": 0.0,
    "pwr_a_keepout_items": [
     {
@@ -18025,14 +15338,6 @@
      ]
     },
     {
-     "item": "J105",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      2.7,
-      8.8
-     ]
-    },
-    {
      "item": "J106",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -18049,70 +15354,6 @@
      ]
     },
     {
-     "item": "J108",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      6.9,
-      8.8
-     ]
-    },
-    {
-     "item": "J109",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J110",
-     "tht_pads": 5,
-     "pin_field_mm": [
-      9.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J111",
-     "tht_pads": 3,
-     "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J112",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J113",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J114",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
-     "item": "J115",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      10.27,
-      3.6
-     ]
-    },
-    {
      "item": "J205",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -18126,14 +15367,6 @@
      "pin_field_mm": [
       16.02,
       5.2
-     ]
-    },
-    {
-     "item": "J507",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      7.2,
-      1.75
      ]
     }
    ],
@@ -18246,30 +15479,6 @@
       "kind": "power",
       "prot_A": 0.153,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-       "R122"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-       "C114",
-       "R111",
-       "R112"
-      ],
-      "pwr_b": [
-       "J202"
-      ],
-      "kind": "signal",
       "pins": 1
      },
      {
@@ -18409,28 +15618,6 @@
       "pins": 1
      },
      {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "I2C2_SCL",
       "pwr_a": [
        "U216"
@@ -18457,56 +15644,20 @@
       "pins": 1
      },
      {
-      "net": "IMU_RX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "IMU_TX",
-      "pwr_a": [
-       "J507",
-       "U551"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-       "J110"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "LAB5",
       "pwr_a": [
        "C112",
        "C223",
        "C508",
        "C509",
-       "C552",
        "F104",
        "J104",
+       "J106",
        "J206",
        "L101",
        "L205",
        "R110",
-       "U503",
-       "U553"
+       "U503"
       ],
       "pwr_b": [
        "C248",
@@ -18606,28 +15757,6 @@
       "pins": 1
      },
      {
-      "net": "PICO_OFF",
-      "pwr_a": [
-       "D102"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-       "D103"
-      ],
-      "pwr_b": [
-       "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-     },
-     {
       "net": "VBUS_HFP",
       "pwr_a": [
        "C511",
@@ -18646,12 +15775,12 @@
      }
     ],
     "power_nets": 8,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "power_pins": 13,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -18787,14 +15916,14 @@
      "height_overrides_to_pwr_a": [],
      "b2b": {
       "power_pins": 13,
-      "signal_pins": 25,
+      "signal_pins": 16,
       "gnd_pins": 17,
-      "contacts_needed": 55,
-      "contacts_with_spare": 66,
+      "contacts_needed": 46,
+      "contacts_with_spare": 56,
       "meets_spare_rule": true,
       "fits": true,
       "errors": [],
-      "crossing_nets": 33
+      "crossing_nets": 24
      }
     }
    },
@@ -18828,10 +15957,10 @@
     "bond_zones_mm2": 3272.0,
     "hole_keepouts_mm2": 269.4,
     "outline_minus_holes_and_bond_mm2": 4368.6,
-    "top_tht_fields_plus_margin_mm2": 1141.2,
-    "top_tht_items": 23,
+    "top_tht_fields_plus_margin_mm2": 679.9,
+    "top_tht_items": 13,
     "tht_margin_mm": 1.0,
-    "refs": 94,
+    "refs": 73,
     "chip_refs_left_on_top": [
      "C121",
      "C122",

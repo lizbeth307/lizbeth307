@@ -368,6 +368,11 @@ POWER_TRUNKS = {
 BOTTOM_ROW = ['J107', 'J111', 'J105', 'J109', 'J106', 'J110', 'J108', 'J112']
 BOTTOM_ROW_TURNED = ['J109', 'J111', 'J112']
 BOTTOM_ROW_START = 8.2  # x of the first courtyard (right of the H1 keepout), the draft value
+# W2 F2C-FALLBACK (gate G1 fired, fallback F2-C; build/15): J105 and J108-J112 left the PWR-A bottom row (J105/J108/J109/J112 are
+# PWR-C parts, J110/J111 left the graph with S06/S07). The two headers that stay, J107 and J106 (the PWR-A ends of harness S42,
+# W-C1), keep the courtyard x of the placement of record instead of being packed together, so that their PWR-B edge strips
+# (placement-study-shrink2.json pwr_b_cutouts) stay where the routed PWR-B copper already leaves them free: design choice.
+F2C_ROW_X = {'J107': 8.2, 'J106': 45.2}
 
 # Top regions of the SHRINK-2 layout (free rectangles after the anchors, J208, the scripted copper and the hole keepouts;
 # design choice). The band keeps the draft regions, re-cut around the E1_SW rise and the turned bottom row; the leg is
@@ -515,11 +520,17 @@ def live_status(pspec):
     return {row['id']: row for row in rows}
 
 
-def bottom_row_anchors(draft_by_ref, fp_geo_of, row_end_max, margin):
+def bottom_row_refs(draft_by_ref, pwr_a_refs):
+    """The headers of BOTTOM_ROW that are still PWR-A refs (W2 F2C-FALLBACK: J107 and J106)."""
+    return [r for r in BOTTOM_ROW if r in pwr_a_refs and r in draft_by_ref]
+
+
+def bottom_row_anchors(draft_by_ref, fp_geo_of, row_end_max, margin, pwr_a_refs):
     """Anchors of the bottom-edge row: each header keeps its courtyard bottom on the edge line of the draft and its order;
     the turned ones rotate by 90 degrees; the row is packed from BOTTOM_ROW_START with GAP between courtyards."""
     out, x = {}, BOTTOM_ROW_START
-    for ref in BOTTOM_ROW:
+    for ref in bottom_row_refs(draft_by_ref, pwr_a_refs):
+        x = F2C_ROW_X.get(ref, x)
         old = draft_by_ref[ref]['anchor']
         geo = fp_geo_of(ref)
         rot = (float(old.get('rotation', 0)) + (90 if ref in BOTTOM_ROW_TURNED else 0)) % 360
@@ -619,7 +630,7 @@ def build():
     edge0 = contract['edge_zones'][0]
     row_end_max = edge0.get('row_end_max')
     margin_w = pspec['parameters']['window_margin']
-    row_anchors, row_end = (bottom_row_anchors(by_ref, fp_geo_of, row_end_max, margin_w) if row_end_max is not None
+    row_anchors, row_end = (bottom_row_anchors(by_ref, fp_geo_of, row_end_max, margin_w, keep_set) if row_end_max is not None
                             else ({}, None))
     for ref in keep:
         old = by_ref.get(ref)
@@ -961,7 +972,8 @@ def build():
         out['exit_edges'] = {r: 'bottom' for r in FFC_PLACES}
     out['turn_whatif'] = [r for r in TURN_WHATIF if r not in row_anchors]
     if row_anchors:
-        out['bottom_row'] = {'refs': BOTTOM_ROW, 'turned': BOTTOM_ROW_TURNED, 'start_x': BOTTOM_ROW_START,
+        out['bottom_row'] = {'refs': bottom_row_refs(by_ref, keep_set), 'turned': [r for r in BOTTOM_ROW_TURNED if r in row_anchors],
+                             'start_x': BOTTOM_ROW_START, 'kept_x': {r: x for r, x in F2C_ROW_X.items() if r in row_anchors},
                              'end_x_with_margin': row_end, 'row_end_max': row_end_max,
                              'rule': 'MECH-7 contract edge_zones[0] row_end_max: the courtyards of J105-J112 + window_margin '
                                      'end at x <= row_end_max, so that the PWR-A bottom edge under the PWR-B PH 9-pin span '

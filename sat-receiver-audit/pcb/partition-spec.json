@@ -6,21 +6,20 @@
   "chosen": "shrink2",
   "fits_at_1_8": false,
   "ratios_1_8": {
-   "PWR_A": 0.933,
-   "PWR_A_BOTTOM": 3.614,
-   "PWR_B": 1.07,
+   "PWR_A": 1.179,
+   "PWR_A_BOTTOM": 5.13,
+   "PWR_B": 1.249,
    "CTRL_top": 1.117,
    "CTRL_bottom": 0.908
   },
   "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2, two-sided since W2 AREA-2), PWR-B (mezzanine on the PWR-A footprint, Samtec LSHM-150-02.5 pair J208/J209, 5.00 mm stack), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a) (the draft PWR-B group list, with the LNB OVP comparator U220 kept on PWR-A next to U212) with the SHRINK-2 content (candidate shrink2, W2 AREA-2): TI converters instead of the Pololu modules, SMD F103/F201, low-profile 5 V dampers, 2520 inductors, 1210 C111/C112, C109 deleted, C506 as three 16SVPG47M on PWR-B, merged PWR-B headers, a two-sided PWR-A and rule H-TRIM. Computed (MODEL ESTIMATE, pcb/partition-budget.json; W2 AREA-REC, 13.11.2026, on the graph with the GR-5A/GR-5B parts, 11 of the 12 planned changes in the graph, J204+J207-PHD still pending): PWR-A top raw fill 0.595 (185 refs, demand 4549.4 mm2 with the W2 GR-ZONE2-SMD POSCAP parts, 4545.1 before; the reserved blocks are gone; W2 AREA-2 with the changes pending: 0.588, 150 refs, 4494 mm2 incl. 461.7 mm2 of reserved blocks), bottom 0.154 (94 refs; 0.157 before W2 GR-ZONE2-SMD), PWR-B 0.519 (135 refs; 0.553 before the W2 PWR-L6-PLACE top-entry J203/J506, 0.572 before W2 GR-ZONE2-SMD); B2B 55 contacts, 66 with the spare, of 100. The 0.60 placement trigger of F2 and F2-C is met with 35.0 mm2 to spare (39.3 mm2 before W2 GR-ZONE2-SMD, 90.4 mm2 with the reserved blocks); the 1.8 planning factor is not (ratios_1_8), so the placement fill and the route are the record (next_decision). CTRL is unchanged (two-sided; the bottom headers without a height-valid variant are decision.ctrl_headers_unresolved)",
   "why_a": "(a) and (b) leave almost the same total shortfall (about 7.3k mm2 at 1.8), but (a) needs 53 B2B contacts against 81, moves no fused high-current internal net (E2_J21_FUSED) across the boards, and keeps the J21/display/Lime/AUX12 eFuses with their fuse holders and bulk capacitors; moving more groups to PWR-B overfills PWR-B, whose usable area is set by the windows. W2 AREA-REC, 13.11.2026, on the graph after GR-5A/GR-5B: (a) needs 55 contacts (66 with the spare) against 95 (114) of (b), so (b) misses the spare rule of the 100-contact pair (b2b.spare_rule); the total shortfall at 1.8 is again almost the same (a 2677, b 2623 mm2); E2_J21_FUSED no longer crosses in (b), because the NANO2 F201 (2.94 mm, heights.by_mpn) now goes to PWR-B with its group, so that reason no longer separates them; the contact count and the spare rule still do",
   "b2b_contacts_quoted": {
-   "a": 55,
-   "b": 95,
-   "shrink2": 55
+   "a": 46,
+   "b": 86,
+   "shrink2": 46
   },
   "shortfall_1_8_mm2": {
-   "PWR_A": 548,
    "CTRL_bottom": 471
   },
   "shortfall_note": "demand at 1.8 minus usable area of the chosen candidate shrink2 (pcb/partition-budget.json); the 1.8 factor is a planning ratio, not the trigger: the trigger is the placement fill 0.60 (fallbacks F2, F2-C)",
@@ -52,15 +51,16 @@
   "recomputed_w2_pwrl6p3": "W2 PWR-L6-PLACE third pass, 13.11.2026 (judge decision ESC-JUDGE, option M): J203 (S02-PWR-SIG-2) is the JST PHD top entry B20B-PHDSS(LF)(SN) and J506 (SL3-PWR-PH) the JST PH top entry B9B-PH-K-S(LF)(SN), the vertical exit pair of PWR-B edge zone 2 (heights.by_mpn 6.5 / 6.0 mm, header_families.PHD_top h 6.5 body, h_mated 8.8; the courtyards of the vendored KiCad 10.0.7 footprints). ratios_1_8, shortfall_1_8_mm2 and the fallback ratios are recomputed. Old -> new (MODEL ESTIMATE): J203 courtyard 242.74 -> 137.40 mm2, J506 179.74 -> 114.95 mm2; shrink2 PWR-B headers 1018.9 -> 848.8 mm2, demand at 1.0 2796.4 -> 2626.3 mm2, raw fill 0.553 -> 0.519, ratio_1_8 1.004 -> 1.07; the same -170.1 mm2 in every candidate with the PWR-B headers (a 0.583 -> 0.549, s2f3 0.578 -> 0.545, f3 0.608 -> 0.575, s2nt 0.553 -> 0.519); PWR-A (top 0.595, ratio 0.933, 35.0 mm2 below 0.60; bottom 0.154), CTRL and the B2B (55 contacts, 66 with the spare) are unchanged. pwr_heights_above_hA lists the two top-entry headers on PWR-B (mated 8.8 / 8.0 mm; they stand in the zone-2 height zone of the contract, free to the front wall, not under PWR-B). Decisions checked on the new numbers, none flips: the SHRINK-2 pair holds (PWR-A top 0.595 <= 0.60, PWR-B 0.519 <= 0.60), F2-C did not fire (PWR-A unchanged), no evaluated candidate fits at 1.8 (PWR-A below 1 in all), D-ENV unchanged",
   "placement_study": {
    "candidate": "shrink2",
-   "top_fill_all_refs": 0.5949,
-   "top_placed": "186/186",
-   "bottom_fill": 0.1385,
-   "bottom_placed": "94/94",
-   "bottom_usable_mm2": 3582.2,
+   "top_fill_all_refs": 0.4714,
+   "top_placed": "153/153",
+   "bottom_fill": 0.1065,
+   "bottom_placed": "73/73",
+   "bottom_usable_mm2": 3752.1,
    "tolerance": 0.01,
    "src": "build/kicad/boards/PWR_A/placement-study-shrink2.json fill (build/kicad/boards/PWR_A/placement_study.py, the board_gen planner, on the graph with the GR-5A/GR-5B parts; fill_all_refs 0.5949, 280 of 280 refs placed; the 186 top refs are the 185 of this tool plus the B2B half J208, which this tool counts as b2b_raw; courtyard sum 4545.1 mm2 as here; bottom 94 of 94 at 0.1385 on 3582.2 mm2; read 13.11.2026 at wip/w2-pwrtools 82c3cef8, W2 AREA-REC); MODEL",
    "note": "the tool's bottom usable area 3227.5 mm2 (3163.4 mm2 before W2 GR-ZONE2-SMD removed three THT pin fields) is a lower bound (top THT pin fields summed without positions, so their overlap with the bond zones is counted twice); the placement raster with positions gives 3582.2 mm2. Until W2 AREA-REC this record held the orchestrator's scratch re-run of 2026-11-11 with the reserved blocks (top 0.5882, 150/150; bottom 0.132, 94/94 on 3758.6 mm2; wip/w2-pwra1 80d92c28, not committed), which the GR-5A parts superseded"
-  }
+  },
+  "recomputed_w2_f2c": "W2 F2C-FALLBACK, 22.11.2026: gate G1 fired for PWR-A on 6 layers (build/15 W2 PWR-L6-ROUTE: 42 open power-class links after the fresh route and 2 ratchets), so fallback F2-C is adopted: the 60 refs of partition.domain_override_pwr_c are PWR-C parts (pcb/prepare.py domain PWR_ENTRY) and leave the PWR-A/PWR-B budget (pcb/partition_budget.py PWR_C_DOMAINS; current_boards_raw PWR_C: 53 parts 1078.7 mm2 + the #2813 U106 539.2 mm2 = 1618.0 mm2 raw); the E1 groups 'AON і UV', 'Інгібування заряду', 'Аварійний ADC', 'Головний вимикач', 'Захист USB-PD', 'Контрольні точки', 'Сервісний заряд' and the E5 group 'Сервіс і зовнішні шини' left partition.PWR_A_groups, the 21 PWR-C chip refs left candidates shrink2/s2nt/s2f3 pwr_a_bottom.refs, test_points.expected_pwr 28 -> 21, and the 9 S02 signals of the PWR-C groups no longer cross the B2B. ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, b2b.budget_planned, placement_study and the fallback ratios are recomputed. Old -> new for shrink2 (MODEL ESTIMATE): PWR-A top raw fill 0.595 -> 0.471, demand at 1.0 4549.4 -> 3601.7 mm2, ratio_1_8 0.933 -> 1.179 (no shortfall at 1.8 any more: 548 -> 0 mm2); PWR-A bottom 0.154 -> 0.108; PWR-B usable 5056.2 -> 5906.6 mm2 (17 cut-outs fewer: 47 -> 30 in placement-study-shrink2.json pwr_b_cutouts), raw fill 0.519 -> 0.445, ratio_1_8 1.07 -> 1.249; B2B 33 -> 24 crossing nets, 55 -> 46 contacts, 66 -> 56 with the spare (a 55 -> 46, b 95 -> 86); placement study top 0.5949 -> 0.4714 (153 of 153 top refs), bottom 0.1385 -> 0.1065 (73 of 73). CTRL is unchanged (top 1.117, bottom 0.908, shortfall 471 mm2), so shrink2 still does not fit at 1.8 as a whole. Decisions checked on the new numbers: the SHRINK-2 pair on the LSHM-150 holds (both boards farther below 0.60), the B2B budget holds (56 <= 100), F2-C is this package's change (adopted after gate G1, not on area), F2-ENV stays unstarted without the owner, D-ENV unchanged; no other recorded decision flips."
  },
  "parameters": {
   "hA": 4.5,
@@ -246,8 +246,8 @@
   "group_domain": {
    "E1/Контрольні точки": "PWR_MAIN"
   },
-  "expected_pwr": 28,
-  "expected_pwr_why": "pcb/partition_budget.py stops when it finds another number of PWR test points (E1, E2, E5): a changed TP set is checked and this count updated, never lost silently"
+  "expected_pwr": 21,
+  "expected_pwr_why": "pcb/partition_budget.py stops when it finds another number of PWR test points (E1, E2, E5): a changed TP set is checked and this count updated, never lost silently; W2 F2C-FALLBACK: 28 -> 21, TP103-TP108 and TP503 are PWR-C parts (domain PWR_ENTRY, partition.domain_override_pwr_c), outside the PWR-A/PWR-B budget"
  },
  "header_families": {
   "PH_top": {
@@ -813,12 +813,12 @@
   ],
   "guard_rule": "W2 B2B review R2 (07.11.2026): the pads are 0.30 mm wide at 0.50 mm pitch, so neighbouring pads of a row are 0.20 mm apart (b2b.footprint, Samtec Rev G), and a solder bridge between them is the likely defect at this pitch. So no contact at a supply-rail potential has a neighbour in its row other than GND. (1) Rail contacts are the power contacts, the sense/supply taps and the rail nodes: crossing nets that a resistor below rail_node_max_ohm joins to a net other than GND, such as the 0.22 ohm damper nodes (BIAS_CH1_DAMP: R232 from BIAS_CH1, C235 47 uF to GND; pcb/prepare.py low_ohm_links). They sit on the odd row of J208, each followed by its GND return on the same row (rail, GND, rail, GND, ...; the return is the next contact, 0.5 mm away), in the order rail_order (until 11.11.2026 a checkerboard over both rows with the return in the same column; both keep GND beside every rail contact). (2) One GND guard contact follows the rail block in its row; the rails of rail_row_even (LAB5) start the even row the same way, and the signal nets follow them on the even row. (3) Each declared sense pair (at the potential of its rail) takes one column at the end of the strip, with a GND guard column before it. A bridge from a rail contact can then only short that rail to GND, where its protection (tools/assembly_data.py NET_CURRENT) acts; it cannot join two rails, a rail and a sense line, or a rail and a signal line. rail_order puts 3V3_Q6A first and the 12-13.8 V rails of the net names (the BONI13V8 tap, LNB13V2, AUX12 and BONI13V8_PORT) last; between them, for the PWR-B board of record, the rails that leave to the west (LNA4V5, the LNA bias dampers, E2_SB_DAMP, VBUS_RTLB_DAMP, VBUS_LABPORT), to the top edge (VBUS_HFP) and to the right (LAB5_RLY, BIAS_CH4_DAMP); the four LAB5 contacts sit on the even row (rail_row_even). The damper nodes also get their AC return beside them: the 47 uF capacitor sits on PWR-A and the 0.22 ohm resistor on PWR-B. Cost for (a): 10 GND contacts more than one per power contact (6 rail nodes, 1 tap, 3 guards). Design value; signal nets still neighbour signal nets",
   "budget_planned": {
-   "crossing_nets": 33,
+   "crossing_nets": 24,
    "power_pins": 13,
-   "signal_pins": 25,
+   "signal_pins": 16,
    "gnd_pins": 17,
-   "contacts_needed": 55,
-   "contacts_with_spare": 66
+   "contacts_needed": 46,
+   "contacts_with_spare": 56
   },
   "budget_note": "W2 AREA-2: budget_chosen is the B2B of the chosen candidate on the graph of record (pcb/generated/b2b-nets.json totals, checked by pcb/tests/test_b2b_map.py); budget_planned is the same candidate with its planned SHRINK-2 changes: the six damper rail nodes (BIAS_CH1-4_DAMP, VBUS_RTLB_DAMP, E2_SB_DAMP) and VBUS_LABPORT stop crossing once GR-5B moves C235/C239/C243/C247/C251/C298 and C506 to PWR-B; then pcb/prepare.py and pcb/write_b2b_graph.py rewrite the contact map and budget_chosen takes the new totals, in the GR-5B swap commit (partition.domain_override_note). W2 AREA-REC, 13.11.2026: GR-5B made that swap (4a9117cc), so budget_chosen (graph of record) and budget_planned (J204+J207-PHD still pending, no B2B effect) are the same: 33 nets, 55 contacts, 66 with the spare W2 F2C-FALLBACK, 22.11.2026: the 9 S02 signals of the PWR-C groups left the B2B, so budget_chosen is 24 nets, 46 contacts, 56 with the spare (pcb/generated/b2b-nets.json totals); budget_planned keeps the SHRINK-2 expectation of the two-board stack."
  },
@@ -1937,10 +1937,6 @@
    "pwr_a_bottom": {
     "rule": "PWR-A is two-sided (W2 AREA-2): these 94 chip R/C (0603 R and C, 0805/1206 R) of E1_CTRL, E1_USBPD, J21, DISP, LIME, AUX12, INA3221 #2, HFP, E5 service, SYS12 (R108/R109), LNB, Boni and LNA4V5 go on the bottom side; they sit outside the thermal_bond zones and outside every top THT pin field + tht_margin, over plate pockets with polyimide (M-07 extended), and must fit h_room_mm. The list is the SHRINK-2 study set; chip refs that are new later (GR-5A converter passives) stay on top until a later regeneration lists them",
     "refs": [
-     "C105",
-     "C106",
-     "C114",
-     "C115",
      "C201",
      "C211",
      "C214",
@@ -1954,25 +1950,9 @@
      "C508",
      "C510",
      "C513",
-     "C552",
-     "C553",
      "C2913",
-     "R103",
-     "R104",
-     "R105",
-     "R106",
-     "R107",
      "R108",
      "R109",
-     "R111",
-     "R112",
-     "R113",
-     "R114",
-     "R115",
-     "R116",
-     "R121",
-     "R122",
-     "R123",
      "R201",
      "R202",
      "R203",
@@ -2027,7 +2007,6 @@
      "R509",
      "R510",
      "R513",
-     "R553",
      "R2903",
      "R2913",
      "R2923"
@@ -2361,10 +2340,6 @@
    "pwr_a_bottom": {
     "rule": "PWR-A is two-sided (W2 AREA-2): these 94 chip R/C (0603 R and C, 0805/1206 R) of E1_CTRL, E1_USBPD, J21, DISP, LIME, AUX12, INA3221 #2, HFP, E5 service, SYS12 (R108/R109), LNB, Boni and LNA4V5 go on the bottom side; they sit outside the thermal_bond zones and outside every top THT pin field + tht_margin, over plate pockets with polyimide (M-07 extended), and must fit h_room_mm. The list is the SHRINK-2 study set; chip refs that are new later (GR-5A converter passives) stay on top until a later regeneration lists them",
     "refs": [
-     "C105",
-     "C106",
-     "C114",
-     "C115",
      "C201",
      "C211",
      "C214",
@@ -2378,25 +2353,9 @@
      "C508",
      "C510",
      "C513",
-     "C552",
-     "C553",
      "C2913",
-     "R103",
-     "R104",
-     "R105",
-     "R106",
-     "R107",
      "R108",
      "R109",
-     "R111",
-     "R112",
-     "R113",
-     "R114",
-     "R115",
-     "R116",
-     "R121",
-     "R122",
-     "R123",
      "R201",
      "R202",
      "R203",
@@ -2451,7 +2410,6 @@
      "R509",
      "R510",
      "R513",
-     "R553",
      "R2903",
      "R2913",
      "R2923"
@@ -2785,10 +2743,6 @@
    "pwr_a_bottom": {
     "rule": "PWR-A is two-sided (W2 AREA-2): these 94 chip R/C (0603 R and C, 0805/1206 R) of E1_CTRL, E1_USBPD, J21, DISP, LIME, AUX12, INA3221 #2, HFP, E5 service, SYS12 (R108/R109), LNB, Boni and LNA4V5 go on the bottom side; they sit outside the thermal_bond zones and outside every top THT pin field + tht_margin, over plate pockets with polyimide (M-07 extended), and must fit h_room_mm. The list is the SHRINK-2 study set; chip refs that are new later (GR-5A converter passives) stay on top until a later regeneration lists them",
     "refs": [
-     "C105",
-     "C106",
-     "C114",
-     "C115",
      "C201",
      "C211",
      "C214",
@@ -2802,25 +2756,9 @@
      "C508",
      "C510",
      "C513",
-     "C552",
-     "C553",
      "C2913",
-     "R103",
-     "R104",
-     "R105",
-     "R106",
-     "R107",
      "R108",
      "R109",
-     "R111",
-     "R112",
-     "R113",
-     "R114",
-     "R115",
-     "R116",
-     "R121",
-     "R122",
-     "R123",
      "R201",
      "R202",
      "R203",
@@ -2875,7 +2813,6 @@
      "R509",
      "R510",
      "R513",
-     "R553",
      "R2903",
      "R2913",
      "R2923"
@@ -2920,39 +2857,11 @@
   "PWR_A_groups": [
    {
     "sheet": "E1",
-    "group": "AON і UV"
-   },
-   {
-    "sheet": "E1",
     "group": "LAB5"
    },
    {
     "sheet": "E1",
     "group": "SYS12"
-   },
-   {
-    "sheet": "E1",
-    "group": "Інгібування заряду"
-   },
-   {
-    "sheet": "E1",
-    "group": "Аварійний ADC"
-   },
-   {
-    "sheet": "E1",
-    "group": "Головний вимикач"
-   },
-   {
-    "sheet": "E1",
-    "group": "Захист USB-PD"
-   },
-   {
-    "sheet": "E1",
-    "group": "Контрольні точки"
-   },
-   {
-    "sheet": "E1",
-    "group": "Сервісний заряд"
    },
    {
     "sheet": "E2",
@@ -2993,10 +2902,6 @@
    {
     "sheet": "E5",
     "group": "VBUS HF+ з демпфованим LC"
-   },
-   {
-    "sheet": "E5",
-    "group": "Сервіс і зовнішні шини"
    }
   ],
   "PWR_B_groups": [
@@ -3113,7 +3018,7 @@
    "U551",
    "U553"
   ],
-  "domain_override_pwr_c_note": "W2 F2C-FALLBACK (gate G1 fired for PWR-A on 6 layers, build/15 W2 PWR-L6-ROUTE): fallback F2-C of the W2 PWR-L6 synthesis, ported from the probe origin/wip/w2-pwrj-f2c 23337c1a. These refs (E1 groups AON і UV, Головний вимикач, Лічильник заряду, Інгібування заряду, Аварійний ADC, Захист USB-PD, Сервісний заряд, Контрольні точки TP103-TP108; E5 Сервіс і зовнішні шини U551/U553/C552/C553/R553/TP503; the harness ends J105, J108, J109, J112-J115, J507 and the new J118-J120) sit on PWR-C, the front-slab board in front of the battery tray; pcb/prepare.py gives them domain PWR_ENTRY (board PWR_C). The probe had 52 refs with pilot placeholders; the INA228 U102 with its shunt R101 and C101/C102, the Pololu #2813 U106 and the harness ends J118/J119 (S42, W-C1) and J120 (S02C, W-C2) are graph refs since GR-F2C (build/kicad/boards/PWR_C/f2c_graph.py); J110/J111 (S06/S07) left the graph.",
+  "domain_override_pwr_c_note": "W2 F2C-FALLBACK (gate G1 fired for PWR-A on 6 layers, build/15 W2 PWR-L6-ROUTE): fallback F2-C of the W2 PWR-L6 synthesis, ported from the probe origin/wip/w2-pwrj-f2c 23337c1a. These refs (E1 groups AON і UV, Головний вимикач, Лічильник заряду, Інгібування заряду, Аварійний ADC, Захист USB-PD, Сервісний заряд, Контрольні точки TP103-TP108; E5 Сервіс і зовнішні шини U551/U553/C552/C553/R553/TP503; the harness ends J105, J108, J109, J112-J115, J507 and the new J118-J120) sit on PWR-C, the front-slab board in front of the battery tray; pcb/prepare.py gives them domain PWR_ENTRY (board PWR_C). The probe had 52 refs with pilot placeholders; the INA228 U102 with its shunt R101 and C101/C102, the Pololu #2813 U106 and the harness ends J118/J119 (S42, W-C1) and J120 (S02C, W-C2) are graph refs since GR-F2C (build/kicad/boards/PWR_C/f2c_graph.py); J110/J111 (S06/S07) left the graph. Their E1/E5 groups that left partition.PWR_A_groups with them (W2 F2C-FALLBACK, decision.recomputed_w2_f2c): 'AON і UV', 'Інгібування заряду', 'Аварійний ADC', 'Головний вимикач', 'Захист USB-PD', 'Контрольні точки' (TP101/TP102 stay on PWR-A with their test-point domain), 'Сервісний заряд', 'Сервіс і зовнішні шини'.",
   "domain_override_note": "W2 AREA-2: domain_override_pwr_a is what pcb/prepare.py reads now (the radials EEU-FR1H470 C235/C239/C243/C247/C251/C298 and 16SVPC150M C506 are taller than hB in the graph). Removing them here before their swap would put 11.2 mm parts on PWR-B and change the J208/J209 contact map. domain_override_pwr_a_planned is the SHRINK-2 list. In the commit that swaps them to 16SVPG47M (coupled to its refreeze), GR-5B (1) sets domain_override_pwr_a to it, (2) runs pcb/prepare.py and pcb/write_b2b_graph.py (J208/J209 of design/E2.json), (3) sets b2b.budget_chosen to the new pcb/generated/b2b-nets.json totals (b2b.budget_planned is the model expectation), (4) updates the layout of (a) quoted in b2b.pin_map_rule and the rail-node and pin_map_rule assertions of pcb/tests/test_b2b_map.py (the six damper rail nodes stop crossing), and (5) runs the protocol chain and pcb/partition_budget.py. Those hunks of this file and of pcb/tests/test_b2b_map.py are outside the GR-5B paths of the SHRINK-2 plan, so the orchestrator grants them (W2 AREA-2 review R1); pcb/partition_budget.py --check reports the mismatch until then"
  },
  "fallbacks": [
@@ -3133,15 +3038,15 @@
    "cost": "integration_plan step 8: +10-12 h (PCB-REAR board, MECH envelope step, GR-3 partition update)",
    "ratios_1_8": {
     "c": {
-     "PWR_A": 0.809,
-     "PWR_B": 1.011,
+     "PWR_A": 1.011,
+     "PWR_B": 1.181,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "f2b": {
      "PCB_REAR": 1.435,
-     "PWR_A": 0.861,
-     "PWR_B": 1.343,
+     "PWR_A": 1.092,
+     "PWR_B": 1.56,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     }
@@ -3174,15 +3079,15 @@
    "verdict": "at 1.8 the CTRL top already fits without F3 (candidate a 1.117, f3 1.124) and F3 does not close the bottom (0.908 -> 0.946); against the 0.60 placement trigger it is the other way round: F3 brings the CTRL bottom raw fill from 0.612 to 0.587 and leaves the top at 0.614 (computed, candidates a and f3). It leaves decision.ctrl_headers_unresolved as they are. On SHRINK-2 (candidate s2f3) the MCP23017 group lifts the PWR-B raw fill from 0.519 to 0.545 with S02 unchanged, 0.055 below the 0.60 trigger (W2 PWR-L6-PLACE third pass, top-entry J203/J506; 0.553 to 0.578 at W2 GR-ZONE2-SMD, 0.572 to 0.598 before) (the SHRINK-2 decision estimated about 0.62), so F3 on PWR-B needs the S02 FFC (not adopted: no mating FFC pair established, W2 READS-P) or a PWR-B placement check (PCB-PWRB-2) first. Apply only if PCB-CTRL shows the fill",
    "ratios_1_8": {
     "f3": {
-     "PWR_A": 0.809,
-     "PWR_B": 0.967,
+     "PWR_A": 1.011,
+     "PWR_B": 1.129,
      "CTRL_top": 1.124,
      "CTRL_bottom": 0.946
     },
     "s2f3": {
-     "PWR_A": 0.933,
-     "PWR_A_BOTTOM": 3.614,
-     "PWR_B": 1.02,
+     "PWR_A": 1.179,
+     "PWR_A_BOTTOM": 5.13,
+     "PWR_B": 1.191,
      "CTRL_top": 1.124,
      "CTRL_bottom": 0.946
     }
@@ -3199,14 +3104,14 @@
    "verdict": "even w2 stays short (PWR-A 0.874, PWR-B 0.611): replacing the radials alone does not close the budget; no MPN is implied; W2 AREA-REC: on the graph after GR-5A/GR-5B w2 is PWR-A 0.952, PWR-B 0.771 at 1.8, still short",
    "ratios_1_8": {
     "w1": {
-     "PWR_A": 0.809,
-     "PWR_B": 1.011,
+     "PWR_A": 1.011,
+     "PWR_B": 1.181,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "w2": {
-     "PWR_A": 0.951,
-     "PWR_B": 0.833,
+     "PWR_A": 1.242,
+     "PWR_B": 0.964,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     }
@@ -3225,27 +3130,27 @@
    "verdict": "s8 lifts PWR-B from 0.427 to 0.560 for dz_mezz 5.1; only s8c brings PWR-B above 1.0 (1.012), and PWR-A stays at 0.755 there: the PWR-A shortfall needs the owner's area or parts decision; a80 gains 0.003 / 0.006 but misses the spare rule for (a) (83 > 80 under b2b.guard_rule, W2 B2B review R2); am costs PWR-A 0.074 and PWR-B 0.182. W2 AREA-REC, 13.11.2026, on the graph after GR-5A/GR-5B: s8 lifts PWR-B of (a) from 0.922 to 0.999; s8c gives PWR-B 1.257 and PWR-A 0.855; a80 gains 0.005 / 0.010 and now meets the spare rule for (a) (66 <= 80), so only the binding LAYERS6 decision and the board-of-record map keep the LSHM-150 (b2b.spare_rule); am costs PWR-A 0.089 and PWR-B 0.136",
    "ratios_1_8": {
     "s8": {
-     "PWR_A": 0.809,
-     "PWR_B": 1.081,
+     "PWR_A": 1.011,
+     "PWR_B": 1.251,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "s8c": {
      "PCB_REAR": 1.435,
-     "PWR_A": 0.861,
-     "PWR_B": 1.382,
+     "PWR_A": 1.092,
+     "PWR_B": 1.599,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "a80": {
-     "PWR_A": 0.814,
-     "PWR_B": 1.023,
+     "PWR_A": 1.018,
+     "PWR_B": 1.195,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "am": {
-     "PWR_A": 0.72,
-     "PWR_B": 0.867,
+     "PWR_A": 0.876,
+     "PWR_B": 1.037,
      "CTRL_top": 1.205,
      "CTRL_bottom": 1.175
     }
@@ -3265,13 +3170,14 @@
    "verdict": "not fired on area (MODEL): shrink2 top raw fill 0.595 <= 0.60 (W2 AREA-REC, with the GR-5A parts; 0.588 with the reserved blocks), placement fill 0.5949 with 280 of 280 refs placed (build/kicad/boards/PWR_A/placement-study-shrink2.json); the route condition is gate G1 of the LAYERS6 lane (PWR-L6-ROUTE) and is not judged here; W2 AREA-REC: the right-angle Micro-Fit 43650 option of rule R-HDR-MATED (mechanical/generated/fit-report.json, W2 MECH-7; J104 +69.0, J114, J115 and J205 +44.1 mm2 each, MODEL) no longer fits the 35.0 mm2 margin (39.3 mm2 at W2 AREA-REC), so any one of those swaps on the PWR-A top would fire this trigger; such a header needs a place outside the display, or F2-C",
    "ratios_1_8": {
     "s2nt": {
-     "PWR_A": 0.897,
-     "PWR_A_BOTTOM": 3.614,
-     "PWR_B": 1.07,
+     "PWR_A": 1.121,
+     "PWR_A_BOTTOM": 5.13,
+     "PWR_B": 1.249,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     }
-   }
+   },
+   "adopted": "W2 F2C-FALLBACK, 22.11.2026: adopted after gate G1 of the LAYERS6 lane fired for PWR-A (build/15 W2 PWR-L6-ROUTE, W2 PWR-L6 synthesis fallback 2): PWR-C is the board of partition.domain_override_pwr_c (pcb/boards/PWR_C.json, build/kicad/boards/PWR_C/); to_fix_before_use is done in the graph (LAB5 feed of C552/U553 over W-C1 S42, F103 NANO2 2.69 mm, the #2813 U106 soldered flush on its land, INA228 U102 and the shunt R101 as board parts); decision.recomputed_w2_f2c has the numbers"
   },
   {
    "id": "F2-ENV",
