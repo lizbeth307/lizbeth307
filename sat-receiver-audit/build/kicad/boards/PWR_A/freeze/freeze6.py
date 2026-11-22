@@ -349,6 +349,49 @@ def drc_drops(m, drc):
     return out
 
 
+def pad_escapes(m, drc, width):
+    """W2 PWR-L6-ROUTE: a pad that KiCad's DRC of the run names in a connection_width error together with a router track (the
+    track left the pad over its corner, route run 45019150709: U203.1, U109.4, J208.1, U202.7, U213.20) gets a stub of its net's
+    width straight out along the pad's long axis, away from the footprint centre, before the completion (src 'escape': kept while
+    its link is open, pruned at the end if the link fails). The piece of the run is already removed by drc_drops. Power-class and
+    never-routed nets are left alone. Returns [{net, pad, width, to}] (board mm)."""
+    out = []
+    for v in drc.get('violations', []):
+        if v.get('type') != 'connection_width' or v.get('severity') != 'error':
+            continue
+        descs = [d.get('description', '') for d in v.get('items', [])]
+        pads = [re.match(r'Pad (\S+) \[([^\]]+)\] of (\S+)', d) for d in descs]
+        pads = [p for p in pads if p]
+        if not pads or not any(d.startswith('Track [') for d in descs):
+            continue
+        num, net, ref = pads[0].group(1), pads[0].group(2), pads[0].group(3)
+        if net in NEVER or width(net) > 0.15 + 1e-9:
+            continue
+        pad = next((i for i in m.items if i.alive and i.kind == 'pad' and i.src == 'pad' and i.ref == ref and i.pad == num), None)
+        if pad is None or not any(l in ('F.Cu', 'B.Cu') for l in pad.layers):
+            continue
+        lay = next(l for l in ('F.Cu', 'B.Cu') if l in pad.layers)
+        own = [i.at for i in m.items if i.alive and i.kind == 'pad' and i.src == 'pad' and i.ref == ref]
+        cx, cy = sum(p[0] for p in own) / len(own), sum(p[1] for p in own) / len(own)
+        x0, y0, x1, y1 = pad.shape.bbox
+        horiz = (x1 - x0) >= (y1 - y0)
+        d = (pad.at[0] - cx) if horiz else (pad.at[1] - cy)
+        if abs(d) < 1e-6:
+            continue
+        sign = 1.0 if d > 0 else -1.0
+        half = ((x1 - x0) if horiz else (y1 - y0)) / 2
+        w = width(net)
+        for extra in (0.3, 0.45, 0.6, 0.8, 1.0):
+            L = half + extra
+            e = (round(pad.at[0] + sign * L, 4), pad.at[1]) if horiz else (pad.at[0], round(pad.at[1] + sign * L, 4))
+            mg, _why = m.track_margin(net, lay, w, pad.at, e)
+            if mg >= 0.005:
+                m.add_track(net, lay, w, pad.at, e, src='escape')
+                out.append({'net': net, 'pad': f'{ref}.{num}', 'width': w, 'to': B(e)})
+                break
+    return out
+
+
 def drop_failing_completion(m):
     """W2 PWR-TOOLS (port of W2 PWRJ F2ENV feb76b8f, PWR_A): completion copper that the final exact check finds too close
     is dropped with its dangling rest (the joins it made stay open). Returns the nets touched."""
@@ -437,6 +480,8 @@ def main(argv=None):
     ap.add_argument('--order', choices=('class', 'short'), default='class', help='completion order of the open nets')
     ap.add_argument('--rip-wide', action='store_true',
                     help='W2 PWR-L6-ROUTE: a rip-up search in the 25 mm box when the 8 mm box has none (fin.connect_all rip_wide)')
+    ap.add_argument('--rip-new', action='store_true',
+                    help='W2 PWR-L6-ROUTE: the rip-up may also move completion copper of other nets (queued again)')
     ap.add_argument('--spec-zones', action='store_true',
                     help='W2 PWR-L6-ROUTE: model the scripted pours with clearance_mm by their spec outlines (spec_zones)')
     ap.add_argument('--leave-open', action='append', default=[], metavar='NET',
@@ -522,6 +567,10 @@ def main(argv=None):
             m.remove(it)
             viol.add(it.net)
     viol |= {d['net'] for d in drops if d['removed']}
+    escapes = pad_escapes(m, drc, width)
+    for e in escapes:
+        print(f'  {e["net"]}: {e["pad"]} escape stub {e["width"]} mm to {e["to"]} (connection_width in the run)')
+        viol.add(e['net'])
     for poly, own in czones:  # W2 PWR-L6-SCRIPT zone rule: no foreign router copper on F.Cu / In1.Cu over a converter zone
         for it in m.items:
             if not (it.alive and it.src == 'router') or it.net in own or it.net in NEVER:
@@ -556,7 +605,7 @@ def main(argv=None):
         m.keepouts[:] = base_keepouts + zone_keepouts(net)
         ok, ripped, nk = fz.connect_all(net, width=width(net), layers=layers(net), allow_rip=not args.no_rip,
                                         neck=(width(net), NECK_MAX, neck_ok) if layers(net) == OUTER else None,
-                                        rip_wide=args.rip_wide)
+                                        rip_wide=args.rip_wide, soft=('router', 'new') if args.rip_new else ('router',))
         necks += nk
         if not ok and layers(net) == OUTER:  # low-current branches of a power net (exemption policy: TP, R >= 100 ohm, sense pins)
             bk = branch_kind(GRAPH)
@@ -618,7 +667,7 @@ def main(argv=None):
                        'plane layer) by build/kicad/boards/PWR_A/freeze/freeze6.py'),
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed)),
                    **({'scripted_open_in_run': bad_never, 'scripted_split_in_model': scripted_split} if bad_never else {})},
-        'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops, 'merged_split_remainders': len(merged),
+        'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops, 'merged_split_remainders': len(merged), 'pad_escapes': escapes,
                   **({'spec_zones': {'modelled': zones_modelled[0], 'fill_items_removed': zones_modelled[1]}} if zones_modelled else {}),
                   'final_check_dropped': {'items': dropped[0], 'nets': dropped[1]}, 'left_open': left_open},
         'necks': sorted(necks, key=lambda r: (r['ref'], r['pad'], r['to'])),
