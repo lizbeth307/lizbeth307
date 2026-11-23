@@ -7,9 +7,9 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "106eb2fbe9fd2672f22663baf664ee5ff9b757b994781a6384b69f645c136520",
+    "spec_sha256": "738f19feaa367fafcb0f97be7675fabd9f397ff444fd0a2a7c76506329de77a8",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
-    "lab5_budget_sha256": "d813a2892b7fdcb2d5bd78bbfe8c13c6bdf5809030db2c4e4528e1a114470974"
+    "lab5_budget_sha256": "90c53cbda601792847c6b5a572b734d931ed14ed1fbb83608f7c433d52a343d5"
   },
   "drc": null,
   "zones": [
@@ -194,14 +194,14 @@
         "L205.1"
       ],
       "mohm": {
-        "20C": 9.5305,
-        "50C": 10.6542
+        "20C": 9.5334,
+        "50C": 10.6573
       },
       "joined": true,
       "network": {
-        "tracks": 75,
-        "vias": 34,
-        "pads": 17,
+        "tracks": 87,
+        "vias": 41,
+        "pads": 16,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
           "PE-LAB5-J208.10",
@@ -223,14 +223,14 @@
         "J208.14"
       ],
       "mohm": {
-        "20C": 16.4499,
-        "50C": 18.3894
+        "20C": 16.4528,
+        "50C": 18.3926
       },
       "joined": true,
       "network": {
-        "tracks": 75,
-        "vias": 34,
-        "pads": 17,
+        "tracks": 87,
+        "vias": 41,
+        "pads": 16,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
           "PE-LAB5-J208.10",
@@ -286,17 +286,17 @@
     },
     "B_total_20C": {
       "U210.1": {
-        "pwr_a_mohm": 16.4499,
+        "pwr_a_mohm": 16.4528,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 3.3152,
-        "total_mohm": 23.5151,
+        "total_mohm": 23.518,
         "within_10_mohm": false
       },
       "U221.1": {
-        "pwr_a_mohm": 16.4499,
+        "pwr_a_mohm": 16.4528,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 4.3004,
-        "total_mohm": 24.5003,
+        "total_mohm": 24.5032,
         "within_10_mohm": false
       }
     }
@@ -305,48 +305,48 @@
     "label": "MODEL: copper of the drawn (planned or routed) board, IACS copper at 20 degC; E1-05 and its bench stay OPEN",
     "A": {
       "what": "L101.2 -> L205.1 (the LT3045 pair feed)",
-      "mohm_20c": 9.5305,
+      "mohm_20c": 9.5334,
       "limit_mohm": 10.0,
       "met": true
     },
     "B": {
       "what": "L101.2 -> J208 / J209 -> each TPS2553 input on PWR-B at the worst-case concurrent currents (NET_CURRENT protective column), segment by segment",
       "total_current_a": 2.363,
-      "pwr_a_mohm_20c": 16.4499,
+      "pwr_a_mohm_20c": 16.4528,
       "per_destination": {
         "U210.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 38.8711,
+          "pwr_a_mv": 38.878,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 5.1207,
-          "total_mv": 52.8531,
+          "total_mv": 52.86,
           "limit_mv": 32.0,
           "met": false
         },
         "U221.1": {
           "current_a": 0.192,
-          "pwr_a_mv": 38.8711,
+          "pwr_a_mv": 38.878,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 6.0135,
-          "total_mv": 53.7459,
+          "total_mv": 53.7528,
           "limit_mv": 32.0,
           "met": false
         },
         "U501.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 38.8711,
+          "pwr_a_mv": 38.878,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 11.4422,
-          "total_mv": 59.1746,
+          "total_mv": 59.1815,
           "limit_mv": 32.0,
           "met": false
         },
         "U502.1": {
           "current_a": 0.825,
-          "pwr_a_mv": 38.8711,
+          "pwr_a_mv": 38.878,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 8.5056,
-          "total_mv": 56.238,
+          "total_mv": 56.2449,
           "limit_mv": 32.0,
           "met": false
         }
@@ -520,9 +520,10 @@
     "rows": [
       {
         "check": "TVS D201.K on J21 at class width within 5.0 mm",
-        "ok": true,
-        "detail": "1 class-width (PWR3A 0.95 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 2.875 mm from the cathode pad",
-        "label": "MODEL"
+        "ok": false,
+        "detail": "1 class-width (PWR3A 0.95 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 5.1711 mm from the cathode pad",
+        "label": "MODEL",
+        "open": "OPEN for PWR-L6-ROUTE: the routed trunk must pass within the limit, or the part moves before the final route"
       }
     ],
     "rule": "synthesis PWR-L6-SCRIPT: TVS joined at class width within 5.0 mm (MODEL)"
@@ -530,7 +531,7 @@
   "class_widths": {
     "label": "MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to their outlines)",
     "findings": [],
-    "tracks_checked": 2716,
+    "tracks_checked": 3174,
     "exemption_policy": {
       "branch_roles": [
         "test_point",
@@ -548,7 +549,7 @@
         "converter_power_pin"
       ],
       "neck_rule": "at least the narrow side of its pad wide, no longer than its long side",
-      "branch_exempt": 6,
+      "branch_exempt": 7,
       "neck_exempt": 1,
       "pin_entry_pours": {
         "declared": 17,
@@ -988,7 +989,7 @@
         }
       ]
     },
-    "branch_rows": 6,
+    "branch_rows": 7,
     "neck_rows": 1,
     "widths_mm": {
       "BATT": 1.6,
@@ -999,11 +1000,17 @@
   },
   "fill": {
     "label": "MODEL: KiCad courtyard boxes of the top footprints over the outline less the 7 hole keep-outs",
-    "top_courtyards_mm2": 3601.668,
+    "top_courtyards_mm2": 3578.658,
     "usable_mm2": 7640.6084,
-    "fill": 0.4714
+    "fill": 0.4684
   },
   "findings": [],
-  "unverified": [],
+  "unverified": [
+    {
+      "check": "tvs",
+      "item": "TVS D201.K on J21 at class width within 5.0 mm",
+      "reason": "OPEN for PWR-L6-ROUTE: the routed trunk must pass within the limit, or the part moves before the final route; 1 class-width (PWR3A 0.95 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 5.1711 mm from the cathode pad"
+    }
+  ],
   "result": "NO_FINDINGS"
 }

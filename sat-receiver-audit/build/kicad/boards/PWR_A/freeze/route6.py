@@ -212,7 +212,7 @@ def main(argv=None, mb=None):
             if not ok and a.tp_max:
                 okt, brt = fz.branch_pass(net, lambda r, net=net: r is not None and r.startswith('TP') and branch_ok(r, net),
                                           lambda refs: F6.BRANCH_W['TP'], lambda refs: F6.OUTER if a.tp_outer else F6.ROUTING, a.tp_max,
-                                          target_ok=target)
+                                          target_ok=F6.tp_target(m, width(net)))
                 branches += brt
                 ok = ok or okt
         if vips:
@@ -299,6 +299,37 @@ def drop_short_pieces(m, F6, F):
     pattern) are removed and their net pruned, until none is left. Returns the number removed."""
     n = 0
     for _ in range(5):
+        found = F6.short_pieces(m)
+        if not found:
+            break
+        keys = {(f[1], tuple(f[2]), f[3]) for f in found}
+        # W2 PWR-A closure round 2, combine pass: a short last piece of a path whose free end lies inside target copper (a branch
+        # or link that met a track between its corners) is absorbed into the piece before it (one straight track from that piece's
+        # start to the free end, after the exact clearance check), so the path keeps its join instead of being pruned
+        for t in list(m.items):
+            if not (t.alive and t.kind == 'track' and t.src in ('router', 'new', 'escape') and math.dist(t.a, t.b) < t.width):
+                continue
+            lay = t.layers[0]
+            for free, join in ((t.a, t.b), (t.b, t.a)):
+                if (t.net, tuple(F6.B(free)), lay) not in keys:
+                    continue
+                prev = [u for u in m.near(lay, (join[0] - 0.01, join[1] - 0.01, join[0] + 0.01, join[1] + 0.01))
+                        if u.alive and u.kind == 'track' and u.id != t.id and u.net == t.net and u.src in ('router', 'new', 'escape')
+                        and min(math.dist(join, u.a), math.dist(join, u.b)) < 1e-6]
+                if len(prev) != 1 or any(o.kind == 'via' and o.alive and o.net == t.net and o.shape.dist(*join) <= 1e-6
+                                         for o in m.near(lay, (join[0] - 0.01, join[1] - 0.01, join[0] + 0.01, join[1] + 0.01))):
+                    continue
+                u = prev[0]
+                start = u.a if math.dist(join, u.b) < 1e-6 else u.b
+                if math.dist(start, free) < u.width:
+                    continue
+                if m.track_margin(t.net, lay, u.width, start, free, ignore={t.id, u.id})[0] < 0:
+                    continue
+                m.remove(t)
+                m.remove(u)
+                m.add_track(t.net, lay, u.width, start, free, locked=False, src=u.src)
+                n += 1
+                break
         found = F6.short_pieces(m)
         if not found:
             break

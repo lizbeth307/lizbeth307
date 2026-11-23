@@ -718,6 +718,29 @@ def dump(doc):
     return '\n'.join(lines) + '\n'
 
 
+TP_TARGET_GAP = 1.0  # mm: a long test-point branch ends at least this far off a connector land (tp_target)
+
+
+def tp_target(m, w):
+    """Target of the long test-point branch (--tp-max; W2 PWR-A closure round 2, combine pass): class-width copper of the net that
+    is not on a connector land. pcb/check_boards.py walks a branch from its test point to the first class-width copper; a branch that
+    reaches a pad of a role the exemption policy forbids (a connector land: J205.2 in the MODEL route of the combine pass, where the
+    branch ended on the end of the planned DISP12 track over that pad) is a class_widths finding. So a pin-entry pour (PE-, it sits on
+    its pad) and a track with an end on a connector pad (ref J...) of its net are no target."""
+    def on_connector(t):  # any point of the track within its half width + TP_TARGET_GAP of a connector land of its net
+        n = max(1, int(math.dist(t.a, t.b) / 0.1))
+        pts = [(t.a[0] + (t.b[0] - t.a[0]) * k / n, t.a[1] + (t.b[1] - t.a[1]) * k / n) for k in range(n + 1)]
+        r = t.width / 2 + TP_TARGET_GAP
+        box = (min(t.a[0], t.b[0]) - r, min(t.a[1], t.b[1]) - r, max(t.a[0], t.b[0]) + r, max(t.a[1], t.b[1]) + r)
+        for p in m.near(t.layers[0], box):
+            if (p.alive and p.kind == 'pad' and p.src == 'pad' and p.net == t.net and str(p.ref).startswith('J')
+                    and any(p.shape.dist(*q) <= r for q in pts)):
+                return True
+        return False
+    return lambda i: ((i.kind == 'track' and i.width + 1e-6 >= w and not on_connector(i))
+                      or (i.kind == 'pad' and i.src == 'zone' and not str(i.pad).startswith('PE-')))
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--artifact', required=True, help='unzipped pcb-regenerated-PWR_A artifact (board/PWR_A.kicad_pcb, board/report.json)')
@@ -931,8 +954,7 @@ def main(argv=None):
             if not ok and args.tp_max:  # combine pass: a test-point island joins by a longer 0.25 mm branch (route6.py --tp-max)
                 okt, brt = fz.branch_pass(net, lambda r: r is not None and r.startswith('TP') and branch_ok(r, net),
                                           lambda refs: BRANCH_W['TP'], lambda refs: OUTER if args.tp_outer else ROUTING, args.tp_max,
-                                          target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= width(net))
-                                          or (i.kind == 'pad' and i.src == 'zone'))
+                                          target_ok=tp_target(m, width(net)))
                 branches += brt
                 ok = ok or okt
         if vips:
