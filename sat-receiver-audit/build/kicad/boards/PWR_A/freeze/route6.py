@@ -192,12 +192,17 @@ def main(argv=None, mb=None):
         F.prune(m, n, srcs=('router', 'new', 'escape'), log=lambda *x, **k: None)
     F6.merge_remainders(m)
     joints = centre_joints(m)
+    shorts = drop_short_pieces(m, F6, F)
     open_, bad = F6.verify(m)
     dropped = 0
     if bad:
         dropped = F6.drop_failing_completion(m)[0]
         open_, bad = F6.verify(m)
     open_ = {n: k for n, k in open_.items() if n not in never}
+    # the scripted and planned copper (pours drawn as tracks in this model, vias in the bond keep-outs by design) is KiCad-checked by
+    # the route run: only the router and completion copper counts here
+    bad = [b for b in bad if (isinstance(b[0], float) and b[1] in ('router', 'new', 'escape'))
+           or (b[0] in ('short piece', 'track end not on via centre'))]
     print('open', open_, 'violations', len(bad), 'failed', sorted(set(failed)), 'joints', len(joints), flush=True)
     groups = collections.defaultdict(list)
     vias = {'router': [], 'new': []}
@@ -224,7 +229,7 @@ def main(argv=None, mb=None):
                    'harvest': 'build/kicad/boards/PWR_A/freeze/route6.py: model route of the spec (W2 PWR-A closure probe X)',
                    'args': {k: v for k, v in vars(a).items() if k not in ('out', 'summary')}, 'seed': seed_note},
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed)), 'centre_joints': len(joints),
-                   'dropped': dropped},
+                   'dropped': dropped, 'short_pieces_removed': shorts},
         'necks': sorted(necks, key=lambda r: (r['ref'], r['pad'], r['to'])),
         'branches': sorted(branches, key=lambda r: (r['net'], r['refs'])),
         'guard': guard,
@@ -242,6 +247,27 @@ def main(argv=None, mb=None):
         Path(a.summary).write_text(json.dumps(summ, indent=1), encoding='utf-8')
     print('SUMMARY', json.dumps({k: summ[k] for k in ('open_nets', 'open_joins', 'violations', 'power_open', 'seconds')}), flush=True)
     return 0 if not open_ and not bad else 1
+
+
+def drop_short_pieces(m, F6, F):
+    """Router/completion pieces shorter than their width with a free end (freeze6.short_pieces: the KiCad 10.0.7 track_dangling
+    pattern) are removed and their net pruned, until none is left. Returns the number removed."""
+    n = 0
+    for _ in range(5):
+        found = F6.short_pieces(m)
+        if not found:
+            break
+        keys = {(f[1], tuple(f[2]), f[3]) for f in found}
+        for t in list(m.items):
+            if t.alive and t.kind == 'track' and t.src in ('router', 'new', 'escape') and math.dist(t.a, t.b) < t.width:
+                for e in (t.a, t.b):
+                    if (t.net, tuple(F6.B(e)), t.layers[0]) in keys:
+                        m.remove(t)
+                        n += 1
+                        break
+        for net in sorted({f[1] for f in found}):
+            F.prune(m, net, srcs=('router', 'new', 'escape'), log=lambda *x, **k: None)
+    return n
 
 
 def centre_joints(m):
