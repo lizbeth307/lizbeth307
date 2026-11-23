@@ -704,11 +704,12 @@ SCRIPT_TRACKS = [
 # W2 PWR-A closure round 1, probe X (design choice, build/15): ties of a part's own pins under its body, added by build() after the
 # placement (place_board.py does not see them: they lie inside the courtyard of a part that MOVES pins, so no other courtyard can reach
 # them). LM74700 U111 at 180 degrees: EN pin 3 (E1_SW, sense/logic: the enable tied to the anode supply) to ANODE pin 6 through the gap
-# between the pin columns (0.25 mm, 0.2 mm from the GND, GATE and VCAP pads), then from ANODE on to the E1_SW bar at x 28.4; milliamperes
+# between the pin columns (0.25 mm, 0.2 mm from the GND, GATE and VCAP pads), then from ANODE on into the E1_SW bar and the Q102 source bar
+# SC-Q102-S (x 26.6; the bar is a 3.2 mm track whose round end reaches x 28.4 only on its centre line); milliamperes
 # (sense pins): branch_exempt row U111 of SCRIPT_BRANCHES
 PART_TRACKS = [
-    sc_track('SC-U111-EN', 'E1_SW', 0.25, [(31.55, 37.1), (30.85, 36.55), (30.85, 35.75), (30.15, 35.2), (28.2, 35.2)],
-             'LM74700 U111 EN pin 3 tied to ANODE pin 6 under the body and ANODE on to the E1_SW bar (sense/logic pins, milliamperes)'),
+    sc_track('SC-U111-EN', 'E1_SW', 0.25, [(31.55, 37.1), (30.85, 36.55), (30.85, 35.75), (30.15, 35.2), (26.6, 35.2)],
+             'LM74700 U111 EN pin 3 tied to ANODE pin 6 under the body and ANODE on into the E1_SW bar (sense/logic pins, milliamperes)'),
 ]
 SCRIPT_VIAS = [  # (id, net, (x, y), why): 0.6 / 0.3 like the other scripted vias
     ('SC-U107-SENSE-V1', 'SYS12', (12.9, 38.3), f'{U107_WHY}: BIAS / output-sense via ("VIAS to BIAS"), below thermal_bond zone 3\''),
@@ -841,8 +842,8 @@ SCRIPT_BRANCHES = {
              'reason': 'BIAS pin 1 and the RFBT / CFF output sense: bias and sense current (milliamperes), In2.Cu under the In1.Cu GND'},
     'U108': {'pads': ['5'], 'max_mm': 4.0, 'min_width_mm': 0.25,
              'reason': 'VLDOIN pin 5 (internal LDO input, milliamperes) to VOUT1 between the module pins'},
-    # W2 PWR-A closure round 1, probe X: the SC-U111-EN tie (4.5 mm from pin 3 to the E1_SW bar)
-    'U111': {'pads': ['3', '6'], 'max_mm': 5.0, 'min_width_mm': 0.25,
+    # W2 PWR-A closure round 1, probe X: the SC-U111-EN tie (6.1 mm from pin 3 into the E1_SW bar)
+    'U111': {'pads': ['3', '6'], 'max_mm': 6.5, 'min_width_mm': 0.25,
              'reason': 'LM74700 EN pin 3 tied to ANODE pin 6 under the body, then to the E1_SW bar (sense/logic pins, milliamperes)'},
 }
 TPS25947_SOURCE = ('TI TPS25947xx data sheet SLVSFC9C (rev. C, May 2026) section 8.4.1 Layout Guidelines and figure 8-22 Layout Example, '
@@ -1159,13 +1160,15 @@ def gnd_bridges(inp, vias):
     return out
 
 
-# W2 PWR-A closure round 1, probe X (design choice, build/15): the GND fan-out of the B2B J208 turns inward. gnd_fanout gives every GND pin
-# of the J208 top row (y 20.35) a via straight above it at y 21.65 (the first free direction), so each top-row power pin between two GND
-# pins (3V3_Q6A, LNA4V5, VBUS_HFP, LAB5_RLY, BONI13V8, LNB13V2, AUX12, ...) sat behind two vias 0.3 mm apart and had no exit (push 2 of
-# W2 F2C-FALLBACK part 2: AUX12 J208.33 open, MODEL: no 0.15 mm path on any layer). Between the two pin rows (pads 17.4 / 19.6) there is
-# room for a via at y 19.05 (0.2 mm from the top-row pads); the bottom-row GND vias there stay. Done after gnd_fanout and only in the board
-# build, so place_board.py keeps its (more conservative) view of the fixed fan-out above the connector and its placement does not change.
-B2B_INWARD = ('J208',)
+# W2 PWR-A closure round 1, probe X (design choice, build/15): the GND fan-out of two J208 top-row GND pins turns inward. gnd_fanout gives
+# every GND pin of the J208 top row (y 20.35) a via straight above it at y 21.65 (the first free direction), so a top-row pin between two
+# GND pins sits behind two vias 0.3 mm apart: AUX12 J208.33 between GND 31 and 35 had no exit (push 2 of W2 F2C-FALLBACK part 2: open,
+# MODEL: no 0.15 mm path on any layer). Between the two pin rows (pads 17.4 / 19.6) there is room for a via at y 19.05 (0.2 mm from the
+# top-row pads). Only the two pins beside AUX12 move: the route runs used the channel between the rows for bottom-row signals (I2C2,
+# E2_BONI_LDO, FAULT_HFP, ...), which inward vias of every top-row GND pin would close (MODEL, 156 router items of push 2 against 126 with
+# the two). Done after gnd_fanout and only in the board build, so place_board.py keeps its (more conservative) view of the fixed fan-out
+# above the connector and its placement does not change. ref -> top-row GND pads that turn inward
+B2B_INWARD = {'J208': ('31', '35')}
 
 
 def b2b_inward_fanout(inp, pre, tracks, vias):
@@ -1176,7 +1179,7 @@ def b2b_inward_fanout(inp, pre, tracks, vias):
     pads = [p for pa in inp.parts.values() for p in pa.pads]
     segs, pours = scripted_items(pre)
     need = CLEAR + MARGIN - EPS
-    for ref in B2B_INWARD:
+    for ref, inward in B2B_INWARD.items():
         pa = inp.parts.get(ref)
         if pa is None:
             continue
@@ -1192,7 +1195,7 @@ def b2b_inward_fanout(inp, pre, tracks, vias):
         if vy - VIA_D / 2 - need < inner_bot:
             continue
         for q in sorted(top, key=lambda q: q['at'][0]):
-            if q['net'] != 'GND':
+            if q['net'] != 'GND' or q['number'] not in inward:
                 continue
             vid = f'GND-{ref}-{q["number"]}'
             old_v = next((v for v in vias if v['id'] == vid + '-V'), None)

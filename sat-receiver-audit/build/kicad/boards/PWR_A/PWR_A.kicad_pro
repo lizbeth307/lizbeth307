@@ -321,7 +321,7 @@
         "pattern": "AUX12_DAMP"
       },
       {
-        "netclass": "SCRIPTED_PWR1A",
+        "netclass": "PWR1A",
         "pattern": "BONI13V8_PORT"
       },
       {
@@ -481,7 +481,7 @@
         "pattern": "LIME3V3_DAMP"
       },
       {
-        "netclass": "SCRIPTED_PWR1A",
+        "netclass": "PWR1A",
         "pattern": "LNB13V2"
       },
       {

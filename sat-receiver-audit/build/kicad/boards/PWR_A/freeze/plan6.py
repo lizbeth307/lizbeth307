@@ -747,6 +747,51 @@ def revalidate(pl, mb, src, out):
     return 0 if not bad and not changed else 1
 
 
+def ratchet_load(pl, src):
+    """W2 PWR-A closure probe X: the transactional ratchet of the plan across a placement change. The copper of an earlier plan file
+    (pin-entry pours, tracks with the collinear pieces merged, vias) goes on the planning board of the current inputs, as revalidate()
+    puts it; what fails the exact check at the project clearance is dropped (drop_failing), so every piece that still holds is kept and
+    the router copper routed round it stays valid. Returns (the earlier plan document, dropped items)."""
+    doc = json.loads(Path(src).read_text(encoding='utf-8'))
+    doc['loaded_zones'] = {}
+    for net, d in sorted(doc['nets'].items()):
+        for z in d['zones']:
+            rects = [(r[0] + 100.0, 210.0 - r[3], r[2] + 100.0, 210.0 - r[1]) for r in z['rects']]
+            ref, _dot, num = z['pad'].partition('.')
+            pad = next((i for i in pl.m.items if i.alive and i.kind == 'pad' and i.src == 'pad' and i.ref == ref and i.pad == num
+                        and i.net == net), None)
+            # a pin-entry pour whose pad moved (or left) does not come along: the pad's net is planned again
+            if pad is None or not any(r[0] <= pad.bbox[2] and pad.bbox[0] <= r[2] and r[1] <= pad.bbox[3] and pad.bbox[1] <= r[3]
+                                      for r in rects) or z['layer'] not in pad.layers:
+                continue
+            pl.add_zone(net, z['layer'], rects, z['id'])
+            doc['loaded_zones'].setdefault(net, []).append(z)
+        segs = collections.defaultdict(list)
+        for lay, w, a, b in d['tracks']:
+            segs[(lay, w)].append((K(*a), K(*b)))
+        for (lay, w), ss in segs.items():
+            for a, b in merge_collinear(ss):
+                pl.m.add_track(net, lay, w, a, b, src='new')
+        for x, y, size, drill in d['vias']:
+            pl.m.add_via(net, K(x, y), size, drill, src='new')
+    bad = verify(pl)
+    dropped = drop_failing(pl) if bad else []
+    return doc, dropped
+
+
+def ratchet_merge(carried, net, rec):
+    """A net planned again after the ratchet keeps the carried pin-entry pours that went on the board and the carried branches whose
+    parts are still on it (their copper is the board's), in front of what plan_net added."""
+    if carried is None or net not in carried['nets']:
+        return rec
+    zones = list(carried['loaded_zones'].get(net, []))
+    have = {z['id'] for z in zones}
+    rec['zones'] = zones + [z for z in rec['zones'] if z['id'] not in have]
+    seen = {tuple(b['refs']) for b in rec['branches']}
+    rec['branches'] = [b for b in carried['nets'][net]['branches'] if tuple(b['refs']) not in seen] + rec['branches']
+    return rec
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--revalidate', metavar='PLAN', help='W2 F2C-FALLBACK part 2: carry PLAN onto the current scripted copper (revalidate())')
@@ -754,6 +799,8 @@ def main(argv=None):
     ap.add_argument('--negotiate', type=int, default=0, metavar='ROUNDS',
                     help='W2 F2C-FALLBACK part 2: rounds of transactional rip-up and re-plan of the nets left open (negotiate())')
     ap.add_argument('--first', help='W2 F2C-FALLBACK part 2: comma-separated nets planned before the others (the plan order)')
+    ap.add_argument('--ratchet', metavar='PLAN', help='W2 PWR-A closure probe X: keep the copper of PLAN that still holds on the current '
+                                                      'inputs and plan only the power nets it leaves open (ratchet_load())')
     ap.add_argument('--out', default=str(OUT))
     ap.add_argument('--verify', action='store_true', help='only report the margins of the scripted copper')
     args = ap.parse_args(argv)
@@ -774,16 +821,34 @@ def main(argv=None):
         return 1 if bad else 0
     power = sorted({it.net for it in pl.m.items if it.alive and it.kind == 'pad' and it.net and pl.cls.get(it.net) in POWER})
     nets = args.nets.split(',') if args.nets else power
-    todo = [n for n in nets if len([g for g in pl.m.islands(n) if any(i.kind == 'pad' for i in g)]) > 1]
+    carried, carried_dropped = (ratchet_load(pl, args.ratchet) if args.ratchet else (None, []))
+    if carried is not None:
+        print('ratchet:', args.ratchet, 'dropped', len(carried_dropped), flush=True)
+        # the carried branch copper (narrower than its class) is never ripped by negotiate(), as a planned branch
+        for n in carried['nets']:
+            if n in pl.cls:
+                pl.branch_ids.update(it.id for it in pl.m.items if it.alive and it.net == n and it.src == 'new' and it.kind == 'track'
+                                     and it.width + 1e-6 < pl.width(n))
+    todo = [n for n in nets if len([g for g in pl.m.islands(n) if any(i.kind == 'pad' for i in g) or len(g) > 1]) > 1]
     todo.sort(key=lambda n: (CLASS_ORDER[pl.cls[n]], round(span(pl.m, n), 3), n))
     if args.first:  # W2 F2C-FALLBACK part 2: these nets first, in the given order, then the rest in class order
         first = [n for n in args.first.split(',') if n in todo]
         todo = first + [n for n in todo if n not in first]
     print('nets to plan:', len(todo), 'of', len(nets))
     plan = {}
+    if carried is not None:  # the carried nets that still join keep their record (zones, branches); their copper is on the board
+        for n in nets:
+            if n in todo or n not in carried['nets']:
+                continue
+            d = dict(carried['nets'][n])
+            rec = {'class': d['class'], 'width_mm': d['width_mm'], 'zones': list(carried['loaded_zones'].get(n, [])), 'branches': d['branches'],
+                   'log': ['carried (ratchet)'],
+                   'kind': 'power', 'open': 0, 'open_islands': [], 'via_cluster': 0}
+            rec['tracks'], rec['vias'] = pl.harvest(n)
+            plan[n] = rec
     for net in todo:
         t1 = time.time()
-        rec = pl.plan_net(net)
+        rec = ratchet_merge(carried, net, pl.plan_net(net))
         rec['tracks'], rec['vias'] = pl.harvest(net)
         plan[net] = rec
         print(f'{net} ({rec["class"]} {rec["width_mm"]} mm): {rec["kind"]}, open {rec["open"]}, zones {len(rec["zones"])}, '
@@ -818,6 +883,10 @@ def main(argv=None):
               'link': {n: r['open'] for n, r in sorted(plan.items()) if r['kind'] == 'link'}, 'violations': len(bad)}
     if args.first:
         result['first'] = [n for n in args.first.split(',') if n in plan]
+    if carried is not None:
+        result['ratchet'] = {'from_guard': carried['guard'], 'dropped': len(carried_dropped), 'replanned': todo,
+                             'rule': 'plan6.py --ratchet (W2 PWR-A closure probe X): the earlier plan copper that holds on the current inputs '
+                                     'kept, the power nets it leaves open planned again'}
     if args.negotiate:
         result['negotiate'] = {'rounds': args.negotiate, 'kept': [r for r in negotiated if r.endswith(')') and ' kept ' in r],
                                'tries': len(negotiated)}

@@ -7,7 +7,7 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "68b2f12c2c4a2cdc62c0882487c479dabd6fda32fea0be2adb932090dd0b87c6",
+    "spec_sha256": "d84993f2610faf9b323aeaef68193b06d4d7142ff2feebfb9fa2ff0cdf104504",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
     "lab5_budget_sha256": "d813a2892b7fdcb2d5bd78bbfe8c13c6bdf5809030db2c4e4528e1a114470974"
   },
@@ -530,7 +530,7 @@
   "class_widths": {
     "label": "MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to their outlines)",
     "findings": [],
-    "tracks_checked": 1112,
+    "tracks_checked": 1103,
     "exemption_policy": {
       "branch_roles": [
         "test_point",
