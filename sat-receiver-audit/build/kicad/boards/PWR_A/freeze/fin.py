@@ -349,13 +349,15 @@ def neck_link(m, net, A, B, layers, class_w, neck_max, neck_min=0.25, allow=None
 
 
 def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu', 'B.Cu'), g=0.05, via_cost=1.5, neck=None,
-                max_links=80, rip_wide=False, soft=('router',)):
+                max_links=80, rip_wide=False, soft=('router',), bias=None):
     """Join the islands of a net pair by pair (W2 PWRJ-LAYERS6): as Finisher.connect, but a pair without a path is skipped
     and the next pair is tried, so one walled-in pad does not leave the rest of the net open; neck = (class width, max mm)
     allows neck_link for a pair that has no class-width path. W2 PWR-L6-ROUTE: rip_wide also tries the rip-up search in the 25 mm
     box when the 8 mm box has no path (route run 43591929140: E2_AUX_PTC, E5_IMU5V, E5_VBUS_HFP_SW and LNB13V2_DAMP join at the
     class width once the router copper is gone, but not inside 8 mm); soft = the item sources the rip-up may move (('router', 'new')
-    also re-routes completion copper of other nets, which the caller queues again). Returns (all joined, ripped nets, neck records)."""
+    also re-routes completion copper of other nets, which the caller queues again). W2 PWR-A closure round 2, probe Y: bias = the
+    per-layer cost of router.astar (a list aligned with layers: extra cost per mm on that layer), None as before.
+    Returns (all joined, ripped nets, neck records)."""
     ripped, necks, failed = [], [], set()
     prune(self.m, net)
     for _ in range(max_links):
@@ -372,10 +374,10 @@ def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu',
                     continue
                 res, how, rec = None, 'free', None
                 res = R.route_link(self.m, net, A, B, island_box([A, B], 6.0), width=width, g=g, via_cost=via_cost, verbose=False,
-                                   layers=layers, max_nodes=2_000_000)
+                                   layers=layers, max_nodes=2_000_000, bias=bias)
                 if res is None and nb == 0:
                     res = R.route_link(self.m, net, A, B, island_box([A, B], 25.0), width=width, g=g, via_cost=via_cost,
-                                       verbose=False, layers=layers, max_nodes=3_000_000)
+                                       verbose=False, layers=layers, max_nodes=3_000_000, bias=bias)
                     how = 'free-wide'
                 if res is None and neck:
                     res, rec = neck_link(self.m, net, A, B, [l for l in layers if l in ('F.Cu', 'B.Cu')], neck[0], neck[1],
@@ -383,11 +385,12 @@ def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu',
                     how = 'neck'
                 if res is None and allow_rip:
                     res = R.route_link(self.m, net, A, B, island_box([A, B], 8.0), width=width, g=g, via_cost=via_cost,
-                                       verbose=False, layers=layers, soft_src=tuple(soft), soft_cost=2.0)
+                                       verbose=False, layers=layers, soft_src=tuple(soft), soft_cost=2.0, bias=bias)
                     how = 'rip'
                     if res is None and rip_wide and nb == 0:
                         res = R.route_link(self.m, net, A, B, island_box([A, B], 25.0), width=width, g=g, via_cost=via_cost,
-                                           verbose=False, layers=layers, soft_src=tuple(soft), soft_cost=2.0, max_nodes=3_000_000)
+                                           verbose=False, layers=layers, soft_src=tuple(soft), soft_cost=2.0, max_nodes=3_000_000,
+                                           bias=bias)
                         how = 'rip-wide'
                     if res is not None:
                         hits, bad = conflicts(self.m, net, res, soft_src=tuple(soft))
@@ -427,13 +430,14 @@ def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu',
 Finisher.connect_all = connect_all
 
 
-def branch_pass(self, net, is_branch, width_of, layers_of, max_mm=12.0, target_ok=None):
+def branch_pass(self, net, is_branch, width_of, layers_of, max_mm=12.0, target_ok=None, bias=None, box_mm=None):
     """Low-current branches of a power net (W2 PWRJ-LAYERS6): an island whose pads all belong to branch parts (test points,
     capacitors, divider resistors: is_branch) joins any other copper of the net within max_mm at the branch width
     (width_of(refs)) on layers_of(refs); the spec lists each such ref in branch_exempt (pcb/check_boards.py: power-class
     chains from that ref's pads within max_mm, at least the branch width, leave the class width check). Main-path islands
     are not touched. target_ok (W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-02): only the copper it accepts is a target (a branch taps
-    class-width copper, never a power pad). Returns (all joined, branch records)."""
+    class-width copper, never a power pad). W2 PWR-A closure round 2, probe Y: bias (router.astar per-layer cost) and box_mm (search
+    margin round the branch island; default 0.7 x max_mm). Returns (all joined, branch records)."""
     recs, tried = [], set()
     for _ in range(60):
         groups = [gr for gr in self.m.islands(net) if any(i.kind == 'pad' for i in gr) or len(gr) > 1]
@@ -453,7 +457,8 @@ def branch_pass(self, net, is_branch, width_of, layers_of, max_mm=12.0, target_o
                 self.log(f'    {net}: branch {refs} no class-width copper to tap')
                 continue
             w, lays = width_of(refs), layers_of(refs)
-            res = R.route_link(self.m, net, G, rest, island_box([G], max_mm * 0.7), width=w, verbose=False, layers=lays)
+            res = R.route_link(self.m, net, G, rest, island_box([G], box_mm or max_mm * 0.7), width=w, verbose=False, layers=lays,
+                               bias=bias)
             if res is None or (not res['runs'] and not res['vias']):
                 tried.add(key)
                 self.log(f'    {net}: branch {refs} no path')
@@ -471,7 +476,7 @@ def branch_pass(self, net, is_branch, width_of, layers_of, max_mm=12.0, target_o
                 tried.add(key)
                 self.log(f'    {net}: branch commit failed {e}')
                 continue
-            recs.append({'net': net, 'refs': refs, 'width_mm': round(w, 4), 'length_mm': round(L, 3),
+            recs.append({'net': net, 'refs': refs, 'width_mm': round(min(w.values()) if isinstance(w, dict) else w, 4), 'length_mm': round(L, 3),
                          'layers': sorted({lay for lay, _ in res['runs']}), 'vias': len(res['vias'])})
             self.log(f'  {tag} (branch {refs}): {len(res["runs"])} runs {len(res["vias"])} vias {L:.1f} mm at {w} mm')
             done = True

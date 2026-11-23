@@ -29,6 +29,8 @@ import importlib.util
 import json
 import math
 import sys
+
+import numpy as np
 import tempfile
 import time
 from pathlib import Path
@@ -64,6 +66,22 @@ STRIP_CLR = 0.16    # mm: a pin-entry strip continues its own pad (which keeps i
 INNER = ('In2.Cu', 'In3.Cu')
 INNER_FOIL_MM = 0.0152
 INNER_LAYERS4 = ('F.Cu', 'In2.Cu', 'In3.Cu', 'B.Cu')
+# W2 PWR-A closure round 2, probe Y (--in4): In4.Cu is the power layer of the S-G-S-S-P-S stack (L5: on PWR_A the GND fill with the
+# E1_CONV_IN straps and the U108 VOUT polygon; In1.Cu stays the solid GND plane under F.Cu). A power net of a class whose 0.5 oz inner
+# copper counts (PWR1A, and its sub-class PWR05A of pcb/generated/stackup-6l.json inner_classes, which pcb/check_boards.py applies to
+# this board) may run its links on In4.Cu at its inner width (Planner.in4_width), with 2 oz outer stubs at the class width: In4.Cu is
+# not a routing layer of Freerouting (layer type power) nor of the signals, so the planned power copper leaves F.Cu/B.Cu and
+# In2.Cu/In3.Cu to the signals. Vias per transition from the net's own currents and the via fit of netclasses.json (MODEL)
+IN4 = 'In4.Cu'
+IN4_LAYERS = ('F.Cu', 'In4.Cu', 'B.Cu')
+VIA_I10, VIA_I20 = 0.738, 1.001  # A per 0.3 mm via at +10 / +20 degC (pcb/generated/netclasses.json formulas.via, MODEL)
+# W2 PWR-A closure round 2, probe Y (--reserve): escape room of small-signal pins. The planned power copper walled in signal pins of
+# the fine-pitch parts (MODEL, an escape flood of each signal pad on the planned board: U216 INA3221, the TPS259470 eFuses, U503,
+# J208). For each listed pad the planner first reserves the shortest escape on the scripted board: a 0.15 mm stub on the pad's layer
+# to the nearest spot where a router via (0.7/0.3) fits, as items of the pad's own net. The power copper is planned round them; the
+# reservations are removed before the final check and are not part of the plan copper (the router or the completion route the pin).
+RESERVE_W, RESERVE_VIA, RESERVE_DRILL, RESERVE_R = 0.15, 0.7, 0.3, 5.0
+TP_IN4_W = 0.5   # mm, the In4.Cu width of a test-point branch (--tp-in4)
 
 
 def ipc_internal_width(current_a, dt_c, foil_mm=INNER_FOIL_MM, k=0.024):
@@ -253,6 +271,13 @@ class Planner:
         self.fz = F.Finisher(self.m, log=lambda *a: None)
         self.branch_ids = set()  # item ids of the low-current branches (negotiate() keeps them)
         self.inner_classes = ()  # --inner (combine pass)
+        # --in4 (round 2, probe Y): classes / nets planned with In4.Cu, the mode and the extra cost per mm on F.Cu/B.Cu
+        self.in4_classes, self.in4_nets, self.in4_mode, self.in4_bias = (), set(), 'first', 1.0
+        self.tp_in4 = 0.0  # --tp-in4: longest test-point branch with In4.Cu (mm), 0 = off
+        # the PWR1A sub-classes of the copper option (stackup-6l.json inner_classes) and their inner minimum, as check_boards applies them
+        opt = mb.read(mb.STACKUP_6L)['copper_options'][mb.COPPER_OPTION]
+        self.sub_inner = {n: (name, float(c['inner_min_width_mm'])) for name, c in (opt.get('inner_classes') or {}).items()
+                          for n in c['nets']}
         cb = mb.bg  # pcb/board_gen; check_boards for the exemption roles
         sys.path.insert(0, str(mb.BASE / 'pcb'))
         import check_boards as CB
@@ -284,6 +309,108 @@ class Planner:
                 ipc_internal_width(inputs.get('protective_a'), 20.0))
         return round(math.ceil(w / 0.05 - 1e-9) * 0.05, 4)
 
+    def in4_width(self, net):
+        """The In4.Cu width of a power net (--in4): max(the inner minimum of its class, or of its PWR1A sub-class of the copper option,
+        and the IPC-2221 internal width at the net's continuous current +10 degC and protective current +20 degC), rounded up to
+        0.05 mm; None when the class has no counted inner copper (BATT, PWR3A)."""
+        cls = self.classes[self.cls[net]]
+        if cls.get('inner_min_width_mm') is None:
+            return None
+        base = self.sub_inner[net][1] if net in self.sub_inner else float(cls['inner_min_width_mm'])
+        inputs = (self.inp.netclasses['nets'].get(net) or {}).get('inputs') or {}
+        w = max(base, ipc_internal_width(inputs.get('continuous_a'), 10.0), ipc_internal_width(inputs.get('protective_a'), 20.0))
+        return round(math.ceil(w / 0.05 - 1e-9) * 0.05, 4)
+
+    def in4_ok(self, net):
+        return (self.cls.get(net) in self.in4_classes or net in self.in4_nets) and self.in4_width(net) is not None
+
+    def via_need(self, net):
+        """Vias per layer change: the class value, or for an --in4 net its own currents over the via fit (max of continuous / 0.738 A
+        at +10 degC and protective / 1.001 A at +20 degC per 0.3 mm via, MODEL)."""
+        cname = self.cls[net]
+        if not self.in4_ok(net):
+            return int(self.classes[cname].get('vias_per_transition') or 1)
+        inputs = (self.inp.netclasses['nets'].get(net) or {}).get('inputs') or {}
+        c, p = float(inputs.get('continuous_a') or 0), float(inputs.get('protective_a') or 0)
+        return max(1, math.ceil(round(c / VIA_I10, 6)), math.ceil(round(p / VIA_I20, 6)))
+
+    def link_spec(self, net, w_link):
+        """(layers, width, bias) of the link search of a net: F.Cu/B.Cu at the class width, or (--in4, mode first) F.Cu/In4.Cu/B.Cu
+        with In4.Cu at the inner width and the outer layers at in4_bias extra cost per mm."""
+        if self.in4_ok(net) and self.in4_mode == 'first':
+            b = float(self.in4_bias)
+            return IN4_LAYERS, {'F.Cu': w_link, IN4: self.in4_width(net), 'B.Cu': w_link}, [b, 0.0, b]
+        return OUTER, w_link, None
+
+    def reserve(self, refs, log=print):
+        """Reserve an escape (stub + via spot, items of the pad's net, src 'reserve') for each pad 'REF.PIN' of refs; returns the
+        record {pad: {'net', 'layer', 'via', 'stub_mm'} or None when the pad has no escape on the scripted board}."""
+        out = {}
+        for key in refs:
+            ref, _, num = key.partition('.')
+            pad = next((it for it in self.m.items if it.alive and it.kind == 'pad' and it.src == 'pad' and it.ref == ref
+                        and str(it.pad) == num), None)
+            if pad is None or not pad.net:
+                out[key] = None
+                continue
+            lay = next((l for l in pad.layers if l in OUTER), None)
+            if lay is None:
+                out[key] = None
+                continue
+            cx, cy = (pad.bbox[0] + pad.bbox[2]) / 2, (pad.bbox[1] + pad.bbox[3]) / 2
+            g = R.Grid(self.m, (cx - RESERVE_R, cy - RESERVE_R, cx + RESERVE_R, cy + RESERVE_R), 0.05)
+            free = ~g.blocked_track(pad.net, lay, RESERVE_W, clr=PLAN_CLR)
+            vfree = ~g.blocked_via(pad.net, d=RESERVE_VIA, drill=RESERVE_DRILL, clr=PLAN_CLR)
+            src = g.covered([pad], lay) & free
+            if not src.any():
+                out[key] = None
+                continue
+            nx, ny = free.shape
+            prev = {}
+            queue = [tuple(c) for c in np.argwhere(src)]
+            for c in queue:
+                prev[c] = None
+            hit = None
+            k = 0
+            while k < len(queue):
+                c = queue[k]
+                k += 1
+                if vfree[c] and not src[c]:
+                    hit = c
+                    break
+                i, j = c
+                for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    n = (i + di, j + dj)
+                    if 0 <= n[0] < nx and 0 <= n[1] < ny and n not in prev and free[n]:
+                        prev[n] = c
+                        queue.append(n)
+            if hit is None:
+                out[key] = None
+                continue
+            cells = [hit]
+            while prev[cells[-1]] is not None:
+                cells.append(prev[cells[-1]])
+            cells.reverse()
+            pts = [g.pt(i, j) for i, j in cells]
+            corners = [pts[0]] + [b for a, b, c in zip(pts, pts[1:], pts[2:])
+                                  if (round(b[0] - a[0], 4), round(b[1] - a[1], 4)) != (round(c[0] - b[0], 4), round(c[1] - b[1], 4))] + [pts[-1]]
+            corners[0] = (cx, cy)
+            for a_, b_ in zip(corners, corners[1:]):
+                it = self.m.add_track(pad.net, lay, RESERVE_W, a_, b_, src='reserve')
+            it = self.m.add_via(pad.net, pts[-1], RESERVE_VIA, RESERVE_DRILL, src='reserve')
+            L = sum(math.dist(a_, b_) for a_, b_ in zip(corners, corners[1:]))
+            out[key] = {'net': pad.net, 'layer': lay, 'via': B(pts[-1]), 'stub_mm': round(L, 3)}
+            log(f'  reserved {key} ({pad.net}): {lay} stub {L:.2f} mm to a via spot at {B(pts[-1])}')
+        return out
+
+    def unreserve(self):
+        n = 0
+        for it in self.m.items:
+            if it.alive and it.src == 'reserve':
+                self.m.remove(it)
+                n += 1
+        return n
+
     def zone_keepouts(self, net):
         """F.Cu keep-outs of the converter zones 3'/4' for a net without a pad there (W2 PWR-L6-SCRIPT zone rule)."""
         out = []
@@ -291,7 +418,7 @@ class Planner:
             if net in own:
                 continue
             k0, k1 = K(box[0], box[3]), K(box[2], box[1])
-            out.append({'layers': ['F.Cu', 'In1.Cu', 'B.Cu'], 'poly': M.cb.Poly([(k0[0], k0[1]), (k1[0], k0[1]), (k1[0], k1[1]), (k0[0], k1[1])]),
+            out.append({'layers': ['F.Cu', 'In1.Cu', IN4, 'B.Cu'], 'poly': M.cb.Poly([(k0[0], k0[1]), (k1[0], k0[1]), (k1[0], k1[1]), (k0[0], k1[1])]),
                         'name': f'converter zone {zi}'})
         return out
 
@@ -411,11 +538,26 @@ class Planner:
                                at=((bx[0] + bx[2]) / 2, (bx[1] + bx[3]) / 2), drill=0.0, locked=True, src='zone'))
         return it
 
+    def cluster_layers(self, net, v, w):
+        """{layer: width} the extra vias of a cluster around via v join on: F.Cu and B.Cu at w; for an --in4 net the layers on which
+        v has copper of the net (F.Cu/B.Cu at w, In4.Cu at the inner width)."""
+        if not self.in4_ok(net):
+            return {l: w for l in OUTER}
+        out = {}
+        for lay in IN4_LAYERS:
+            for it in self.m.near(lay, (v.at[0] - 0.5, v.at[1] - 0.5, v.at[0] + 0.5, v.at[1] + 0.5)):
+                if it.alive and it.net == net and it.kind == 'track' and lay in it.layers and (
+                        math.dist(it.a, v.at) < 1e-3 or math.dist(it.b, v.at) < 1e-3):
+                    out[lay] = self.in4_width(net) if lay == IN4 else w
+        return out or {l: w for l in OUTER}
+
     def via_cluster(self, net, w, need):
-        """Extra vias around each new via of the net (layer change) up to `need` vias, joined on F.Cu and B.Cu at width w."""
+        """Extra vias around each new via of the net (layer change) up to `need` vias, joined on F.Cu and B.Cu at width w (an --in4
+        net: on the layers of the via's own copper, cluster_layers)."""
         added = []
         for v in [it for it in self.m.items if it.alive and it.kind == 'via' and it.net == net and it.src == 'new']:
             have = 1 + sum(1 for a in added if a[0] == v.at)
+            joins = self.cluster_layers(net, v, w)
             for ring in (0.95, 1.25, 1.6):
                 for k in range(8):
                     if have >= need:
@@ -424,11 +566,11 @@ class Planner:
                     p = (round(v.at[0] + ring * math.cos(ang), 4), round(v.at[1] + ring * math.sin(ang), 4))
                     if self.m.via_margin(net, p, R.VIA_D, R.VIA_DRILL, clr=PLAN_CLR)[0] < 0:
                         continue
-                    if any(self.m.track_margin(net, lay, w, v.at, p, clr=PLAN_CLR)[0] < 0 for lay in OUTER):
+                    if any(self.m.track_margin(net, lay, lw, v.at, p, clr=PLAN_CLR)[0] < 0 for lay, lw in joins.items()):
                         continue
                     self.m.add_via(net, p, R.VIA_D, R.VIA_DRILL, src='new')
-                    for lay in OUTER:
-                        self.m.add_track(net, lay, w, v.at, p, src='new')
+                    for lay, lw in joins.items():
+                        self.m.add_track(net, lay, lw, v.at, p, src='new')
                     added.append((v.at, p))
                     have += 1
         return added
@@ -437,7 +579,7 @@ class Planner:
     def plan_net(self, net):
         cname = self.cls[net]
         w = self.width(net)
-        need_v = int(self.classes[cname].get('vias_per_transition') or 1)
+        need_v = self.via_need(net)
         self.m.keepouts[:] = self.base_keepouts + self.zone_keepouts(net)
         rec = {'class': cname, 'width_mm': w, 'zones': [], 'branches': [], 'log': []}
         try:
@@ -468,13 +610,16 @@ class Planner:
             scripted_entries = {v[0] for v in getattr(self.mb, 'ENTRY_ZONES', {}).values()}  # make_board's scripted pin entries
             w_link = round(w + RASTER_MARGIN, 4) if rec['zones'] or net in scripted_entries else w
             rec['link_width_mm'] = w_link
-            ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width=w_link, layers=OUTER, via_cost=VIA_COST[cname],
-                                                    neck=None, max_links=60)
+            lays, wl, bias = self.link_spec(net, w_link)
+            if lays != OUTER:
+                rec['in4_width_mm'] = self.in4_width(net)
+            ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width=wl, layers=lays, via_cost=VIA_COST[cname],
+                                                    neck=None, max_links=60, bias=bias)
             if not ok:  # second pass: the project clearance and a 0.1 mm grid (wider search boxes for the long links)
                 planning_rules(RELAXED_CLR)
                 try:
-                    ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width=w_link, layers=OUTER, via_cost=VIA_COST[cname],
-                                                            neck=None, max_links=60, g=0.1)
+                    ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width=wl, layers=lays, via_cost=VIA_COST[cname],
+                                                            neck=None, max_links=60, g=0.1, bias=bias)
                 finally:
                     planning_rules()
                 rec['log'].append(f'second pass (clearance {RELAXED_CLR} mm, grid 0.1 mm): {"joined" if ok else "still open"}')
@@ -485,6 +630,12 @@ class Planner:
                                                         neck=None, max_links=60, g=0.1)
                 rec['inner_width_mm'] = w_in
                 rec['log'].append(f'inner pass (In2.Cu/In3.Cu at {w_in} mm, IPC-2221 internal, grid 0.1 mm): {"joined" if ok else "still open"}')
+            if not ok and self.in4_ok(net) and self.in4_mode == 'fallback':  # round 2, probe Y: In4.Cu at the inner width
+                w_in = self.in4_width(net)
+                ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width={'F.Cu': w_link, IN4: w_in, 'B.Cu': w_link},
+                                                        layers=IN4_LAYERS, via_cost=VIA_COST[cname], neck=None, max_links=60, g=0.1)
+                rec['in4_width_mm'] = w_in
+                rec['log'].append(f'In4 pass (In4.Cu at {w_in} mm, IPC-2221 internal, grid 0.1 mm): {"joined" if ok else "still open"}')
             # 3. low-current branches of the allowed roles
             if not ok:
                 CB = self.CB
@@ -497,6 +648,22 @@ class Planner:
                 okb, br = self.fz.branch_pass(net, allowed, lambda refs: BRANCH_W, lambda refs: OUTER, BRANCH_MAX,
                                               target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= w)
                                               or (i.kind == 'pad' and i.src == 'zone'))
+                if not okb and self.tp_in4:
+                    # W2 PWR-A closure round 2, probe Y (--tp-in4): a test-point island (no load current; its place is set by the PWR-B
+                    # probe window) joins by a branch with In4.Cu, the power layer L5 that no signal routes on: 0.25 mm on the outer stubs,
+                    # TP_IN4_W on In4.Cu (wider than the outer branch: a probe slip to GND is cut by the eFuse of the rail before the
+                    # 0.5 oz trace heats, MODEL), up to tp_in4 mm long, the outer layers at in4_bias extra cost per mm
+                    okt, brt = self.fz.branch_pass(net, lambda ref: ref.startswith('TP'),
+                                                   lambda refs: {'F.Cu': BRANCH_W, IN4: TP_IN4_W, 'B.Cu': BRANCH_W},
+                                                   lambda refs: IN4_LAYERS, self.tp_in4,
+                                                   target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= w)
+                                                   or (i.kind == 'pad' and i.src == 'zone'),
+                                                   bias=[float(self.in4_bias), 0.0, float(self.in4_bias)], box_mm=12.0)
+                    for b_ in brt:
+                        b_['width_mm'] = BRANCH_W
+                        b_['in4_width_mm'] = TP_IN4_W
+                    br = list(br) + list(brt)
+                    okb = okb or okt
                 rec['branches'] = br
                 self.branch_ids.update(it.id for it in self.m.items[n0:] if it.alive)  # negotiate() never rips a branch
                 ok = ok or okb
@@ -665,11 +832,12 @@ def cluster_missing(pl, net, w, need):
                 p = (round(v.at[0] + ring * math.cos(ang), 4), round(v.at[1] + ring * math.sin(ang), 4))
                 if pl.m.via_margin(net, p, R.VIA_D, R.VIA_DRILL, clr=PLAN_CLR)[0] < 0:
                     continue
-                if any(pl.m.track_margin(net, lay, w, v.at, p, clr=PLAN_CLR)[0] < 0 for lay in OUTER):
+                joins = pl.cluster_layers(net, v, w)
+                if any(pl.m.track_margin(net, lay, lw, v.at, p, clr=PLAN_CLR)[0] < 0 for lay, lw in joins.items()):
                     continue
                 pl.m.add_via(net, p, R.VIA_D, R.VIA_DRILL, src='new')
-                for lay in OUTER:
-                    pl.m.add_track(net, lay, w, v.at, p, src='new')
+                for lay, lw in joins.items():
+                    pl.m.add_track(net, lay, lw, v.at, p, src='new')
                 have += 1
                 added += 1
     return added
@@ -683,17 +851,18 @@ def relink(pl, rec, net, allow_rip):
     w_link = rec.get('link_width_mm') or pl.width(net)
     pl.m.keepouts[:] = pl.base_keepouts + pl.zone_keepouts(net)
     ripped = []
+    lays, wl, bias = pl.link_spec(net, w_link)
     try:
-        ok, ripped, _n = pl.fz.connect_all(net, allow_rip=allow_rip, width=w_link, layers=OUTER, via_cost=VIA_COST[cname], neck=None,
-                                           max_links=60, rip_wide=allow_rip, soft=('new',))
+        ok, ripped, _n = pl.fz.connect_all(net, allow_rip=allow_rip, width=wl, layers=lays, via_cost=VIA_COST[cname], neck=None,
+                                           max_links=60, rip_wide=allow_rip, soft=('new',), bias=bias)
         if not ok and not allow_rip:
             planning_rules(RELAXED_CLR)
             try:
-                pl.fz.connect_all(net, allow_rip=False, width=w_link, layers=OUTER, via_cost=VIA_COST[cname], neck=None, max_links=60,
-                                  g=0.1)
+                pl.fz.connect_all(net, allow_rip=False, width=wl, layers=lays, via_cost=VIA_COST[cname], neck=None, max_links=60,
+                                  g=0.1, bias=bias)
             finally:
                 planning_rules()
-        cluster_missing(pl, net, pl.width(net), int(pl.classes[cname].get('vias_per_transition') or 1))
+        cluster_missing(pl, net, pl.width(net), pl.via_need(net))
     finally:
         pl.m.keepouts[:] = pl.base_keepouts
     return ripped
@@ -851,6 +1020,18 @@ def main(argv=None):
                                                       'inputs and plan only the power nets it leaves open (ratchet_load())')
     ap.add_argument('--inner', default='', help='W2 PWR-A closure round 1, combine pass: comma-separated power classes whose open links may '
                                                  'run on In2.Cu/In3.Cu at the inner width (Planner.inner_width), e.g. PWR1A')
+    ap.add_argument('--in4', default='', help='W2 PWR-A closure round 2, probe Y: comma-separated power classes whose nets plan their links '
+                                               'with In4.Cu (the power layer L5) at the inner width (Planner.in4_width), e.g. PWR1A')
+    ap.add_argument('--in4-nets', default='', help='round 2, probe Y: comma-separated nets planned with In4.Cu as --in4 does for a class')
+    ap.add_argument('--in4-mode', choices=('first', 'fallback'), default='first',
+                    help='round 2, probe Y: first = every link searched on F.Cu/In4.Cu/B.Cu with the outer layers at --in4-bias extra cost; '
+                         'fallback = In4.Cu only for links without an outer path')
+    ap.add_argument('--in4-bias', type=float, default=1.0, help='round 2, probe Y: extra cost per mm on F.Cu/B.Cu for an --in4 net (mode first)')
+    ap.add_argument('--tp-in4', type=float, default=0.0, help='W2 PWR-A closure round 2, probe Y: a test-point island left open joins by a '
+                                                               'branch with In4.Cu up to this length in mm (0.25 mm outer, 0.5 mm on In4.Cu)')
+    ap.add_argument('--reserve', default='', help='W2 PWR-A closure round 2, probe Y: comma-separated pads REF.PIN (or @FILE: a JSON '
+                                                   'list, or an object with a "walled" list of "REF.PIN:NET") whose escape is reserved '
+                                                   'before the power copper is planned (Planner.reserve)')
     ap.add_argument('--out', default=str(OUT))
     ap.add_argument('--verify', action='store_true', help='only report the margins of the scripted copper')
     args = ap.parse_args(argv)
@@ -859,6 +1040,10 @@ def main(argv=None):
     t0 = time.time()
     pl = Planner(mb)
     pl.inner_classes = tuple(c for c in args.inner.split(',') if c)
+    pl.in4_classes = tuple(c for c in args.in4.split(',') if c)
+    pl.in4_nets = {n for n in args.in4_nets.split(',') if n}
+    pl.in4_mode, pl.in4_bias = args.in4_mode, args.in4_bias
+    pl.tp_in4 = args.tp_in4
     if not args.verify:
         planning_rules()
     print(f'planning board: {len(pl.m.items)} items ({time.time() - t0:.1f} s)')
@@ -886,6 +1071,16 @@ def main(argv=None):
         first = [n for n in args.first.split(',') if n in todo]
         todo = first + [n for n in todo if n not in first]
     print('nets to plan:', len(todo), 'of', len(nets))
+    reserved = {}
+    if args.reserve:
+        if args.reserve.startswith('@'):
+            raw = json.loads(Path(args.reserve[1:]).read_text(encoding='utf-8'))
+            raw = raw.get('walled', []) if isinstance(raw, dict) else raw
+            keys = [str(r).split(':')[0] for r in raw]
+        else:
+            keys = [r for r in args.reserve.split(',') if r]
+        reserved = pl.reserve(keys)
+        print('reserved escapes:', sum(1 for v in reserved.values() if v), 'of', len(keys), flush=True)
     plan = {}
     if carried is not None:  # the carried nets that still join keep their record (zones, branches); their copper is on the board
         for n in nets:
@@ -918,6 +1113,8 @@ def main(argv=None):
             rec['open_islands'] = [sorted(f'{i.ref}.{i.pad}' for i in g if i.kind == 'pad' and i.src == 'pad') for g in isl] if len(isl) > 1 else []
             rec['kind'] = 'power' if rec['open'] == 0 else 'link'
         print('after negotiation:', {n: r['open'] for n, r in sorted(plan.items()) if r['open']}, flush=True)
+    if reserved:
+        print('reservations removed:', pl.unreserve(), flush=True)
     bad = verify(pl)
     if bad:  # drop planned copper that fails the exact final check at 0.15 mm (its joins stay open) and re-harvest
         dropped = drop_failing(pl)
@@ -959,6 +1156,11 @@ def main(argv=None):
         result['ratchet'] = {'from_guard': carried['guard'], 'dropped': len(carried_dropped), 'replanned': todo,
                              'rule': 'plan6.py --ratchet (W2 PWR-A closure probe X): the earlier plan copper that holds on the current inputs '
                                      'kept, the power nets it leaves open planned again'}
+    if reserved:
+        result['reserved'] = {'pads': reserved,
+                              'rule': 'plan6.py --reserve (W2 PWR-A closure round 2, probe Y): the escape of each listed signal pad (a 0.15 mm '
+                                      'stub on its layer to the nearest spot for a 0.7/0.3 via, within 5 mm) kept free while the power '
+                                      'copper was planned; not plan copper'}
     if args.negotiate:
         result['negotiate'] = {'rounds': args.negotiate, 'kept': [r for r in negotiated if r.endswith(')') and ' kept ' in r],
                                'tries': len(negotiated)}
@@ -970,11 +1172,16 @@ def main(argv=None):
         'label': 'MODEL plan of the PWR_A scripted power copper (W2 PWR-L6-SCRIPT); not a hardware PASS; bench gates OPEN',
         'source': {'tool': 'build/kicad/boards/PWR_A/freeze/plan6.py', 'board': 'make_board.py build(frozen=False, planned=False)',
                    'rules': f'grid A* 0.05 mm, clearance {PLAN_CLR} mm, outline {PLAN_EDGE} mm, power classes on F.Cu/B.Cu at the 2 oz '
-                            'widths, via cost per class, converter zones 3/4 kept free of foreign nets on F.Cu'},
+                            'widths, via cost per class, converter zones 3/4 kept free of foreign nets on F.Cu'
+                            + (f'; In4.Cu (the power layer L5) for {sorted(set(pl.in4_classes) | pl.in4_nets)} at the inner width '
+                               f'(IPC-2221 internal, 0.5 oz), mode {pl.in4_mode}, outer extra cost {pl.in4_bias}/mm, vias per transition '
+                               f'from the net currents (0.738 A at +10 degC, 1.001 A at +20 degC per 0.3 mm via)'
+                               if (pl.in4_classes or pl.in4_nets) else '')},
         'guard': script_guard(mb, pl.inp, pl.pre),
         'result': result,
         'nets': {n: {**{k: r[k] for k in ('kind', 'class', 'width_mm', 'open', 'open_islands', 'zones', 'branches', 'tracks', 'vias')},
-                     **({'inner_width_mm': r['inner_width_mm']} if r.get('inner_width_mm') else {})}
+                     **({'inner_width_mm': r['inner_width_mm']} if r.get('inner_width_mm') else {}),
+                     **({'in4_width_mm': r['in4_width_mm']} if r.get('in4_width_mm') else {})}
                  for n, r in sorted(plan.items())},
     }
     text = json.dumps(doc, ensure_ascii=False, indent=1) + '\n'

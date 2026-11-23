@@ -1933,6 +1933,8 @@ def planned_copper(inp, pre):
     for net, d in sorted(doc['nets'].items()):
         why = (f'W2 PWR-L6-SCRIPT planned {d["class"]} copper of {net} ({SCRIPT6.name}, freeze/plan6.py: grid A* at the 2 oz class '
                f'width {d["width_mm"]} mm on F.Cu/B.Cu, clearance 0.20 mm; kind {d["kind"]})')
+        if d.get('in4_width_mm'):  # W2 PWR-A closure round 2, probe Y: links on In4.Cu, the power layer L5 (plan6.py --in4)
+            why = why[:-1] + f'; links on In4.Cu at {d["in4_width_mm"]} mm, the IPC-2221 internal width on 0.5 oz)'
         for k, (layer, w, a, b) in enumerate(d['tracks'], 1):
             tracks.append({'id': f'PL-{net}-{k:03d}', 'net': net, 'layer': layer, 'width_mm': w, 'path': [list(a), list(b)],
                            'locked': True, 'why': why})
