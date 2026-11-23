@@ -481,7 +481,7 @@
         "pattern": "LIME3V3_DAMP"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "LNB13V2"
       },
       {

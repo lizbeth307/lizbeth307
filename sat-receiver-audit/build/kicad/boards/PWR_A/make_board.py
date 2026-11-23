@@ -1160,15 +1160,15 @@ def gnd_bridges(inp, vias):
     return out
 
 
-# W2 PWR-A closure round 1, probe X (design choice, build/15): the GND fan-out of two J208 top-row GND pins turns inward. gnd_fanout gives
+# W2 PWR-A closure round 1, probe X (design choice, build/15): the GND fan-out of four J208 top-row GND pins turns inward. gnd_fanout gives
 # every GND pin of the J208 top row (y 20.35) a via straight above it at y 21.65 (the first free direction), so a top-row pin between two
 # GND pins sits behind two vias 0.3 mm apart: AUX12 J208.33 between GND 31 and 35 had no exit (push 2 of W2 F2C-FALLBACK part 2: open,
-# MODEL: no 0.15 mm path on any layer). Between the two pin rows (pads 17.4 / 19.6) there is room for a via at y 19.05 (0.2 mm from the
-# top-row pads). Only the two pins beside AUX12 move: the route runs used the channel between the rows for bottom-row signals (I2C2,
-# E2_BONI_LDO, FAULT_HFP, ...), which inward vias of every top-row GND pin would close (MODEL, 156 router items of push 2 against 126 with
-# the two). Done after gnd_fanout and only in the board build, so place_board.py keeps its (more conservative) view of the fixed fan-out
-# above the connector and its placement does not change. ref -> top-row GND pads that turn inward
-B2B_INWARD = {'J208': ('31', '35')}
+# MODEL: no 0.15 mm path on any layer), nor BONI13V8 J208.25 between GND 23 and 27 (MODEL). Between the two pin rows (pads 17.4 / 19.6)
+# there is room for a via at y 19.05 (0.2 mm from the top-row pads). Only these four move: the route runs used the channel between the
+# rows for bottom-row signals (I2C2, E2_BONI_LDO, FAULT_HFP, ...), which inward vias of every top-row GND pin would close (MODEL, 156
+# router items of push 2 off the board against 126 with two). Done after gnd_fanout and only in the board build, so place_board.py keeps
+# its (more conservative) view of the fixed fan-out above the connector and its placement does not change. ref -> top-row GND pads
+B2B_INWARD = {'J208': ('23', '27', '31', '35')}
 
 
 def b2b_inward_fanout(inp, pre, tracks, vias):

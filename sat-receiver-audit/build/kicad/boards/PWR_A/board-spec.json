@@ -6286,42 +6286,6 @@
         "why": "GND fan-out of J208.19 to its plane via"
       },
       {
-        "id": "GND-J208-23-S",
-        "net": "GND",
-        "layer": "F.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            92.05,
-            20.35
-          ],
-          [
-            92.05,
-            21.65
-          ]
-        ],
-        "locked": true,
-        "why": "GND fan-out of J208.23 to its plane via"
-      },
-      {
-        "id": "GND-J208-27-S",
-        "net": "GND",
-        "layer": "F.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            93.05,
-            20.35
-          ],
-          [
-            93.05,
-            21.65
-          ]
-        ],
-        "locked": true,
-        "why": "GND fan-out of J208.27 to its plane via"
-      },
-      {
         "id": "GND-J208-39-S",
         "net": "GND",
         "layer": "F.Cu",
@@ -9070,6 +9034,42 @@
         ],
         "locked": true,
         "why": "GND fan-out of U503.2 to its plane via"
+      },
+      {
+        "id": "GND-J208-23-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            92.05,
+            20.35
+          ],
+          [
+            92.05,
+            19.05
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of J208.23 inward between the pin rows (W2 PWR-A closure probe X, b2b_inward_fanout)"
+      },
+      {
+        "id": "GND-J208-27-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            93.05,
+            20.35
+          ],
+          [
+            93.05,
+            19.05
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of J208.27 inward between the pin rows (W2 PWR-A closure probe X, b2b_inward_fanout)"
       },
       {
         "id": "GND-J208-31-S",
@@ -18540,60 +18540,6 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR3A copper of LAB5 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.95 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-LAB5_RLY-001",
-        "net": "LAB5_RLY",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            90.55,
-            19.65
-          ],
-          [
-            90.7,
-            19.25
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LAB5_RLY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LAB5_RLY-002",
-        "net": "LAB5_RLY",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            90.7,
-            19.25
-          ],
-          [
-            91.45,
-            19.3
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LAB5_RLY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LAB5_RLY-003",
-        "net": "LAB5_RLY",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            91.45,
-            19.3
-          ],
-          [
-            91.55,
-            19.65
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LAB5_RLY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
         "id": "PL-LIME3V3-001",
         "net": "LIME3V3",
         "layer": "B.Cu",
@@ -19734,6 +19680,42 @@
         "width_mm": 0.2,
         "path": [
           [
+            6.9,
+            17.475
+          ],
+          [
+            7.85,
+            17.475
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-002",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            6.9,
+            17.475
+          ],
+          [
+            11.9,
+            17.725
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-003",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
             7.7,
             29.625
           ],
@@ -19743,46 +19725,46 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-002",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            9.1,
-            21.025
-          ],
-          [
-            10.05,
-            21.025
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-003",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            9.1,
-            21.025
-          ],
-          [
-            11.3,
-            18.725
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-004",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            8.7,
+            27.975
+          ],
+          [
+            9.65,
+            27.975
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-005",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            8.7,
+            27.975
+          ],
+          [
+            10.75,
+            25.925
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-006",
         "net": "LNB13V2",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -19797,10 +19779,10 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-LNB13V2-005",
+        "id": "PL-LNB13V2-007",
         "net": "LNB13V2",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -19815,10 +19797,10 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-LNB13V2-006",
+        "id": "PL-LNB13V2-008",
         "net": "LNB13V2",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -19833,10 +19815,10 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-LNB13V2-007",
+        "id": "PL-LNB13V2-009",
         "net": "LNB13V2",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -19851,43 +19833,7 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-008",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            11.3,
-            18.725
-          ],
-          [
-            12.2,
-            17.275
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-009",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            12.2,
-            17.275
-          ],
-          [
-            14.5,
-            17.125
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-010",
@@ -19896,19 +19842,73 @@
         "width_mm": 0.2,
         "path": [
           [
-            14.5,
-            17.125
+            11.4,
+            20.075
           ],
           [
-            20.65,
-            12.975
+            10.75,
+            25.925
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-011",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            11.9,
+            17.775
+          ],
+          [
+            11.4,
+            20.075
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-012",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            12.2,
+            17.275
+          ],
+          [
+            11.9,
+            17.775
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-013",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            13.95,
+            17.225
+          ],
+          [
+            12.2,
+            17.275
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-014",
         "net": "LNB13V2",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -19923,10 +19923,10 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-LNB13V2-012",
+        "id": "PL-LNB13V2-015",
         "net": "LNB13V2",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -19941,10 +19941,10 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-LNB13V2-013",
+        "id": "PL-LNB13V2-016",
         "net": "LNB13V2",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -19959,61 +19959,7 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-014",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            20.65,
-            12.975
-          ],
-          [
-            22.6,
-            12.025
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-015",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            22.6,
-            12.025
-          ],
-          [
-            35.95,
-            12.425
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-016",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            35.95,
-            12.425
-          ],
-          [
-            37.25,
-            11.625
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-017",
@@ -20022,16 +19968,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            37.25,
-            11.625
+            20.15,
+            13.275
           ],
           [
-            36.3661,
-            10.7411
+            13.95,
+            17.225
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-018",
@@ -20040,16 +19986,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            37.6,
-            14.275
+            22.05,
+            12.275
           ],
           [
-            37.6,
-            15.225
+            20.15,
+            13.275
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-019",
@@ -20058,16 +20004,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            37.6,
-            14.275
+            46.25,
+            1.825
           ],
           [
-            45.45,
+            22.05,
             12.275
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-020",
@@ -20076,16 +20022,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            45.45,
-            12.275
+            54.15,
+            1.825
           ],
           [
-            51.0,
-            12.425
+            46.25,
+            1.825
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-021",
@@ -20094,73 +20040,19 @@
         "width_mm": 0.2,
         "path": [
           [
-            51.0,
-            12.425
+            61.75,
+            5.725
           ],
           [
-            53.85,
-            12.625
+            54.15,
+            1.825
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-022",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            53.85,
-            12.625
-          ],
-          [
-            56.7,
-            13.225
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-023",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            56.7,
-            13.225
-          ],
-          [
-            62.4,
-            13.225
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-024",
-        "net": "LNB13V2",
-        "layer": "B.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            62.4,
-            13.225
-          ],
-          [
-            63.0718,
-            12.5532
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-025",
         "net": "LNB13V2",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -20175,10 +20067,10 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-LNB13V2-026",
+        "id": "PL-LNB13V2-023",
         "net": "LNB13V2",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -20188,12 +20080,66 @@
             26.725
           ],
           [
-            71.9,
-            23.225
+            72.3,
+            19.575
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-024",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            72.2,
+            13.075
+          ],
+          [
+            61.75,
+            5.725
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-025",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            72.2,
+            13.075
+          ],
+          [
+            73.3,
+            12.025
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-026",
+        "net": "LNB13V2",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            72.3,
+            19.575
+          ],
+          [
+            72.2,
+            13.075
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-027",
@@ -20202,16 +20148,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            68.65,
-            13.025
+            73.3,
+            12.025
           ],
           [
-            69.6,
-            13.025
+            77.0,
+            12.625
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-028",
@@ -20220,16 +20166,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            68.65,
-            13.025
+            77.0,
+            12.625
           ],
           [
-            70.8,
-            15.575
+            86.95,
+            18.675
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-029",
@@ -20238,16 +20184,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            70.8,
-            15.575
+            86.95,
+            18.675
           ],
           [
-            72.3,
-            18.425
+            92.9,
+            21.675
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-030",
@@ -20256,19 +20202,55 @@
         "width_mm": 0.2,
         "path": [
           [
-            72.3,
-            18.425
+            92.9,
+            21.675
           ],
           [
-            71.9,
-            23.225
+            91.95,
+            21.675
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-031",
+        "net": "LNB13V2",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            4.65,
+            16.325
+          ],
+          [
+            6.9,
+            17.475
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-032",
+        "net": "LNB13V2",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            6.9,
+            17.475
+          ],
+          [
+            7.85,
+            17.475
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-033",
         "net": "LNB13V2",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -20278,48 +20260,12 @@
             29.625
           ],
           [
-            8.05,
-            28.625
+            7.95,
+            28.875
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-032",
-        "net": "LNB13V2",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            8.7,
-            21.425
-          ],
-          [
-            9.1,
-            21.025
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-033",
-        "net": "LNB13V2",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            9.1,
-            21.025
-          ],
-          [
-            10.05,
-            21.025
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-034",
@@ -20328,16 +20274,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            12.8,
-            26.825
+            7.95,
+            28.875
           ],
           [
-            8.05,
-            28.625
+            8.7,
+            27.975
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-035",
@@ -20346,16 +20292,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            12.85,
-            25.775
+            8.7,
+            27.975
           ],
           [
-            4.2,
-            16.725
+            8.9952,
+            27.8276
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-036",
@@ -20364,16 +20310,16 @@
         "width_mm": 0.2,
         "path": [
           [
-            37.25,
-            11.625
+            8.7,
+            27.975
           ],
           [
-            36.3661,
-            10.7411
+            9.65,
+            27.975
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-037",
@@ -20382,91 +20328,19 @@
         "width_mm": 0.2,
         "path": [
           [
-            37.25,
-            11.625
+            8.9952,
+            27.8276
           ],
           [
-            37.6,
-            14.275
+            12.775,
+            26.775
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2-038",
-        "net": "LNB13V2",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            37.6,
-            14.275
-          ],
-          [
-            37.6,
-            15.225
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-039",
-        "net": "LNB13V2",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            62.4,
-            13.225
-          ],
-          [
-            63.0718,
-            12.5532
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-040",
-        "net": "LNB13V2",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            62.4,
-            13.225
-          ],
-          [
-            63.35,
-            13.025
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-041",
-        "net": "LNB13V2",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            63.35,
-            13.025
-          ],
-          [
-            69.6,
-            13.025
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-LNB13V2-042",
         "net": "LNB13V2",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -20481,10 +20355,10 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-LNB13V2-043",
+        "id": "PL-LNB13V2-039",
         "net": "LNB13V2",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -20499,7 +20373,61 @@
           ]
         ],
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-040",
+        "net": "LNB13V2",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            92.9,
+            21.675
+          ],
+          [
+            91.95,
+            21.675
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-041",
+        "net": "LNB13V2",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            92.9,
+            21.675
+          ],
+          [
+            93.55,
+            21.275
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-LNB13V2-042",
+        "net": "LNB13V2",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            93.55,
+            21.275
+          ],
+          [
+            93.55,
+            21.025
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PL-LNB13V2_DAMP-001",
@@ -21570,12 +21498,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            93.3,
-            18.475
+            94.55,
+            18.275
           ],
           [
-            92.35,
-            18.475
+            93.6,
+            18.275
           ]
         ],
         "locked": true,
@@ -21588,12 +21516,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            93.3,
-            18.475
+            94.55,
+            18.275
           ],
           [
-            93.45,
-            19.475
+            95.5,
+            18.475
           ]
         ],
         "locked": true,
@@ -21606,12 +21534,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            93.45,
-            19.475
+            95.5,
+            18.475
           ],
           [
-            95.1,
-            21.725
+            95.75,
+            18.975
           ]
         ],
         "locked": true,
@@ -21619,6 +21547,42 @@
       },
       {
         "id": "PL-VBUS_HFP-005",
+        "net": "VBUS_HFP",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            95.75,
+            18.975
+          ],
+          [
+            96.95,
+            21.925
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-VBUS_HFP-006",
+        "net": "VBUS_HFP",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            96.95,
+            21.925
+          ],
+          [
+            97.9,
+            21.925
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-VBUS_HFP-007",
         "net": "VBUS_HFP",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -21636,7 +21600,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-006",
+        "id": "PL-VBUS_HFP-008",
         "net": "VBUS_HFP",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -21654,7 +21618,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-007",
+        "id": "PL-VBUS_HFP-009",
         "net": "VBUS_HFP",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -21672,7 +21636,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-008",
+        "id": "PL-VBUS_HFP-010",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21690,54 +21654,18 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-009",
-        "net": "VBUS_HFP",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            89.55,
-            19.45
-          ],
-          [
-            89.55,
-            19.65
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PL-VBUS_HFP-010",
-        "net": "VBUS_HFP",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            90.55,
-            18.65
-          ],
-          [
-            89.55,
-            19.45
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
         "id": "PL-VBUS_HFP-011",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
         "path": [
           [
-            93.3,
-            18.475
+            89.55,
+            19.5
           ],
           [
-            90.55,
-            18.65
+            89.55,
+            19.65
           ]
         ],
         "locked": true,
@@ -21750,12 +21678,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            93.3,
-            18.475
+            90.75,
+            18.45
           ],
           [
-            92.35,
-            18.475
+            89.55,
+            19.5
           ]
         ],
         "locked": true,
@@ -21768,12 +21696,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            95.1,
-            21.725
+            94.55,
+            18.275
           ],
           [
-            95.8,
-            22.325
+            90.75,
+            18.45
           ]
         ],
         "locked": true,
@@ -21786,12 +21714,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            95.8,
-            22.325
+            94.55,
+            18.275
           ],
           [
-            98.4,
-            24.275
+            93.6,
+            18.275
           ]
         ],
         "locked": true,
@@ -21804,12 +21732,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            98.4,
-            24.275
+            96.95,
+            21.925
           ],
           [
-            100.0,
-            25.875
+            97.9,
+            21.925
           ]
         ],
         "locked": true,
@@ -21822,12 +21750,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            98.471,
-            18.0259
+            96.95,
+            21.925
           ],
           [
-            93.3,
-            18.475
+            100.05,
+            25.825
           ]
         ],
         "locked": true,
@@ -21835,6 +21763,24 @@
       },
       {
         "id": "PL-VBUS_HFP-017",
+        "net": "VBUS_HFP",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            98.4705,
+            18.0184
+          ],
+          [
+            94.55,
+            18.275
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-VBUS_HFP-018",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21852,7 +21798,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-018",
+        "id": "PL-VBUS_HFP-019",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21862,15 +21808,15 @@
             18.0
           ],
           [
-            98.471,
-            18.0259
+            98.4705,
+            18.0184
           ]
         ],
         "locked": true,
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-019",
+        "id": "PL-VBUS_HFP-020",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -22002,12 +21948,12 @@
         "width_mm": 0.4,
         "path": [
           [
-            47.35,
-            5.6
+            30.45,
+            6.75
           ],
           [
-            46.4,
-            5.6
+            30.45,
+            7.7
           ]
         ],
         "locked": true,
@@ -22020,12 +21966,12 @@
         "width_mm": 0.4,
         "path": [
           [
-            56.85,
-            5.6
+            30.45,
+            6.75
           ],
           [
-            55.9,
-            5.6
+            31.4,
+            6.75
           ]
         ],
         "locked": true,
@@ -22038,12 +21984,12 @@
         "width_mm": 0.4,
         "path": [
           [
-            56.85,
-            5.6
+            66.4,
+            14.85
           ],
           [
-            56.85,
-            6.55
+            65.7282,
+            15.5218
           ]
         ],
         "locked": true,
@@ -22056,12 +22002,12 @@
         "width_mm": 0.4,
         "path": [
           [
-            70.85,
-            13.05
+            66.4,
+            14.85
           ],
           [
-            70.1782,
-            13.7218
+            66.4,
+            16.1
           ]
         ],
         "locked": true,
@@ -22074,12 +22020,12 @@
         "width_mm": 0.4,
         "path": [
           [
-            70.85,
-            13.05
+            72.9,
+            19.95
           ],
           [
-            71.8,
-            13.05
+            73.85,
+            19.95
           ]
         ],
         "locked": true,
@@ -22087,24 +22033,6 @@
       },
       {
         "id": "PL-VCC_3V3_MKEY-012",
-        "net": "VCC_3V3_MKEY",
-        "layer": "B.Cu",
-        "width_mm": 0.4,
-        "path": [
-          [
-            72.85,
-            19.95
-          ],
-          [
-            73.8,
-            19.95
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PL-VCC_3V3_MKEY-013",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.4,
@@ -22122,7 +22050,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-014",
+        "id": "PL-VCC_3V3_MKEY-013",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22140,7 +22068,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-015",
+        "id": "PL-VCC_3V3_MKEY-014",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22158,18 +22086,36 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-016",
+        "id": "PL-VCC_3V3_MKEY-015",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
         "path": [
           [
             1.75,
-            25.15
+            25.05
           ],
           [
             1.15,
             31.25
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-016",
+        "net": "VCC_3V3_MKEY",
+        "layer": "B.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            2.15,
+            24.5
+          ],
+          [
+            1.75,
+            25.05
           ]
         ],
         "locked": true,
@@ -22182,12 +22128,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            2.05,
-            24.55
+            2.9,
+            14.4
           ],
           [
-            1.75,
-            25.15
+            3.25,
+            21.35
           ]
         ],
         "locked": true,
@@ -22200,12 +22146,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            3.15,
-            24.45
+            3.25,
+            21.35
           ],
           [
-            2.05,
-            24.55
+            4.45,
+            22.65
           ]
         ],
         "locked": true,
@@ -22218,12 +22164,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            4.35,
-            23.95
+            3.4,
+            24.45
           ],
           [
-            3.15,
-            24.45
+            2.15,
+            24.5
           ]
         ],
         "locked": true,
@@ -22236,12 +22182,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            5.15,
-            20.85
+            4.45,
+            22.65
           ],
           [
-            4.35,
-            23.95
+            4.45,
+            23.85
           ]
         ],
         "locked": true,
@@ -22254,12 +22200,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            6.7,
-            19.25
+            4.45,
+            23.85
           ],
           [
-            5.15,
-            20.85
+            3.4,
+            24.45
           ]
         ],
         "locked": true,
@@ -22267,6 +22213,24 @@
       },
       {
         "id": "PL-VCC_3V3_MKEY-022",
+        "net": "VCC_3V3_MKEY",
+        "layer": "B.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            5.05,
+            12.2
+          ],
+          [
+            2.9,
+            14.4
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-023",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22284,43 +22248,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-023",
-        "net": "VCC_3V3_MKEY",
-        "layer": "B.Cu",
-        "width_mm": 0.5,
-        "path": [
-          [
-            10.25,
-            13.95
-          ],
-          [
-            6.7,
-            19.25
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
         "id": "PL-VCC_3V3_MKEY-024",
-        "net": "VCC_3V3_MKEY",
-        "layer": "B.Cu",
-        "width_mm": 0.5,
-        "path": [
-          [
-            11.4,
-            12.55
-          ],
-          [
-            10.25,
-            13.95
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PL-VCC_3V3_MKEY-025",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22338,7 +22266,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-026",
+        "id": "PL-VCC_3V3_MKEY-025",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22356,7 +22284,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-027",
+        "id": "PL-VCC_3V3_MKEY-026",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22374,7 +22302,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-028",
+        "id": "PL-VCC_3V3_MKEY-027",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22392,18 +22320,36 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
+        "id": "PL-VCC_3V3_MKEY-028",
+        "net": "VCC_3V3_MKEY",
+        "layer": "B.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            23.55,
+            6.75
+          ],
+          [
+            5.05,
+            12.2
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
         "id": "PL-VCC_3V3_MKEY-029",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
         "path": [
           [
-            40.05,
-            7.8
+            23.55,
+            6.75
           ],
           [
-            11.4,
-            12.55
+            30.45,
+            6.75
           ]
         ],
         "locked": true,
@@ -22416,12 +22362,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            40.05,
-            7.8
+            54.15,
+            11.95
           ],
           [
-            47.35,
-            5.6
+            55.35,
+            13.15
           ]
         ],
         "locked": true,
@@ -22434,12 +22380,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            56.85,
-            5.6
+            55.35,
+            13.15
           ],
           [
-            58.3,
-            5.6
+            66.4,
+            14.85
           ]
         ],
         "locked": true,
@@ -22452,61 +22398,7 @@
         "width_mm": 0.5,
         "path": [
           [
-            61.95,
-            5.65
-          ],
-          [
-            58.3,
-            5.6
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PL-VCC_3V3_MKEY-033",
-        "net": "VCC_3V3_MKEY",
-        "layer": "B.Cu",
-        "width_mm": 0.5,
-        "path": [
-          [
-            69.85,
-            12.2
-          ],
-          [
-            61.95,
-            5.65
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PL-VCC_3V3_MKEY-034",
-        "net": "VCC_3V3_MKEY",
-        "layer": "B.Cu",
-        "width_mm": 0.5,
-        "path": [
-          [
-            69.85,
-            12.2
-          ],
-          [
-            70.85,
-            13.05
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PL-VCC_3V3_MKEY-035",
-        "net": "VCC_3V3_MKEY",
-        "layer": "B.Cu",
-        "width_mm": 0.5,
-        "path": [
-          [
-            72.85,
+            72.9,
             19.95
           ],
           [
@@ -22518,7 +22410,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-036",
+        "id": "PL-VCC_3V3_MKEY-033",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22536,7 +22428,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-037",
+        "id": "PL-VCC_3V3_MKEY-034",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22554,7 +22446,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-038",
+        "id": "PL-VCC_3V3_MKEY-035",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22572,7 +22464,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-039",
+        "id": "PL-VCC_3V3_MKEY-036",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22590,7 +22482,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-040",
+        "id": "PL-VCC_3V3_MKEY-037",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22608,7 +22500,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-041",
+        "id": "PL-VCC_3V3_MKEY-038",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22626,7 +22518,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-042",
+        "id": "PL-VCC_3V3_MKEY-039",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22644,7 +22536,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-043",
+        "id": "PL-VCC_3V3_MKEY-040",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22662,7 +22554,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-044",
+        "id": "PL-VCC_3V3_MKEY-041",
         "net": "VCC_3V3_MKEY",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -22680,7 +22572,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-045",
+        "id": "PL-VCC_3V3_MKEY-042",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -22698,7 +22590,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-046",
+        "id": "PL-VCC_3V3_MKEY-043",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -22716,7 +22608,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-047",
+        "id": "PL-VCC_3V3_MKEY-044",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -22734,7 +22626,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-048",
+        "id": "PL-VCC_3V3_MKEY-045",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -22752,7 +22644,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-049",
+        "id": "PL-VCC_3V3_MKEY-046",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.4,
@@ -22770,7 +22662,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-050",
+        "id": "PL-VCC_3V3_MKEY-047",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.4,
@@ -22788,7 +22680,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-051",
+        "id": "PL-VCC_3V3_MKEY-048",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.4,
@@ -22806,7 +22698,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-052",
+        "id": "PL-VCC_3V3_MKEY-049",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.4,
@@ -22824,18 +22716,72 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
+        "id": "PL-VCC_3V3_MKEY-050",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.45,
+            6.75
+          ],
+          [
+            30.45,
+            7.7
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-051",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.45,
+            6.75
+          ],
+          [
+            31.4,
+            6.75
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-052",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            66.4,
+            14.85
+          ],
+          [
+            65.7282,
+            15.5218
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
         "id": "PL-VCC_3V3_MKEY-053",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.4,
         "path": [
           [
-            47.35,
-            5.6
+            66.4,
+            14.85
           ],
           [
-            46.4,
-            5.6
+            66.4,
+            16.1
           ]
         ],
         "locked": true,
@@ -22848,12 +22794,12 @@
         "width_mm": 0.4,
         "path": [
           [
-            56.85,
-            5.6
+            72.9,
+            19.95
           ],
           [
-            55.9,
-            5.6
+            73.85,
+            19.95
           ]
         ],
         "locked": true,
@@ -22861,78 +22807,6 @@
       },
       {
         "id": "PL-VCC_3V3_MKEY-055",
-        "net": "VCC_3V3_MKEY",
-        "layer": "F.Cu",
-        "width_mm": 0.4,
-        "path": [
-          [
-            56.85,
-            5.6
-          ],
-          [
-            56.85,
-            6.55
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PL-VCC_3V3_MKEY-056",
-        "net": "VCC_3V3_MKEY",
-        "layer": "F.Cu",
-        "width_mm": 0.4,
-        "path": [
-          [
-            70.85,
-            13.05
-          ],
-          [
-            70.1782,
-            13.7218
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PL-VCC_3V3_MKEY-057",
-        "net": "VCC_3V3_MKEY",
-        "layer": "F.Cu",
-        "width_mm": 0.4,
-        "path": [
-          [
-            70.85,
-            13.05
-          ],
-          [
-            71.8,
-            13.05
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PL-VCC_3V3_MKEY-058",
-        "net": "VCC_3V3_MKEY",
-        "layer": "F.Cu",
-        "width_mm": 0.4,
-        "path": [
-          [
-            72.85,
-            19.95
-          ],
-          [
-            73.8,
-            19.95
-          ]
-        ],
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PL-VCC_3V3_MKEY-059",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.4,
@@ -22950,7 +22824,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-060",
+        "id": "PL-VCC_3V3_MKEY-056",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -22968,7 +22842,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-061",
+        "id": "PL-VCC_3V3_MKEY-057",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -22986,7 +22860,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-062",
+        "id": "PL-VCC_3V3_MKEY-058",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -23004,18 +22878,90 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
+        "id": "PL-VCC_3V3_MKEY-059",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            30.45,
+            6.75
+          ],
+          [
+            38.2,
+            5.5
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-060",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            39.8,
+            5.35
+          ],
+          [
+            38.2,
+            5.5
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-061",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            43.45,
+            5.45
+          ],
+          [
+            39.8,
+            5.35
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-062",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            47.9,
+            6.35
+          ],
+          [
+            43.45,
+            5.45
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
         "id": "PL-VCC_3V3_MKEY-063",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.5,
         "path": [
           [
-            47.35,
-            5.6
+            49.65,
+            6.65
           ],
           [
-            56.85,
-            5.6
+            47.9,
+            6.35
           ]
         ],
         "locked": true,
@@ -23028,12 +22974,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            70.85,
-            13.05
+            49.65,
+            6.65
           ],
           [
-            71.45,
-            13.65
+            54.15,
+            11.95
           ]
         ],
         "locked": true,
@@ -23046,12 +22992,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            72.2,
-            17.15
+            66.4,
+            14.85
           ],
           [
-            71.45,
-            13.65
+            67.2,
+            14.4
           ]
         ],
         "locked": true,
@@ -23064,12 +23010,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            72.2,
-            17.15
+            71.15,
+            14.4
           ],
           [
-            72.85,
-            19.95
+            67.2,
+            14.4
           ]
         ],
         "locked": true,
@@ -23077,6 +23023,60 @@
       },
       {
         "id": "PL-VCC_3V3_MKEY-067",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            71.7,
+            14.7
+          ],
+          [
+            71.15,
+            14.4
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-068",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            72.25,
+            17.45
+          ],
+          [
+            71.7,
+            14.7
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-069",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            72.25,
+            17.45
+          ],
+          [
+            72.9,
+            19.95
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PL-VCC_3V3_MKEY-070",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -23094,7 +23094,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-068",
+        "id": "PL-VCC_3V3_MKEY-071",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -23112,7 +23112,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-069",
+        "id": "PL-VCC_3V3_MKEY-072",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -23130,7 +23130,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-070",
+        "id": "PL-VCC_3V3_MKEY-073",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -23148,7 +23148,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PL-VCC_3V3_MKEY-071",
+        "id": "PL-VCC_3V3_MKEY-074",
         "net": "VCC_3V3_MKEY",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -24438,30 +24438,6 @@
         "diameter_mm": 0.7,
         "locked": true,
         "why": "GND plane via of J208.19"
-      },
-      {
-        "id": "GND-J208-23-V",
-        "net": "GND",
-        "at": [
-          92.05,
-          21.65
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "GND plane via of J208.23"
-      },
-      {
-        "id": "GND-J208-27-V",
-        "net": "GND",
-        "at": [
-          93.05,
-          21.65
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "GND plane via of J208.27"
       },
       {
         "id": "GND-J208-39-V",
@@ -26130,6 +26106,30 @@
         "diameter_mm": 0.7,
         "locked": true,
         "why": "GND plane via of U503.2"
+      },
+      {
+        "id": "GND-J208-23-V",
+        "net": "GND",
+        "at": [
+          92.05,
+          19.05
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of J208.23 between the pin rows (b2b_inward_fanout)"
+      },
+      {
+        "id": "GND-J208-27-V",
+        "net": "GND",
+        "at": [
+          93.05,
+          19.05
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of J208.27 between the pin rows (b2b_inward_fanout)"
       },
       {
         "id": "GND-J208-31-V",
@@ -28283,112 +28283,64 @@
         "id": "PLV-LNB13V2-01",
         "net": "LNB13V2",
         "at": [
+          6.9,
+          17.475
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PLV-LNB13V2-02",
+        "net": "LNB13V2",
+        "at": [
           7.7,
           29.625
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PLV-LNB13V2-02",
-        "net": "LNB13V2",
-        "at": [
-          9.1,
-          21.025
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PLV-LNB13V2-03",
         "net": "LNB13V2",
         "at": [
-          10.05,
-          21.025
+          7.85,
+          17.475
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PLV-LNB13V2-04",
         "net": "LNB13V2",
         "at": [
-          36.3661,
-          10.7411
+          8.7,
+          27.975
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PLV-LNB13V2-05",
         "net": "LNB13V2",
         "at": [
-          37.25,
-          11.625
+          9.65,
+          27.975
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PLV-LNB13V2-06",
-        "net": "LNB13V2",
-        "at": [
-          37.6,
-          14.275
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PLV-LNB13V2-07",
-        "net": "LNB13V2",
-        "at": [
-          37.6,
-          15.225
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PLV-LNB13V2-08",
-        "net": "LNB13V2",
-        "at": [
-          62.4,
-          13.225
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PLV-LNB13V2-09",
-        "net": "LNB13V2",
-        "at": [
-          63.0718,
-          12.5532
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PLV-LNB13V2-10",
         "net": "LNB13V2",
         "at": [
           68.4,
@@ -28397,22 +28349,10 @@
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PLV-LNB13V2-11",
-        "net": "LNB13V2",
-        "at": [
-          68.65,
-          13.025
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
-      },
-      {
-        "id": "PLV-LNB13V2-12",
+        "id": "PLV-LNB13V2-07",
         "net": "LNB13V2",
         "at": [
           69.35,
@@ -28421,19 +28361,31 @@
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PLV-LNB13V2-13",
+        "id": "PLV-LNB13V2-08",
         "net": "LNB13V2",
         "at": [
-          69.6,
-          13.025
+          91.95,
+          21.675
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
+      },
+      {
+        "id": "PLV-LNB13V2-09",
+        "net": "LNB13V2",
+        "at": [
+          92.9,
+          21.675
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of LNB13V2 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
         "id": "PLV-LNB13V2_DAMP-01",
@@ -28715,8 +28667,8 @@
         "id": "PLV-VBUS_HFP-02",
         "net": "VBUS_HFP",
         "at": [
-          92.35,
-          18.475
+          93.6,
+          18.275
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28727,8 +28679,8 @@
         "id": "PLV-VBUS_HFP-03",
         "net": "VBUS_HFP",
         "at": [
-          93.3,
-          18.475
+          94.55,
+          18.275
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28739,8 +28691,8 @@
         "id": "PLV-VBUS_HFP-04",
         "net": "VBUS_HFP",
         "at": [
-          95.1,
-          21.725
+          96.95,
+          21.925
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28749,6 +28701,18 @@
       },
       {
         "id": "PLV-VBUS_HFP-05",
+        "net": "VBUS_HFP",
+        "at": [
+          97.9,
+          21.925
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-VBUS_HFP-06",
         "net": "VBUS_HFP",
         "at": [
           98.6282,
@@ -28760,7 +28724,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-VBUS_HFP-06",
+        "id": "PLV-VBUS_HFP-07",
         "net": "VBUS_HFP",
         "at": [
           98.8,
@@ -28772,7 +28736,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-VBUS_HFP-07",
+        "id": "PLV-VBUS_HFP-08",
         "net": "VBUS_HFP",
         "at": [
           99.3,
@@ -28784,7 +28748,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-VBUS_HFP-08",
+        "id": "PLV-VBUS_HFP-09",
         "net": "VBUS_HFP",
         "at": [
           99.75,
@@ -28895,8 +28859,8 @@
         "id": "PLV-VCC_3V3_MKEY-09",
         "net": "VCC_3V3_MKEY",
         "at": [
-          46.4,
-          5.6
+          30.45,
+          6.75
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28907,8 +28871,8 @@
         "id": "PLV-VCC_3V3_MKEY-10",
         "net": "VCC_3V3_MKEY",
         "at": [
-          47.35,
-          5.6
+          30.45,
+          7.7
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28919,8 +28883,8 @@
         "id": "PLV-VCC_3V3_MKEY-11",
         "net": "VCC_3V3_MKEY",
         "at": [
-          55.9,
-          5.6
+          31.4,
+          6.75
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28931,8 +28895,8 @@
         "id": "PLV-VCC_3V3_MKEY-12",
         "net": "VCC_3V3_MKEY",
         "at": [
-          56.85,
-          5.6
+          54.15,
+          11.95
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28943,8 +28907,8 @@
         "id": "PLV-VCC_3V3_MKEY-13",
         "net": "VCC_3V3_MKEY",
         "at": [
-          56.85,
-          6.55
+          65.7282,
+          15.5218
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28955,8 +28919,8 @@
         "id": "PLV-VCC_3V3_MKEY-14",
         "net": "VCC_3V3_MKEY",
         "at": [
-          70.1782,
-          13.7218
+          66.4,
+          14.85
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28967,8 +28931,8 @@
         "id": "PLV-VCC_3V3_MKEY-15",
         "net": "VCC_3V3_MKEY",
         "at": [
-          70.85,
-          13.05
+          66.4,
+          16.1
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28979,8 +28943,8 @@
         "id": "PLV-VCC_3V3_MKEY-16",
         "net": "VCC_3V3_MKEY",
         "at": [
-          71.8,
-          13.05
+          72.9,
+          19.95
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28991,7 +28955,7 @@
         "id": "PLV-VCC_3V3_MKEY-17",
         "net": "VCC_3V3_MKEY",
         "at": [
-          72.85,
+          73.85,
           19.95
         ],
         "drill_mm": 0.3,
@@ -29003,18 +28967,6 @@
         "id": "PLV-VCC_3V3_MKEY-18",
         "net": "VCC_3V3_MKEY",
         "at": [
-          73.8,
-          19.95
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PLV-VCC_3V3_MKEY-19",
-        "net": "VCC_3V3_MKEY",
-        "at": [
           75.15,
           23.5
         ],
@@ -29024,7 +28976,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PLV-VCC_3V3_MKEY-20",
+        "id": "PLV-VCC_3V3_MKEY-19",
         "net": "VCC_3V3_MKEY",
         "at": [
           76.1,
@@ -29036,7 +28988,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PLV-VCC_3V3_MKEY-21",
+        "id": "PLV-VCC_3V3_MKEY-20",
         "net": "VCC_3V3_MKEY",
         "at": [
           77.05,
@@ -29048,7 +29000,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of VCC_3V3_MKEY (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PLV-VCC_3V3_MKEY-22",
+        "id": "PLV-VCC_3V3_MKEY-21",
         "net": "VCC_3V3_MKEY",
         "at": [
           82.075,
@@ -31494,6 +31446,7 @@
       "LAB5",
       "LIME3V3",
       "LIME3V3_DAMP",
+      "LNB13V2",
       "LNB13V2_DAMP",
       "SYS12",
       "VCC_3V3_MKEY"
@@ -31528,7 +31481,7 @@
       "E1_LAB5_FB",
       "E1_LAB5_RT"
     ],
-    "planned_file": "build/kicad/boards/PWR_A/script-planned-6l.json sha256 b747d4895f0c0e283336d1ce9b8d8a2e5dc05696d750462c3c24ec0fc8f59faa",
+    "planned_file": "build/kicad/boards/PWR_A/script-planned-6l.json sha256 dc3f2daf92704b92ceb56ef732ff17b54cefdff26f73dea3a2c2a3de8eced8f3",
     "planned_result": {
       "nets": 36,
       "power": [
@@ -31557,6 +31510,7 @@
         "LAB5",
         "LIME3V3",
         "LIME3V3_DAMP",
+        "LNB13V2",
         "LNB13V2_DAMP",
         "SYS12",
         "VCC_3V3_MKEY"
@@ -31567,18 +31521,17 @@
         "E2_BONI_IN": 2,
         "E2_BONI_IN_DAMP": 1,
         "J21": 1,
-        "LAB5_RLY": 1,
-        "LNB13V2": 1,
+        "LAB5_RLY": 2,
         "VBUS_HFP": 2
       },
       "violations": 0,
       "negotiate": {
         "rounds": 1,
         "kept": [
-          "round 1 SYS12: ripped ['LIME3V3', 'E1_CONV_IN'], open 11 -> 10, kept (19 s)",
-          "round 1 VCC_3V3_MKEY: ripped [], open 10 -> 9, kept (24 s)"
+          "round 1 SYS12: ripped ['LIME3V3', 'E1_CONV_IN'], open 11 -> 10, kept (16 s)",
+          "round 1 VCC_3V3_MKEY: ripped [], open 10 -> 9, kept (18 s)"
         ],
-        "tries": 10
+        "tries": 9
       }
     },
     "planned_nets": {
@@ -31696,7 +31649,7 @@
       },
       "LAB5_RLY": {
         "kind": "link",
-        "open": 1
+        "open": 2
       },
       "LIME3V3": {
         "kind": "power",
@@ -31707,8 +31660,8 @@
         "open": 0
       },
       "LNB13V2": {
-        "kind": "link",
-        "open": 1
+        "kind": "power",
+        "open": 0
       },
       "LNB13V2_DAMP": {
         "kind": "power",
@@ -32102,7 +32055,7 @@
     "rule": "make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to a 0.7 / 0.3 via, or to a GND via within 3 mm"
   },
   "moves": {
-    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 44c275b41c7683eca1a35a265ad17f05f855c6a4b8efca5e214f9413e43e4713",
+    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 522c922bad98a11c2e9a433bf68cfe816cbbdca9c2f7c7283977107ae8892e13",
     "moved_refs": 151,
     "manual": [
       {
