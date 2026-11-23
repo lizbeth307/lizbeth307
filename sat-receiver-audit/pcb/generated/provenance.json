@@ -2,11 +2,11 @@
   "inputs": [
     {
       "file": "design/E1.json",
-      "sha256": "2265ae3197e38f5f7ea787f70c2b0ca7c126115427fdb71a6e93b93170d7b03e"
+      "sha256": "1bc7eb53a1823d2d5b2e17253bf2f59df06ecc5412c2516cbbbf54b534eb3e9f"
     },
     {
       "file": "design/E2.json",
-      "sha256": "9e3b73999f923c3093bd180274997277ad181bed0f45c17cf8d10bea79df9582"
+      "sha256": "691b33679e239e32eb10317a9032253b3b31033bef335fdd142240827228d157"
     },
     {
       "file": "design/E3.json",
@@ -143,7 +143,7 @@
   },
   "partition": {
     "file": "pcb/partition-spec.json",
-    "sha256": "a940f54a8fa782bb5751053037091a5329541b236c676b99ab405ab3efda42cb",
+    "sha256": "f3d8650100ee85f753f4618e950281560603ce4f332615d3f2929a7abb1923a8",
     "b2b_currents": "tools/assembly_data.py NET_CURRENT"
   }
 }

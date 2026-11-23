@@ -5,10 +5,10 @@
   "status": "MODEL / planning result of the board_gen planner (standard library); no KiCad board, no routing, no hardware result; bench gates OPEN",
   "generator": "build/kicad/boards/PWR_A/placement_study.py",
   "inputs": {
-    "spec_sha256": "9fccd1f65b015519b316943ca5aca1feafb1c869c2e1c49dc0cdfe6192743857",
+    "spec_sha256": "3992d3223a91bfab0f3ce3768357fd17c418e811f6a32db5782b7cf5a2add593",
     "contract_pwr": "38152078220463bf4ce8e405b0aae905beb74da0c7d85b79be0bc9b6b0e43203",
     "contract_pwr_b_outline": "ffe8e8c1eab5700401657c3c70be9da78460409e41ebaf72ceb0224135d4d0ed",
-    "template_sha256": "4c45cb593f465bb6f348ed63e88ee99fec436badb804f0a3000f3fb88550dbb3",
+    "template_sha256": "ed5fe640dfd1ddbee21955ec30ff858d8a0619cbee7dbf9208203d5b73b88b32",
     "project_sha256": "f76dad17034970a241dc60fa31bb8666d48304fa848c88fcb26bdcff7d8dc3de",
     "pwr_b_placeholders": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
     "pwr_b_spec_sha256": "872f7b889472bca1ba1bcb49efa5a65acc28c2415fad8ecdf79df9e82beedf4f",
@@ -19,7 +19,7 @@
     "project_rules": "passed",
     "domain_audit": {
       "passed": true,
-      "refs": 226,
+      "refs": 225,
       "missing": [],
       "foreign": []
     }
@@ -30,28 +30,28 @@
     "outline_mm2": 7910.0,
     "hole_keepouts_mm2": 269.3916,
     "usable_mm2": 7640.6084,
-    "refs": 226,
-    "graph_refs": 226,
+    "refs": 225,
+    "graph_refs": 225,
     "placeholder_refs": [],
-    "top_refs": 153,
-    "courtyard_sum_mm2": 3601.668,
+    "top_refs": 152,
+    "courtyard_sum_mm2": 3578.658,
     "reserved_rects_mm2": 0.0,
     "reserved_area_only_mm2": 0.0,
-    "demand_mm2": 3601.668,
-    "fill_all_refs": 0.4714,
-    "budget_raw_fill": 0.471,
-    "anchored_refs": 76,
-    "anchored_mm2": 2523.4124,
-    "free_after_anchors_and_reserves_mm2": 5117.196,
+    "demand_mm2": 3578.658,
+    "fill_all_refs": 0.4684,
+    "budget_raw_fill": 0.468,
+    "anchored_refs": 75,
+    "anchored_mm2": 2500.4024,
+    "free_after_anchors_and_reserves_mm2": 5140.206,
     "remaining_demand_mm2": 1078.2556,
-    "free_regions_of_spec_mm2": 2623.109,
-    "placed_refs": 226,
-    "placed_top_refs": 153,
-    "placed_mm2": 3601.668,
-    "fill_placed": 0.4714,
+    "free_regions_of_spec_mm2": 2653.039,
+    "placed_refs": 225,
+    "placed_top_refs": 152,
+    "placed_mm2": 3578.658,
+    "fill_placed": 0.4684,
     "unplaced_refs": 0,
     "unplaced_mm2": 0.0,
-    "area_to_remove_for_0_60_mm2": -982.6971,
+    "area_to_remove_for_0_60_mm2": -1005.7071,
     "trigger_id": "F2-C",
     "f2_trigger": "PCB-PWRA-3/4 measures a PWR-A top fill above 0.60, or leaves refs unplaced or nets unrouted after two iterations; or H-TRIM fails at proof-fit (candidate s2nt: top raw fill 0.638); or a sourced part or block grows the PWR-A top demand by more than the 35.0 mm2 left below 0.60 (candidate shrink2 with the GR-5A parts and the W2 GR-ZONE2-SMD POSCAP parts; 39.3 mm2 at W2 AREA-REC; the GR-5A parts took 51.1 of the 90.4 mm2 left with the reserved blocks)",
     "f2_fired": false,
@@ -104,10 +104,10 @@
     },
     "unplaced_top_refs": [],
     "f2c": {
-      "reference_demand_mm2": 3601.7,
+      "reference_demand_mm2": 3578.7,
       "reference": "pcb/partition-budget.json candidates.shrink2.boards.PWR_A.demand_1_mm2 (the decided SHRINK-2 top demand, MODEL)",
-      "demand_minus_reference_mm2": -0.032,
-      "margin_to_0_60_mm2": 982.6971
+      "demand_minus_reference_mm2": -0.042,
+      "margin_to_0_60_mm2": 1005.7071
     }
   },
   "anchors": {
@@ -664,24 +664,6 @@
           66.0,
           7.54,
           82.5
-        ],
-        "checks": {
-          "inside_outline": true,
-          "clear_of_hole_keepouts": true
-        }
-      },
-      {
-        "ref": "F104",
-        "at": [
-          2.25,
-          99.25
-        ],
-        "rotation": 90,
-        "courtyard_box": [
-          0.3,
-          96.3,
-          4.2,
-          102.2
         ],
         "checks": {
           "inside_outline": true,
@@ -2002,22 +1984,6 @@
         "overlaps_anchors": [
           "C112",
           "L101"
-        ],
-        "hole_keepouts_hit": [],
-        "side": "F"
-      },
-      {
-        "id": "CU_LAB5-F104",
-        "rect": [
-          0.6,
-          93.6,
-          3.95,
-          97.675
-        ],
-        "area_mm2": 13.6513,
-        "inside_outline": true,
-        "overlaps_anchors": [
-          "F104"
         ],
         "hole_keepouts_hit": [],
         "side": "F"
@@ -5687,23 +5653,6 @@
         "inside_outline": true
       },
       {
-        "id": "LAB5-F104",
-        "kind": "zone",
-        "net": "LAB5",
-        "layer": "F.Cu",
-        "class": "PWR3A",
-        "rect_min_width_mm": 3.35,
-        "class_width_mm": 1.85,
-        "class_width_basis": "single layer",
-        "width_ok": true,
-        "pad_connection": "solid",
-        "net_pads_touched": [
-          "F104.1"
-        ],
-        "foreign_pads_inside": [],
-        "inside_outline": true
-      },
-      {
         "id": "LAB5-B-TOP",
         "kind": "zone",
         "net": "LAB5",
@@ -7135,14 +7084,13 @@
           "targets": [
             "L101.2",
             "C112.1",
-            "F104.1",
             "L205.1",
             "J208.2",
             "J208.6",
             "J208.10",
             "J208.14"
           ],
-          "scripted_items": 39,
+          "scripted_items": 38,
           "targets_not_placed": [],
           "targets_not_joined": [],
           "joined": true
@@ -7564,14 +7512,13 @@
         "class": "PWR3A",
         "width_mm": 1.85,
         "scripted_seed": true,
-        "terminals": 17,
+        "terminals": 16,
         "branch_pads_not_checked": [],
         "components": [
           [
             "C112.1",
             "C223.1",
             "C509.1",
-            "F104.1",
             "J104.3",
             "J104.4",
             "J106.2",
@@ -7648,8 +7595,8 @@
         "mate_footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
         "pin_map": "pcb/generated/b2b-nets.json contacts (pwr_a_pin -> pwr_b_pin)",
         "contacts": 100,
-        "netted_contacts": 46,
-        "mate_netted_contacts": 46,
+        "netted_contacts": 44,
+        "mate_netted_contacts": 44,
         "net_differences": [],
         "pins_without_mate": [],
         "mate_pins_without_pin": [],
@@ -9339,22 +9286,6 @@
           66.0,
           7.54,
           82.5
-        ]
-      },
-      {
-        "ref": "F104",
-        "at": [
-          2.25,
-          99.25
-        ],
-        "rotation": 90,
-        "side": "F",
-        "how": "anchor",
-        "courtyard_box": [
-          0.3,
-          96.3,
-          4.2,
-          102.2
         ]
       },
       {
@@ -11345,7 +11276,7 @@
   },
   "boundary": {
     "dangling_nets": [],
-    "b2b_nets": 24,
+    "b2b_nets": 23,
     "dangling_not_in_b2b": [],
     "b2b_not_dangling": [
       "3V3_Q6A",
@@ -11366,7 +11297,6 @@
       "I2C2_SCL",
       "I2C2_SDA",
       "LAB5",
-      "LAB5_RLY",
       "LNA4V5",
       "LNB13V2",
       "OVP_LNB_N",

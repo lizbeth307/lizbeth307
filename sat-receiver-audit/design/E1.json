@@ -2656,7 +2656,7 @@
         }
       ],
       "notes": [
-        "W2 GR-3 (R-E1-09): PTC on PWR-A in the LAB5 feed of the RF relay coils K401/K402 (2 x G6K DC5, about 21.1 mA, build/08 step 10). Bourns MF-MSMF075/24-2: Ihold 0.75 A / Itrip 1.50 A at 23 C; Ihold 0.60 A at 50 C and 0.49 A at 70 C (Bourns MF-MSMF REV. AO, p.1 and p.4, as F301). It limits the S04 lead to the RF board (LAB5_RLY, one JST PH contact rated 2 A) instead of F102 4 A, so no Micro-Fit is needed on the 5.5 mm RF board.",
+        "W2 GR-3 (R-E1-09): PTC in the LAB5 feed of the RF relay coils (on PWR-A until W2 PWR-A closure round 2, probe Z; on the PWR-B LAB5 trunk since then, pcb/partition-spec.json partition.domain_override_pwr_b) K401/K402 (2 x G6K DC5, about 21.1 mA, build/08 step 10). Bourns MF-MSMF075/24-2: Ihold 0.75 A / Itrip 1.50 A at 23 C; Ihold 0.60 A at 50 C and 0.49 A at 70 C (Bourns MF-MSMF REV. AO, p.1 and p.4, as F301). It limits the S04 lead to the RF board (LAB5_RLY, one JST PH contact rated 2 A) instead of F102 4 A, so no Micro-Fit is needed on the 5.5 mm RF board.",
         "Reflow only: the maker forbids wave and hand soldering."
       ]
     },
@@ -4215,7 +4215,7 @@
     },
     {
       "id": "R-E1-09",
-      "description": "W2 GR-3, 07.11.2026: живлення котушок реле RF (K401/K402, D401 K_COMMON) — окрема мережа LAB5_RLY після PTC F104 Bourns MF-MSMF075/24-2 (Itrip 1.50 A при 23 °C, Ihold 0.49 A при 70 °C; MF-MSMF REV. AO) на PWR-A замість прямого LAB5 після F102 4 A. Причина: межа захисту LAB5 4 A вимагала б Micro-Fit на RF-платі (build/15 «Живлення ≥2 A»), а вертикальна 43650 (9.9 мм) і кутова (6.98 мм з розеткою) вищі за 5.5 мм RF; з PTC провід S04 до RF — один контакт JST PH (2 A) бічного входу. Струм котушок ≈21.1 mA (08 крок 10)."
+      "description": "W2 GR-3, 07.11.2026: живлення котушок реле RF (K401/K402, D401 K_COMMON) — окрема мережа LAB5_RLY після PTC F104 Bourns MF-MSMF075/24-2 (Itrip 1.50 A при 23 °C, Ihold 0.49 A при 70 °C; MF-MSMF REV. AO) на PWR-B (з 23.11.2026, W2 PWR-A, закриття, прохід 2, проба Z: на магістралі LAB5 плати PWR-B, тож LAB5_RLY більше не перетинає стик B2B; до того на PWR-A) замість прямого LAB5 після F102 4 A. Причина: межа захисту LAB5 4 A вимагала б Micro-Fit на RF-платі (build/15 «Живлення ≥2 A»), а вертикальна 43650 (9.9 мм) і кутова (6.98 мм з розеткою) вищі за 5.5 мм RF; з PTC провід S04 до RF — один контакт JST PH (2 A) бічного входу. Струм котушок ≈21.1 mA (08 крок 10)."
     },
     {
       "id": "R-E1-10",

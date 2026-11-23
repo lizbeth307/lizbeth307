@@ -57,6 +57,21 @@ BRANCH_W = 0.25     # mm, low-current branch width
 BRANCH_MAX = 15.0   # mm
 RASTER_MARGIN = 0.1  # mm wider links on nets with pin-entry pours (the neck raster of pcb/check_boards.py, grid 0.05)
 STRIP_CLR = 0.16    # mm: a pin-entry strip continues its own pad (which keeps its land-pattern gap); the project clearance + 0.01
+# W2 PWR-A closure round 1, combine pass (--inner): a power net of a class whose 0.5 oz inner copper counts (pcb/generated/netclasses.json
+# inner_min_width_mm: PWR1A 1.8 mm; PWR2A 4.7 mm; BATT/PWR3A none) that has no outer path may run on In2.Cu/In3.Cu at its inner width:
+# the larger of the class inner minimum and the IPC-2221 internal width of the net's own currents (netclasses nets inputs: continuous at
+# +10 degC, protective at +20 degC; k 0.024 on the finished inner foil 0.0152 mm of pcb/stackup.py), rounded up to 0.05 mm; MODEL
+INNER = ('In2.Cu', 'In3.Cu')
+INNER_FOIL_MM = 0.0152
+INNER_LAYERS4 = ('F.Cu', 'In2.Cu', 'In3.Cu', 'B.Cu')
+
+
+def ipc_internal_width(current_a, dt_c, foil_mm=INNER_FOIL_MM, k=0.024):
+    """IPC-2221 internal conductor width (mm) for current_a at a rise of dt_c (MODEL)."""
+    if not current_a:
+        return 0.0
+    area_mil2 = (float(current_a) / (k * dt_c ** 0.44)) ** (1 / 0.725)
+    return area_mil2 / (foil_mm / 0.0254) * 0.0254
 
 
 def planning_rules(clr=None):
@@ -237,6 +252,7 @@ class Planner:
         self.classes = nc['classes']
         self.fz = F.Finisher(self.m, log=lambda *a: None)
         self.branch_ids = set()  # item ids of the low-current branches (negotiate() keeps them)
+        self.inner_classes = ()  # --inner (combine pass)
         cb = mb.bg  # pcb/board_gen; check_boards for the exemption roles
         sys.path.insert(0, str(mb.BASE / 'pcb'))
         import check_boards as CB
@@ -256,6 +272,17 @@ class Planner:
     # ---------------------------------------------------------------- geometry helpers (KiCad mm)
     def width(self, net):
         return self.classes[self.cls[net]]['outer_min_width_mm']
+
+    def inner_width(self, net):
+        """The inner width of a power net (--inner): max(class inner_min_width_mm, IPC-2221 internal at the net's continuous current
+        +10 degC and protective current +20 degC), rounded up to 0.05 mm; None when the class has no counted inner copper."""
+        cls = self.classes[self.cls[net]]
+        if cls.get('inner_min_width_mm') is None:
+            return None
+        inputs = (self.inp.netclasses['nets'].get(net) or {}).get('inputs') or {}
+        w = max(float(cls['inner_min_width_mm']), ipc_internal_width(inputs.get('continuous_a'), 10.0),
+                ipc_internal_width(inputs.get('protective_a'), 20.0))
+        return round(math.ceil(w / 0.05 - 1e-9) * 0.05, 4)
 
     def zone_keepouts(self, net):
         """F.Cu keep-outs of the converter zones 3'/4' for a net without a pad there (W2 PWR-L6-SCRIPT zone rule)."""
@@ -300,6 +327,16 @@ class Planner:
                 probes = ((cx, cy), (cx, y1 + 0.01), (cx, y0 - 0.01), (x1 + 0.01, cy), (x0 - 0.01, cy))
                 if it.kind == 'pad' and it.src == 'zone' and any(it.shape.dist(px, py) <= 1e-6 for px, py in probes)                         and min(it.bbox[2] - it.bbox[0], it.bbox[3] - it.bbox[1]) + 1e-6 >= w:
                     return True
+                # W2 PWR-A closure round 1, combine pass: a narrower scripted pin-group pour (make_board.py in_group: TPS7A4701 IN pins
+                # 15 and 16) that overlaps a scripted class-width entry of its net joins the pad already; a planned entry pour of its
+                # own (PE-E2_BONI_IN-U213.15, priority 4) cut the corner of the scripted landing SC-U213-IN-ENTRY in the KiCad fill
+                # (route runs 45062920789 and 45109912253: strip 0.85 mm and the E2_BONI_IN neck 1.223 mm, pcb/check_boards.py)
+                if it.kind == 'pad' and it.src == 'zone' and str(it.pad).startswith('SC-') and any(it.shape.dist(px, py) <= 1e-6 for px, py in probes):
+                    for ot in self.m.near(lay, it.bbox):
+                        if (ot.alive and ot is not it and ot.net == net and ot.kind == 'pad' and ot.src == 'zone' and str(ot.pad).startswith('SC-')
+                                and min(ot.bbox[2] - ot.bbox[0], ot.bbox[3] - ot.bbox[1]) + 1e-6 >= w
+                                and any(ot.shape.dist(*pt) <= 1e-6 for e in it.shape.edges for pt in e)):
+                            return True
         return False
 
     def entry_pour(self, net, pad, w, clr=None):
@@ -441,6 +478,13 @@ class Planner:
                 finally:
                     planning_rules()
                 rec['log'].append(f'second pass (clearance {RELAXED_CLR} mm, grid 0.1 mm): {"joined" if ok else "still open"}')
+            if not ok and cname in self.inner_classes and self.inner_width(net):  # combine pass: In2/In3 at the inner width
+                w_in = self.inner_width(net)
+                wd = {'F.Cu': w_link, 'B.Cu': w_link, 'In2.Cu': w_in, 'In3.Cu': w_in}
+                ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width=wd, layers=INNER_LAYERS4, via_cost=VIA_COST[cname],
+                                                        neck=None, max_links=60, g=0.1)
+                rec['inner_width_mm'] = w_in
+                rec['log'].append(f'inner pass (In2.Cu/In3.Cu at {w_in} mm, IPC-2221 internal, grid 0.1 mm): {"joined" if ok else "still open"}')
             # 3. low-current branches of the allowed roles
             if not ok:
                 CB = self.CB
@@ -764,6 +808,10 @@ def ratchet_load(pl, src):
             if pad is None or not any(r[0] <= pad.bbox[2] and pad.bbox[0] <= r[2] and r[1] <= pad.bbox[3] and pad.bbox[1] <= r[3]
                                       for r in rects) or z['layer'] not in pad.layers:
                 continue
+            # W2 PWR-A closure round 1, combine pass: nor does one that plan_net would no longer make (on_scripted: the pad's scripted
+            # copper joins it already, e.g. PE-E2_BONI_IN-U213.15 over the scripted landing SC-U213-IN-ENTRY)
+            if pl.on_scripted(net, pad, pl.width(net)):
+                continue
             pl.add_zone(net, z['layer'], rects, z['id'])
             doc['loaded_zones'].setdefault(net, []).append(z)
         segs = collections.defaultdict(list)
@@ -801,6 +849,8 @@ def main(argv=None):
     ap.add_argument('--first', help='W2 F2C-FALLBACK part 2: comma-separated nets planned before the others (the plan order)')
     ap.add_argument('--ratchet', metavar='PLAN', help='W2 PWR-A closure probe X: keep the copper of PLAN that still holds on the current '
                                                       'inputs and plan only the power nets it leaves open (ratchet_load())')
+    ap.add_argument('--inner', default='', help='W2 PWR-A closure round 1, combine pass: comma-separated power classes whose open links may '
+                                                 'run on In2.Cu/In3.Cu at the inner width (Planner.inner_width), e.g. PWR1A')
     ap.add_argument('--out', default=str(OUT))
     ap.add_argument('--verify', action='store_true', help='only report the margins of the scripted copper')
     args = ap.parse_args(argv)
@@ -808,6 +858,7 @@ def main(argv=None):
     mb = load_make_board()
     t0 = time.time()
     pl = Planner(mb)
+    pl.inner_classes = tuple(c for c in args.inner.split(',') if c)
     if not args.verify:
         planning_rules()
     print(f'planning board: {len(pl.m.items)} items ({time.time() - t0:.1f} s)')
@@ -879,6 +930,27 @@ def main(argv=None):
             rec['open_islands'] = [sorted(f'{i.ref}.{i.pad}' for i in g if i.kind == 'pad' and i.src == 'pad') for g in isl] if len(isl) > 1 else []
             rec['kind'] = 'power' if rec['open'] == 0 else 'link'
         bad = verify(pl)
+        # W2 PWR-A closure round 1, combine pass: a net that lost a piece in the exact check (a simplified diagonal 0.0008 mm inside the
+        # project clearance of a GND via: E2_BONI_IN at (42.6, 16.8)) is linked again at a wider planning clearance, then checked again
+        again = sorted(n for n in {d[1] for d in dropped} if n in plan and plan[n]['open'])
+        for net in again:
+            planning_rules(PLAN_CLR + 0.05)
+            try:
+                relink(pl, plan[net], net, allow_rip=False)
+            finally:
+                planning_rules()
+        if again:
+            bad = verify(pl)
+            dropped2 = drop_failing(pl) if bad else []
+            print('linked again after the final check:', again, 'dropped again:', dropped2)
+            for net in again:
+                rec = plan[net]
+                rec['tracks'], rec['vias'] = pl.harvest(net)
+                isl = [g for g in pl.m.islands(net) if any(i.kind == 'pad' for i in g) or len(g) > 1]
+                rec['open'] = max(0, len(isl) - 1)
+                rec['open_islands'] = [sorted(f'{i.ref}.{i.pad}' for i in g if i.kind == 'pad' and i.src == 'pad') for g in isl] if len(isl) > 1 else []
+                rec['kind'] = 'power' if rec['open'] == 0 else 'link'
+            bad = verify(pl)
     result = {'nets': len(plan), 'power': sorted(n for n, r in plan.items() if r['kind'] == 'power'),
               'link': {n: r['open'] for n, r in sorted(plan.items()) if r['kind'] == 'link'}, 'violations': len(bad)}
     if args.first:
@@ -901,7 +973,8 @@ def main(argv=None):
                             'widths, via cost per class, converter zones 3/4 kept free of foreign nets on F.Cu'},
         'guard': script_guard(mb, pl.inp, pl.pre),
         'result': result,
-        'nets': {n: {k: r[k] for k in ('kind', 'class', 'width_mm', 'open', 'open_islands', 'zones', 'branches', 'tracks', 'vias')}
+        'nets': {n: {**{k: r[k] for k in ('kind', 'class', 'width_mm', 'open', 'open_islands', 'zones', 'branches', 'tracks', 'vias')},
+                     **({'inner_width_mm': r['inner_width_mm']} if r.get('inner_width_mm') else {})}
                  for n, r in sorted(plan.items())},
     }
     text = json.dumps(doc, ensure_ascii=False, indent=1) + '\n'

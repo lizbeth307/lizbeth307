@@ -222,11 +222,17 @@ class GuardRuleTests(unittest.TestCase):
         # (sense pair at the end of the strip since 11.11.2026, for the PWR-B board of record)
         # (W2 GR-5B: 10 rail contacts instead of 17 once the six damper nodes and VBUS_LABPORT stopped crossing)
         # (W2 F2C-FALLBACK: 13 signal nets instead of 22 once the 9 S02 signals of the PWR-C groups stopped crossing)
-        self.assertIn('odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the '
+        # (W2 PWR-A closure round 2, probe Z: LAB5_RLY left the B2B with F104; its two rail columns 17 and 21 stay free, their GND
+        # returns 19 and 23 kept as guards, so every other contact keeps its place)
+        self.assertIn('odd 1-37 the 8 rail contacts (1, 5, 9, 13, 25, 29, 33, 37) with their GND returns (3, 7, 11, 15, 27, 31, 35, 39), the '
+                      'two free rail columns 17 and 21', SPEC['pin_map_rule'])
+        self.assertIn('41 guard, even 2-14 the '
                       '4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-42 the 13 signal nets in name order, then signal_moves',
                       SPEC['pin_map_rule'])
-        self.assertTrue({role[p] for p in range(1, 38, 4)} <= set(prepare.B2B_RAIL_KINDS))
-        self.assertEqual({role[p] for p in range(3, 40, 4)} | {role[p] for p in range(4, 17, 4)}, {'gnd'})
+        self.assertTrue({role[p] for p in (1, 5, 9, 13, 25, 29, 33, 37)} <= set(prepare.B2B_RAIL_KINDS))
+        self.assertEqual([role[p] for p in (17, 21)], ['spare', 'spare'])
+        self.assertEqual([role[p] for p in (19, 23)], ['guard', 'guard'])
+        self.assertEqual({role[p] for p in (3, 7, 11, 15, 27, 31, 35, 39)} | {role[p] for p in range(4, 17, 4)}, {'gnd'})
         self.assertEqual(role[41], 'guard')
         self.assertEqual({role[p] for p in range(2, 15, 4)}, {'power'})
         # W2 F2C-FALLBACK: the 13 signals back on their contacts of the PWR-B board of record (b2b.signal_moves)

@@ -9864,9 +9864,9 @@
         },
         {
           "number": "17",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "18",
@@ -9888,9 +9888,9 @@
         },
         {
           "number": "21",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "22",
@@ -10487,9 +10487,9 @@
         },
         {
           "number": "18",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "19",
@@ -10511,9 +10511,9 @@
         },
         {
           "number": "22",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "23",
