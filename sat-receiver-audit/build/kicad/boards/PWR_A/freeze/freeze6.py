@@ -597,6 +597,33 @@ LEAVE_OPEN_WHY = {
 }
 
 
+def centre_joints(m):
+    """A router/completion track end inside a same-net SMD pad less than half its width from the pad edge gets a track of its width
+    to the pad centre where that clears (KiCad 10.0.7 connection_width: a track that enters a pad over its corner, route runs
+    45062920789 and 45109912253); the port of route6.py centre_joints. Returns [(net, pad)]."""
+    added = []
+    for t in list(m.items):
+        if not (t.alive and t.kind == 'track' and t.src in ('router', 'new')):
+            continue
+        lay = t.layers[0]
+        for e in (t.a, t.b):
+            for p in m.near(lay, (e[0] - 0.01, e[1] - 0.01, e[0] + 0.01, e[1] + 0.01)):
+                if not (p.alive and p.kind == 'pad' and p.src == 'pad' and p.net == t.net and not p.drill):
+                    continue
+                if p.shape.dist(*e) > 0:
+                    continue
+                x0, y0, x1, y1 = p.bbox
+                depth = min(e[0] - x0, x1 - e[0], e[1] - y0, y1 - e[1])
+                c = ((x0 + x1) / 2, (y0 + y1) / 2)
+                if depth + 1e-6 >= t.width / 2 or math.dist(e, c) < 1e-4:
+                    continue
+                mg, _w = m.track_margin(t.net, lay, t.width, e, c)
+                if mg >= 0:
+                    m.add_track(t.net, lay, t.width, e, c, src='new')
+                    added.append((t.net, f'{p.ref}.{p.pad}'))
+    return added
+
+
 def rebase(m, art, prev):
     """W2 PWR-A closure round 1, probe Y (--rebase): every track and via of the run's board and the fills of the scripted pours of
     its board-spec.json go; the locked tracks and vias of the current board-spec.json (make_board.py without route-frozen-6l.json:
@@ -719,6 +746,13 @@ def main(argv=None):
     ap.add_argument('--sense-branches', action='store_true',
                     help='W2 PWR-A closure round 1, probe Y: sense/logic pins of ICs on a power net (pcb/check_boards.py role '
                          'sense_logic_pin) take a 0.25 mm branch on the four routing layers, as test points do')
+    ap.add_argument('--tp-max', type=float, default=0.0,
+                    help='W2 PWR-A closure round 1, combine pass: longest test-point branch in mm (route6.py --tp-max; a test point '
+                         'carries no load current; 0: none beyond BRANCH_MAX)')
+    ap.add_argument('--centre-joints', action='store_true',
+                    help='W2 PWR-A closure round 1, combine pass: a router/completion track end inside a same-net SMD pad less than half its '
+                         'width from the pad edge gets a track to the pad centre (route6.py centre_joints; KiCad connection_width at '
+                         'D202.1 in route run 45109912253)')
     ap.add_argument('--rebase', action='store_true',
                     help='W2 PWR-A closure round 1, probe Y: carry the frozen copper of --prev onto changed scripted / planned '
                          'copper (rebase(): the scripted copper of the run is replaced by that of the current board-spec.json, '
@@ -890,6 +924,13 @@ def main(argv=None):
                 ok = ok or okb
                 if ok:
                     break
+            if not ok and args.tp_max:  # combine pass: a test-point island joins by a longer 0.25 mm branch (route6.py --tp-max)
+                okt, brt = fz.branch_pass(net, lambda r: r is not None and r.startswith('TP') and branch_ok(r, net),
+                                          lambda refs: BRANCH_W['TP'], lambda refs: ROUTING, args.tp_max,
+                                          target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= width(net))
+                                          or (i.kind == 'pad' and i.src == 'zone'))
+                branches += brt
+                ok = ok or okt
         if vips:
             n_drop = drop_unused_vips(m, net)
             print(f'  {net}: vias in pads added {len(vips)}, unused removed {n_drop}')
@@ -904,6 +945,9 @@ def main(argv=None):
         drop_unused_vips(m, n)
     merged = merge_remainders(m)
     print('split remainders merged back:', len(merged))
+    joints = centre_joints(m) if args.centre_joints else []
+    if joints:
+        print('centre joints added (track end shallow inside a pad):', joints)
     open_, bad = verify(m)
     dropped = (0, [])
     if bad:

@@ -313,7 +313,7 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
-        "netclass": "SCRIPTED_PWR1A",
+        "netclass": "PWR1A",
         "pattern": "AUX12"
       },
       {
@@ -321,7 +321,7 @@
         "pattern": "AUX12_DAMP"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "BONI13V8_PORT"
       },
       {
@@ -353,7 +353,7 @@
         "pattern": "E1_LAB5_RT"
       },
       {
-        "netclass": "BATT",
+        "netclass": "SCRIPTED_BATT",
         "pattern": "E1_SW"
       },
       {
@@ -389,11 +389,11 @@
         "pattern": "E2_AUX_SWITCHED"
       },
       {
-        "netclass": "BATT",
+        "netclass": "SCRIPTED_BATT",
         "pattern": "E2_BONI_IN"
       },
       {
-        "netclass": "BATT",
+        "netclass": "SCRIPTED_BATT",
         "pattern": "E2_BONI_IN_DAMP"
       },
       {
@@ -429,7 +429,7 @@
         "pattern": "E2_LNA_IN"
       },
       {
-        "netclass": "SCRIPTED_PWR3A",
+        "netclass": "PWR3A",
         "pattern": "E2_LNA_IN_DAMP"
       },
       {
@@ -465,11 +465,11 @@
         "pattern": "J21_DAMP"
       },
       {
-        "netclass": "PWR3A",
+        "netclass": "SCRIPTED_PWR3A",
         "pattern": "LAB5"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "LAB5_RLY"
       },
       {
@@ -497,7 +497,7 @@
         "pattern": "VBUS_HFP"
       },
       {
-        "netclass": "SCRIPTED_PWR2A",
+        "netclass": "PWR2A",
         "pattern": "VCC_3V3_MKEY"
       }
     ]

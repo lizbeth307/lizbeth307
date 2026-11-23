@@ -118,6 +118,13 @@ MOVES: dict = {
     # GND pad faced R132 and the GND fan-out via landed between R133.1 and R132.2, the two ends of E1_EN_LAB5 (push 2: open, MODEL: no
     # 0.15 mm path on any layer); at 0 the EN pad sits right above R132.2 and the GND fan-out leaves on the other side
     'R133': (18.9, 82.65, 0, 'F', 'W2 PWR-A closure probe X: U108 EN divider R133 turned, EN pad above R132.2'),
+    # W2 PWR-A closure round 1, combine pass (design choice, build/15): the E2_BONI_IN input damper R260 (B, pocket PB3) and its capacitor
+    # C265 (F) turned by 180 degrees in place, so that their E2_BONI_IN_DAMP pads face each other across the column-to-band junction
+    # (C265.1 east at x 26.4 on F.Cu, R260.2 west at x 31.9 on B.Cu): before, the DAMP link had to pass the R260 E2_BONI_IN pad and the
+    # C265 GND pad (route run 45109912253 and every plan since F2-C: E2_BONI_IN_DAMP open; MODEL plan6: the link joins once turned).
+    # The E2_BONI_IN pad R260.1 then faces east, onto the gap of the B.Cu LAB5 band (SC-LAB5-B-BAND-W/-E). Same places and courtyards
+    'R260': (33.4, 30.65, 0, 'B', 'W2 PWR-A closure combine pass: E2_BONI_IN damper turned, DAMP pad west towards C265'),
+    'C265': (24.3, 30.3, 180, 'F', 'W2 PWR-A closure combine pass: E2_BONI_IN damper capacitor turned, DAMP pad east towards R260'),
 }
 PLACEMENT = HERE / 'board-placement.json'
 
@@ -617,6 +624,9 @@ SCRIPT_DROP = {
     'CU-LAB5-B-SPINE': 'B.Cu LAB5 spine 2.2 mm: wider (2.5 mm) where the bond zone 3 keep-out and the E1_CONV_IN via column allow, with '
                        'parallel strips (E1-05 path A)',
     'CU-LAB5-B-TOP': 'B.Cu LAB5 top run 2.2 mm: 2.4 / 2.3 mm (E1-05 path A)',
+    # W2 PWR-A closure round 1, combine pass (design choice, build/15): the band leaves a B.Cu gap under R260 for E2_BONI_IN
+    'CU-LAB5-B-BAND': ('B.Cu LAB5 band 2.2 mm (x 24.3-42.2): split at x 33.9-36.3 (SC-LAB5-B-BAND-W/-E) so that the E2_BONI_IN copper '
+                       'reaches the damper R260.1 in pocket PB3 on B.Cu; the F.Cu band SC-LAB5-F-BAND carries LAB5 over the gap'),
 }
 U107_WHY = 'LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2'
 E105_WHY = 'PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu'
@@ -676,6 +686,15 @@ SCRIPT_TRACKS = [
     sc_track('SC-LAB5-B-PAR3-S', 'LAB5', 2.5, [(27.75, 72.5), (27.75, 84.0)], E105_WHY + ': parallel strip beside the spine at y 72-84',
              'B.Cu'),
     sc_track('SC-LAB5-B-PAR3-T', 'LAB5', 2.2, [(27.75, 84.0), (25.4, 84.0)], E105_WHY + ': join of the strip at y 84', 'B.Cu'),
+    # W2 PWR-A closure round 1, combine pass (design choice, build/15): the B.Cu band of the spec (pour LAB5-B-BAND, rect 24.3-42.2 x
+    # 27.3-29.5) in two pieces with a gap at x 33.9-36.3 under the damper R260 (pocket PB3): R260 sits north of the band, boxed in by the
+    # spine (west), the band (south) and the PB3/PB4 parts (east), so its E2_BONI_IN pad had no class-width exit on B.Cu (push 2 of W2
+    # F2C-FALLBACK part 2 and route run 45109912253: E2_BONI_IN open at R260.1; MODEL plan6: no path). Over the gap the F.Cu band carries
+    # LAB5 alone; vias at both gap edges keep the two bands in parallel elsewhere (E1-05 path A recomputed by board_audit.py, MODEL)
+    sc_track('SC-LAB5-B-BAND-W', 'LAB5', 2.2, [(25.4, 28.4), (32.8, 28.4)],
+             E105_WHY + ': B.Cu band west of the E2_BONI_IN gap (x 24.3-33.9)', 'B.Cu'),
+    sc_track('SC-LAB5-B-BAND-E', 'LAB5', 2.2, [(37.4, 28.4), (41.1, 28.4)],
+             E105_WHY + ': B.Cu band east of the E2_BONI_IN gap (x 36.3-42.2), into the RISE-L vias', 'B.Cu'),
     sc_track('SC-LAB5-F-BAND', 'LAB5', 2.0, [(26.2, 27.8), (39.6, 27.8)],
              E105_WHY.replace('B.Cu', 'F.Cu') + ': F.Cu strip over the B.Cu band (y 26.8-28.8, free at 0.20 mm) into the RISE-L copper; '
              'three vias to the band at its left end'),
@@ -717,6 +736,12 @@ SCRIPT_VIAS = [  # (id, net, (x, y), why): 0.6 / 0.3 like the other scripted via
     ('SC-LAB5-F-BAND-V1', 'LAB5', (26.2, 27.8), 'E1-05 path A: F.Cu band strip to the B.Cu band and spine'),
     ('SC-LAB5-F-BAND-V2', 'LAB5', (27.0, 28.4), 'E1-05 path A: F.Cu band strip to the B.Cu band'),
     ('SC-LAB5-F-BAND-V3', 'LAB5', (27.9, 28.4), 'E1-05 path A: F.Cu band strip to the B.Cu band'),
+    # W2 PWR-A closure round 1, combine pass: the two B.Cu band pieces joined to the F.Cu band at the E2_BONI_IN gap edges
+    ('SC-LAB5-B-BAND-W-V1', 'LAB5', (31.0, 28.0), 'E1-05 path A: west B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
+    ('SC-LAB5-B-BAND-W-V2', 'LAB5', (31.9, 28.0), 'E1-05 path A: west B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
+    ('SC-LAB5-B-BAND-W-V3', 'LAB5', (32.8, 28.0), 'E1-05 path A: west B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
+    ('SC-LAB5-B-BAND-E-V1', 'LAB5', (37.5, 28.0), 'E1-05 path A: east B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
+    ('SC-LAB5-B-BAND-E-V2', 'LAB5', (38.4, 28.0), 'E1-05 path A: east B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
     ('SC-U108-VOUT-V1', 'E1_LAB5_RAW', (12.0, 76.2), f'{U108_WHY}: thermal via at VOUT1 to the In4.Cu VOUT polygon'),
     ('SC-U108-VOUT-V2', 'E1_LAB5_RAW', (16.0, 76.2), f'{U108_WHY}: thermal via at VOUT2 to the In4.Cu VOUT polygon'),
     ('SC-U108-VOUT-V3', 'E1_LAB5_RAW', (14.0, 76.2), f'{U108_WHY}: thermal via between the VOUT pins to the In4.Cu VOUT polygon'),
@@ -1168,7 +1193,11 @@ def gnd_bridges(inp, vias):
 # rows for bottom-row signals (I2C2, E2_BONI_LDO, FAULT_HFP, ...), which inward vias of every top-row GND pin would close (MODEL, 156
 # router items of push 2 off the board against 126 with two). Done after gnd_fanout and only in the board build, so place_board.py keeps
 # its (more conservative) view of the fixed fan-out above the connector and its placement does not change. ref -> top-row GND pads
-B2B_INWARD = {'J208': ('23', '27', '31', '35')}
+# W2 PWR-A closure round 1, combine pass (design choice, build/15): also GND 15, 19 and 39, the neighbours of VBUS_HFP J208.13, LAB5_RLY
+# J208.17 / .21 and BONI13V8_PORT J208.37: with their vias above the row, LAB5_RLY had no exit between the vias of 15/19/23 (0.3 mm
+# gaps; MODEL plan6: LAB5_RLY open at both contacts, and joined alone on the scripted board); with 15/19/39 inward the plan joins
+# LAB5_RLY (In2/In3 at its inner width, plan6.py --inner) and BONI13V8_PORT (MODEL)
+B2B_INWARD = {'J208': ('15', '19', '23', '27', '31', '35', '39')}
 
 
 def b2b_inward_fanout(inp, pre, tracks, vias):
@@ -1274,6 +1303,14 @@ SFO_WHY2 = ('no via site within 4 mm once the power copper was planned round the
 # KiCad via_dangling error (the via joins its pad on one layer only); U203.4 (FLT_LIME3V3), U213.14 (E2_BONI_NR), C136.1
 # (E1_RPP_VCAP) and R216.1 (E2_U203_OV) stayed open in that run, and U203.2 (E2_U203_OV) has no escape at all (the channel between
 # U203 pins 1-4 and the E5_VBUS_HFP_SW pad holds one track)
+# W2 PWR-A closure round 1, combine pass (design choice, build/15): on the probe-X placement only the escapes of the 0.5 mm pitch
+# TPS259470 pins stay (no via in those pads: the 0.5 mm pitch neighbours, freeze/freeze6.py add_pad_vias). Every escape placed before
+# the plan costs plan room (MODEL, plan6 --negotiate 1 --inner PWR1A on this board: 4 open power joins without escapes, 8 with these
+# six, 9 with R203.1 as well, 16 with all twenty), while each of these six pins is walled in without it (MODEL, a fresh-model A* of
+# the net alone on the planned board). Left out: U111.5 and Q102.4 (E1_RPP_GATE), R133.1 (E1_EN_LAB5) and J208.33 (AUX12), which the
+# probe-X moves freed (each joins alone); J208.25 (BONI13V8) and J208.5 (LNA4V5), whose escapes walled the J208 top row; R203.1
+# (E2_U201_ILM, a resistor pad), U216.6/.7/.11/.14/.15 and U213.13 (0.65 mm pitch): a via in the pad at the harvest where they stay
+# walled (freeze6.py --pad-vias); R204.2 (E2_U201_OV joins alone)
 SIGNAL_FANOUT = [
     # TPS259470 RPW (0.5 mm pitch): EN/UVLO, OVLO, FLT, DVDT pins between the IN/OUT bars and their planned feeds
     ('U203.1', 0.15, 'EN_LIME3V3, EN/UVLO of U203: ' + SFO_WHY),
@@ -1283,22 +1320,8 @@ SIGNAL_FANOUT = [
     ('U202.2', 0.15, 'E2_U202_OV, OVLO of U202: ' + SFO_WHY),
     ('U202.1', 0.15, 'PICO_DISP_EN, EN/UVLO of U202: ' + SFO_WHY),
     # TPS7A4701 RGW and INA3221 RGV (0.65 mm pitch)
-    ('U213.13', 0.15, 'EN_BONI, EN of U213: ' + SFO_WHY),
-    ('U216.6', 0.15, 'I2C2_SCL, SCL of U216: ' + SFO_WHY2),
-    ('U216.7', 0.15, 'I2C2_SDA, SDA of U216: ' + SFO_WHY2),
-    ('U216.11', 0.15, 'E2_U216_IM1, IN-1 of U216: ' + SFO_WHY2),
-    ('U216.15', 0.15, 'E2_U216_IP2, IN+2 of U216: ' + SFO_WHY),
-    ('U216.14', 0.15, 'E2_U216_IM2, IN-2 of U216: ' + SFO_WHY),
     # LM74700 SOT-23-6 and the divider / filter passives
-    ('U111.5', 0.15, 'E1_RPP_GATE, GATE of U111: ' + SFO_WHY),
-    ('Q102.4', 0.15, 'E1_RPP_GATE, gate of Q102: ' + SFO_WHY2),
-    ('R133.1', 0.15, 'E1_EN_LAB5, EN divider of U108: ' + SFO_WHY),
-    ('R204.2', 0.15, 'E2_U201_OV, OVLO divider of U201: ' + SFO_WHY),
-    ('R203.1', 0.15, 'E2_U201_ILM, ILM resistor of U201: ' + SFO_WHY),
     # LSHM-150 B2B pin of the PWR1A rail AUX12 (0.2 mm: the PWR1A width on 2 oz outer copper, stackup-6l.json outer_2oz)
-    ('J208.5', 0.15, 'LNA4V5 at the B2B: ' + SFO_WHY2),
-    ('J208.25', 0.15, 'BONI13V8 at the B2B: ' + SFO_WHY2),
-    ('J208.33', 0.2, 'AUX12 (PWR1A) at the B2B: ' + SFO_WHY),
 ]
 
 

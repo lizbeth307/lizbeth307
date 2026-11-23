@@ -7,7 +7,7 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "73224ef783cff68b67b62f72138b4457615cb902701b115fb29f7e850cd130db",
+    "spec_sha256": "6b87ca1d60c8666fdcef2c74932d5272dc67585202c4b6591501e810d6bf7bd6",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
     "lab5_budget_sha256": "d813a2892b7fdcb2d5bd78bbfe8c13c6bdf5809030db2c4e4528e1a114470974"
   },
@@ -194,13 +194,13 @@
         "L205.1"
       ],
       "mohm": {
-        "20C": 8.4469,
-        "50C": 9.4428
+        "20C": 9.5305,
+        "50C": 10.6542
       },
       "joined": true,
       "network": {
-        "tracks": 92,
-        "vias": 38,
+        "tracks": 75,
+        "vias": 34,
         "pads": 17,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
@@ -223,13 +223,13 @@
         "J208.14"
       ],
       "mohm": {
-        "20C": 13.499,
-        "50C": 15.0906
+        "20C": 16.4499,
+        "50C": 18.3894
       },
       "joined": true,
       "network": {
-        "tracks": 92,
-        "vias": 38,
+        "tracks": 75,
+        "vias": 34,
         "pads": 17,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
@@ -286,17 +286,17 @@
     },
     "B_total_20C": {
       "U210.1": {
-        "pwr_a_mohm": 13.499,
+        "pwr_a_mohm": 16.4499,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 3.3152,
-        "total_mohm": 20.5642,
+        "total_mohm": 23.5151,
         "within_10_mohm": false
       },
       "U221.1": {
-        "pwr_a_mohm": 13.499,
+        "pwr_a_mohm": 16.4499,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 4.3004,
-        "total_mohm": 21.5494,
+        "total_mohm": 24.5003,
         "within_10_mohm": false
       }
     }
@@ -305,48 +305,48 @@
     "label": "MODEL: copper of the drawn (planned or routed) board, IACS copper at 20 degC; E1-05 and its bench stay OPEN",
     "A": {
       "what": "L101.2 -> L205.1 (the LT3045 pair feed)",
-      "mohm_20c": 8.4469,
+      "mohm_20c": 9.5305,
       "limit_mohm": 10.0,
       "met": true
     },
     "B": {
       "what": "L101.2 -> J208 / J209 -> each TPS2553 input on PWR-B at the worst-case concurrent currents (NET_CURRENT protective column), segment by segment",
       "total_current_a": 2.363,
-      "pwr_a_mohm_20c": 13.499,
+      "pwr_a_mohm_20c": 16.4499,
       "per_destination": {
         "U210.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 31.8981,
+          "pwr_a_mv": 38.8711,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 5.1207,
-          "total_mv": 45.8801,
+          "total_mv": 52.8531,
           "limit_mv": 32.0,
           "met": false
         },
         "U221.1": {
           "current_a": 0.192,
-          "pwr_a_mv": 31.8981,
+          "pwr_a_mv": 38.8711,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 6.0135,
-          "total_mv": 46.7729,
+          "total_mv": 53.7459,
           "limit_mv": 32.0,
           "met": false
         },
         "U501.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 31.8981,
+          "pwr_a_mv": 38.8711,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 11.4422,
-          "total_mv": 52.2016,
+          "total_mv": 59.1746,
           "limit_mv": 32.0,
           "met": false
         },
         "U502.1": {
           "current_a": 0.825,
-          "pwr_a_mv": 31.8981,
+          "pwr_a_mv": 38.8711,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 8.5056,
-          "total_mv": 49.265,
+          "total_mv": 56.238,
           "limit_mv": 32.0,
           "met": false
         }
@@ -530,7 +530,7 @@
   "class_widths": {
     "label": "MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to their outlines)",
     "findings": [],
-    "tracks_checked": 1103,
+    "tracks_checked": 1111,
     "exemption_policy": {
       "branch_roles": [
         "test_point",
@@ -551,8 +551,8 @@
       "branch_exempt": 6,
       "neck_exempt": 1,
       "pin_entry_pours": {
-        "declared": 18,
-        "accepted": 18
+        "declared": 17,
+        "accepted": 17
       },
       "pin_entry_measured": [
         {
@@ -611,40 +611,16 @@
           "measured": {
             "sides": [
               {
-                "side": "-y",
-                "pad_side_mm": 1.325,
-                "strip_mm": 0.0
+                "side": "-x",
+                "pad_side_mm": 0.6,
+                "strip_mm": 0.25
               }
             ],
-            "strip_mm": 0.0,
+            "strip_mm": 0.25,
             "problem": null
           },
           "declared": {
-            "strip_mm": 0.0,
-            "landing_mm": [
-              1.6,
-              1.6
-            ]
-          }
-        },
-        {
-          "zone": "PE-E2_BONI_IN-U213.15",
-          "pad": "U213.15",
-          "role": "ic_power_pin",
-          "carve_out": null,
-          "measured": {
-            "sides": [
-              {
-                "side": "+y",
-                "pad_side_mm": 0.75,
-                "strip_mm": 0.4
-              }
-            ],
-            "strip_mm": 0.4,
-            "problem": null
-          },
-          "declared": {
-            "strip_mm": 0.4,
+            "strip_mm": 0.25,
             "landing_mm": [
               1.6,
               1.6
