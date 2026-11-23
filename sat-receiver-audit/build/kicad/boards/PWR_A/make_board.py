@@ -1139,18 +1139,19 @@ VIA_OWN_PAD = 0.02  # mm: an escape via keeps this off the SMD pads of its own n
 SFO_WHY = 'no via site within 4 mm on the board of route run 45062920789 without router copper (MODEL blocker split)'
 SFO_WHY2 = ('no via site within 4 mm once the power copper was planned round the first escapes (MODEL, freeze/plan6.py on the '
             'board with the escapes, second pass of the blocker split)')
+# Left out after route run 45104323646 (W2 PWR-A closure round 1, probe Y, design choice): an escape whose net stays open is a
+# KiCad via_dangling error (the via joins its pad on one layer only); U203.4 (FLT_LIME3V3), U213.14 (E2_BONI_NR), C136.1
+# (E1_RPP_VCAP) and R216.1 (E2_U203_OV) stayed open in that run, and U203.2 (E2_U203_OV) has no escape at all (the channel between
+# U203 pins 1-4 and the E5_VBUS_HFP_SW pad holds one track)
 SIGNAL_FANOUT = [
     # TPS259470 RPW (0.5 mm pitch): EN/UVLO, OVLO, FLT, DVDT pins between the IN/OUT bars and their planned feeds
     ('U203.1', 0.15, 'EN_LIME3V3, EN/UVLO of U203: ' + SFO_WHY),
-    ('U203.4', 0.15, 'FLT_LIME3V3, FLT of U203: ' + SFO_WHY),
-    ('U203.2', 0.15, 'E2_U203_OV, OVLO of U203: ' + SFO_WHY),
     ('U203.7', 0.15, 'E2_U203_DVDT, DVDT of U203: ' + SFO_WHY),
     ('U203.9', 0.15, 'E2_U203_ILM, ILM of U203: ' + SFO_WHY2),
     ('U201.7', 0.15, 'E2_U201_DVDT, DVDT of U201: ' + SFO_WHY2),
     ('U202.2', 0.15, 'E2_U202_OV, OVLO of U202: ' + SFO_WHY),
     ('U202.1', 0.15, 'PICO_DISP_EN, EN/UVLO of U202: ' + SFO_WHY),
     # TPS7A4701 RGW and INA3221 RGV (0.65 mm pitch)
-    ('U213.14', 0.15, 'E2_BONI_NR, NR of U213: ' + SFO_WHY),
     ('U213.13', 0.15, 'EN_BONI, EN of U213: ' + SFO_WHY),
     ('U216.6', 0.15, 'I2C2_SCL, SCL of U216: ' + SFO_WHY2),
     ('U216.7', 0.15, 'I2C2_SDA, SDA of U216: ' + SFO_WHY2),
@@ -1160,11 +1161,9 @@ SIGNAL_FANOUT = [
     # LM74700 SOT-23-6 and the divider / filter passives
     ('U111.5', 0.15, 'E1_RPP_GATE, GATE of U111: ' + SFO_WHY),
     ('Q102.4', 0.15, 'E1_RPP_GATE, gate of Q102: ' + SFO_WHY2),
-    ('C136.1', 0.15, 'E1_RPP_VCAP, VCAP capacitor of U111: ' + SFO_WHY),
     ('R133.1', 0.15, 'E1_EN_LAB5, EN divider of U108: ' + SFO_WHY),
     ('R204.2', 0.15, 'E2_U201_OV, OVLO divider of U201: ' + SFO_WHY),
     ('R203.1', 0.15, 'E2_U201_ILM, ILM resistor of U201: ' + SFO_WHY),
-    ('R216.1', 0.15, 'E2_U203_OV, OVLO divider of U203 (R215.2 / R216.1 walled in together): ' + SFO_WHY),
     # LSHM-150 B2B pin of the PWR1A rail AUX12 (0.2 mm: the PWR1A width on 2 oz outer copper, stackup-6l.json outer_2oz)
     ('J208.5', 0.15, 'LNA4V5 at the B2B: ' + SFO_WHY2),
     ('J208.25', 0.15, 'BONI13V8 at the B2B: ' + SFO_WHY2),

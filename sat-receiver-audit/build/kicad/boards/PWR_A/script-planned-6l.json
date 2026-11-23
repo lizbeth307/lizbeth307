@@ -8,7 +8,7 @@
  },
  "guard": {
   "pads_sha256": "dba3ead8ea37ef1a9df7db2c604c02b58647412e294666a0773cdf439128c31e",
-  "scripted_sha256": "648e0ff1c9c9e8601925f946b384bddf0384fce680ee524c8966dde174de7e9b",
+  "scripted_sha256": "2f6e6b934c8f5c8a6597accab519868efed9d10027d6958f4b549d2366753a60",
   "zones_sha256": "64361795216d8d29fcc0599e8711d1857cb4e0d12185b9d7675255e2b427b5bf"
  },
  "result": {
@@ -60,6 +60,16 @@
     "round 1 SYS12: ripped ['E1_CONV_IN', 'LIME3V3'], open 15 -> 14, kept (26 s)"
    ],
    "tries": 13
+  },
+  "revalidated": {
+   "from_guard": {
+    "pads_sha256": "dba3ead8ea37ef1a9df7db2c604c02b58647412e294666a0773cdf439128c31e",
+    "scripted_sha256": "648e0ff1c9c9e8601925f946b384bddf0384fce680ee524c8966dde174de7e9b",
+    "zones_sha256": "64361795216d8d29fcc0599e8711d1857cb4e0d12185b9d7675255e2b427b5bf"
+   },
+   "dropped": [],
+   "open_changed": {},
+   "rule": "plan6.py --revalidate (W2 F2C-FALLBACK part 2): the plan copper on the current scripted copper, collinear pieces merged, checked at 0.15 mm"
   }
  },
  "nets": {

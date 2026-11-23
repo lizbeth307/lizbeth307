@@ -597,11 +597,12 @@ LEAVE_OPEN_WHY = {
 }
 
 
-def rebase(m, art):
-    """W2 PWR-A closure round 1, probe Y (--rebase): the scripted copper (locked tracks and vias that the ratchet left 'scripted')
-    and the fills of the scripted pours of the run's board-spec.json go; the locked tracks and vias of the current board-spec.json
-    (make_board.py without route-frozen-6l.json: scripted, GND fan-out, signal escapes, planned copper) come in as scripted copper.
-    The pads must be those of the run (same placement); spec_zones() then models the current pours. Returns counts."""
+def rebase(m, art, prev):
+    """W2 PWR-A closure round 1, probe Y (--rebase): every track and via of the run's board and the fills of the scripted pours of
+    its board-spec.json go; the locked tracks and vias of the current board-spec.json (make_board.py without route-frozen-6l.json:
+    scripted, GND fan-out, signal escapes, planned copper) come in as scripted copper, and the frozen copper of --prev (router and
+    completion tracks and vias, its vias in pads as such) as router copper, so a harvest that was never routed in CI can be carried
+    too. The pads must be those of the run (same placement); spec_zones() then models the current pours. Returns counts."""
     now = json.loads((HERE.parent / 'board-spec.json').read_text(encoding='utf-8'))
     old = json.loads((art / 'board/board-spec.json').read_text(encoding='utf-8'))
     pre = now['pre_route']
@@ -615,7 +616,7 @@ def rebase(m, art):
         raise SystemExit('freeze6 --rebase: the placement differs from the run; route again')
     n_old = 0
     for it in m.items:
-        if it.alive and it.src == 'scripted' and it.kind in ('track', 'via'):
+        if it.alive and it.kind in ('track', 'via'):
             m.remove(it)
             n_old += 1
     fills = {z['id'] for z in old['pre_route']['zones'] if 'clearance_mm' in z} | {z['id'] for z in pre['zones'] if 'clearance_mm' in z}
@@ -632,7 +633,18 @@ def rebase(m, art):
     for v in pre['vias']:
         m.add_via(v['net'], K(*v['at']), v['diameter_mm'], v['drill_mm'], locked=True, src='scripted')
         n_new += 1
-    return {'old_scripted_items_removed': n_old, 'old_pour_fills_removed': n_fill, 'scripted_items_added': n_new}
+    n_prev = 0
+    pvip = {(r['net'], K(*r['at'])) for r in prev.get('via_in_pad', [])}
+    for key in ('router_tracks', 'completion_tracks'):
+        for net, lay, w, path in prev[key]:
+            for a, b in zip(path, path[1:]):
+                m.add_track(net, lay, w, K(*a), K(*b), locked=False, src='router')
+                n_prev += 1
+    for key in ('router_vias', 'completion_vias'):
+        for net, x, y, d, drill in prev[key]:
+            m.add_via(net, K(x, y), d, drill, locked=False, src='vip' if (net, K(x, y)) in pvip else 'router')
+            n_prev += 1
+    return {'run_items_removed': n_old, 'old_pour_fills_removed': n_fill, 'scripted_items_added': n_new, 'frozen_items_added': n_prev}
 
 
 def spec_zones(m):
@@ -746,7 +758,7 @@ def main(argv=None):
             elif it.kind == 'via' and (it.net, (round(it.at[0], 4), round(it.at[1], 4))) in pvias:
                 it.src, hit = ('vip' if (it.net, (round(it.at[0], 4), round(it.at[1], 4))) in pvip else 'router'), hit + 1
         print(f'ratchet: {hit} locked items of {args.prev} harvested again')
-    rebased = rebase(m, art) if args.rebase else None
+    rebased = rebase(m, art, prev) if args.rebase else None
     if rebased:
         print('rebase:', rebased)
     stubs_hit, stubs_all = fix_stubs(m, art)
