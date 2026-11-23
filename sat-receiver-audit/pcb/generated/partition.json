@@ -3,7 +3,7 @@
     "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
     "components": 883,
     "schematic_contacts": 3040,
-    "connected_contacts": 2758,
+    "connected_contacts": 2754,
     "nets": 499,
     "categories": {
       "bare_board_part": 785,
@@ -24,9 +24,9 @@
       "IMU_CARRIER": 12,
       "PACK_FUSE": 3,
       "PWR_BRANCH": 164,
-      "PWR_BRANCH_SW": 114,
+      "PWR_BRANCH_SW": 115,
       "PWR_ENTRY": 60,
-      "PWR_MAIN": 50,
+      "PWR_MAIN": 49,
       "RF_HF": 14,
       "RF_HMC": 54,
       "RF_INJECTOR": 34,
@@ -39,7 +39,7 @@
     "bare_parts_without_footprint": 0,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
-    "xml_compared_connected_pins": 2758,
+    "xml_compared_connected_pins": 2754,
     "core_parts": 71,
     "core_connected_pins": 180,
     "core_boundary_nets": 8,
@@ -55,11 +55,11 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "2265ae3197e38f5f7ea787f70c2b0ca7c126115427fdb71a6e93b93170d7b03e"
+        "sha256": "1bc7eb53a1823d2d5b2e17253bf2f59df06ecc5412c2516cbbbf54b534eb3e9f"
       },
       {
         "file": "design/E2.json",
-        "sha256": "9e3b73999f923c3093bd180274997277ad181bed0f45c17cf8d10bea79df9582"
+        "sha256": "691b33679e239e32eb10317a9032253b3b31033bef335fdd142240827228d157"
       },
       {
         "file": "design/E3.json",
@@ -79,7 +79,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "ff5d9383c52289e3b4fe3180025ff8a2a35bd00fbd269327dfa1c1c8f619fce7"
+        "sha256": "991a2b61723795b03ed78c4b518be6e096d602cdbc32b241dd14977548447d0c"
       }
     ],
     "source_documents": [
@@ -196,7 +196,7 @@
     },
     "partition": {
       "file": "pcb/partition-spec.json",
-      "sha256": "a940f54a8fa782bb5751053037091a5329541b236c676b99ab405ab3efda42cb",
+      "sha256": "954ff927a07decebcc2d42b602eac6a0a33003f4b4ad220525b3397889cc3f10",
       "b2b_currents": "tools/assembly_data.py NET_CURRENT"
     }
   },
@@ -5604,7 +5604,7 @@
       "kind": "fuse",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "PWR_MAIN",
+      "board_candidate": "PWR_BRANCH_SW",
       "dnp": false,
       "footprint": "Fuse:Fuse_1812_4532Metric",
       "portable_footprint": true,

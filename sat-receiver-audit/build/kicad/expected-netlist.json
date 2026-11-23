@@ -5937,30 +5937,6 @@
       "type": "passive"
     },
     {
-      "ref": "J208",
-      "pin": "17",
-      "sheet": "E2",
-      "type": "passive"
-    },
-    {
-      "ref": "J208",
-      "pin": "21",
-      "sheet": "E2",
-      "type": "passive"
-    },
-    {
-      "ref": "J209",
-      "pin": "18",
-      "sheet": "E2",
-      "type": "passive"
-    },
-    {
-      "ref": "J209",
-      "pin": "22",
-      "sheet": "E2",
-      "type": "passive"
-    },
-    {
       "ref": "D401",
       "pin": "3",
       "sheet": "E4",

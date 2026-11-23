@@ -7,14 +7,14 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "829d9a9042ea8df14cb96ca66990cbe0d569d82510e351d7198265983cda5a3e"
+      "sha256": "912ba55f30bc00e067ede3a87bc27454e7b9970228abf89d89319d5785a2cb06"
     },
     "projection_sha256": {
-      "graph_refs_pins_nets": "2ee0891c6fcd78eecf6c93a330f6c74d768542670ae9ca699d8d5ee87c9558d8",
-      "footprints": "92e42020e0190146fadf2920d9ca6dd75364f034fa9d3aaefba5ca16b10c741d",
+      "graph_refs_pins_nets": "93e659663d90e43f8d39e1e115cb4079389513f35eb4f62be499071c4d7d1eda",
+      "footprints": "8e8fc3129c92bdb61eb6b305a22e378fa1c2b5d0cbfe1508cae0583488fb38eb",
       "contract_board": "4b1616d88e13a8f31341ab1884adee4e9faa87dee279b0ef10490a2dc3e7c0eb",
       "netclasses": "4444198bc87d83d61b33d4e54cefd9fbdd0b93e1e64755b18bb8a1ee15f4814e",
-      "spec": "201bfafc8f045ffedba70326502b3eb9c02cf65fcd059f277a9b045d800a5ae2"
+      "spec": "2ca265acb0dc8c3dc725a8963c471becb719f7c472eb599f4a75f2632770482e"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },
@@ -27,10 +27,10 @@
     "source": "Edge.Cuts bounding box"
   },
   "counts": {
-    "footprints": 144,
-    "pads": 520,
-    "tracks": 1782,
-    "vias": 329,
+    "footprints": 145,
+    "pads": 522,
+    "tracks": 1779,
+    "vias": 335,
     "zones": 250,
     "holes": 9,
     "copper_layers": [
@@ -279,12 +279,12 @@
     },
     "pad_nets": {
       "findings": 0,
-      "expected_refs": 137,
-      "board_footprints": 144
+      "expected_refs": 138,
+      "board_footprints": 145
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1762,
+      "tracks_checked": 1759,
       "pour_necks": [],
       "split_nets": {}
     },
@@ -307,7 +307,7 @@
     },
     "heights": {
       "findings": 0,
-      "checked": 137
+      "checked": 138
     },
     "pth_annular": {
       "findings": 0,
@@ -341,11 +341,6 @@
       "check": "class_widths",
       "item": "J209 branch on LAB5",
       "reason": "branch_exempt: 8 track piece(s), path 3.4 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR3A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
-    },
-    {
-      "check": "class_widths",
-      "item": "J209 branch on LAB5_RLY",
-      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
@@ -444,6 +439,11 @@
     },
     {
       "check": "class_widths",
+      "item": "E2_RTLB_SW vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
       "item": "E2_SB_DAMP vias",
       "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 8 via(s) of the net on the board"
     },
@@ -459,13 +459,18 @@
     },
     {
       "check": "class_widths",
+      "item": "LAB5_RLY vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
       "item": "LNB13V2 vias",
-      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 1 (PWR05A) is advisory, not counted: 3 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "VBUS_LABPORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 9 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 6 via(s) of the net on the board"
     },
     {
       "check": "class_widths",

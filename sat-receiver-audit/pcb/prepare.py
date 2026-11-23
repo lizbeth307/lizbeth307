@@ -67,6 +67,10 @@ def pwr_b_overrides():
         for c in json.loads((ROOT / f'design/{sheet}.json').read_text(encoding='utf-8'))['components']:
             if (sheet, c.get('group', '')) in groups and c['ref'] not in keep:
                 out[c['ref']] = dom
+    # W2 PWR-A closure round 2, probe Z: single refs pinned to PWR-B outside their group (partition.domain_override_pwr_b,
+    # mirrored by candidates.<chosen>.pinned_pwr_b of pcb/partition_budget.py): F104, the LAB5_RLY PTC, on the PWR-B LAB5 trunk
+    for ref in spec.get('domain_override_pwr_b', []):
+        out[ref] = 'PWR_BRANCH_SW'
     return out
 # Board parts assembled off the plate boards (build/15, build/16 §2): their own domain instead of the sheet default.
 # W2 GR-3: the hatch-board harness headers sit on HATCH, and the PWR side-entry headers that tie to PWR-B parts on PWR-B
@@ -195,6 +199,7 @@ def b2b_mate(n):
     return n+1 if n%2 else n-1
 
 B2B_RAIL_KINDS=('power','sense/supply tap','rail node')
+B2B_FREE_SLOT='(free)'  # W2 PWR-A closure round 2, probe Z: a kept-free rail column of b2b.rail_order (b2b_contacts)
 
 def low_ohm_links(components,max_ohm):
     """W2 B2B review R2: nets that a resistor below max_ohm joins to a net other than GND, {net: 'Rref value to NET'} (lowest ref
@@ -217,7 +222,8 @@ def b2b_pairs(out,bb):
 def b2b_guards(out,bb):
     """GND guard contacts of b2b.guard_rule: a GND column (2 contacts) beside each crossing declared sense pair, and one GND
     contact after the last rail column, in the row of that rail contact."""
-    return 2*len(b2b_pairs(out,bb))+(1 if any(r['kind'] in B2B_RAIL_KINDS and r['pins'] for r in out) else 0)
+    return (2*len(b2b_pairs(out,bb))+(1 if any(r['kind'] in B2B_RAIL_KINDS and r['pins'] for r in out) else 0)
+            +bb['rail_order'].count(B2B_FREE_SLOT))  # W2 PWR-A closure round 2, probe Z: the kept GND of each free rail column
 
 def b2b_contacts(out,bb):
     """Contact map of the two B2B halves (W2 B2B, pcb/partition-spec.json b2b.pin_map_rule and b2b.guard_rule), J208 column c =
@@ -241,11 +247,15 @@ def b2b_contacts(out,bb):
     rails=[r for r in out if r['kind'] in B2B_RAIL_KINDS and r['pins']];kind={r['net']:r['kind'] for r in rails}
     left={r['net']:r['pins'] for r in rails};seq=[]
     for i,n in enumerate(order):
+        # W2 PWR-A closure round 2, probe Z: B2B_FREE_SLOT in rail_order keeps a rail column free (its contact spare, its GND
+        # return kept as a guard), so the rails after it keep their contacts of the boards of record
+        if n==B2B_FREE_SLOT:seq.append(n);continue
         if not left.get(n):continue
         k=1 if n in order[i+1:] else left[n];seq+=[n]*k;left[n]-=k
     for r in sorted(rails,key=lambda r:r['net']):seq+=[r['net']]*left[r['net']];left[r['net']]=0
     even=set(bb.get('rail_row_even',[]));ecol=1
     for net in seq:
+        if net==B2B_FREE_SLOT:put(2*col-1,'','spare');put(2*col+1,'GND','guard');last=2*col+1;col+=2;continue
         if net in even:put(2*ecol,net,kind[net]);put(2*ecol+2,'GND','gnd');ecol+=2;continue
         put(2*col-1,net,kind[net]);put(2*col+1,'GND','gnd');last=2*col+1;col+=2
     if last is not None:put(last+2,'GND','guard')

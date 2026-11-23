@@ -102,7 +102,8 @@ EDGE_INSET = 0.3  # mm, a planner region keeps this off the board outline (the d
 # strap on an inner layer ("Use a wide VIN plane on a lower layer to connect both of the VIN pairs together", figure 11-2
 # "VIN Strap on Inner Layer"): In2.Cu here, In1.Cu stays the solid GND plane under the IC.
 # Review fix F2: C111 (E1_LAB5_FUSED input capacitor of the LAB5 filter) at the F102.2/L101.1 node, C112 (LAB5 output bulk)
-# and F104 (LAB5_RLY PTC) at L101.2, L205 (LAB5 -> E2_LNA_IN filter of the LT3045 pair) left of U204 under the LAB5 trunk;
+# at L101.2 (W2 PWR-A closure round 2, probe Z: F104, the LAB5_RLY PTC, is a PWR-B part on the PWR-B LAB5 trunk since then,
+# pcb/partition-spec.json partition.domain_override_pwr_b), L205 (LAB5 -> E2_LNA_IN filter of the LT3045 pair) left of U204 under the LAB5 trunk;
 # two SYS12 branch heads at the SYS12 node right of the spine: F201 (J21 fuse) above, Q201 (AUX12 switch) below; the
 # display filter L202 does not fit there (C113, R110 and the hole keep-out at (38, 56)) and stays with its group.
 POWER_ANCHORS = {
@@ -112,7 +113,7 @@ POWER_ANCHORS = {
     'Q102': (26.5, 38.6, 90), 'C107': (19.0, 67.15, 180),
     'U108': (14.0, 80.0, 0), 'C130': (11.2, 86.475, 90), 'C131': (16.8, 86.475, 90),
     'C133': (9.2, 73.725, 270), 'C134': (12.6, 73.725, 270), 'C135': (16.0, 73.725, 270),
-    'L101': (4.0, 88.0, 90), 'C111': (9.3, 80.05, 90), 'C112': (5.85, 94.9, 90), 'F104': (2.25, 99.25, 90),
+    'L101': (4.0, 88.0, 90), 'C111': (9.3, 80.05, 90), 'C112': (5.85, 94.9, 90),
     'L205': (39.91, 23.41, 270),
     'F201': (30.43, 64.9, 90), 'Q201': (30.53, 56.6, 180),
 }
@@ -276,8 +277,6 @@ POWER_POURS = {
                            'PWR3A 2.0 mm: onto C111.1 at the F102.2/L101.1 node (review fix F2)', branch=True),
     'LAB5-L101': pour('LAB5', rect(0.6, 89.0, 7.4, 94.0),
                       'PWR3A 5.0 mm: L101.2 (the E1 LAB5 end) and C112.1, six vias to the B.Cu trunk (review fix F2)'),
-    'LAB5-F104': pour('LAB5', rect(0.6, 93.6, 3.95, 97.675), 'PWR3A 3.35 mm: onto F104.1 (LAB5_RLY PTC) (review fix F2)',
-                      branch=True),
     'LAB5-B-TOP': pour('LAB5', rect(0.6, 90.4, 26.5, 92.6),
                        'B.Cu PWR3A 2.2 mm: the LAB5 trunk from L101.2 across the leg above thermal_bond zone 4\' (review fix '
                        'F2)', layer='B.Cu'),
@@ -361,7 +360,7 @@ POWER_TRUNKS = {
     'SYS12': ['L102.2', 'C123.1', 'C124.1', 'C125.1', 'C126.1', 'F201.1', 'Q201.2'],
     'E1_LAB5_RAW': ['U108.8', 'U108.9', 'C133.1', 'C134.1', 'C135.1', 'F102.1'],
     'E1_LAB5_FUSED': ['F102.2', 'C111.1', 'L101.1'],
-    'LAB5': ['L101.2', 'C112.1', 'F104.1', 'L205.1', 'J208.2', 'J208.6', 'J208.10', 'J208.14'],
+    'LAB5': ['L101.2', 'C112.1', 'L205.1', 'J208.2', 'J208.6', 'J208.10', 'J208.14'],
 }
 
 # Bottom row of the PWR-A bottom edge (MECH-7 contract edge_zones[0] row_end_max): the headers in their order along the
@@ -996,7 +995,7 @@ def build():
                     'Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its '
                     'CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 '
                     'over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 '
-                    'VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, F104.1, '
+                    'VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, '
                     'L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router '
                     '(PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, '
                     'CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other '

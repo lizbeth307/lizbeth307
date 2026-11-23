@@ -67,6 +67,13 @@ EVICT_R = 30.0
 # group regions they would cut): R131 (RT of U108) carries the end of the scripted RT track of make_board.py: ref -> (x, y, rotation)
 BOARD_PINS = {'R131': (22.15, 78.85, 270)}
 WEIGHT = {'BATT': 4.0, 'PWR3A': 3.0, 'PWR2A': 2.0, 'PWR1A': 1.5}  # cost weight per net class (others 1.0)
+# W2 PWR-A closure round 2, probe Z (design choice): carry the positions of record. The annealing is chaotic: a change of the
+# static obstacles far from a part (here F104 and its LAB5 pour leaving PWR-A for PWR-B) changes the whole trajectory and
+# would re-place about 150 parts that the closure probes tuned and measured. With CARRY the movable parts start from the rows of
+# board-placement.json (this tool's own output of record; the other movable parts stand at their placement-study position,
+# which a partition change of an anchor leaves unchanged), are legalised as before, and the annealing is skipped; the GND
+# fan-out repair still runs. A placement change itself goes through make_board.py MOVES, or a re-run with CARRY = False.
+CARRY = True
 
 
 def r4(v):
@@ -290,6 +297,12 @@ class Grid:
 def place():
     m = Model()
     rng = random.Random(SEED)
+    carried = []
+    if CARRY and OUT.is_file():
+        for ref, row in read(OUT)['positions'].items():
+            if ref in m.at and not m.fixed[ref] and row['side'] == m.side[ref]:
+                m.at[ref], m.rot[ref] = (float(row['at'][0]), float(row['at'][1])), int(row['rotation']) % 360
+                carried.append(ref)
     grids = {'F': Grid(), 'B': Grid()}
     for ref in m.refs:
         grids[m.side[ref]].add(ref, m.box(ref))
@@ -491,7 +504,7 @@ def place():
             grids[m.side[r]].add(r, m.box(r))
             pinpos[r] = m.pins(r)
 
-    for step in range(STEPS):
+    for step in range(0 if carried else STEPS):
         frac = step / STEPS
         temp = t0 * (t1 / t0) ** frac
         reach = max(0.5, 25.0 * (1 - frac))
@@ -611,7 +624,8 @@ def place():
         'inputs': {'spec_sha256': bg.sha256_bytes(bg.canonical(m.spec)),
                    'study_sha256': bg.sha256_bytes(bg.canonical(m.study)),
                    'pwr_b_h_trim_sha256': bg.sha256_bytes(bg.canonical(read(PWR_B_SPEC)['h_trim']))},
-        'rules': {'seed': SEED, 'steps': STEPS, 'gap_mm': GAP, 'edge_inset_mm': EDGE_INSET, 'via_keep_mm': VIA_KEEP,
+        'rules': {'seed': SEED, 'steps': 0 if carried else STEPS, 'carry': ('positions of record carried from board-placement.json '
+                  f'({len(carried)} rows), annealing skipped (CARRY)') if carried else 'off', 'gap_mm': GAP, 'edge_inset_mm': EDGE_INSET, 'via_keep_mm': VIA_KEEP,
                   'weights': WEIGHT, 'fixed': 'anchors of PWR_A.spec-shrink2.json, parts with a PWR-B cut-out and BOARD_PINS',
                   'board_pins': {r: list(v) for r, v in sorted(BOARD_PINS.items())}},
         'cost': {'note': 'sum over the non-GND nets of the half-perimeter of the pin box (weighted by class), mm',

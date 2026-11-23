@@ -153,7 +153,6 @@
       "J21",
       "J21_DAMP",
       "LAB5",
-      "LAB5_RLY",
       "LIME3V3",
       "LIME3V3_DAMP",
       "LNA4V5",
@@ -272,7 +271,6 @@
           "D203": "D203",
           "D2903": "D2903",
           "F102": "F102",
-          "F104": "F104",
           "F201": "F201",
           "F202": "F202",
           "J104": "J104",
@@ -501,7 +499,6 @@
           "J21": "J21",
           "J21_DAMP": "J21_DAMP",
           "LAB5": "LAB5",
-          "LAB5_RLY": "LAB5_RLY",
           "LIME3V3": "LIME3V3",
           "LIME3V3_DAMP": "LIME3V3_DAMP",
           "LNA4V5": "LNA4V5",
@@ -1247,20 +1244,6 @@
         }
       },
       "anchor_source": "next to U108 VOUT (E1_LAB5_RAW, BATT class): left strip x 0-7.75 of the leg, rotation 90; PWR-B window (Keystone 3568, height >= 7.37 mm lower bound)"
-    },
-    {
-      "ref": "F104",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          2.25,
-          99.25
-        ],
-        "align": "origin",
-        "rotation": 90,
-        "side": "F"
-      },
-      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "F201",
@@ -3775,6 +3758,12 @@
         93.6
       ],
       "LEG_LEFT_HIGH": [
+        0.6,
+        94.0,
+        4.25,
+        102.2
+      ],
+      "LEG_LEFT_HIGHb": [
         4.25,
         97.2,
         6.75,
@@ -4262,19 +4251,6 @@
         89.0,
         7.4,
         94.0
-      ],
-      "side": "F",
-      "kind": "copper",
-      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
-      "source": "make_spec.py POWER_POURS"
-    },
-    {
-      "id": "CU_LAB5-F104",
-      "rect": [
-        0.6,
-        93.6,
-        3.95,
-        97.675
       ],
       "side": "F",
       "kind": "copper",
@@ -6297,33 +6273,6 @@
         "why": "PWR3A 5.0 mm: L101.2 (the E1 LAB5 end) and C112.1, six vias to the B.Cu trunk (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
-        "id": "LAB5-F104",
-        "net": "LAB5",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            0.6,
-            93.6
-          ],
-          [
-            3.95,
-            93.6
-          ],
-          [
-            3.95,
-            97.675
-          ],
-          [
-            0.6,
-            97.675
-          ]
-        ],
-        "priority": 2,
-        "pad_connection": "solid",
-        "why": "PWR3A 3.35 mm: onto F104.1 (LAB5_RLY PTC) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
-        "branch": true
-      },
-      {
         "id": "LAB5-B-TOP",
         "net": "LAB5",
         "layer": "B.Cu",
@@ -7534,7 +7483,6 @@
       "C133",
       "C134",
       "C135",
-      "F104",
       "F201",
       "L101",
       "L102",
@@ -7587,7 +7535,6 @@
       "LAB5-B-TOP",
       "LAB5-DETOUR",
       "LAB5-DROP",
-      "LAB5-F104",
       "LAB5-J208-10",
       "LAB5-J208-14",
       "LAB5-J208-2",
@@ -7741,7 +7688,6 @@
       "LAB5": [
         "L101.2",
         "C112.1",
-        "F104.1",
         "L205.1",
         "J208.2",
         "J208.6",
@@ -7750,7 +7696,7 @@
       ]
     },
     "u107_input_source": "TI LM61460 data sheet SNVSBD5D (rev. D, July 2022) section 11.1 Layout Guidelines and figure 11-2 Layout Example, https://www.ti.com/lit/ds/symlink/lm61460.pdf read 2026-11-12 (curl default User-Agent, HTTP 200, sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d; fetch-only, not committed)",
-    "note": "W2 PCB-PWRA-3 (design choice; review fixes F1/F2): anchored power stages and their scripted copper. Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, F104.1, L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router (PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 IN pins and every branch net after F201, L202 and Q201",
+    "note": "W2 PCB-PWRA-3 (design choice; review fixes F1/F2): anchored power stages and their scripted copper. Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router (PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 IN pins and every branch net after F201, L202 and Q201",
     "small_signal": {
       "rule": "W2 PWR-L6-PLACE (placement only): the U107 and U108 small-signal parts anchored inside thermal_bond zones 3'/4' next to their pins (make_spec.py SMALL_SIGNAL_ANCHORS); MODEL geometry, pad centre to pin centre: CVCC <= 2.0 mm of VCC/AGND, CBOOT, RBOOT and the feedback parts <= 5.0 mm of their pins (project limits). Their copper (the SW-CBOOT link through the VIN2-RBOOT gap, the FB node on F.Cu only, AGND to PGND under U108) is W2 PWR-L6-SCRIPT's; the F.Cu VIN2 bar CONVIN-U107-L-BAR closes that gap today",
       "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 Layout Example, https://www.ti.com/lit/ds/symlink/lm61460.pdf, and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, https://www.ti.com/lit/ds/symlink/tpsm63606.pdf, both read 2026-11-13 (curl default User-Agent, HTTP 200, sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d and d1c157ff51c0e24bec9749dc434c3f8cdb8e980a7d1295d3a51c7d13f8ab4147; fetch-only, not committed); the 2 mm and 5 mm limits are project rules for TI's \"as close as possible\", not TI numbers",

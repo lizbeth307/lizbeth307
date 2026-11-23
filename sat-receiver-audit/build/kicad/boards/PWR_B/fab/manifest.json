@@ -7,10 +7,10 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-    "board_sha256": "829d9a9042ea8df14cb96ca66990cbe0d569d82510e351d7198265983cda5a3e",
+    "board_sha256": "912ba55f30bc00e067ede3a87bc27454e7b9970228abf89d89319d5785a2cb06",
     "project_sha256": "93c48029d7d173255395f0894d792a7e876b0def01ec9dd5ef1eb499e43a9b0b",
-    "spec_projection_sha256": "bebadb24486c95c3f3c884392aa91d4c3df048e59400043746ebe82a602291ea",
-    "report_projection_sha256": "b8d29b52c71b309877008ffcd5f5abf3b0aeb00340d3888f7c20c2d78507d197",
+    "spec_projection_sha256": "52ec63cb1e7efb97f4c7ff90cc6796c56ddd4439774a2cb4627dbd79dc94704d",
+    "report_projection_sha256": "dc2f38f798ad966047a7e7b02f7eb975b0799623f90f858bd1c45bbbdce86932",
     "jlc_bom_rows": [
       {
         "Board": "PWR_B",
@@ -206,6 +206,14 @@
       },
       {
         "Board": "PWR_B",
+        "Comment": "MF-MSMF075/24-2",
+        "Designator": "F104",
+        "Footprint": "Fuse_1812_4532Metric",
+        "LCSC Part #": "C208467",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "PWR_B",
         "Comment": "RC0603FR-07162KL",
         "Designator": "R243,R293",
         "Footprint": "R_0603_1608Metric",
@@ -317,7 +325,7 @@
         "Mount": "SMD"
       }
     ],
-    "jlc_bom_rows_sha256": "2d528861e104f70dc27be878363120f0961147541f8c5908c0333097627deae6",
+    "jlc_bom_rows_sha256": "6f7ab04fa3e0c511eca9af2dd738459abc0d4a965e0dc56f884a0f62fba680dc",
     "stackup": {
       "id": "JLC06161H-2116",
       "copper_layers": 6,
@@ -526,10 +534,10 @@
   ],
   "coverage": {
     "cpl": {
-      "rows": 129,
+      "rows": 130,
       "placed_by_side_and_mount": {
         "Top": {
-          "SMD": 122,
+          "SMD": 123,
           "THT": 6
         },
         "Bottom": {
@@ -539,8 +547,8 @@
       "smd_refs_once_per_side": true
     },
     "bom": {
-      "rows": 38,
-      "designators": 129,
+      "rows": 39,
+      "designators": 130,
       "tbd": [
         "C274,C275,C276,C277,C283,C285,C287,C2911,C2912"
       ],
@@ -768,10 +776,10 @@
     "drill": {
       "pth_file": 1,
       "npth_file": 1,
-      "pth_hits": 403,
+      "pth_hits": 409,
       "npth_hits": 9,
       "board_pth_pads": 74,
-      "board_vias": 329,
+      "board_vias": 335,
       "board_npth_pads": 9,
       "maps": [
         "drill/PWR_B-NPTH-drl_map.gbr",
@@ -832,13 +840,13 @@
     },
     {
       "path": "PWR_B-fab-notes.pdf",
-      "sha256": "0f3ff71bfeb4a1decfe4030585fdd0654db9479f8de963bef64e10156db3b017",
-      "bytes": 29439
+      "sha256": "02916e0db32e45e8140d7934894607741486984e1a94dde8e4232c4958bb9143",
+      "bytes": 29574
     },
     {
       "path": "PWR_B.ipc356",
-      "sha256": "9443741dfb713aee5f939f6a499432c9fbd8130bdfb3ba30b25e21ac45038511",
-      "bytes": 68946
+      "sha256": "8fad48820f9de0c7b15b8e8fc49607ef65ff0cc61f1fce8148d2bd0dd21a8119",
+      "bytes": 69594
     },
     {
       "path": "PWR_B.kicad_jobset",
@@ -852,28 +860,28 @@
     },
     {
       "path": "assembly/PWR_B-bom-jlc.csv",
-      "sha256": "23a8c91a20bca0c5656dd3b308b1e1136c84bcb0df8c64b914c8df35d4f498fa",
-      "bytes": 5971
+      "sha256": "6ce3f8cb4641a569fecf019afd18a1745fe5d4bc2269145145db662b88ab326b",
+      "bytes": 6068
     },
     {
       "path": "assembly/PWR_B-cpl-jlc.csv",
-      "sha256": "7820524e0f1708ff4870022d681bdae560d932d49be7d620dcb33b3c7d1bbb8c",
-      "bytes": 6742
+      "sha256": "f1f933e636884f49770b4b761b1570d4344146d80c205ac6edd0919146da3520",
+      "bytes": 6795
     },
     {
       "path": "assembly/PWR_B-cpl-rotation-offsets.csv",
-      "sha256": "6d6d0f912524c0f6c6b4b8a91687d77b9a133c7fcfd36695555064570d9c5563",
-      "bytes": 6868
+      "sha256": "556511dde23e7cc69ee8608b49b01ac6a972900ddc10745332835f2c0319dafb",
+      "bytes": 7196
     },
     {
       "path": "assembly/PWR_B-instances.csv",
-      "sha256": "2d3f8452016c7f16d9df825e6d16ee24ece067fae170292696a46877177dbff3",
-      "bytes": 4903
+      "sha256": "614f8ee6cdad9c01dc7733d5668cd3be351099bde7f5c183938df64c23133c45",
+      "bytes": 4938
     },
     {
       "path": "assembly/PWR_B-pos-kicad.csv",
-      "sha256": "01965fb5958da765610e5010f56f4924ea524b2d2fc1213bcaee026c13bfeef7",
-      "bytes": 11270
+      "sha256": "bbb6ddea96c6d67364a8890204e2bcb558bc7174e802a9f0fffcd76494977550",
+      "bytes": 11362
     },
     {
       "path": "drill/PWR_B-NPTH-drl_map.gbr",
@@ -887,23 +895,23 @@
     },
     {
       "path": "drill/PWR_B-PTH-drl_map.gbr",
-      "sha256": "e913901504934719874b1fec97b114d5c4a0ee1cd34b944fd963653c772d7133",
-      "bytes": 74025
+      "sha256": "0a85479467110b5abbc26b0aef6cfa967509b5527a3ac0af2d1eae32e0f3c5bd",
+      "bytes": 74457
     },
     {
       "path": "drill/PWR_B-PTH.drl",
-      "sha256": "6e7a6afab57c1f3289f89b53b92f5e785301d0721281d7a26963bab1c3699e0e",
-      "bytes": 6921
+      "sha256": "6516e164fed55d0477cd1d5efdafcdff6f6586f8c6dade92aea6655c8ff33b91",
+      "bytes": 7023
     },
     {
       "path": "gerber/PWR_B-B_Cu.gbl",
-      "sha256": "a5bb37686475697aefc0e6b36699618b89aaf4a2e7e97454f743552b5a993315",
-      "bytes": 402004
+      "sha256": "be1e6d58012f02c39d93c0d9a8368ae907268b1763b82055f0d3bb51ee42e80f",
+      "bytes": 392339
     },
     {
       "path": "gerber/PWR_B-B_Mask.gbs",
-      "sha256": "f263366a711cf858c90a96ad5078fc9776ff1e24a8888de668fe372ff5258991",
-      "bytes": 6696
+      "sha256": "d8832a7d8688baabb8589e4939ab361087eae4dced27a5021098c52868005594",
+      "bytes": 6701
     },
     {
       "path": "gerber/PWR_B-B_Paste.gbp",
@@ -912,8 +920,8 @@
     },
     {
       "path": "gerber/PWR_B-B_Silkscreen.gbo",
-      "sha256": "c01b27d7f98451cf122c18b933814c59b7e395e680158b7e2eed646fd96e079d",
-      "bytes": 10361
+      "sha256": "900a9c83a49746c49b40fd775225162d23f55c709694e9a04d5ae7c0556748be",
+      "bytes": 10366
     },
     {
       "path": "gerber/PWR_B-Edge_Cuts.gm1",
@@ -922,43 +930,43 @@
     },
     {
       "path": "gerber/PWR_B-F_Cu.gtl",
-      "sha256": "e2fac7bd6b7767f36fce7b2221e1ad8439367f80c36f60fc1c305ec4ac53e10f",
-      "bytes": 482347
+      "sha256": "40e546f8820aa1be6d2c041fb59c9f10bcd0fcb40e977973b14a9dc1c62486d2",
+      "bytes": 485585
     },
     {
       "path": "gerber/PWR_B-F_Mask.gts",
-      "sha256": "27057c8d3a33f058d9fdd94f8f7743e4376bb21e16c77cd94eec09a08e7c468d",
-      "bytes": 18744
+      "sha256": "f8c2db1a5eca5f9ef8044355c8b4c8dcf07f11f8a7beca431b2bc1c0f0198329",
+      "bytes": 18915
     },
     {
       "path": "gerber/PWR_B-F_Paste.gtp",
-      "sha256": "7ab2bb5f715041617b69c2779c907c429ad0f4c3d006619827bcac7906cdf955",
-      "bytes": 15312
+      "sha256": "82c7070227be328b5d09648bc1b127639ab03d4fedf936de9d15fad5ed18ab1c",
+      "bytes": 15498
     },
     {
       "path": "gerber/PWR_B-F_Silkscreen.gto",
-      "sha256": "6fa0c66f718e7f45a281c949d4d97a2ce0085295fca492d7fa93af97101f68d5",
-      "bytes": 429123
+      "sha256": "8a5322542299e746696cee3e17304bd2ab5641db600264b9c361b3d6d9bd461d",
+      "bytes": 431023
     },
     {
       "path": "gerber/PWR_B-In1_Cu.g1",
-      "sha256": "74d8b6a719651a4a55a5623b2b556d9cb4b39b3b882fb212b019ac455c5fad98",
-      "bytes": 443432
+      "sha256": "14ce3d375afdf4f8389204ca04b507914f428f832e81704d9832ebf60482a6f9",
+      "bytes": 450962
     },
     {
       "path": "gerber/PWR_B-In2_Cu.g2",
-      "sha256": "c9dfdaf63692a743fc1f48ea7675f18137938cc868df9ef7295abe2ffed95a9d",
-      "bytes": 34486
+      "sha256": "567bde1b27fbef66729719d0c11800e4afe5f2b47f40e1e1485db07c604c3ad9",
+      "bytes": 33670
     },
     {
       "path": "gerber/PWR_B-In3_Cu.g3",
-      "sha256": "ed94e308b5198ee95988017b2f23114d9ccffe57427b18d507f0dd759ad00c26",
-      "bytes": 33028
+      "sha256": "edef81279a8ae629ba76b484e5fc11648610841bbc4d0dd411a1d2808b44fc41",
+      "bytes": 33826
     },
     {
       "path": "gerber/PWR_B-In4_Cu.g4",
-      "sha256": "03ce582594a0737c0d7b9f87f55da346f25fda41c20e077ea68f00a2ff59343f",
-      "bytes": 563660
+      "sha256": "12252acca910a2b9e992ac0aba98348d04c723116368fa370cb255f63ca69cfc",
+      "bytes": 573920
     },
     {
       "path": "gerber/PWR_B-job.gbrjob",

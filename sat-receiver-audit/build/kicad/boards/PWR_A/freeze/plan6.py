@@ -993,6 +993,13 @@ def ratchet_load(pl, src):
             pl.m.add_via(net, K(x, y), size, drill, src='new')
     bad = verify(pl)
     dropped = drop_failing(pl) if bad else []
+    # W2 PWR-A closure round 2, probe Z: carried copper whose pad left the board dangles (PL-LAB5-031 ran to F104.1, a PWR-B part
+    # since then; KiCad track_dangling in route run 45162094133): planned pieces with a free end go, as fin.prune does for router copper
+    doc['pruned'] = {}
+    for net in sorted(doc['nets']):
+        n = F.prune(pl.m, net, srcs=('new',), log=lambda *a, **k: None)
+        if n:
+            doc['pruned'][net] = n
     return doc, dropped
 
 
@@ -1034,6 +1041,8 @@ def main(argv=None):
     ap.add_argument('--reserve', default='', help='W2 PWR-A closure round 2, probe Y: comma-separated pads REF.PIN (or @FILE: a JSON '
                                                    'list, or an object with a "walled" list of "REF.PIN:NET") whose escape is reserved '
                                                    'before the power copper is planned (Planner.reserve)')
+    ap.add_argument('--no-replan', action='store_true', help='W2 PWR-A closure round 2, probe Z: with --ratchet, the nets left open keep '
+                                                                 'their carried copper and are not planned again')
     ap.add_argument('--out', default=str(OUT))
     ap.add_argument('--verify', action='store_true', help='only report the margins of the scripted copper')
     args = ap.parse_args(argv)
@@ -1061,7 +1070,7 @@ def main(argv=None):
     nets = args.nets.split(',') if args.nets else power
     carried, carried_dropped = (ratchet_load(pl, args.ratchet) if args.ratchet else (None, []))
     if carried is not None:
-        print('ratchet:', args.ratchet, 'dropped', len(carried_dropped), flush=True)
+        print('ratchet:', args.ratchet, 'dropped', len(carried_dropped), 'pruned', carried.get('pruned'), flush=True)
         # the carried branch copper (narrower than its class) is never ripped by negotiate(), as a planned branch
         for n in carried['nets']:
             if n in pl.cls:
@@ -1102,7 +1111,17 @@ def main(argv=None):
             plan[n] = rec
     for net in todo:
         t1 = time.time()
-        rec = ratchet_merge(carried, net, pl.plan_net(net))
+        if args.no_replan and carried is not None and net in carried['nets']:
+            # W2 PWR-A closure round 2, probe Z (--no-replan): an open net keeps its carried copper as it is, so the router copper
+            # of a run on the earlier plan stays valid (only the pruned dangling pieces changed)
+            d = carried['nets'][net]
+            isl = [g for g in pl.m.islands(net) if any(i.kind == 'pad' for i in g) or len(g) > 1]
+            rec = {'class': d['class'], 'width_mm': d['width_mm'], 'zones': list(carried['loaded_zones'].get(net, [])),
+                   'branches': d['branches'], 'log': ['carried as it is (ratchet --no-replan)'], 'kind': 'link',
+                   'open': max(0, len(isl) - 1), 'via_cluster': 0,
+                   'open_islands': [sorted(f'{i.ref}.{i.pad}' for i in g if i.kind == 'pad' and i.src == 'pad') for g in isl] if len(isl) > 1 else []}
+        else:
+            rec = ratchet_merge(carried, net, pl.plan_net(net))
         rec['tracks'], rec['vias'] = pl.harvest(net)
         plan[net] = rec
         print(f'{net} ({rec["class"]} {rec["width_mm"]} mm): {rec["kind"]}, open {rec["open"]}, zones {len(rec["zones"])}, '
@@ -1162,6 +1181,7 @@ def main(argv=None):
         result['first'] = [n for n in args.first.split(',') if n in plan]
     if carried is not None:
         result['ratchet'] = {'from_guard': carried['guard'], 'dropped': len(carried_dropped), 'replanned': todo,
+                             **({'pruned': carried['pruned']} if carried.get('pruned') else {}),
                              'rule': 'plan6.py --ratchet (W2 PWR-A closure probe X): the earlier plan copper that holds on the current inputs '
                                      'kept, the power nets it leaves open planned again'}
     if reserved:

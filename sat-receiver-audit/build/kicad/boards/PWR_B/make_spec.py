@@ -398,6 +398,12 @@ PLACEMENT = {
     'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
     'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90), 'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90),
     'U502': (64.5, 20, 90), 'U507': (4.5, 51, 0),
+    # W2 PWR-A closure round 2, probe Z (design choice): F104, the LAB5_RLY PTC (pcb/partition-spec.json partition.domain_override_pwr_b),
+    # under the west end of the F.Cu LAB5 trunk, pad 1 on the trunk, pad 2 south of it; the only place the MODEL search found
+    # (scratch, every 0.5 mm in x 56-120, y 2-33, four turns): no courtyard, cut-out, plug-zone, hole, edge or scripted-copper
+    # conflict and outside the J209 escape band (J209_CORRIDOR x >= 84) and the zone-2 exit field; north of the trunk the
+    # LAB5 cells, J209, J204/J207 and their plug zones leave no place. LAB5_RLY runs from pad 2 to J204.7 (frozen route).
+    'F104': (82.0, 12.5, 270),
 }
 PLUG_ZONES = ('J204', 'J207')   # top-span headers: no part between the mating face and the board edge
 # Kelvin cell of each LNA channel (W2 PCB-PWRB lineage): TPS2553 switch, Kelvin shunt, XAL5030, input / shunt capacitors and,

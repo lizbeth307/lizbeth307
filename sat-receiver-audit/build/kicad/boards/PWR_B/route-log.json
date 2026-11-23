@@ -26,8 +26,8 @@
   "ses_sha256": null,
   "dsn_probe": null,
   "locked_segments": {
-    "before_ses_import": 2111,
-    "after_ses_import": 2111
+    "before_ses_import": 2114,
+    "after_ses_import": 2114
   },
   "freerouting_not_run": {
     "passes": 0,
@@ -47,7 +47,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "829d9a9042ea8df14cb96ca66990cbe0d569d82510e351d7198265983cda5a3e",
+  "board_sha256": "912ba55f30bc00e067ede3a87bc27454e7b9970228abf89d89319d5785a2cb06",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -358,6 +358,12 @@
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
       "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15"
+    },
+    {
+      "ref": "F104",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "file": "build/kicad/footprints/Fuse.pretty/Fuse_1812_4532Metric.kicad_mod",
+      "sha256": "b2bd7adcbcc58fa3957f88eedc5c2c057055a8e1737142fc9ffea5afdb68f6e3"
     },
     {
       "ref": "J201",
@@ -878,8 +884,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "45036974510",
-    "sha": "702ee2bf7ccfdc21186f9f2bc475ecc7e56b5085",
-    "ref": "refs/heads/wip/w2-pwrl6"
+    "run_id": "45141762864",
+    "sha": "6982f39a42bbdc9f5dc8eafa722fbe69fa9330ba",
+    "ref": "refs/heads/wip/w2-pwrl6-q2z"
   }
 }

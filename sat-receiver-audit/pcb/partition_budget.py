@@ -579,6 +579,8 @@ class Evaluator:
         groups_rear = {(g["sheet"], g["group"]) for g in cand.get("rear_groups", [])}
         groups_ctrl_to_b = {(g["sheet"], g["group"]) for g in cand.get("ctrl_groups_to_pwr_b", [])}
         pinned = set(cand.get("pinned_pwr_a", []))
+        # W2 PWR-A closure round 2, probe Z: single refs pinned to PWR-B outside their group (F104, the LAB5_RLY PTC), under hB
+        pinned_b = set(cand.get("pinned_pwr_b", []))
         hB = cand.get("hB", P["hB"])
         side, override, rear_override = {}, [], []
         what_if = cand.get("what_if_height", {})
@@ -597,7 +599,7 @@ class Evaluator:
                     side[ref] = "PCB_REAR"
                     continue
                 rear_override.append(ref)
-            if key in groups_b and ref not in pinned:
+            if (key in groups_b or ref in pinned_b) and ref not in pinned:
                 if p["h"] is None:
                     raise SystemExit(f"{ref}: no height for the PWR-B rule ({p['footprint']})")
                 if p["h"] <= hB and not p["h_lower_bound"]:
@@ -748,7 +750,8 @@ class Evaluator:
         # each crossing declared sense pair and one GND guard after the rail block
         rail = sum(r["pins"] or 0 for r in rows if r["kind"] in ("power", "sense/supply tap", "rail node"))
         pairs = sum(1 for pair in S["b2b"]["declared_sense_pairs"] if all(n in cross for n in pair["nets"]))
-        guards = 2 * pairs + (1 if rail else 0)
+        # W2 PWR-A closure round 2, probe Z: a kept-free rail column of b2b.rail_order keeps its GND return as a guard
+        guards = 2 * pairs + (1 if rail else 0) + S["b2b"]["rail_order"].count("(free)")
         gnd = rail * S["b2b"]["gnd_pins_per_power_contact"] + guards
         with_spare = math.ceil((pins + gnd) * (1 + S["b2b"]["spare_fraction"]) - 1e-9)
         return {"nets": rows, "power_nets": n_power, "signal_pins": sum(r["pins"] for r in rows if r["kind"] != "power" and r["pins"]),
@@ -1190,6 +1193,9 @@ def check_spec(spec, report):
     # W2 AREA-2: with planned changes the graph of record (what pcb/prepare.py and b2b-nets.json follow) and the planned state
     # are both recorded: domain_override_pwr_a / b2b.budget_chosen for the graph, the *_planned keys for the plan
     pinned = spec["candidates"][ch].get("pinned_pwr_a", [])
+    # W2 PWR-A closure round 2, probe Z: the refs pinned to PWR-B are the ones pcb/prepare.py puts there
+    if sorted(rec.get("domain_override_pwr_b", [])) != sorted(spec["candidates"][ch].get("pinned_pwr_b", [])):
+        errs.append("partition.domain_override_pwr_b differs from the chosen candidate's pinned_pwr_b")
     graph = (res.get("planned") or {}).get("graph_of_record")
     g_over = graph["height_overrides_to_pwr_a"] if graph else res["height_overrides_to_pwr_a"]
     if sorted(rec["domain_override_pwr_a"]) != sorted(g_over + pinned):

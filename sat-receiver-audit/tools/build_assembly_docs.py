@@ -958,7 +958,7 @@ BOND = {
 HARNESS_FINDINGS = [
     "Тонкі гілки LAB5 мають власні межі (build/15 «Межі струму тонких гілок (W2 GR-1)»): LC76G — U315 TPS2553DBVR-1 на CTRL (144–192 mA, S25), "
     "вентилятор Noctua — PTC F301 (Itrip 1.50 A при 23 °C, S27), пак IMU — U553 TPS2553DBVR зі сталим струмом на PWR (265–339 mA, S32/S33), котушки "
-    "реле RF — PTC F104 на PWR-A (Itrip 1.50 A при 23 °C, LAB5_RLY у S04, R-E1-09); решта гілок LAB5 (S02, S13, S28) — під загальним F102 4 A, і їхні "
+    "реле RF — PTC F104 на PWR-B (з W2 PWR-A, закриття, прохід 2, проба Z; Itrip 1.50 A при 23 °C, LAB5_RLY у S04, R-E1-09); решта гілок LAB5 (S02, S13, S28) — під загальним F102 4 A, і їхні "
     "проводи генератор розраховує на 4 A.",
     "J503: тривалий струм J21 2.5 A на одному контакті Micro-Fit (50 % від 5 A); межа захисту 4 A (F201) — 80 %; приймання — прогрів J503 у "
     "тесті Ж-04/Ж-11.",
@@ -994,7 +994,7 @@ HARNESS_FINDINGS = [
     "mechanical/params/parts.json harness_headers MF_ra) — над BMS/IP2368 це dz = 6.98 + 1.0 − 3.9 = 4.1 мм у межах dz cap 6.0 (pcb/partition-spec.json "
     "ctrl.bottom_header_rule). Бокс IDC J304 (XDFH-0254-2*20P: креслення LCSC не читається; еталон Würth WR-BHD 61204021621 — 9.1 мм) і вилка KK J313 "
     "(висоту 22-27-2031 не прочитано) варіанта в межах dz cap над BMS/IP2368 не мають: їм потрібна зона CTRL з вільною висотою ≥ h + 1.0 мм (MECH-3) — OPEN "
-    "(R-HDR-HEIGHT). RF — лише PH бічного входу (J418–J420): живлення котушок G6K іде через PTC F104 на PWR-A, тож силового Micro-Fit на RF немає. PWR-B — "
+    "(R-HDR-HEIGHT). RF — лише PH бічного входу (J418–J420): живлення котушок G6K іде через PTC F104 на PWR-B, тож силового Micro-Fit на RF немає. PWR-B — "
     "PH/PHD бічного входу (≤ hB 5.5 мм); PWR-A — Micro-Fit, Mini-Fit Jr. і PH верхнього входу в непокритих крайових смугах. Вертикальні вилки "
     "PWR-A вищі за межу плати PWR 9.0 мм (mechanical/params/boards.json:28; зона 10.5 мм — лише під модулі Pololu): Micro-Fit 43650-0415/-0215 — "
     "9.9 мм, з розеткою 17.27 мм (значення родини, mechanical/params/parts.json harness_headers MF_top; J104, J114, J115, J205), дворядна "

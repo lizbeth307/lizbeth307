@@ -1197,5 +1197,38 @@ class PinEntryRotatedPad(unittest.TestCase):
         self.assertEqual(a, b270)
 
 
+class BranchChainViaInPad(unittest.TestCase):
+    """W2 PWR-A closure round 2, probe Z: track_chain starts at the track ends a via in the start pad joins (a via in an SMD pad,
+    freeze6.py --pad-vias), so a test-point branch that leaves its F.Cu pad through that via on an inner layer is one chain."""
+
+    class Track:
+        def __init__(self, net, layer, a, b, w):
+            self.net, self.layer, self.width, self.kind = net, layer, w, 'track'
+            self.shape = cb.Capsule(a[0], a[1], b[0], b[1], w / 2)
+
+    def board(self, with_via):
+        box = lambda x, y, h: cb.Poly([(x - h, y - h), (x + h, y - h), (x + h, y + h), (x - h, y + h)])
+        tp = {'ref': 'TP1', 'number': '1', 'net': 'N', 'layers': ['F.Cu'], 'geo': box(0.0, 0.0, 0.75), 'x': 0.0, 'y': 0.0}
+        far = {'ref': 'C1', 'number': '1', 'net': 'N', 'layers': ['F.Cu'], 'geo': box(30.0, 0.0, 0.5), 'x': 30.0, 'y': 0.0}
+        tracks = [self.Track('N', 'In2.Cu', (0.0, 0.0), (10.0, 0.0), 0.25), self.Track('N', 'In2.Cu', (10.0, 0.0), (20.0, 0.0), 0.25)]
+        vias = [{'net': 'N', 'x': 0.0, 'y': 0.0, 'layers': ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu'], 'size': 0.6}] if with_via else []
+        b = type('B', (), {})()
+        b.tracks, b.vias, b.pads, b.copper = tracks, vias, [tp, far], list(tracks)
+        return b, tp
+
+    def test_via_in_the_start_pad_starts_the_chain(self):
+        b, tp = self.board(True)
+        items, longest = cb.track_chain(b, 'N', [tp], 25.0, lambda it: it.width < 0.4)
+        self.assertEqual(len(items), 2)
+        self.assertAlmostEqual(longest, 20.0)
+        items, _ = cb.track_chain(b, 'N', [tp], 15.0, lambda it: it.width < 0.4)
+        self.assertEqual(len(items), 1)
+
+    def test_no_via_no_chain_on_another_layer(self):
+        b, tp = self.board(False)
+        items, longest = cb.track_chain(b, 'N', [tp], 25.0, lambda it: it.width < 0.4)
+        self.assertEqual(items, [])
+
+
 if __name__ == '__main__':
     unittest.main()

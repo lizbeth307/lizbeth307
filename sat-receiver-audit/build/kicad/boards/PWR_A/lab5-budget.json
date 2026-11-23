@@ -4,9 +4,9 @@
   "status": "MODEL: copper resistance from geometry (IACS copper, finished outer 0.07 mm, inner 0.0152 mm, copper option outer_2oz); no PWR-A board exists, no measurement; E1-05 and every bench gate stay OPEN",
   "generator": "build/kicad/boards/PWR_A/lab5_budget.py",
   "inputs": {
-    "spec_sha256": "9fccd1f65b015519b316943ca5aca1feafb1c869c2e1c49dc0cdfe6192743857",
-    "pwr_b_board_sha256": "829d9a9042ea8df14cb96ca66990cbe0d569d82510e351d7198265983cda5a3e",
-    "pwr_b_mate_pins_sha256": "4a6e7af7d421e1063527b89905d8d36e92491a06ca648e86e275cc98eeb533ec",
+    "spec_sha256": "3992d3223a91bfab0f3ce3768357fd17c418e811f6a32db5782b7cf5a2add593",
+    "pwr_b_board_sha256": "912ba55f30bc00e067ede3a87bc27454e7b9970228abf89d89319d5785a2cb06",
+    "pwr_b_mate_pins_sha256": "dec609dea835dd81f515c1a7de6cd4fe1a4e0dff5726eac99626f82c3ceac953",
     "netclasses_sha256": "b16722e79aa740e50b034f82a38f8f640e6aac7c374a2ea06f4a490c1c9bf590",
     "e1_05": "Відкрито: MPN F102 з холодним опором ≤10 mΩ і опір з'єднання LAB5 E1→E2 ≤10 mΩ (кожні 10 mΩ — 32 mV при 3.2 A)."
   },
@@ -54,7 +54,7 @@
     "network": {
       "tracks": 15,
       "vias": 4,
-      "pads": 14,
+      "pads": 15,
       "zones_not_modelled": []
     },
     "by_temperature": {
@@ -105,6 +105,14 @@
           "group": "VBUS RTL-A і LAB PORT",
           "resistance_mohm": 4.5951,
           "last_track_width_mm": 0.7,
+          "to_start_of_last_track_mohm": 3.6802
+        },
+        {
+          "pad": "F104.1",
+          "sheet": "E1",
+          "group": "LAB5",
+          "resistance_mohm": 1.4081,
+          "last_track_width_mm": 2.0,
           "to_start_of_last_track_mohm": 3.6802
         },
         {
@@ -187,6 +195,14 @@
           "group": "VBUS RTL-A і LAB PORT",
           "resistance_mohm": 5.1369,
           "last_track_width_mm": 0.7,
+          "to_start_of_last_track_mohm": 4.1142
+        },
+        {
+          "pad": "F104.1",
+          "sheet": "E1",
+          "group": "LAB5",
+          "resistance_mohm": 1.5741,
+          "last_track_width_mm": 2.0,
           "to_start_of_last_track_mohm": 4.1142
         },
         {
