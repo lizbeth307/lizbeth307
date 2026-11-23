@@ -909,7 +909,8 @@ def main(argv=None):
         lays = set()
         for lay in M.LAYERS:
             for ot in m.near(lay, (it.at[0] - 1, it.at[1] - 1, it.at[0] + 1, it.at[1] + 1)):
-                if ot.id != it.id and ot.net == it.net and ((ot.kind == 'track' and any(it.shape.dist(*e) <= 1e-4 for e in (ot.a, ot.b)))
+                if ot.id != it.id and ot.net == it.net and ((ot.kind == 'track' and (any(it.shape.dist(*e) <= 1e-4 for e in (ot.a, ot.b))
+                                                                                         or ot.shape.dist(*it.at) <= 1e-4))
                                                             or (ot.kind == 'pad' and ot.shape.dist(*it.at) <= 1e-4)
                                                             or (ot.kind == 'via' and math.dist(ot.at, it.at) <= 1e-4)):
                     lays.add(lay)
