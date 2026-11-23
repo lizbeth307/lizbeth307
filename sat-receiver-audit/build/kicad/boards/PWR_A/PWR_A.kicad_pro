@@ -313,7 +313,7 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "AUX12"
       },
       {
@@ -329,7 +329,7 @@
         "pattern": "DISP12"
       },
       {
-        "netclass": "BATT",
+        "netclass": "SCRIPTED_BATT",
         "pattern": "E1_CONV_IN"
       },
       {
@@ -425,7 +425,7 @@
         "pattern": "E2_LNA4_SW"
       },
       {
-        "netclass": "PWR3A",
+        "netclass": "SCRIPTED_PWR3A",
         "pattern": "E2_LNA_IN"
       },
       {
@@ -437,7 +437,7 @@
         "pattern": "E2_LNB_EF"
       },
       {
-        "netclass": "BATT",
+        "netclass": "SCRIPTED_BATT",
         "pattern": "E2_LNB_IN"
       },
       {
@@ -497,7 +497,7 @@
         "pattern": "VBUS_HFP"
       },
       {
-        "netclass": "PWR2A",
+        "netclass": "SCRIPTED_PWR2A",
         "pattern": "VCC_3V3_MKEY"
       }
     ]
