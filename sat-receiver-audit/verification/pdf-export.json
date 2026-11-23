@@ -1,13 +1,13 @@
 {
   "pdf": {
     "file": "build/kicad/sr-rx-v2.pdf",
-    "sha256": "24aff7fee75fa2039336961c735fc68a0a6d50b9738a7d6c5102bd4d45ec5050"
+    "sha256": "c83cb5005a1a57a984c1e345163668a3d0ad045934ff3cee53c5cbb9dbd5314c"
   },
   "kicad_sch_sha256": {
-    "build/kicad/E1.kicad_sch": "a23719de6ca7dfc130190a98e067a863f9fbdab3e76c43ac5402ab3f6b3ce61c",
+    "build/kicad/E1.kicad_sch": "212b99c9d22f59b21dbd6017bb9e2e20957557cb5ea39432ae97aa2d7085dde4",
     "build/kicad/E1_02.kicad_sch": "901c05292d7049bfb2de5c10668dd8c2a18060c9f874edb98e5da891d79e49dc",
     "build/kicad/E2.kicad_sch": "6e0f8a80eab730f58da3ac1cce73c13c4774feae375b170225425878dc6f5c44",
-    "build/kicad/E2_02.kicad_sch": "ba9df5119049390e8941b26201ff9ec065d5e38b3b42745f0f1425bb75a490d5",
+    "build/kicad/E2_02.kicad_sch": "c467ee1faaac25b15b55dd7879f42e8863c5c8d875ba74eba6ff2f76799ce65c",
     "build/kicad/E2_03.kicad_sch": "7ac803a4457b130d561d74db3df041f4bb1ed003912fb5b336fa2cde0e08f9e9",
     "build/kicad/E2_04.kicad_sch": "6b9ece2aedd72cb5ebe4873f9ebe8ef8e351c045c4e1709f4665849ccceb78e6",
     "build/kicad/E2_05.kicad_sch": "1cd66aa6c49f6d5addad3f403efdf38bb24170c44d86b6abf3244209b9ed60ea",

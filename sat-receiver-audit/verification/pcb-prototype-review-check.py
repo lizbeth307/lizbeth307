@@ -21,8 +21,8 @@ from independent_pcb_check import (child, children, inspect_outline,
                                    pad_geometry, pad_net, parse_sexpr, walk)
 
 
-FROZEN_INPUT_SHA256 = 'd6bd9ec6765d5919f844621856352947cbf4abeda2cbe3278c56a1ab49c9fbd4'
-FROZEN_STARTER_SHA256 = '667dea0555eeea5a3ad78b35c25774f7717faf38c4fbf95af3a4bdaa22870a42'
+FROZEN_INPUT_SHA256 = '3f36d024be06f7b9bd5a88918a820ce55b1107cca8d59fd08d881512d47ff84e'
+FROZEN_STARTER_SHA256 = '68dbe01512b0c1b7fe26a48781b27595d5ba5e75d74ff40ee4bc166066eadbe3'
 SENSE_NETS = ('E4_DCS_UHF_SENSE', 'E4_DCS_LBAND_SENSE', 'E4_DCS_HF_SENSE')
 EPS = 1e-7
 
