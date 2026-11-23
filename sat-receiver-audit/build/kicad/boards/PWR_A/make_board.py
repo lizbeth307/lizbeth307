@@ -1256,6 +1256,250 @@ def b2b_inward_fanout(inp, pre, tracks, vias):
     return tracks, vias, moved
 
 
+# W2 PWR-A closure round 1, probe Y (design choice, build/15): a scripted escape (stub + via) for the pins that the planned power
+# copper walled in. The blocker split of route run 45062920789 (MODEL: the board of that run with every router and frozen item
+# removed, each island grown at its track width over the four routing layers) found these pins without a via site within 4 mm;
+# with the planned copper (PL-/PLV-/PE-) removed as well, every one of them has thousands of via sites. So the escape goes in
+# before the plan (freeze/plan6.py plans the power copper round it), as the GND fan-out does: a locked stub of the net's width
+# from the pad centre to a via 0.6 / 0.3 mm, CLEAR + MARGIN off every other net, the edge, the hole keep-outs and the drill
+# spacing, outside the converter zones 3'/4' of other nets; the router and the frozen-route completion join the via on the
+# inner layers. pad -> (stub width mm, why). Signal pins take the SIG width 0.15; J208.33 (AUX12, PWR1A) its 2 oz class width.
+SFO_D, SFO_DRILL = 0.6, 0.3
+SFO_MAX = 4.5      # mm: longest escape stub (a longer locked stub walls in the planned power copper round the part)
+VIA_OWN_PAD = 0.02  # mm: an escape via keeps this off the SMD pads of its own net (no via in pad; freeze/model.py via_margin)
+SFO_WHY = 'no via site within 4 mm on the board of route run 45062920789 without router copper (MODEL blocker split)'
+SFO_WHY2 = ('no via site within 4 mm once the power copper was planned round the first escapes (MODEL, freeze/plan6.py on the '
+            'board with the escapes, second pass of the blocker split)')
+# Left out after route run 45104323646 (W2 PWR-A closure round 1, probe Y, design choice): an escape whose net stays open is a
+# KiCad via_dangling error (the via joins its pad on one layer only); U203.4 (FLT_LIME3V3), U213.14 (E2_BONI_NR), C136.1
+# (E1_RPP_VCAP) and R216.1 (E2_U203_OV) stayed open in that run, and U203.2 (E2_U203_OV) has no escape at all (the channel between
+# U203 pins 1-4 and the E5_VBUS_HFP_SW pad holds one track)
+SIGNAL_FANOUT = [
+    # TPS259470 RPW (0.5 mm pitch): EN/UVLO, OVLO, FLT, DVDT pins between the IN/OUT bars and their planned feeds
+    ('U203.1', 0.15, 'EN_LIME3V3, EN/UVLO of U203: ' + SFO_WHY),
+    ('U203.7', 0.15, 'E2_U203_DVDT, DVDT of U203: ' + SFO_WHY),
+    ('U203.9', 0.15, 'E2_U203_ILM, ILM of U203: ' + SFO_WHY2),
+    ('U201.7', 0.15, 'E2_U201_DVDT, DVDT of U201: ' + SFO_WHY2),
+    ('U202.2', 0.15, 'E2_U202_OV, OVLO of U202: ' + SFO_WHY),
+    ('U202.1', 0.15, 'PICO_DISP_EN, EN/UVLO of U202: ' + SFO_WHY),
+    # TPS7A4701 RGW and INA3221 RGV (0.65 mm pitch)
+    ('U213.13', 0.15, 'EN_BONI, EN of U213: ' + SFO_WHY),
+    ('U216.6', 0.15, 'I2C2_SCL, SCL of U216: ' + SFO_WHY2),
+    ('U216.7', 0.15, 'I2C2_SDA, SDA of U216: ' + SFO_WHY2),
+    ('U216.11', 0.15, 'E2_U216_IM1, IN-1 of U216: ' + SFO_WHY2),
+    ('U216.15', 0.15, 'E2_U216_IP2, IN+2 of U216: ' + SFO_WHY),
+    ('U216.14', 0.15, 'E2_U216_IM2, IN-2 of U216: ' + SFO_WHY),
+    # LM74700 SOT-23-6 and the divider / filter passives
+    ('U111.5', 0.15, 'E1_RPP_GATE, GATE of U111: ' + SFO_WHY),
+    ('Q102.4', 0.15, 'E1_RPP_GATE, gate of Q102: ' + SFO_WHY2),
+    ('R133.1', 0.15, 'E1_EN_LAB5, EN divider of U108: ' + SFO_WHY),
+    ('R204.2', 0.15, 'E2_U201_OV, OVLO divider of U201: ' + SFO_WHY),
+    ('R203.1', 0.15, 'E2_U201_ILM, ILM resistor of U201: ' + SFO_WHY),
+    # LSHM-150 B2B pin of the PWR1A rail AUX12 (0.2 mm: the PWR1A width on 2 oz outer copper, stackup-6l.json outer_2oz)
+    ('J208.5', 0.15, 'LNA4V5 at the B2B: ' + SFO_WHY2),
+    ('J208.25', 0.15, 'BONI13V8 at the B2B: ' + SFO_WHY2),
+    ('J208.33', 0.2, 'AUX12 (PWR1A) at the B2B: ' + SFO_WHY),
+]
+
+
+def fanout_paths(p, layer, net, width, pads, segs, pours, outline):
+    """grid_paths for a pad of any net: breadth-first stub paths on a GRID raster of the pad's layer from the pad centre, CLEAR +
+    MARGIN off the copper of the other nets on that layer and EDGE + MARGIN off the outline; yields (corners, end)."""
+    cx, cy = p['at']
+    n = int(round(2 * REACH / GRID)) + 1
+    x0, y0 = cx - REACH, cy - REACH
+    half = width / 2
+    blocked = bytearray(n * n)
+
+    def paint(box, inflate):
+        # cells whose centre lies in the inflated box (grid_paths paints one cell more on each side: too coarse for a stub
+        # between 0.45 mm pitch pins; clear() checks the chosen path exactly)
+        bx0, by0, bx1, by1 = box[0] - inflate, box[1] - inflate, box[2] + inflate, box[3] + inflate
+        i0, i1 = max(0, math.ceil((bx0 - x0) / GRID - 1e-9)), min(n - 1, math.floor((bx1 - x0) / GRID + 1e-9))
+        j0, j1 = max(0, math.ceil((by0 - y0) / GRID - 1e-9)), min(n - 1, math.floor((by1 - y0) / GRID + 1e-9))
+        for j in range(j0, j1 + 1):
+            row = j * n
+            for i in range(i0, i1 + 1):
+                blocked[row + i] = 1
+    need = CLEAR + MARGIN + half
+    win = (x0 - 2, y0 - 2, x0 + 2 * REACH + 2, y0 + 2 * REACH + 2)
+    for q in pads:
+        if layer not in q['layers'] or not bg.rects_overlap(q['box'], win):
+            continue
+        if q['net'] == net and q['type'] != 'np_thru_hole':
+            continue
+        paint(q['box'], need + (0.1 if q['type'] == 'np_thru_hole' else 0.0))
+    for s in segs:
+        if s['net'] == net or s['layer'] not in (layer, '*'):
+            continue
+        box = (min(s['a'][0], s['b'][0]), min(s['a'][1], s['b'][1]), max(s['a'][0], s['b'][0]), max(s['a'][1], s['b'][1]))
+        if bg.rects_overlap(box, win, s['r'] + need):
+            paint(box, s['r'] + need)
+    for z in pours:
+        if z['net'] != net and z['layer'] == layer and bg.rects_overlap(z['box'], win, need):
+            paint(z['box'], need)
+    for j in range(n):
+        for i in range(n):
+            pt = (x0 + i * GRID, y0 + j * GRID)
+            if not bg.point_in_outline(pt, outline) or edge_dist(pt, outline) - half < EDGE + MARGIN:
+                blocked[j * n + i] = 1
+    start = (int(round(REACH / GRID)), int(round(REACH / GRID)))
+    sx0, sy0 = math.floor((p['box'][0] - x0) / GRID), math.floor((p['box'][1] - y0) / GRID)
+    sx1, sy1 = math.ceil((p['box'][2] - x0) / GRID), math.ceil((p['box'][3] - y0) / GRID)
+    for j in range(max(0, sy0), min(n, sy1 + 1)):
+        for i in range(max(0, sx0), min(n, sx1 + 1)):
+            if p['box'][0] <= x0 + i * GRID <= p['box'][2] and p['box'][1] <= y0 + j * GRID <= p['box'][3]:
+                blocked[j * n + i] = 0
+    prev = {start: None}
+    queue = [start]
+    k = 0
+    while k < len(queue):
+        cur = queue[k]
+        k += 1
+        if k > 1:
+            cells = [cur]
+            while prev[cells[-1]] is not None:
+                cells.append(prev[cells[-1]])
+            cells.reverse()
+            pts = [(r4(x0 + i * GRID), r4(y0 + j * GRID)) for i, j in cells]
+            pts[0] = (cx, cy)
+            corners = [pts[0]] + [b for a, b, c in zip(pts, pts[1:], pts[2:])
+                                  if (round(b[0] - a[0], 3), round(b[1] - a[1], 3)) != (round(c[0] - b[0], 3), round(c[1] - b[1], 3))] + [pts[-1]]
+            yield corners, pts[-1]
+        i, j = cur
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < n and 0 <= nj < n and (ni, nj) not in prev and not blocked[nj * n + ni]:
+                prev[(ni, nj)] = cur
+                queue.append((ni, nj))
+
+
+def signal_fanout(inp, pre):
+    """The scripted escapes of SIGNAL_FANOUT (stub + via per pad; see there). Returns (tracks, vias, rows)."""
+    c = inp.contract
+    holes = [(tuple(h), c['hole_keepout_d'] / 2) for h in c['holes_mm']]
+    pads = [p for pa in inp.parts.values() for p in pa.pads]
+    drills = [(p['at'], (p['drill'][0] if p['drill'] else min(p['box'][2] - p['box'][0], p['box'][3] - p['box'][1])))
+              for p in pads if p['type'] in ('thru_hole', 'np_thru_hole')]
+    drills += [(tuple(v['at']), v['drill_mm']) for v in pre.get('vias', [])]
+    segs, pours = scripted_items(pre)
+    zones = []
+    for zi in (3, 4):  # converter zones 3'/4': only the nets with a pad inside carry copper there (F.Cu, In1.Cu, B.Cu)
+        x, y, w, h = c['thermal_bond_mm'][zi - 1]
+        box = (x, y, x + w, y + h)
+        own = {q['net'] for pa in inp.parts.values() for q in pa.pads if q['net'] and box[0] <= q['at'][0] <= box[2]
+               and box[1] <= q['at'][1] <= box[3]} | {'GND'}
+        zones.append((box, own))
+    need = CLEAR + MARGIN - EPS
+    r = SFO_D / 2
+    out_t, out_v, rows = [], [], []
+
+    def clear(path, via_at, layer, net, width):
+        vx, vy = via_at
+        stubs = list(zip(path, path[1:]))
+        if any(edge_dist(q, inp.outline) - width / 2 < EDGE + MARGIN or not bg.point_in_outline(q, inp.outline) for q in path[1:]):
+            return False
+        if edge_dist(via_at, inp.outline) - r < EDGE + MARGIN:
+            return False
+        for box, own in zones:
+            if net not in own and (box_dist((vx, vy, vx, vy), box) < r + need
+                                   or any(seg_box_dist(a, q, box) - width / 2 < need for a, q in stubs)):
+                return False
+        for (hx, hy), hr in holes:
+            if math.hypot(vx - hx, vy - hy) - r < hr:
+                return False
+        for (dx, dy), dd in drills:
+            if math.hypot(vx - dx, vy - dy) < SFO_DRILL / 2 + dd / 2 + HOLE_GAP:
+                return False
+        for p in pads:
+            b = p['box']
+            if b[0] - 4 > vx or b[2] + 4 < vx or b[1] - 4 > vy or b[3] + 4 < vy:
+                continue
+            if p['net'] == net and p['type'] == 'smd':
+                if box_dist((vx, vy, vx, vy), b) - r < VIA_OWN_PAD:  # no via in an SMD pad (freeze/model.py via_margin)
+                    return False
+                continue
+            if p['net'] == net and p['type'] != 'np_thru_hole':
+                continue
+            gap = 0.25 + MARGIN - EPS if p['type'] == 'np_thru_hole' else need
+            if box_dist((vx, vy, vx, vy), b) - r < gap:
+                return False
+            if layer in p['layers'] and any(seg_box_dist(a, q, b) - width / 2 < gap for a, q in stubs):
+                return False
+        for s in segs:
+            if s['net'] == net:
+                continue
+            if seg_seg_dist(s['a'], s['b'], via_at, via_at) - s['r'] - r < need:
+                return False
+            if s['layer'] in (layer, '*') and any(seg_seg_dist(s['a'], s['b'], a, q) - s['r'] - width / 2 < need for a, q in stubs):
+                return False
+        for z in pours:
+            if z['net'] == net:
+                continue
+            if box_dist((vx, vy, vx, vy), z['box']) - r < need:
+                return False
+            if z['layer'] == layer and any(seg_box_dist(a, q, z['box']) - width / 2 < need for a, q in stubs):
+                return False
+        return True
+
+    def escape(name, width):
+        ref, _, num = name.partition('.')
+        pa = inp.parts[ref]
+        p = next(q for q in pa.pads if q['number'] == num)
+        net, layer = p['net'], pa.side
+        cx, cy = p['at']
+        hw, hh = (p['box'][2] - p['box'][0]) / 2, (p['box'][3] - p['box'][1]) / 2
+        cands = []
+        for gap in (0.45, 0.6, 0.8, 1.0, 1.3):
+            for dx, dy in GND_DIRS:
+                nn = math.hypot(dx, dy)
+                ux, uy = dx / nn, dy / nn
+                reach = (abs(ux) * hw + abs(uy) * hh) if (dx == 0 or dy == 0) else max(hw, hh)
+                at = (r4(cx + ux * (reach + gap)), r4(cy + uy * (reach + gap)))
+                cands.append(([(cx, cy), at], at))
+        chosen = next(((path, at) for path, at in cands if clear(path, at, layer, net, width)), None)
+        if chosen is None:
+            for path, at in fanout_paths(p, layer, net, width, pads, segs, pours, inp.outline):
+                if sum(math.hypot(q[0] - o[0], q[1] - o[1]) for o, q in zip(path, path[1:])) > SFO_MAX:
+                    break
+                if clear(path, at, layer, net, width):
+                    chosen = (path, at)
+                    break
+        return chosen, net, layer
+
+    table = {row[0]: row for row in SIGNAL_FANOUT}
+    order = [row[0] for row in SIGNAL_FANOUT]
+    got = {}
+    for name in order:  # table order (inner pins of a row first where it matters); a pin without an escape is reported, not forced
+        width = table[name][1]
+        chosen, net, layer = escape(name, width)
+        if chosen is None:
+            continue
+        path, at = chosen
+        got[name] = (path, at, net, layer)
+        drills.append((at, SFO_DRILL))
+        for a_, b_ in zip(path, path[1:]):
+            segs.append({'net': net, 'layer': layer, 'a': a_, 'b': b_, 'r': width / 2})
+        segs.append({'net': net, 'layer': '*', 'a': at, 'b': at, 'r': r})
+    for name in order:
+        ref, _, num = name.partition('.')
+        _n, width, why = table[name]
+        if name not in got:
+            net = next(q for q in inp.parts[ref].pads if q['number'] == num)['net']
+            rows.append({'pad': name, 'net': net, 'result': 'no escape'})
+            continue
+        path, at, net, layer = got[name]
+        sid = f'SFO-{ref}-{num}'
+        out_t.append({'id': sid + '-S', 'net': net, 'layer': f'{layer}.Cu', 'width_mm': width,
+                      'path': [[r4(x), r4(y)] for x, y in path], 'locked': True,
+                      'why': f'scripted escape of {name} to its via (W2 PWR-A closure round 1, probe Y): {why}'})
+        out_v.append({'id': sid + '-V', 'net': net, 'at': [r4(at[0]), r4(at[1])], 'drill_mm': SFO_DRILL, 'diameter_mm': SFO_D,
+                      'locked': True, 'why': f'escape via of {name} (W2 PWR-A closure round 1, probe Y)'})
+        length = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(path, path[1:]))
+        rows.append({'pad': name, 'net': net, 'result': 'escape', 'stub_mm': round(length, 3), 'via': [r4(at[0]), r4(at[1])]})
+    return out_t, out_v, rows
+
+
 def fixed_refs(study, shrink2=None):
     """Refs place_board.py never moves: the anchors of the SHRINK-2 spec and every part with a PWR-B cut-out."""
     shrink2 = shrink2 or read(HERE / 'PWR_A.spec-shrink2.json')
@@ -1581,7 +1825,7 @@ def frozen_copper(inp, tracks, vias):
     in after the scripted copper, which it does not change; the guard stops make_board when a pad or the scripted copper
     changed. Returns (tracks, vias, note, necks, branches)."""
     if not FROZEN6.is_file():
-        return [], [], None, [], []
+        return [], [], None, [], [], []
     doc = read(FROZEN6)
     if not doc.get('guard'):
         raise SystemExit(f'make_board: {FROZEN6.name} has no guard (a freeze6.py --no-guard trial): harvest again with the guard')
@@ -1607,7 +1851,7 @@ def frozen_copper(inp, tracks, vias):
             'build/kicad/boards/PWR_A/freeze/freeze6.py (numpy, offline; tools copied from build/kicad/boards/PWR_B/freeze). '
             f'Source: build/kicad/boards/PWR_A/{FROZEN6.name}; valid only for this placement, netlist and scripted copper (guard: '
             f'SHA256 of the pads and of the scripted copper). Freezer result: {json.dumps(doc.get("result", {}), sort_keys=True)}')
-    return ft, fv, note, list(doc.get('necks', [])), list(doc.get('branches', []))
+    return ft, fv, note, list(doc.get('necks', [])), list(doc.get('branches', [])), list(doc.get('via_in_pad', []))
 
 
 def branch_rows(branches):
@@ -1800,7 +2044,9 @@ def build(frozen=True, planned=True):
     gt, gv, skipped = gnd_fanout(inp, pre, first=fixed_refs(study))
     gt, gv, _inward = b2b_inward_fanout(inp, pre, gt, gv)
     gt = gt + gnd_bridges(inp, gv)
-    base = {'tracks': pre['tracks'] + gt, 'vias': pre['vias'] + gv, 'zones': pre['zones']}
+    # W2 PWR-A closure round 1, probe Y: the scripted escapes of the walled-in pins, before the planned power copper
+    st, sv, sfo_rows = signal_fanout(inp, {'tracks': pre['tracks'] + gt, 'vias': pre['vias'] + gv, 'zones': pre['zones']})
+    base = {'tracks': pre['tracks'] + gt + st, 'vias': pre['vias'] + gv + sv, 'zones': pre['zones']}
     for net in CONVERTER_NETS:
         pieces, apart = net_pieces(inp, base, net)
         if pieces != 1:
@@ -1808,8 +2054,8 @@ def build(frozen=True, planned=True):
     pt, pv, pz, pbranch, whole, plan_doc = planned_copper(inp, base) if planned else ([], [], [], {}, set(), None)
     scripted = scripted_classes(inp, set(CONVERTER_NETS) | whole)
     inp.scripted = scripted
-    ft, fv, frozen_note, necks, branches = (frozen_copper(inp, base['tracks'] + pt, base['vias'] + pv) if frozen
-                                            else ([], [], None, [], []))
+    ft, fv, frozen_note, necks, branches, vips = (frozen_copper(inp, base['tracks'] + pt, base['vias'] + pv) if frozen
+                                                  else ([], [], None, [], [], []))
     heights, sources, unread = heights_block(inp)
     nets = set(spec['instances']['template_nets'])
     out = {}
@@ -1934,6 +2180,22 @@ def build(frozen=True, planned=True):
     out['gnd_fanout'] = {'vias': len(gv), 'stubs': len(gt), 'pads_joined_by_scripted_gnd_pours': skipped,
                          'rule': 'make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to '
                                  'a 0.7 / 0.3 via, or to a GND via within 3 mm'}
+    if vips:  # W2 PWR-A closure round 1, probe Y: vias in pads of the frozen-route completion (freeze6.py --pad-vias)
+        out['via_in_pad'] = {
+            'vias': vips,
+            'rule': ('W2 PWR-A closure round 1, probe Y: a pin that the grid A* completion could not reach otherwise takes a through via '
+                     'in its SMD pad (freeze/freeze6.py --pad-vias; the PWR_B precedent VIP-U215-6/7): 0.6 / 0.3 mm, KiCad clearance '
+                     '0.15 + 0.01 to every other net on every layer, hole clearance 0.25 + 0.01, 0.5 mm hole to hole (margin_mm: the '
+                     'smallest margin left)'),
+            'fab': ('filled and capped via in pad (POFV), the JLC default from 6 layers; the page gives "via diameters from 0.15 to '
+                    '0.55 mm" without saying hole or finished diameter (https://jlcpcb.com/capabilities/pcb-capabilities, read '
+                    '2026-11-13, as PWR_B): TBD at order'),
+            'gate': 'OPEN: assembly gate of the parts with a filled via in a pad (voiding, coplanarity) at the first build'}
+    out['signal_fanout'] = {'stubs': len(st), 'vias': len(sv), 'pads': sfo_rows,
+                            'rule': ('make_board.py signal_fanout (W2 PWR-A closure round 1, probe Y): a locked stub of the net width from '
+                                     'the pad centre to a 0.6 / 0.3 via for the pins of SIGNAL_FANOUT, before the planned power copper; '
+                                     'CLEAR + MARGIN off the other nets, the edge, the hole keep-outs, the drill spacing and the converter '
+                                     "zones 3'/4' of other nets")}
     out['moves'] = {'placement_file': (PLACEMENT.relative_to(BASE).as_posix() + ' sha256 ' + bg.sha256_file(PLACEMENT))
                     if PLACEMENT.is_file() else None,
                     'moved_refs': len(all_moves(study)),

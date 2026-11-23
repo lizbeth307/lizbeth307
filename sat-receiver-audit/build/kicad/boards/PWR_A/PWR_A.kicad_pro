@@ -353,7 +353,7 @@
         "pattern": "E1_LAB5_RT"
       },
       {
-        "netclass": "SCRIPTED_BATT",
+        "netclass": "BATT",
         "pattern": "E1_SW"
       },
       {
@@ -397,7 +397,7 @@
         "pattern": "E2_BONI_IN_DAMP"
       },
       {
-        "netclass": "SCRIPTED_BATT",
+        "netclass": "BATT",
         "pattern": "E2_DISP_IN"
       },
       {
@@ -465,7 +465,7 @@
         "pattern": "J21_DAMP"
       },
       {
-        "netclass": "SCRIPTED_PWR3A",
+        "netclass": "PWR3A",
         "pattern": "LAB5"
       },
       {
