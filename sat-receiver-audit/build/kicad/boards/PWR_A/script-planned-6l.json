@@ -57,24 +57,39 @@
   "ratchet": {
    "from_guard": {
     "pads_sha256": "0e5829b12452465ef6ae50227852e7229b327152d877e580b773c3b7726dd9c1",
-    "scripted_sha256": "4bc8233af1b785df05bf63e2aacb8f0ad883c7a0cfd786208b163b33f750fd8a",
+    "scripted_sha256": "881d12fbe0cf96d9f6a1dd8d2d091d69795f352332c558564e0cad6ab537a7d8",
     "zones_sha256": "64361795216d8d29fcc0599e8711d1857cb4e0d12185b9d7675255e2b427b5bf"
    },
    "dropped": 0,
    "replanned": [
     "E2_DISP_IN",
     "J21",
-    "DISP12",
-    "VBUS_HFP"
+    "DISP12"
    ],
    "rule": "plan6.py --ratchet (W2 PWR-A closure probe X): the earlier plan copper that holds on the current inputs kept, the power nets it leaves open planned again"
   },
-  "negotiate": {
-   "rounds": 1,
-   "kept": [
-    "round 1 VBUS_HFP: ripped ['LAB5_RLY'], open 4 -> 3, kept (76 s)"
-   ],
-   "tries": 4
+  "reserved": {
+   "pads": {
+    "U216.15": {
+     "net": "E2_U216_IP2",
+     "layer": "F.Cu",
+     "via": [
+      71.875,
+      30.175
+     ],
+     "stub_mm": 1.335
+    },
+    "U216.14": {
+     "net": "E2_U216_IM2",
+     "layer": "F.Cu",
+     "via": [
+      71.875,
+      31.125
+     ],
+     "stub_mm": 2.935
+    }
+   },
+   "rule": "plan6.py --reserve (W2 PWR-A closure round 2, probe Y): the escape of each listed signal pad (a 0.15 mm stub on its layer to the nearest spot for a 0.7/0.3 via, within 5 mm) kept free while the power copper was planned; not plan copper"
   }
  },
  "nets": {
@@ -2592,6 +2607,18 @@
       102.7057
      ],
      [
+      22.5693,
+      102.7057
+     ]
+    ],
+    [
+     "B.Cu",
+     1.6,
+     [
+      23.5193,
+      102.7057
+     ],
+     [
       25.075,
       101.15
      ]
@@ -2690,6 +2717,18 @@
      [
       8.35,
       98.4
+     ]
+    ],
+    [
+     "F.Cu",
+     1.6,
+     [
+      23.5193,
+      102.7057
+     ],
+     [
+      22.5693,
+      102.7057
      ]
     ],
     [
@@ -2859,6 +2898,12 @@
     [
      8.35,
      99.35,
+     0.65,
+     0.3
+    ],
+    [
+     22.5693,
+     102.7057,
      0.65,
      0.3
     ],
@@ -6708,6 +6753,42 @@
      ]
     ],
     [
+     "B.Cu",
+     0.95,
+     [
+      71.45,
+      32.3
+     ],
+     [
+      71.45,
+      33.25
+     ]
+    ],
+    [
+     "B.Cu",
+     0.95,
+     [
+      71.45,
+      32.3
+     ],
+     [
+      73.75,
+      32.25
+     ]
+    ],
+    [
+     "B.Cu",
+     0.95,
+     [
+      73.75,
+      32.25
+     ],
+     [
+      75.85,
+      30.3
+     ]
+    ],
+    [
      "F.Cu",
      0.95,
      [
@@ -6735,36 +6816,36 @@
      "F.Cu",
      0.95,
      [
-      70.25,
-      30.3
-     ],
-     [
       68.05,
-      31.55
-     ]
-    ],
-    [
-     "F.Cu",
-     0.95,
-     [
-      75.2,
-      30.2
+      32.3
      ],
      [
-      70.25,
-      30.3
+      71.45,
+      32.3
      ]
     ],
     [
      "F.Cu",
      0.95,
+     [
+      71.45,
+      32.3
+     ],
+     [
+      71.45,
+      33.25
+     ]
+    ],
+    [
+     "F.Cu",
+     0.95,
+     [
+      75.85,
+      30.3
+     ],
      [
       76.7,
       30.55
-     ],
-     [
-      75.2,
-      30.2
      ]
     ],
     [
@@ -6996,7 +7077,26 @@
      ]
     ]
    ],
-   "vias": []
+   "vias": [
+    [
+     71.45,
+     32.3,
+     0.65,
+     0.3
+    ],
+    [
+     71.45,
+     33.25,
+     0.65,
+     0.3
+    ],
+    [
+     75.85,
+     30.3,
+     0.65,
+     0.3
+    ]
+   ]
   },
   "J21_DAMP": {
    "kind": "power",
@@ -11529,8 +11629,7 @@
      0.65,
      0.3
     ]
-   ],
-   "in4_width_mm": 1.8
+   ]
   },
   "VCC_3V3_MKEY": {
    "kind": "power",

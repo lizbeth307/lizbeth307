@@ -1029,6 +1029,8 @@ def main(argv=None):
     ap.add_argument('--in4-bias', type=float, default=1.0, help='round 2, probe Y: extra cost per mm on F.Cu/B.Cu for an --in4 net (mode first)')
     ap.add_argument('--tp-in4', type=float, default=0.0, help='W2 PWR-A closure round 2, probe Y: a test-point island left open joins by a '
                                                                'branch with In4.Cu up to this length in mm (0.25 mm outer, 0.5 mm on In4.Cu)')
+    ap.add_argument('--replan', default='', help='W2 PWR-A closure round 2, probe Y: with --ratchet, comma-separated nets whose carried '
+                                                  'tracks and vias are dropped and planned again (after --reserve)')
     ap.add_argument('--reserve', default='', help='W2 PWR-A closure round 2, probe Y: comma-separated pads REF.PIN (or @FILE: a JSON '
                                                    'list, or an object with a "walled" list of "REF.PIN:NET") whose escape is reserved '
                                                    'before the power copper is planned (Planner.reserve)')
@@ -1065,6 +1067,12 @@ def main(argv=None):
             if n in pl.cls:
                 pl.branch_ids.update(it.id for it in pl.m.items if it.alive and it.net == n and it.src == 'new' and it.kind == 'track'
                                      and it.width + 1e-6 < pl.width(n))
+    if carried is not None and args.replan:  # round 2, probe Y: drop the carried tracks and vias of these nets and plan them again
+        for n in [x for x in args.replan.split(',') if x]:
+            gone = [it for it in pl.m.items if it.alive and it.net == n and it.src == 'new' and it.kind in ('track', 'via')]
+            for it in gone:
+                pl.m.remove(it)
+            print('replan', n, 'carried items removed', len(gone), flush=True)
     todo = [n for n in nets if len([g for g in pl.m.islands(n) if any(i.kind == 'pad' for i in g) or len(g) > 1]) > 1]
     todo.sort(key=lambda n: (CLASS_ORDER[pl.cls[n]], round(span(pl.m, n), 3), n))
     if args.first:  # W2 F2C-FALLBACK part 2: these nets first, in the given order, then the rest in class order
