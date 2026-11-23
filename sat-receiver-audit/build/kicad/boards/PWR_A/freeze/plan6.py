@@ -658,7 +658,7 @@ class Planner:
                                                    lambda refs: IN4_LAYERS, self.tp_in4,
                                                    target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= w)
                                                    or (i.kind == 'pad' and i.src == 'zone'),
-                                                   bias=[float(self.in4_bias), 0.0, float(self.in4_bias)], box_mm=12.0)
+                                                   bias=[float(self.in4_bias), 0.0, float(self.in4_bias)], box_mm=None)
                     for b_ in brt:
                         b_['width_mm'] = BRANCH_W
                         b_['in4_width_mm'] = TP_IN4_W

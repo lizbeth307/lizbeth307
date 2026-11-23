@@ -1197,7 +1197,10 @@ def gnd_bridges(inp, vias):
 # J208.17 / .21 and BONI13V8_PORT J208.37: with their vias above the row, LAB5_RLY had no exit between the vias of 15/19/23 (0.3 mm
 # gaps; MODEL plan6: LAB5_RLY open at both contacts, and joined alone on the scripted board); with 15/19/39 inward the plan joins
 # LAB5_RLY (In2/In3 at its inner width, plan6.py --inner) and BONI13V8_PORT (MODEL)
-B2B_INWARD = {'J208': ('15', '19', '23', '27', '31', '35', '39')}
+# W2 PWR-A closure round 2, probe Y (design choice, build/15): also GND 11, the west neighbour of VBUS_HFP J208.13: its via above the row
+# (89.0, 21.65) left the J208.13 exit 0.05 mm (MODEL); with it inward VBUS_HFP and LAB5_RLY join alone on the scripted board and in the
+# plan of record (plan6.py --in4 PWR1A, MODEL), and the via sits 1.0 mm from the GND 15 via between the rows (hole gap 0.7 mm)
+B2B_INWARD = {'J208': ('11', '15', '19', '23', '27', '31', '35', '39')}
 
 
 def b2b_inward_fanout(inp, pre, tracks, vias):
