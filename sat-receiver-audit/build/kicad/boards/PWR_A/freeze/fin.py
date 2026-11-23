@@ -14,7 +14,7 @@ def conflicts(m, net, res, soft_src=('router',)):
     w = res['width']
     for lay, pts in res['runs']:
         for a, b in zip(pts, pts[1:]):
-            r = w / 2
+            r = R.wof(w, lay) / 2
             bb = (min(a[0], b[0]) - r - 1, min(a[1], b[1]) - r - 1, max(a[0], b[0]) + r + 1, max(a[1], b[1]) + r + 1)
             for it in m.near(lay, bb):
                 if it.net == net or it.kind == 'npth':
@@ -218,7 +218,8 @@ def prune(m, net, srcs=('router', 'new'), log=print):
                     for ot in m.near(lay, (it.at[0] - 1, it.at[1] - 1, it.at[0] + 1, it.at[1] + 1)):
                         if ot.id == it.id or ot.net != net:
                             continue
-                        if ot.kind == 'track' and any(it.shape.dist(*e) <= 1e-4 for e in (ot.a, ot.b)):
+                        # W2 PWR-A closure round 1, probe Y: a track whose copper covers the via centre joins it (KiCad anchor test)
+                        if ot.kind == 'track' and (any(it.shape.dist(*e) <= 1e-4 for e in (ot.a, ot.b)) or ot.shape.dist(*it.at) <= 1e-4):
                             lays.add(lay)
                         elif ot.kind == 'pad' and ot.shape.dist(*it.at) <= 1e-4:
                             lays.add(lay)
@@ -255,7 +256,7 @@ def dangling(m):
                 for ot in m.near(lay, (it.at[0] - 1, it.at[1] - 1, it.at[0] + 1, it.at[1] + 1)):
                     if ot.id == it.id or ot.net != net:
                         continue
-                    if (ot.kind == 'track' and any(it.shape.dist(*e) <= 1e-4 for e in (ot.a, ot.b))) or \
+                    if (ot.kind == 'track' and (any(it.shape.dist(*e) <= 1e-4 for e in (ot.a, ot.b)) or ot.shape.dist(*it.at) <= 1e-4)) or \
                             (ot.kind == 'pad' and ot.shape.dist(*it.at) <= 1e-4):
                         lays.add(lay)
             if len(lays) < 2:

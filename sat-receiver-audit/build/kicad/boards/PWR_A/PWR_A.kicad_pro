@@ -321,11 +321,11 @@
         "pattern": "AUX12_DAMP"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "BONI13V8_PORT"
       },
       {
-        "netclass": "PWR2A",
+        "netclass": "SCRIPTED_PWR2A",
         "pattern": "DISP12"
       },
       {
@@ -393,7 +393,7 @@
         "pattern": "E2_BONI_IN"
       },
       {
-        "netclass": "BATT",
+        "netclass": "SCRIPTED_BATT",
         "pattern": "E2_BONI_IN_DAMP"
       },
       {
@@ -493,7 +493,7 @@
         "pattern": "SYS12"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "VBUS_HFP"
       },
       {

@@ -333,7 +333,10 @@ def touches(p, q):
         # KiCad joins a track to a pad/via when a track end lies inside it; W2 PWR-TOOLS (port of W2 PWRJ F2ENV, PWR_A): also
         # when the track copper covers the pad anchor (a scripted pour drawn as a wide locked track; KiCad counted those pads
         # connected in route run 43340503685)
-        return any(p.shape.dist(*e) <= 1e-4 for e in (q.a, q.b)) or (p.kind == 'pad' and p.src != 'zone' and p.at is not None
+        # W2 PWR-A closure round 1, probe Y: a via whose centre lies on the track copper joins it too (KiCad anchor test; the
+        # LAB5 stitching vias on the scripted B.Cu spine of make_board.py sit mid-track, KiCad counted them connected in route
+        # run 45091751842, the model left 24 of them as islands once LAB5 was a link net of the plan)
+        return any(p.shape.dist(*e) <= 1e-4 for e in (q.a, q.b)) or (p.kind in ('pad', 'via') and p.src != 'zone' and p.at is not None
                                                                      and q.shape.dist(*p.at) <= 1e-4)
     # pad/via vs pad/via
     if p.kind == 'via' and q.kind == 'via':

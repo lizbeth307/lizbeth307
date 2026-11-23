@@ -118,6 +118,24 @@ MOVES: dict = {
     # GND pad faced R132 and the GND fan-out via landed between R133.1 and R132.2, the two ends of E1_EN_LAB5 (push 2: open, MODEL: no
     # 0.15 mm path on any layer); at 0 the EN pad sits right above R132.2 and the GND fan-out leaves on the other side
     'R133': (18.9, 82.65, 0, 'F', 'W2 PWR-A closure probe X: U108 EN divider R133 turned, EN pad above R132.2'),
+    # W2 PWR-A closure round 2, probe X (design choice, build/15; the lever of the round-1 combine pass, wip/w2-pwrl6-q1x 981d86b7): the
+    # E2_BONI_IN input damper R260 (B, pocket PB3) and its capacitor C265 (F) turned by 180 degrees in place, so that their E2_BONI_IN_DAMP
+    # pads face each other across the column-to-band junction (C265.1 east at x 26.4 on F.Cu, R260.2 west at x 31.9 on B.Cu): before, the
+    # DAMP link had to pass the R260 E2_BONI_IN pad and the C265 GND pad (every plan since F2-C: E2_BONI_IN_DAMP open; MODEL plan6: the link
+    # joins once turned). The E2_BONI_IN pad R260.1 then faces east, onto the gap of the B.Cu LAB5 band (SC-LAB5-B-BAND-W/-E)
+    'R260': (33.4, 30.65, 0, 'B', 'W2 PWR-A closure round 2 probe X: E2_BONI_IN damper turned, DAMP pad west towards C265'),
+    'C265': (24.3, 30.3, 180, 'F', 'W2 PWR-A closure round 2 probe X: E2_BONI_IN damper capacitor turned, DAMP pad east towards R260'),
+    # W2 PWR-A closure round 2, probe X (design choice, build/15): the J21 eFuse (U201, TPS259470) output capacitors C204 (10 uF) and C203
+    # (1 uF, E2_J21_EF, PWR3A) from the foot of the right column (y 41-45, 25 mm below U201) to its OUT side: C204 right above U201 OUT
+    # (pad 1 at (32.5, 75.8), 5 mm from U201.6) and C203 right of C207 beside L201.1 (the E2_J21_EF filter input), the nearest
+    # place_board.py-legal spots (courtyard GAP 0.4, scripted copper and vias, MODEL). The 25 mm E2_J21_EF run down the right column
+    # on F.Cu and B.Cu goes (MODEL plan6: that run walled the right column, the J21 / VBUS_HFP corridor from the top of the column)
+    'C204': (31.0, 75.75, 180, 'F', 'W2 PWR-A closure round 2 probe X: J21 eFuse output capacitor above U201 OUT'),
+    'C203': (39.5, 85.5, 0, 'F', 'W2 PWR-A closure round 2 probe X: J21 eFuse output capacitor beside L201.1'),
+    # W2 PWR-A closure round 2, probe X (design choice, build/15): the J21 TVS clamp D201 (cathode J21, anode GND) from the band's north
+    # strip (x 61-68, between C220 and Q202) to the J21 connector J206 it protects (a clamp belongs at the connector pins): the
+    # place_board.py-legal spot (117.5, 20.5, 270) beside J206; the north strip keeps that room for the long links
+    'D201': (117.5, 20.5, 270, 'F', 'W2 PWR-A closure round 2 probe X: J21 TVS clamp beside the J21 connector J206'),
 }
 PLACEMENT = HERE / 'board-placement.json'
 
@@ -617,6 +635,9 @@ SCRIPT_DROP = {
     'CU-LAB5-B-SPINE': 'B.Cu LAB5 spine 2.2 mm: wider (2.5 mm) where the bond zone 3 keep-out and the E1_CONV_IN via column allow, with '
                        'parallel strips (E1-05 path A)',
     'CU-LAB5-B-TOP': 'B.Cu LAB5 top run 2.2 mm: 2.4 / 2.3 mm (E1-05 path A)',
+    # W2 PWR-A closure round 2, probe X (design choice, build/15; lever of the round-1 combine pass): a B.Cu gap under R260 for E2_BONI_IN
+    'CU-LAB5-B-BAND': ('B.Cu LAB5 band 2.2 mm (x 24.3-42.2): split at x 33.9-36.3 (SC-LAB5-B-BAND-W/-E) so that the E2_BONI_IN copper '
+                       'reaches the damper R260.1 in pocket PB3 on B.Cu; the F.Cu band SC-LAB5-F-BAND carries LAB5 over the gap'),
 }
 U107_WHY = 'LM61460 U107 stage per SNVSBD5D 11.1 / figure 11-2'
 E105_WHY = 'PWR3A LAB5 E1-05 path A copper on 2 oz B.Cu'
@@ -676,6 +697,15 @@ SCRIPT_TRACKS = [
     sc_track('SC-LAB5-B-PAR3-S', 'LAB5', 2.5, [(27.75, 72.5), (27.75, 84.0)], E105_WHY + ': parallel strip beside the spine at y 72-84',
              'B.Cu'),
     sc_track('SC-LAB5-B-PAR3-T', 'LAB5', 2.2, [(27.75, 84.0), (25.4, 84.0)], E105_WHY + ': join of the strip at y 84', 'B.Cu'),
+    # W2 PWR-A closure round 2, probe X (design choice, build/15; lever of the round-1 combine pass): the B.Cu band of the spec (pour
+    # LAB5-B-BAND, rect 24.3-42.2 x 27.3-29.5) in two pieces with a gap at x 33.9-36.3 under the damper R260 (pocket PB3): R260 sits north
+    # of the band, boxed in by the spine (west), the band (south) and the PB3/PB4 parts (east), so its E2_BONI_IN pad had no class-width
+    # exit on B.Cu (MODEL plan6: no path). Over the gap the F.Cu band carries LAB5 alone; vias at both gap edges keep the two bands in
+    # parallel elsewhere (E1-05 path A recomputed by board_audit.py, MODEL)
+    sc_track('SC-LAB5-B-BAND-W', 'LAB5', 2.2, [(25.4, 28.4), (32.8, 28.4)],
+             E105_WHY + ': B.Cu band west of the E2_BONI_IN gap (x 24.3-33.9)', 'B.Cu'),
+    sc_track('SC-LAB5-B-BAND-E', 'LAB5', 2.2, [(37.4, 28.4), (41.1, 28.4)],
+             E105_WHY + ': B.Cu band east of the E2_BONI_IN gap (x 36.3-42.2), into the RISE-L vias', 'B.Cu'),
     sc_track('SC-LAB5-F-BAND', 'LAB5', 2.0, [(26.2, 27.8), (39.6, 27.8)],
              E105_WHY.replace('B.Cu', 'F.Cu') + ': F.Cu strip over the B.Cu band (y 26.8-28.8, free at 0.20 mm) into the RISE-L copper; '
              'three vias to the band at its left end'),
@@ -717,6 +747,12 @@ SCRIPT_VIAS = [  # (id, net, (x, y), why): 0.6 / 0.3 like the other scripted via
     ('SC-LAB5-F-BAND-V1', 'LAB5', (26.2, 27.8), 'E1-05 path A: F.Cu band strip to the B.Cu band and spine'),
     ('SC-LAB5-F-BAND-V2', 'LAB5', (27.0, 28.4), 'E1-05 path A: F.Cu band strip to the B.Cu band'),
     ('SC-LAB5-F-BAND-V3', 'LAB5', (27.9, 28.4), 'E1-05 path A: F.Cu band strip to the B.Cu band'),
+    # W2 PWR-A closure round 2, probe X: the two B.Cu band pieces joined to the F.Cu band at the E2_BONI_IN gap edges
+    ('SC-LAB5-B-BAND-W-V1', 'LAB5', (31.0, 28.0), 'E1-05 path A: west B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
+    ('SC-LAB5-B-BAND-W-V2', 'LAB5', (31.9, 28.0), 'E1-05 path A: west B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
+    ('SC-LAB5-B-BAND-W-V3', 'LAB5', (32.8, 28.0), 'E1-05 path A: west B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
+    ('SC-LAB5-B-BAND-E-V1', 'LAB5', (37.5, 28.0), 'E1-05 path A: east B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
+    ('SC-LAB5-B-BAND-E-V2', 'LAB5', (38.4, 28.0), 'E1-05 path A: east B.Cu band piece to the F.Cu band at the E2_BONI_IN gap'),
     ('SC-U108-VOUT-V1', 'E1_LAB5_RAW', (12.0, 76.2), f'{U108_WHY}: thermal via at VOUT1 to the In4.Cu VOUT polygon'),
     ('SC-U108-VOUT-V2', 'E1_LAB5_RAW', (16.0, 76.2), f'{U108_WHY}: thermal via at VOUT2 to the In4.Cu VOUT polygon'),
     ('SC-U108-VOUT-V3', 'E1_LAB5_RAW', (14.0, 76.2), f'{U108_WHY}: thermal via between the VOUT pins to the In4.Cu VOUT polygon'),
@@ -1168,7 +1204,12 @@ def gnd_bridges(inp, vias):
 # rows for bottom-row signals (I2C2, E2_BONI_LDO, FAULT_HFP, ...), which inward vias of every top-row GND pin would close (MODEL, 156
 # router items of push 2 off the board against 126 with two). Done after gnd_fanout and only in the board build, so place_board.py keeps
 # its (more conservative) view of the fixed fan-out above the connector and its placement does not change. ref -> top-row GND pads
-B2B_INWARD = {'J208': ('23', '27', '31', '35')}
+# W2 PWR-A closure round 2, probe X (design choice, build/15; lever of the round-1 combine pass, wip/w2-pwrl6-q1x 981d86b7): also GND
+# 15, 19 and 39, the neighbours of VBUS_HFP J208.13, LAB5_RLY J208.17 / .21 and BONI13V8_PORT J208.37: with their vias above the row,
+# LAB5_RLY had no exit between the vias of 15/19/23 (0.3 mm gaps; MODEL plan6: LAB5_RLY open at both contacts) and BONI13V8_PORT none
+# between those of 35/39; and GND 11, the other neighbour of VBUS_HFP J208.13: with its via above the row the 0.2 mm exit of J208.13
+# kept 0.1 mm from it (MODEL plan6: VBUS_HFP joined everywhere but J208.13)
+B2B_INWARD = {'J208': ('11', '15', '19', '23', '27', '31', '35', '39')}
 
 
 def b2b_inward_fanout(inp, pre, tracks, vias):
@@ -1581,7 +1622,7 @@ def frozen_copper(inp, tracks, vias):
     in after the scripted copper, which it does not change; the guard stops make_board when a pad or the scripted copper
     changed. Returns (tracks, vias, note, necks, branches)."""
     if not FROZEN6.is_file():
-        return [], [], None, [], []
+        return [], [], None, [], [], []
     doc = read(FROZEN6)
     if not doc.get('guard'):
         raise SystemExit(f'make_board: {FROZEN6.name} has no guard (a freeze6.py --no-guard trial): harvest again with the guard')
@@ -1607,7 +1648,7 @@ def frozen_copper(inp, tracks, vias):
             'build/kicad/boards/PWR_A/freeze/freeze6.py (numpy, offline; tools copied from build/kicad/boards/PWR_B/freeze). '
             f'Source: build/kicad/boards/PWR_A/{FROZEN6.name}; valid only for this placement, netlist and scripted copper (guard: '
             f'SHA256 of the pads and of the scripted copper). Freezer result: {json.dumps(doc.get("result", {}), sort_keys=True)}')
-    return ft, fv, note, list(doc.get('necks', [])), list(doc.get('branches', []))
+    return ft, fv, note, list(doc.get('necks', [])), list(doc.get('branches', [])), list(doc.get('via_in_pad', []))
 
 
 def branch_rows(branches):
@@ -1808,8 +1849,8 @@ def build(frozen=True, planned=True):
     pt, pv, pz, pbranch, whole, plan_doc = planned_copper(inp, base) if planned else ([], [], [], {}, set(), None)
     scripted = scripted_classes(inp, set(CONVERTER_NETS) | whole)
     inp.scripted = scripted
-    ft, fv, frozen_note, necks, branches = (frozen_copper(inp, base['tracks'] + pt, base['vias'] + pv) if frozen
-                                            else ([], [], None, [], []))
+    ft, fv, frozen_note, necks, branches, vips = (frozen_copper(inp, base['tracks'] + pt, base['vias'] + pv) if frozen
+                                                  else ([], [], None, [], [], []))
     heights, sources, unread = heights_block(inp)
     nets = set(spec['instances']['template_nets'])
     out = {}
@@ -1934,6 +1975,17 @@ def build(frozen=True, planned=True):
     out['gnd_fanout'] = {'vias': len(gv), 'stubs': len(gt), 'pads_joined_by_scripted_gnd_pours': skipped,
                          'rule': 'make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to '
                                  'a 0.7 / 0.3 via, or to a GND via within 3 mm'}
+    if vips:  # W2 PWR-A closure round 1, probe Y (ported in round 2, probe X): vias in pads of the frozen-route completion (--pad-vias)
+        out['via_in_pad'] = {
+            'vias': vips,
+            'rule': ('W2 PWR-A closure round 1, probe Y: a pin that the grid A* completion could not reach otherwise takes a through via '
+                     'in its SMD pad (freeze/freeze6.py --pad-vias; the PWR_B precedent VIP-U215-6/7): 0.6 / 0.3 mm, KiCad clearance '
+                     '0.15 + 0.01 to every other net on every layer, hole clearance 0.25 + 0.01, 0.5 mm hole to hole (margin_mm: the '
+                     'smallest margin left)'),
+            'fab': ('filled and capped via in pad (POFV), the JLC default from 6 layers; the page gives "via diameters from 0.15 to '
+                    '0.55 mm" without saying hole or finished diameter (https://jlcpcb.com/capabilities/pcb-capabilities, read '
+                    '2026-11-13, as PWR_B): TBD at order'),
+            'gate': 'OPEN: assembly gate of the parts with a filled via in a pad (voiding, coplanarity) at the first build'}
     out['moves'] = {'placement_file': (PLACEMENT.relative_to(BASE).as_posix() + ' sha256 ' + bg.sha256_file(PLACEMENT))
                     if PLACEMENT.is_file() else None,
                     'moved_refs': len(all_moves(study)),
