@@ -56,6 +56,7 @@ def main(argv=None, mb=None):
     ap.add_argument('--first', default='', help='comma-separated nets joined first')
     ap.add_argument('--tp-max', type=float, default=0.0, help='longest test-point branch, mm (0: none beyond freeze6.BRANCH_MAX)')
     ap.add_argument('--summary', help='also write a short JSON summary here')
+    ap.add_argument('--tp-outer', action='store_true', help='freeze6 --tp-outer: the --tp-max test-point branch on F.Cu/B.Cu only')
     # W2 PWR-A closure round 1, combine pass: the probe-Y options of freeze6.py on the model route
     ap.add_argument('--pad-vias', action='store_true', help='freeze6 --pad-vias: a net left open tries again with a via in its SMD pads')
     ap.add_argument('--deep-entry', action='store_true', help='freeze6 --deep-entry: completion tracks end deep inside small pads')
@@ -210,7 +211,8 @@ def main(argv=None, mb=None):
                     break
             if not ok and a.tp_max:
                 okt, brt = fz.branch_pass(net, lambda r, net=net: r is not None and r.startswith('TP') and branch_ok(r, net),
-                                          lambda refs: F6.BRANCH_W['TP'], lambda refs: F6.ROUTING, a.tp_max, target_ok=target)
+                                          lambda refs: F6.BRANCH_W['TP'], lambda refs: F6.OUTER if a.tp_outer else F6.ROUTING, a.tp_max,
+                                          target_ok=target)
                 branches += brt
                 ok = ok or okt
         if vips:

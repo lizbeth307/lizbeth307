@@ -271,6 +271,7 @@ class Planner:
         self.fz = F.Finisher(self.m, log=lambda *a: None)
         self.branch_ids = set()  # item ids of the low-current branches (negotiate() keeps them)
         self.inner_classes = ()  # --inner (combine pass)
+        self.guided = True  # the guided wave of probe X round 2 (--no-guided switches it off)
         # --in4 (round 2, probe Y): classes / nets planned with In4.Cu, the mode and the extra cost per mm on F.Cu/B.Cu
         self.in4_classes, self.in4_nets, self.in4_mode, self.in4_bias = (), set(), 'first', 1.0
         self.tp_in4 = 0.0  # --tp-in4: longest test-point branch with In4.Cu (mm), 0 = off
@@ -636,6 +637,8 @@ class Planner:
                                                         layers=IN4_LAYERS, via_cost=VIA_COST[cname], neck=None, max_links=60, g=0.1)
                 rec['in4_width_mm'] = w_in
                 rec['log'].append(f'In4 pass (In4.Cu at {w_in} mm, IPC-2221 internal, grid 0.1 mm): {"joined" if ok else "still open"}')
+            if not ok and self.guided:  # W2 PWR-A closure round 2, probe X (ported in the combine pass): long links the A* boxes miss
+                ok = guided_pass(self, net, wl, VIA_COST[cname], rec['log'].append, layers=lays)
             # 3. low-current branches of the allowed roles
             if not ok:
                 CB = self.CB
@@ -809,6 +812,152 @@ def snapshot(m):
     return len(m.items), [it.alive for it in m.items]
 
 
+GUIDE_G = 0.1          # mm: raster of the guided wave (W2 PWR-A closure round 2, probe X)
+GUIDE_MIN_SPAN = 15.0  # mm: only links whose islands lie at least this far apart take the guided wave
+
+
+def guided_link(m, net, A, B, width, via_cost, layers=OUTER, g=GUIDE_G):
+    """W2 PWR-A closure round 2, probe X (ported in the combine pass, per-layer widths): a long link that the A* boxes of fin.connect_all do not reach. connect_all searches a box
+    of the two islands plus 6 mm (2 M nodes), then plus 25 mm (3 M nodes); a link from the top of the column down the leg and along
+    the band (J21 C207 -> D201, VBUS_HFP L501 -> J208, DISP12 -> TP202) spans most of the board and changes layer at a via cost of
+    4-20 mm, so the heap runs out of nodes before the target (MODEL: on the planning board of probe X round 2 a free class-width path
+    existed for J21 and VBUS_HFP that plan6 left open). This is a breadth-first wave over the same blocked rasters as router.astar
+    (same width and clearance, the same no-corner-cutting rule, no via right after a via, no via onto the target), a via delaying
+    the wave by via_cost / g steps, from island A until island B is reached; the path traced back from B goes through the exact
+    check of router.commit like any other link. Returns the route_link result or None."""
+    grid = R.Grid(m, F.BOARD_BOX, g)
+    shape = grid.X.shape
+    nx, ny = shape
+    free = {l: ~grid.blocked_track(net, l, R.wof(width, l)) for l in layers}
+    vfree = ~grid.blocked_via(net)
+    src = {l: grid.covered(A, l) & free[l] for l in layers}
+    dst = {l: grid.covered(B, l) & free[l] for l in layers}
+    if not any(v.any() for v in src.values()) or not any(v.any() for v in dst.values()):
+        return None
+    K = max(1, int(round(via_cost / g)))
+    dist = {l: np.full(shape, -1, dtype=np.int32) for l in layers}
+    viaarr = {l: np.zeros(shape, dtype=bool) for l in layers}
+    front = {}
+    for l in layers:
+        dist[l][src[l]] = 0
+        front[l] = src[l].copy()
+    pending = collections.defaultdict(list)
+
+    def schedule(l, cells, t):
+        vc = cells & vfree & ~viaarr[l]
+        if vc.any():
+            idx = np.flatnonzero(vc)
+            for l2 in layers:
+                if l2 != l:
+                    pending[t + K].append((l2, idx))
+    t, goal = 0, None  # no via on the start island itself (router.astar: a via needs a step first)
+    limit = 6 * (nx + ny) + 4 * K
+    while t < limit:
+        for l in layers:
+            hit = front[l] & dst[l] & ~viaarr[l]
+            if hit.any():
+                goal = (l, int(np.flatnonzero(hit)[0]))
+                break
+        if goal is not None:
+            break
+        t += 1
+        newf = {}
+        for l in layers:
+            f, fr = front[l], free[l]
+            n = np.zeros(shape, dtype=bool)
+            n[1:, :] |= f[:-1, :]
+            n[:-1, :] |= f[1:, :]
+            n[:, 1:] |= f[:, :-1]
+            n[:, :-1] |= f[:, 1:]
+            n[1:, 1:] |= f[:-1, :-1] & fr[:-1, 1:] & fr[1:, :-1]
+            n[:-1, :-1] |= f[1:, 1:] & fr[1:, :-1] & fr[:-1, 1:]
+            n[1:, :-1] |= f[:-1, 1:] & fr[:-1, :-1] & fr[1:, 1:]
+            n[:-1, 1:] |= f[1:, :-1] & fr[1:, 1:] & fr[:-1, :-1]
+            newf[l] = n & fr & (dist[l] < 0)
+        for l2, idx in pending.pop(t, []):
+            add = np.zeros(nx * ny, dtype=bool)
+            add[idx] = True
+            add = add.reshape(shape) & free[l2] & (dist[l2] < 0) & ~newf[l2]
+            viaarr[l2] |= add
+            newf[l2] = newf[l2] | add
+        alive = False
+        for l in layers:
+            n = newf[l]
+            if n.any():
+                alive = True
+                dist[l][n] = t
+                schedule(l, n, t)
+            front[l] = n
+        if not alive and not pending:
+            return None
+    if goal is None:
+        return None
+    # trace back from the goal: a via where the cell arrived by one, else a neighbour one step nearer (straight on preferred)
+    li = layers.index(goal[0])
+    i, j = divmod(goal[1], ny)
+    d = int(dist[layers[li]][i, j])
+    path = [(layers[li], i, j)]
+    last = None
+    dirs = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+    while d > 0:
+        lay = layers[li]
+        if viaarr[lay][i, j]:
+            lo = next(k for k, l2 in enumerate(layers) if k != li and dist[l2][i, j] == d - K)
+            li, d, last = lo, d - K, None
+            path.append((layers[li], i, j))
+            continue
+        fr = free[lay]
+        order = ([last] if last else []) + [x for x in dirs if x != last]
+        step = None
+        for di, dj in order:
+            a, b = i - di, j - dj
+            if not (0 <= a < nx and 0 <= b < ny) or dist[lay][a, b] != d - 1:
+                continue
+            if di and dj and not (fr[a, j] and fr[i, b]):
+                continue
+            step = (di, dj, a, b)
+            break
+        if step is None:
+            return None
+        last = (step[0], step[1])
+        i, j, d = step[2], step[3], d - 1
+        path.append((lay, i, j))
+    path.reverse()
+    runs, vias = R.to_runs(grid, path)
+    out = [(lay, R.simplify(m, net, lay, R.wof(width, lay), pts)) for lay, pts in runs if len(pts) > 1]
+    return {'runs': out, 'vias': vias, 'width': width}
+
+
+def guided_pass(pl, net, width, via_cost, log, layers=OUTER):
+    """Join the islands of a net that connect_all left open with guided_link, largest island first, its nearest other island next;
+    each link goes through router.commit (exact check at the planning clearance). Returns True when the net is joined. W2 PWR-A
+    closure round 2, combine pass: width may be a per-layer dict and layers F.Cu/In4.Cu/B.Cu for an --in4 net (Planner.link_spec)."""
+    tried = set()
+    for _ in range(12):
+        groups = [gr for gr in pl.m.islands(net) if any(i.kind == 'pad' for i in gr) or len(gr) > 1]
+        if len(groups) <= 1:
+            return True
+        groups.sort(key=lambda gr: (-len(gr), sorted(F._pads(gr))))
+        A = groups[0]
+        cand = [gr for gr in groups[1:] if frozenset(F._pads(gr)) not in tried and F._gap(A, gr) >= GUIDE_MIN_SPAN]
+        if not cand:
+            return False
+        Bg = min(cand, key=lambda gr: (F._gap(A, gr), sorted(F._pads(gr))))
+        tried.add(frozenset(F._pads(Bg)))
+        t0 = time.time()
+        res = guided_link(pl.m, net, A, Bg, width, via_cost, layers=layers)
+        if res is None:
+            log(f'guided wave: no path {sorted(F._pads(Bg))[:3]} ({time.time() - t0:.0f} s)')
+            continue
+        try:
+            R.commit(pl.m, net, res, f'GUIDE-{net}', lambda *a: None)
+            log(f'guided wave: joined {sorted(F._pads(Bg))[:3]}, {len(res["runs"])} runs, {len(res["vias"])} vias '
+                f'({time.time() - t0:.0f} s)')
+        except RuntimeError as e:
+            log(f'guided wave: commit refused {sorted(F._pads(Bg))[:3]}: {e}')
+    return False
+
+
 def restore(m, snap):
     n, alive = snap
     for it in m.items[n:]:
@@ -858,10 +1007,12 @@ def relink(pl, rec, net, allow_rip):
         if not ok and not allow_rip:
             planning_rules(RELAXED_CLR)
             try:
-                pl.fz.connect_all(net, allow_rip=False, width=wl, layers=lays, via_cost=VIA_COST[cname], neck=None, max_links=60,
-                                  g=0.1, bias=bias)
+                ok, _r, _n = pl.fz.connect_all(net, allow_rip=False, width=wl, layers=lays, via_cost=VIA_COST[cname], neck=None,
+                                               max_links=60, g=0.1, bias=bias)
             finally:
                 planning_rules()
+            if not ok and pl.guided:  # W2 PWR-A closure round 2, probe X (ported): a long link cut by the rip-up, by the guided wave
+                guided_pass(pl, net, wl, VIA_COST[cname], lambda *a: None, layers=lays)
         cluster_missing(pl, net, pl.width(net), pl.via_need(net))
     finally:
         pl.m.keepouts[:] = pl.base_keepouts
@@ -1043,6 +1194,8 @@ def main(argv=None):
                                                    'before the power copper is planned (Planner.reserve)')
     ap.add_argument('--no-replan', action='store_true', help='W2 PWR-A closure round 2, probe Z: with --ratchet, the nets left open keep '
                                                                  'their carried copper and are not planned again')
+    ap.add_argument('--no-guided', action='store_true', help='W2 PWR-A closure round 2, combine pass: without the guided wave of probe X '
+                                                                 '(guided_pass) after the link passes')
     ap.add_argument('--out', default=str(OUT))
     ap.add_argument('--verify', action='store_true', help='only report the margins of the scripted copper')
     args = ap.parse_args(argv)
@@ -1051,6 +1204,7 @@ def main(argv=None):
     t0 = time.time()
     pl = Planner(mb)
     pl.inner_classes = tuple(c for c in args.inner.split(',') if c)
+    pl.guided = not args.no_guided
     pl.in4_classes = tuple(c for c in args.in4.split(',') if c)
     pl.in4_nets = {n for n in args.in4_nets.split(',') if n}
     pl.in4_mode, pl.in4_bias = args.in4_mode, args.in4_bias

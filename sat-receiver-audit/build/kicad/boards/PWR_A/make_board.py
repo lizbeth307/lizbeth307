@@ -125,6 +125,19 @@ MOVES: dict = {
     # The E2_BONI_IN pad R260.1 then faces east, onto the gap of the B.Cu LAB5 band (SC-LAB5-B-BAND-W/-E). Same places and courtyards
     'R260': (33.4, 30.65, 0, 'B', 'W2 PWR-A closure combine pass: E2_BONI_IN damper turned, DAMP pad west towards C265'),
     'C265': (24.3, 30.3, 180, 'F', 'W2 PWR-A closure combine pass: E2_BONI_IN damper capacitor turned, DAMP pad east towards R260'),
+    # W2 PWR-A closure round 2, probe X (design choice, build/15; ported in the round-2 combine pass): the J21 eFuse (U201, TPS259470)
+    # output capacitors C204 (10 uF) and C203 (1 uF, E2_J21_EF, PWR3A) from the foot of the right column (y 41-45, 25 mm below U201) to
+    # its OUT side: C204 right above U201 OUT (pad 1 at (32.5, 75.8), 5 mm from U201.6) and C203 right of C207 beside L201.1 (the
+    # E2_J21_EF filter input), the nearest place_board.py-legal spots (courtyard GAP 0.4, scripted copper and vias, MODEL). The 25 mm
+    # E2_J21_EF run down the right column on F.Cu and B.Cu goes (MODEL plan6: that run walled the right column, the J21 / VBUS_HFP
+    # corridor from the top of the column)
+    'C204': (31.0, 75.75, 180, 'F', 'W2 PWR-A closure round 2 probe X: J21 eFuse output capacitor above U201 OUT'),
+    'C203': (39.5, 85.5, 0, 'F', 'W2 PWR-A closure round 2 probe X: J21 eFuse output capacitor beside L201.1'),
+    # W2 PWR-A closure round 2, probe X (design choice, build/15; ported in the round-2 combine pass): the J21 TVS clamp D201 (cathode
+    # J21, anode GND) from the band's north strip (x 61-68, between C220 and Q202) to the J21 connector J206 it protects (a clamp
+    # belongs at the connector pins): the place_board.py-legal spot (117.5, 20.5, 270) beside J206; the north strip keeps that room
+    # for the long links
+    'D201': (117.5, 20.5, 270, 'F', 'W2 PWR-A closure round 2 probe X: J21 TVS clamp beside the J21 connector J206'),
 }
 PLACEMENT = HERE / 'board-placement.json'
 

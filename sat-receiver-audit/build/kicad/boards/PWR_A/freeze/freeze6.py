@@ -749,6 +749,10 @@ def main(argv=None):
     ap.add_argument('--tp-max', type=float, default=0.0,
                     help='W2 PWR-A closure round 1, combine pass: longest test-point branch in mm (route6.py --tp-max; a test point '
                          'carries no load current; 0: none beyond BRANCH_MAX)')
+    ap.add_argument('--tp-outer', action='store_true',
+                    help='W2 PWR-A closure round 2, combine pass: the long test-point branch of --tp-max on F.Cu/B.Cu only (0.25 mm on 2 oz '
+                         'outer copper: 1.96 A at +20 degC by IPC-2221, MODEL, above the eFuse current limit of the rail; the same 0.25 mm '
+                         'on the 0.5 oz inner layers carries 0.32 A)')
     ap.add_argument('--centre-joints', action='store_true',
                     help='W2 PWR-A closure round 1, combine pass: a router/completion track end inside a same-net SMD pad less than half its '
                          'width from the pad edge gets a track to the pad centre (route6.py centre_joints; KiCad connection_width at '
@@ -926,7 +930,7 @@ def main(argv=None):
                     break
             if not ok and args.tp_max:  # combine pass: a test-point island joins by a longer 0.25 mm branch (route6.py --tp-max)
                 okt, brt = fz.branch_pass(net, lambda r: r is not None and r.startswith('TP') and branch_ok(r, net),
-                                          lambda refs: BRANCH_W['TP'], lambda refs: ROUTING, args.tp_max,
+                                          lambda refs: BRANCH_W['TP'], lambda refs: OUTER if args.tp_outer else ROUTING, args.tp_max,
                                           target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= width(net))
                                           or (i.kind == 'pad' and i.src == 'zone'))
                 branches += brt
