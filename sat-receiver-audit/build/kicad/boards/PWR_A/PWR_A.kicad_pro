@@ -469,10 +469,6 @@
         "pattern": "LAB5"
       },
       {
-        "netclass": "PWR1A",
-        "pattern": "LAB5_RLY"
-      },
-      {
         "netclass": "SCRIPTED_PWR2A",
         "pattern": "LIME3V3"
       },

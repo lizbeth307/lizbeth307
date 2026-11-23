@@ -156,7 +156,6 @@
       "J21",
       "J21_DAMP",
       "LAB5",
-      "LAB5_RLY",
       "LIME3V3",
       "LIME3V3_DAMP",
       "LNA4V5",
@@ -275,7 +274,6 @@
           "D203": "D203",
           "D2903": "D2903",
           "F102": "F102",
-          "F104": "F104",
           "F201": "F201",
           "F202": "F202",
           "J104": "J104",
@@ -504,7 +502,6 @@
           "J21": "J21",
           "J21_DAMP": "J21_DAMP",
           "LAB5": "LAB5",
-          "LAB5_RLY": "LAB5_RLY",
           "LIME3V3": "LIME3V3",
           "LIME3V3_DAMP": "LIME3V3_DAMP",
           "LNA4V5": "LNA4V5",
@@ -2048,27 +2045,6 @@
         }
       },
       "anchor_source": "next to U108 VOUT (E1_LAB5_RAW, BATT class): left strip x 0-7.75 of the leg, rotation 90; PWR-B window (Keystone 3568, height >= 7.37 mm lower bound)"
-    },
-    {
-      "ref": "F104",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          2.25,
-          99.25
-        ],
-        "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            2.25,
-            99.25
-          ],
-          "angle": 90
-        }
-      },
-      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "F201",
@@ -4402,24 +4378,6 @@
         ],
         "locked": true,
         "why": "scripted pour LAB5-L101 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
-      },
-      {
-        "id": "CU-LAB5-F104",
-        "net": "LAB5",
-        "layer": "F.Cu",
-        "width_mm": 3.35,
-        "path": [
-          [
-            2.275,
-            95.275
-          ],
-          [
-            2.275,
-            96.0
-          ]
-        ],
-        "locked": true,
-        "why": "scripted pour LAB5-F104 of PWR_A.spec-shrink2.json as a locked track (make_board.py board_copper)"
       },
       {
         "id": "CU-LAB5-B-BAND",
@@ -8560,8 +8518,8 @@
             96.5
           ],
           [
-            4.525,
-            95.475
+            3.575,
+            96.5
           ]
         ],
         "locked": true,
@@ -9250,24 +9208,6 @@
         ],
         "locked": true,
         "why": "GND bridge of the fan-out via GND-C291-2-V to C230.2, which it only grazes (minimum connection width 0.15 mm; W2 F2C-FALLBACK part 2, make_board.py gnd_bridges)"
-      },
-      {
-        "id": "GND-R211-2-V-B-C112-2",
-        "net": "GND",
-        "layer": "F.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            4.525,
-            95.475
-          ],
-          [
-            5.85,
-            96.375
-          ]
-        ],
-        "locked": true,
-        "why": "GND bridge of the fan-out via GND-R211-2-V to C112.2, which it only grazes (minimum connection width 0.15 mm; W2 F2C-FALLBACK part 2, make_board.py gnd_bridges)"
       },
       {
         "id": "GND-R513-2-V-B-C509-2",
@@ -10050,6 +9990,24 @@
         "width_mm": 0.2,
         "path": [
           [
+            46.9282,
+            10.7782
+          ],
+          [
+            46.2564,
+            11.45
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-BONI13V8_PORT-002",
+        "net": "BONI13V8_PORT",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
             47.6,
             11.45
           ],
@@ -10062,7 +10020,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-002",
+        "id": "PL-BONI13V8_PORT-003",
         "net": "BONI13V8_PORT",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -10080,7 +10038,25 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-003",
+        "id": "PL-BONI13V8_PORT-004",
+        "net": "BONI13V8_PORT",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            62.4282,
+            10.2782
+          ],
+          [
+            61.1782,
+            10.2782
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-BONI13V8_PORT-005",
         "net": "BONI13V8_PORT",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -10098,7 +10074,43 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-004",
+        "id": "PL-BONI13V8_PORT-006",
+        "net": "BONI13V8_PORT",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            63.1,
+            10.95
+          ],
+          [
+            63.1,
+            11.9
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-BONI13V8_PORT-007",
+        "net": "BONI13V8_PORT",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            72.8532,
+            13.3718
+          ],
+          [
+            72.8532,
+            14.3218
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-BONI13V8_PORT-008",
         "net": "BONI13V8_PORT",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -10116,7 +10128,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-005",
+        "id": "PL-BONI13V8_PORT-009",
         "net": "BONI13V8_PORT",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -10134,7 +10146,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-006",
+        "id": "PL-BONI13V8_PORT-010",
         "net": "BONI13V8_PORT",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -10152,7 +10164,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-007",
+        "id": "PL-BONI13V8_PORT-011",
         "net": "BONI13V8_PORT",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -10170,7 +10182,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-008",
+        "id": "PL-BONI13V8_PORT-012",
         "net": "BONI13V8_PORT",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -10188,7 +10200,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-009",
+        "id": "PL-BONI13V8_PORT-013",
         "net": "BONI13V8_PORT",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -10206,7 +10218,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-010",
+        "id": "PL-BONI13V8_PORT-014",
         "net": "BONI13V8_PORT",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -10224,7 +10236,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-011",
+        "id": "PL-BONI13V8_PORT-015",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -10242,7 +10254,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-012",
+        "id": "PL-BONI13V8_PORT-016",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -10260,7 +10272,25 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-013",
+        "id": "PL-BONI13V8_PORT-017",
+        "net": "BONI13V8_PORT",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            46.9282,
+            10.7782
+          ],
+          [
+            46.2564,
+            11.45
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-BONI13V8_PORT-018",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -10278,7 +10308,25 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-014",
+        "id": "PL-BONI13V8_PORT-019",
+        "net": "BONI13V8_PORT",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            62.4282,
+            10.2782
+          ],
+          [
+            61.1782,
+            10.2782
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-BONI13V8_PORT-020",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -10296,7 +10344,25 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-015",
+        "id": "PL-BONI13V8_PORT-021",
+        "net": "BONI13V8_PORT",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            63.1,
+            10.95
+          ],
+          [
+            63.1,
+            11.9
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-BONI13V8_PORT-022",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -10314,7 +10380,25 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-016",
+        "id": "PL-BONI13V8_PORT-023",
+        "net": "BONI13V8_PORT",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            72.8532,
+            13.3718
+          ],
+          [
+            72.8532,
+            14.3218
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-BONI13V8_PORT-024",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -10332,7 +10416,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-017",
+        "id": "PL-BONI13V8_PORT-025",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -10350,7 +10434,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-018",
+        "id": "PL-BONI13V8_PORT-026",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -10368,7 +10452,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-019",
+        "id": "PL-BONI13V8_PORT-027",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -10386,7 +10470,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-BONI13V8_PORT-020",
+        "id": "PL-BONI13V8_PORT-028",
         "net": "BONI13V8_PORT",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -11814,11 +11898,11 @@
         "width_mm": 1.6,
         "path": [
           [
-            53.4,
+            50.9,
             19.7
           ],
           [
-            52.15,
+            53.4,
             19.7
           ]
         ],
@@ -11832,11 +11916,11 @@
         "width_mm": 1.6,
         "path": [
           [
-            53.4,
+            52.15,
             19.7
           ],
           [
-            52.7282,
+            51.4782,
             19.0282
           ]
         ],
@@ -11854,7 +11938,7 @@
             19.7
           ],
           [
-            54.0718,
+            52.7282,
             19.0282
           ]
         ],
@@ -11863,6 +11947,42 @@
       },
       {
         "id": "PL-E2_BONI_IN-007",
+        "net": "E2_BONI_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            53.4,
+            19.7
+          ],
+          [
+            54.0718,
+            19.0282
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-008",
+        "net": "E2_BONI_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            54.0718,
+            19.0282
+          ],
+          [
+            55.0218,
+            19.0282
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-009",
         "net": "E2_BONI_IN",
         "layer": "B.Cu",
         "width_mm": 1.6,
@@ -11880,25 +12000,133 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-008",
+        "id": "PL-E2_BONI_IN-010",
         "net": "E2_BONI_IN",
         "layer": "B.Cu",
         "width_mm": 1.7,
         "path": [
           [
-            36.0,
-            17.15
+            36.3108,
+            17.0392
           ],
           [
-            36.2917,
-            16.9956
+            36.0,
+            17.15
           ]
         ],
         "locked": true,
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-009",
+        "id": "PL-E2_BONI_IN-011",
+        "net": "E2_BONI_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.7,
+        "path": [
+          [
+            36.35,
+            17.0
+          ],
+          [
+            36.3108,
+            17.0392
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-012",
+        "net": "E2_BONI_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.7,
+        "path": [
+          [
+            42.6,
+            16.8
+          ],
+          [
+            36.35,
+            17.0
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-013",
+        "net": "E2_BONI_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.7,
+        "path": [
+          [
+            46.65,
+            17.5
+          ],
+          [
+            42.6,
+            16.8
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-014",
+        "net": "E2_BONI_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.7,
+        "path": [
+          [
+            50.1,
+            18.15
+          ],
+          [
+            46.65,
+            17.5
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-015",
+        "net": "E2_BONI_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.7,
+        "path": [
+          [
+            51.8365,
+            19.5971
+          ],
+          [
+            50.1,
+            18.15
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-016",
+        "net": "E2_BONI_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.7,
+        "path": [
+          [
+            52.15,
+            19.7
+          ],
+          [
+            51.8365,
+            19.5971
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-017",
         "net": "E2_BONI_IN",
         "layer": "B.Cu",
         "width_mm": 1.7,
@@ -11916,7 +12144,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-010",
+        "id": "PL-E2_BONI_IN-018",
         "net": "E2_BONI_IN",
         "layer": "B.Cu",
         "width_mm": 1.7,
@@ -11934,7 +12162,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-011",
+        "id": "PL-E2_BONI_IN-019",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.6,
@@ -11952,7 +12180,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-012",
+        "id": "PL-E2_BONI_IN-020",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.6,
@@ -11970,7 +12198,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-013",
+        "id": "PL-E2_BONI_IN-021",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.6,
@@ -11988,17 +12216,17 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-014",
+        "id": "PL-E2_BONI_IN-022",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.6,
         "path": [
           [
-            53.4,
+            50.9,
             19.7
           ],
           [
-            52.15,
+            53.4,
             19.7
           ]
         ],
@@ -12006,7 +12234,25 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-015",
+        "id": "PL-E2_BONI_IN-023",
+        "net": "E2_BONI_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            52.15,
+            19.7
+          ],
+          [
+            51.4782,
+            19.0282
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-024",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.6,
@@ -12024,7 +12270,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-016",
+        "id": "PL-E2_BONI_IN-025",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.6,
@@ -12042,7 +12288,25 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-017",
+        "id": "PL-E2_BONI_IN-026",
+        "net": "E2_BONI_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            54.0718,
+            19.0282
+          ],
+          [
+            55.0218,
+            19.0282
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-E2_BONI_IN-027",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.6,
@@ -12060,7 +12324,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-018",
+        "id": "PL-E2_BONI_IN-028",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.7,
@@ -12078,7 +12342,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-019",
+        "id": "PL-E2_BONI_IN-029",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.7,
@@ -12096,7 +12360,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-020",
+        "id": "PL-E2_BONI_IN-030",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.7,
@@ -12114,7 +12378,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-E2_BONI_IN-021",
+        "id": "PL-E2_BONI_IN-031",
         "net": "E2_BONI_IN",
         "layer": "F.Cu",
         "width_mm": 1.7,
@@ -21588,12 +21852,12 @@
         "width_mm": 0.2,
         "path": [
           [
-            98.8,
-            18.0
+            98.6282,
+            14.8218
           ],
           [
-            99.3,
-            14.15
+            99.5782,
+            14.8218
           ]
         ],
         "locked": true,
@@ -21610,8 +21874,8 @@
             18.0
           ],
           [
-            99.75,
-            18.0
+            99.3,
+            14.15
           ]
         ],
         "locked": true,
@@ -21619,6 +21883,42 @@
       },
       {
         "id": "PL-VBUS_HFP-009",
+        "net": "VBUS_HFP",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            98.8,
+            18.0
+          ],
+          [
+            99.6839,
+            18.8839
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-VBUS_HFP-010",
+        "net": "VBUS_HFP",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            98.8,
+            18.0
+          ],
+          [
+            100.7,
+            18.0
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-VBUS_HFP-011",
         "net": "VBUS_HFP",
         "layer": "B.Cu",
         "width_mm": 0.2,
@@ -21636,7 +21936,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-010",
+        "id": "PL-VBUS_HFP-012",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21654,7 +21954,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-011",
+        "id": "PL-VBUS_HFP-013",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21672,7 +21972,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-012",
+        "id": "PL-VBUS_HFP-014",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21690,7 +21990,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-013",
+        "id": "PL-VBUS_HFP-015",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21708,7 +22008,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-014",
+        "id": "PL-VBUS_HFP-016",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21726,7 +22026,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-015",
+        "id": "PL-VBUS_HFP-017",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21744,7 +22044,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-016",
+        "id": "PL-VBUS_HFP-018",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21762,7 +22062,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-017",
+        "id": "PL-VBUS_HFP-019",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21780,7 +22080,25 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-018",
+        "id": "PL-VBUS_HFP-020",
+        "net": "VBUS_HFP",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            98.6282,
+            14.8218
+          ],
+          [
+            99.5782,
+            14.8218
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-VBUS_HFP-021",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21798,7 +22116,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-019",
+        "id": "PL-VBUS_HFP-022",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21816,7 +22134,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PL-VBUS_HFP-020",
+        "id": "PL-VBUS_HFP-023",
         "net": "VBUS_HFP",
         "layer": "F.Cu",
         "width_mm": 0.2,
@@ -21826,7 +22144,25 @@
             18.0
           ],
           [
-            99.75,
+            99.6839,
+            18.8839
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PL-VBUS_HFP-024",
+        "net": "VBUS_HFP",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            98.8,
+            18.0
+          ],
+          [
+            100.7,
             18.0
           ]
         ],
@@ -25787,8 +26123,8 @@
         "id": "GND-R211-2-V",
         "net": "GND",
         "at": [
-          4.525,
-          95.475
+          3.575,
+          96.5
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -26339,6 +26675,18 @@
         "id": "PLV-BONI13V8_PORT-01",
         "net": "BONI13V8_PORT",
         "at": [
+          46.2564,
+          11.45
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-BONI13V8_PORT-02",
+        "net": "BONI13V8_PORT",
+        "at": [
           46.9282,
           10.7782
         ],
@@ -26348,7 +26696,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-BONI13V8_PORT-02",
+        "id": "PLV-BONI13V8_PORT-03",
         "net": "BONI13V8_PORT",
         "at": [
           47.6,
@@ -26360,7 +26708,19 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-BONI13V8_PORT-03",
+        "id": "PLV-BONI13V8_PORT-04",
+        "net": "BONI13V8_PORT",
+        "at": [
+          61.1782,
+          10.2782
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-BONI13V8_PORT-05",
         "net": "BONI13V8_PORT",
         "at": [
           62.4282,
@@ -26372,7 +26732,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-BONI13V8_PORT-04",
+        "id": "PLV-BONI13V8_PORT-06",
         "net": "BONI13V8_PORT",
         "at": [
           63.1,
@@ -26384,7 +26744,19 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-BONI13V8_PORT-05",
+        "id": "PLV-BONI13V8_PORT-07",
+        "net": "BONI13V8_PORT",
+        "at": [
+          63.1,
+          11.9
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-BONI13V8_PORT-08",
         "net": "BONI13V8_PORT",
         "at": [
           72.8532,
@@ -26396,7 +26768,19 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-BONI13V8_PORT-06",
+        "id": "PLV-BONI13V8_PORT-09",
+        "net": "BONI13V8_PORT",
+        "at": [
+          72.8532,
+          14.3218
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-BONI13V8_PORT-10",
         "net": "BONI13V8_PORT",
         "at": [
           73.525,
@@ -26408,7 +26792,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of BONI13V8_PORT (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-BONI13V8_PORT-07",
+        "id": "PLV-BONI13V8_PORT-11",
         "net": "BONI13V8_PORT",
         "at": [
           88.925,
@@ -26675,7 +27059,7 @@
         "id": "PLV-E2_BONI_IN-05",
         "net": "E2_BONI_IN",
         "at": [
-          52.15,
+          50.9,
           19.7
         ],
         "drill_mm": 0.3,
@@ -26687,7 +27071,7 @@
         "id": "PLV-E2_BONI_IN-06",
         "net": "E2_BONI_IN",
         "at": [
-          52.7282,
+          51.4782,
           19.0282
         ],
         "drill_mm": 0.3,
@@ -26699,7 +27083,7 @@
         "id": "PLV-E2_BONI_IN-07",
         "net": "E2_BONI_IN",
         "at": [
-          53.4,
+          52.15,
           19.7
         ],
         "drill_mm": 0.3,
@@ -26711,7 +27095,7 @@
         "id": "PLV-E2_BONI_IN-08",
         "net": "E2_BONI_IN",
         "at": [
-          54.0718,
+          52.7282,
           19.0282
         ],
         "drill_mm": 0.3,
@@ -26723,6 +27107,42 @@
         "id": "PLV-E2_BONI_IN-09",
         "net": "E2_BONI_IN",
         "at": [
+          53.4,
+          19.7
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-E2_BONI_IN-10",
+        "net": "E2_BONI_IN",
+        "at": [
+          54.0718,
+          19.0282
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-E2_BONI_IN-11",
+        "net": "E2_BONI_IN",
+        "at": [
+          55.0218,
+          19.0282
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-E2_BONI_IN-12",
+        "net": "E2_BONI_IN",
+        "at": [
           69.3,
           18.25
         ],
@@ -26732,7 +27152,7 @@
         "why": "W2 PWR-L6-SCRIPT planned BATT copper of E2_BONI_IN (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 1.6 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
       },
       {
-        "id": "PLV-E2_BONI_IN-10",
+        "id": "PLV-E2_BONI_IN-13",
         "net": "E2_BONI_IN",
         "at": [
           69.9718,
@@ -28739,8 +29159,8 @@
         "id": "PLV-VBUS_HFP-08",
         "net": "VBUS_HFP",
         "at": [
-          99.3,
-          14.15
+          99.5782,
+          14.8218
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -28751,7 +29171,31 @@
         "id": "PLV-VBUS_HFP-09",
         "net": "VBUS_HFP",
         "at": [
+          99.6839,
+          18.8839
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-VBUS_HFP-10",
+        "net": "VBUS_HFP",
+        "at": [
           99.75,
+          18.0
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "W2 PWR-L6-SCRIPT planned PWR1A copper of VBUS_HFP (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.2 mm on F.Cu/B.Cu, clearance 0.20 mm; kind link)"
+      },
+      {
+        "id": "PLV-VBUS_HFP-11",
+        "net": "VBUS_HFP",
+        "at": [
+          100.7,
           18.0
         ],
         "drill_mm": 0.3,
@@ -29760,50 +30204,6 @@
         "why": "W2 PWR-L6-SCRIPT pin-entry pour of U111.6 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
       },
       {
-        "id": "PE-E2_BONI_IN-U213.15",
-        "net": "E2_BONI_IN",
-        "layer": "F.Cu",
-        "outline": [
-          [
-            77.075,
-            18.405
-          ],
-          [
-            77.5,
-            18.405
-          ],
-          [
-            77.5,
-            17.695
-          ],
-          [
-            78.25,
-            17.695
-          ],
-          [
-            78.25,
-            18.405
-          ],
-          [
-            78.675,
-            18.405
-          ],
-          [
-            78.675,
-            20.105
-          ],
-          [
-            77.075,
-            20.105
-          ]
-        ],
-        "priority": 4,
-        "pad_connection": "solid",
-        "clearance_mm": 0.15,
-        "min_thickness_mm": 0.15,
-        "why": "W2 PWR-L6-SCRIPT pin-entry pour of U213.15 (script-planned-6l.json): the pad, its cross-section at most half the class width beyond it, then a class-width landing for the planned track"
-      },
-      {
         "id": "PE-E2_LNA_IN-U204.7",
         "net": "E2_LNA_IN",
         "layer": "F.Cu",
@@ -30588,7 +30988,6 @@
       "C133",
       "C134",
       "C135",
-      "F104",
       "F201",
       "L101",
       "L102",
@@ -30641,7 +31040,6 @@
       "LAB5-B-TOP",
       "LAB5-DETOUR",
       "LAB5-DROP",
-      "LAB5-F104",
       "LAB5-J208-10",
       "LAB5-J208-14",
       "LAB5-J208-2",
@@ -30795,7 +31193,6 @@
       "LAB5": [
         "L101.2",
         "C112.1",
-        "F104.1",
         "L205.1",
         "J208.2",
         "J208.6",
@@ -30804,7 +31201,7 @@
       ]
     },
     "u107_input_source": "TI LM61460 data sheet SNVSBD5D (rev. D, July 2022) section 11.1 Layout Guidelines and figure 11-2 Layout Example, https://www.ti.com/lit/ds/symlink/lm61460.pdf read 2026-11-12 (curl default User-Agent, HTTP 200, sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d; fetch-only, not committed)",
-    "note": "W2 PCB-PWRA-3 (design choice; review fixes F1/F2): anchored power stages and their scripted copper. Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, F104.1, L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router (PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 IN pins and every branch net after F201, L202 and Q201",
+    "note": "W2 PCB-PWRA-3 (design choice; review fixes F1/F2): anchored power stages and their scripted copper. Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router (PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 IN pins and every branch net after F201, L202 and Q201",
     "small_signal": {
       "rule": "W2 PWR-L6-PLACE (placement only): the U107 and U108 small-signal parts anchored inside thermal_bond zones 3'/4' next to their pins (make_spec.py SMALL_SIGNAL_ANCHORS); MODEL geometry, pad centre to pin centre: CVCC <= 2.0 mm of VCC/AGND, CBOOT, RBOOT and the feedback parts <= 5.0 mm of their pins (project limits). Their copper (the SW-CBOOT link through the VIN2-RBOOT gap, the FB node on F.Cu only, AGND to PGND under U108) is W2 PWR-L6-SCRIPT's; the F.Cu VIN2 bar CONVIN-U107-L-BAR closes that gap today",
       "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 Layout Example, https://www.ti.com/lit/ds/symlink/lm61460.pdf, and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, https://www.ti.com/lit/ds/symlink/tpsm63606.pdf, both read 2026-11-13 (curl default User-Agent, HTTP 200, sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d and d1c157ff51c0e24bec9749dc434c3f8cdb8e980a7d1295d3a51c7d13f8ab4147; fetch-only, not committed); the 2 mm and 5 mm limits are project rules for TI's \"as close as possible\", not TI numbers",
@@ -31244,14 +31641,6 @@
         1.6
       ]
     },
-    "PE-E2_BONI_IN-U213.15": {
-      "pad": "U213.15",
-      "strip_mm": 0.4,
-      "landing_mm": [
-        1.6,
-        1.6
-      ]
-    },
     "PE-E2_LNA_IN-U204.7": {
       "pad": "U204.7",
       "strip_mm": 0.0,
@@ -31481,9 +31870,9 @@
       "E1_LAB5_FB",
       "E1_LAB5_RT"
     ],
-    "planned_file": "build/kicad/boards/PWR_A/script-planned-6l.json sha256 dc3f2daf92704b92ceb56ef732ff17b54cefdff26f73dea3a2c2a3de8eced8f3",
+    "planned_file": "build/kicad/boards/PWR_A/script-planned-6l.json sha256 8b7e0e9c558e86e94dde51e5b396f6981fc08ec31867847913ad72fc0b57f537",
     "planned_result": {
-      "nets": 36,
+      "nets": 35,
       "power": [
         "AUX12",
         "AUX12_DAMP",
@@ -31518,20 +31907,33 @@
       "link": {
         "BONI13V8_PORT": 1,
         "DISP12": 1,
-        "E2_BONI_IN": 2,
+        "E2_BONI_IN": 1,
         "E2_BONI_IN_DAMP": 1,
         "J21": 1,
-        "LAB5_RLY": 2,
         "VBUS_HFP": 2
       },
       "violations": 0,
+      "ratchet": {
+        "from_guard": {
+          "pads_sha256": "efca7e3c06d74e7e84bb5c0d407a686fbaa7c2bf818e2634b9d2cee6635e2563",
+          "scripted_sha256": "85134d80664153db617dad57cea7e9ea8a5e2c71061719233a377722f4bf73a1",
+          "zones_sha256": "64361795216d8d29fcc0599e8711d1857cb4e0d12185b9d7675255e2b427b5bf"
+        },
+        "dropped": 0,
+        "replanned": [
+          "E2_BONI_IN_DAMP",
+          "E2_BONI_IN",
+          "J21",
+          "DISP12",
+          "BONI13V8_PORT",
+          "VBUS_HFP"
+        ],
+        "rule": "plan6.py --ratchet (W2 PWR-A closure probe X): the earlier plan copper that holds on the current inputs kept, the power nets it leaves open planned again"
+      },
       "negotiate": {
         "rounds": 1,
-        "kept": [
-          "round 1 SYS12: ripped ['LIME3V3', 'E1_CONV_IN'], open 11 -> 10, kept (16 s)",
-          "round 1 VCC_3V3_MKEY: ripped [], open 10 -> 9, kept (18 s)"
-        ],
-        "tries": 9
+        "kept": [],
+        "tries": 6
       }
     },
     "planned_nets": {
@@ -31573,7 +31975,7 @@
       },
       "E2_BONI_IN": {
         "kind": "link",
-        "open": 2
+        "open": 1
       },
       "E2_BONI_IN_DAMP": {
         "kind": "link",
@@ -31646,10 +32048,6 @@
       "LAB5": {
         "kind": "power",
         "open": 0
-      },
-      "LAB5_RLY": {
-        "kind": "link",
-        "open": 2
       },
       "LIME3V3": {
         "kind": "power",
@@ -31784,7 +32182,6 @@
     "D203": 2.7,
     "D2903": 2.7,
     "F102": 7.37,
-    "F104": 2.7,
     "F201": 2.94,
     "F202": 2.7,
     "L101": 6.1,
@@ -31933,7 +32330,6 @@
     "D203": "pcb/partition-spec.json heights.low_profile h_max (class bound of Nexperia_CFP3_SOD-123W): class height of chip, SOT, SO, MSOP, (V)QFN, HSOP, SMA/SMB and CFP3 packages: not a tall part for the hA/hB rule (no part here is taller than an SMB body); only the parts listed by MPN or footprint above can exceed hA",
     "D2903": "pcb/partition-spec.json heights.low_profile h_max (class bound of SOT-23): class height of chip, SOT, SO, MSOP, (V)QFN, HSOP, SMA/SMB and CFP3 packages: not a tall part for the hA/hB rule (no part here is taller than an SMB body); only the parts listed by MPN or footprint above can exceed hA",
     "F102": "pcb/partition-spec.json heights.by_mpn.0297004.WXNV: LOWER BOUND, holder body only: Keystone 3568 holder body 16.00 x 6.73 x 7.37 mm (Keystone catalogue K75 p48, https://www.keyelco.com/userAssets/file/K75p48.pdf, read 2026-11-07); the mini fuse stands above the holder and the height with the fuse inserted is TBD (Littelfuse 297 drawing not read), so this part always gets a PWR-B window and its height against the window ceiling stays OPEN",
-    "F104": "pcb/partition-spec.json heights.low_profile h_max (class bound of Fuse_1812_4532Metric): class height of chip, SOT, SO, MSOP, (V)QFN, HSOP, SMA/SMB and CFP3 packages: not a tall part for the hA/hB rule (no part here is taller than an SMB body); only the parts listed by MPN or footprint above can exceed hA",
     "F201": "pcb/partition-spec.json heights.by_mpn.0451004.MRL: Littelfuse 451/453 Series datasheet Rev. GD 08/23/21 (Mouser-distributed copy, https://sy-dep-epc-lpc.web.cern.ch/components/datasheets/epc-lpc%20(converters)/451-453_Fuse_(LITTLEFUSE).pdf, read 2026-11-13; the littelfuse.com 451 product page answered HTTP 403 on 2026-11-13): body 6.10 +-0.20 x 2.69 +-0.25 x 2.69 +-0.25 mm, so 2.94 max; 4.00 A (amp code 004.), 125 V, nominal cold resistance 0.0160 ohm",
     "F202": "pcb/partition-spec.json heights.low_profile h_max (class bound of Fuse_1812_4532Metric): class height of chip, SOT, SO, MSOP, (V)QFN, HSOP, SMA/SMB and CFP3 packages: not a tall part for the hA/hB rule (no part here is taller than an SMB body); only the parts listed by MPN or footprint above can exceed hA",
     "L101": "pcb/partition-spec.json heights.by_footprint.L_Coilcraft_XAL6060: KiCad 10.0.7 footprint descr 'XAL6060-XXX, 6.56x6.76x6.1mm' (vendored file; coilcraft.com answered HTTP 403 on 2026-11-07)",
@@ -32050,12 +32446,12 @@
   },
   "gnd_fanout": {
     "vias": 173,
-    "stubs": 185,
+    "stubs": 184,
     "pads_joined_by_scripted_gnd_pours": [],
     "rule": "make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to a 0.7 / 0.3 via, or to a GND via within 3 mm"
   },
   "moves": {
-    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 522c922bad98a11c2e9a433bf68cfe816cbbdca9c2f7c7283977107ae8892e13",
+    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 c13e84231f2c6a486100b11f4c8c104099c3ad35536a8fdd5ffcb2c7f74af560",
     "moved_refs": 151,
     "manual": [
       {

@@ -1581,7 +1581,7 @@ def frozen_copper(inp, tracks, vias):
     in after the scripted copper, which it does not change; the guard stops make_board when a pad or the scripted copper
     changed. Returns (tracks, vias, note, necks, branches)."""
     if not FROZEN6.is_file():
-        return [], [], None, [], []
+        return [], [], None, [], [], []
     doc = read(FROZEN6)
     if not doc.get('guard'):
         raise SystemExit(f'make_board: {FROZEN6.name} has no guard (a freeze6.py --no-guard trial): harvest again with the guard')
@@ -1607,7 +1607,7 @@ def frozen_copper(inp, tracks, vias):
             'build/kicad/boards/PWR_A/freeze/freeze6.py (numpy, offline; tools copied from build/kicad/boards/PWR_B/freeze). '
             f'Source: build/kicad/boards/PWR_A/{FROZEN6.name}; valid only for this placement, netlist and scripted copper (guard: '
             f'SHA256 of the pads and of the scripted copper). Freezer result: {json.dumps(doc.get("result", {}), sort_keys=True)}')
-    return ft, fv, note, list(doc.get('necks', [])), list(doc.get('branches', []))
+    return ft, fv, note, list(doc.get('necks', [])), list(doc.get('branches', [])), list(doc.get('via_in_pad', []))
 
 
 def branch_rows(branches):
@@ -1808,8 +1808,8 @@ def build(frozen=True, planned=True):
     pt, pv, pz, pbranch, whole, plan_doc = planned_copper(inp, base) if planned else ([], [], [], {}, set(), None)
     scripted = scripted_classes(inp, set(CONVERTER_NETS) | whole)
     inp.scripted = scripted
-    ft, fv, frozen_note, necks, branches = (frozen_copper(inp, base['tracks'] + pt, base['vias'] + pv) if frozen
-                                            else ([], [], None, [], []))
+    ft, fv, frozen_note, necks, branches, vips = (frozen_copper(inp, base['tracks'] + pt, base['vias'] + pv) if frozen
+                                                  else ([], [], None, [], [], []))
     heights, sources, unread = heights_block(inp)
     nets = set(spec['instances']['template_nets'])
     out = {}
@@ -1934,6 +1934,17 @@ def build(frozen=True, planned=True):
     out['gnd_fanout'] = {'vias': len(gv), 'stubs': len(gt), 'pads_joined_by_scripted_gnd_pours': skipped,
                          'rule': 'make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to '
                                  'a 0.7 / 0.3 via, or to a GND via within 3 mm'}
+    if vips:  # W2 PWR-A closure round 1, probe Y (port, round 2 probe Z): vias in pads of the frozen-route completion (freeze6.py --pad-vias)
+        out['via_in_pad'] = {
+            'vias': vips,
+            'rule': ('W2 PWR-A closure round 1, probe Y: a pin that the grid A* completion could not reach otherwise takes a through via '
+                     'in its SMD pad (freeze/freeze6.py --pad-vias; the PWR_B precedent VIP-U215-6/7): 0.6 / 0.3 mm, KiCad clearance '
+                     '0.15 + 0.01 to every other net on every layer, hole clearance 0.25 + 0.01, 0.5 mm hole to hole (margin_mm: the '
+                     'smallest margin left)'),
+            'fab': ('filled and capped via in pad (POFV), the JLC default from 6 layers; the page gives "via diameters from 0.15 to '
+                    '0.55 mm" without saying hole or finished diameter (https://jlcpcb.com/capabilities/pcb-capabilities, read '
+                    '2026-11-13, as PWR_B): TBD at order'),
+            'gate': 'OPEN: assembly gate of the parts with a filled via in a pad (voiding, coplanarity) at the first build'}
     out['moves'] = {'placement_file': (PLACEMENT.relative_to(BASE).as_posix() + ' sha256 ' + bg.sha256_file(PLACEMENT))
                     if PLACEMENT.is_file() else None,
                     'moved_refs': len(all_moves(study)),

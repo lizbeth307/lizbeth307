@@ -9,10 +9,10 @@
     "contract_pwr": "38152078220463bf4ce8e405b0aae905beb74da0c7d85b79be0bc9b6b0e43203",
     "contract_pwr_b_outline": "ffe8e8c1eab5700401657c3c70be9da78460409e41ebaf72ceb0224135d4d0ed",
     "template_sha256": "ed5fe640dfd1ddbee21955ec30ff858d8a0619cbee7dbf9208203d5b73b88b32",
-    "project_sha256": "f76dad17034970a241dc60fa31bb8666d48304fa848c88fcb26bdcff7d8dc3de",
+    "project_sha256": "04ebe6846903fb42ea50e0d636d28bde5897ad86e3c98cd4dc67be2cb5dde27b",
     "pwr_b_placeholders": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-    "pwr_b_spec_sha256": "872f7b889472bca1ba1bcb49efa5a65acc28c2415fad8ecdf79df9e82beedf4f",
-    "pwr_b_connectors_sha256": "a67a8b933ca952b742e7e46262936fbb478592ef363e7a505e13b49762386e1f"
+    "pwr_b_spec_sha256": "45cc786b06dcbe6eac3c63c8b08d49d44668a13a61cacf3ee1bdb172ec18b4b1",
+    "pwr_b_connectors_sha256": "3256bfc0783c7550d1dc5520e933825017efb32fb629ce4f38ea3a4ee0fbeaa6"
   },
   "spec_checks": {
     "validate_spec": "passed",

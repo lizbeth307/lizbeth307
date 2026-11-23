@@ -64,7 +64,7 @@ NECK_MAX = 3.0  # mm: longest pad-to-pad neck of a power pair without a class-wi
 # 2 oz at the PWR2A width 0.4 mm, IPC-2221 about 2 A at +10 degC, MODEL) and resistors of 100 ohm or more (dividers, bias:
 # milliamperes); series parts (fuses, shunts, inductors, FETs, diodes, connectors, damper resistors) stay main path
 BRANCH_MAX = 12.0   # mm, longest branch path
-BRANCH_W = {'TP': 0.25, 'R': 0.25, 'C': 0.4}
+BRANCH_W = {'TP': 0.25, 'R': 0.25, 'C': 0.4, 'S': 0.25}
 ROUTING = tuple(M.RLAYERS)
 OUTER = ('F.Cu', 'B.Cu')
 K = lambda x, y: (round(x + 100.0, 4), round(210.0 - y, 4))  # board mm -> KiCad mm (frame of pcb/board_gen.py)
@@ -219,6 +219,8 @@ def verify(m):
             continue
         if it.kind == 'track':
             mg, why = m.track_margin(it.net, it.layers[0], it.width, it.a, it.b, ignore={it.id})
+        elif it.kind == 'via' and it.src == 'vip':  # probe Y: a via in its own SMD pad
+            mg, why = vip_margin(m, it.net, it.at, it.size, it.drill, ignore={it.id})
         elif it.kind == 'via':
             mg, why = m.via_margin(it.net, it.at, it.size, it.drill, ignore={it.id})
             if why and why.startswith('own pad') and it.src != 'new':
@@ -272,13 +274,17 @@ def ohms(value):
     return v * {'': 1.0, 'r': 1.0, 'k': 1e3, 'm': 1e6}[m.group(2).lower()]
 
 
-def branch_kind(graph):
-    """ref -> 'TP' | 'C' | 'R' for parts that may hang on a power net as a low-current branch, else None."""
+def branch_kind(graph, sense=False):
+    """ref -> 'TP' | 'C' | 'R' for parts that may hang on a power net as a low-current branch, else None. W2 PWR-A closure
+    round 1, probe Y (sense=True): an IC ('U') is 'S', a sense/logic pin branch; the caller's role test (pcb/check_boards.py
+    exemption_role sense_logic_pin) decides per pad."""
     def kind(ref):
         if ref is None:
             return None
         if ref.startswith('TP'):
             return 'TP'
+        if sense and re.match(r'U\d', ref):
+            return 'S'
         if re.match(r'C\d', ref):
             return 'C'
         if re.match(r'R\d', ref):
@@ -397,10 +403,12 @@ def drop_failing_completion(m):
     is dropped with its dangling rest (the joins it made stay open). Returns the nets touched."""
     drop = []
     for it in m.items:
-        if not (it.alive and it.src == 'new'):
+        if not (it.alive and it.src in ('new', 'vip')):
             continue
         if it.kind == 'track':
             mg, _w = m.track_margin(it.net, it.layers[0], it.width, it.a, it.b, ignore={it.id})
+        elif it.kind == 'via' and it.src == 'vip':
+            mg, _w = vip_margin(m, it.net, it.at, it.size, it.drill, ignore={it.id})
         elif it.kind == 'via':
             mg, _w = m.via_margin(it.net, it.at, it.size, it.drill, ignore={it.id})
         else:
@@ -415,6 +423,171 @@ def drop_failing_completion(m):
     return len(drop), nets
 
 
+# W2 PWR-A closure round 1, probe Y (--pad-vias): a through via in the SMD pad of a walled-in pin. The blocker split of route
+# run 45062920789 (W2 F2C-FALLBACK part 2) left 15 signal nets with no 0.15 mm path on any routing layer: their pins are boxed in
+# on their own layer by pads, scripted pours and planned copper, and no via site is reachable. A via in the pad takes such a pin
+# straight to In2.Cu/In3.Cu. PWR_B carries the same kind of via (VIP-U215-6/7, W2 PWR-L6-PLACE third pass); JLC fills and caps
+# via-in-pad by default from 6 layers (pcb/generated/stackup-6l.json capabilities.via_in_pad). The via is the project via
+# 0.6/0.3 mm (PWR_A.kicad_pro min_via_diameter 0.6, annulus 0.15); it keeps the KiCad clearance 0.15 (+0.01) to other-net copper
+# on every layer, the hole clearance 0.25 (+0.01), 0.5 mm (+0.02) hole to hole and the keep-outs; it overlaps only its own pad
+# and its own net. Pads of 0.5 mm pitch (LSHM-150, TPS25947 RPW) take no such via (it would reach the neighbour pads).
+VIP_SIZES = ((0.6, 0.3),)
+VIP_CLR = 0.16       # mm: KiCad clearance 0.15 + 0.01
+VIP_HOLE_CLR = 0.26  # mm: PWR_A.kicad_pro min_hole_clearance 0.25 + 0.01
+VIP_MAX_PAD = 3.0    # mm: no via in pads larger than this on both sides (exposed pads; power pads keep their own vias)
+
+
+def vip_margin(m, net, at, size, drill, ignore=()):
+    """Smallest margin (>= 0 is clear) of a via in a pad of `net`: other-net copper (VIP_CLR, hole VIP_HOLE_CLR), hole to hole,
+    keep-outs, edges; same-net copper (its own pad) is allowed; items in `ignore` (the via itself) are skipped."""
+    r = size / 2
+    bb = (at[0] - r - 1.5, at[1] - r - 1.5, at[0] + r + 1.5, at[1] + r + 1.5)
+    worst, why, seen = math.inf, None, set(ignore)
+    for lay in M.LAYERS:
+        for it in m.near(lay, bb):
+            if it.id in seen:
+                continue
+            seen.add(it.id)
+            if it.kind in ('via', 'npth') or (it.kind == 'pad' and it.drill):
+                d = math.hypot(at[0] - it.at[0], at[1] - it.at[1]) - drill / 2 - (it.drill or 0) / 2 - M.HOLE_HOLE - 0.02
+                if d < worst:
+                    worst, why = d, f'hole {it.kind} {it.ref or ""}.{it.pad or ""}'
+            if it.kind == 'npth' or it.net == net:
+                continue
+            dist = it.shape.dist(*at)
+            for mg in (dist - r - VIP_CLR, dist - drill / 2 - VIP_HOLE_CLR):
+                if mg < worst:
+                    worst, why = mg, f'{it.kind} {it.net} {it.ref or ""}.{it.pad or ""}'
+    for k in m.keepouts:
+        kb = k['poly'].bbox
+        if kb[0] > bb[2] or kb[2] < bb[0] or kb[1] > bb[3] or kb[3] < bb[1]:
+            continue
+        mg = k['poly'].dist(*at) - r - 0.01
+        if mg < worst:
+            worst, why = mg, 'keepout ' + k['name']
+    mg = min(M.seg_dist(at[0], at[1], e0[0], e0[1], e1[0], e1[1]) for e0, e1 in m.edges) - r - M.EDGE_CLR - 0.02
+    if mg < worst:
+        worst, why = mg, 'edge'
+    if not m.inside(at):
+        return -9.0, 'outside'
+    return worst, why
+
+
+def vip_spots(pad, size):
+    """Via centres in a pad: its centre, then along its long axis in 0.05 mm steps while the via centre stays a quarter of the via
+    inside the pad ends (KiCad mm)."""
+    x0, y0, x1, y1 = pad.shape.bbox
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    horiz = (x1 - x0) >= (y1 - y0)
+    half = ((x1 - x0) if horiz else (y1 - y0)) / 2 - size / 4
+    out = [(round(cx, 4), round(cy, 4))]
+    k = 1
+    while k * 0.05 <= half + 1e-9:
+        for sgn in (1, -1):
+            d = sgn * k * 0.05
+            out.append((round(cx + d, 4), round(cy, 4)) if horiz else (round(cx, 4), round(cy + d, 4)))
+        k += 1
+    return [q for q in out if pad.shape.dist(*q) <= 0.0]
+
+
+def add_pad_vias(m, net, sizes=VIP_SIZES, refs=None):
+    """A via in each SMD pad of `net` (outer layer, at most VIP_MAX_PAD on its short side, no via in it yet; refs limits the parts)
+    that has a free spot, src 'vip'. Returns the added via items."""
+    added = []
+    groups = [gr for gr in m.islands(net) if any(i.kind == 'pad' for i in gr)]
+    if len(groups) <= 1:
+        return added
+    for gr in groups:
+        for p in gr:
+            if p.kind != 'pad' or p.src != 'pad' or p.drill or not any(l in OUTER for l in p.layers):
+                continue
+            if refs is not None and p.ref not in refs:
+                continue
+            bx = p.shape.bbox
+            if min(bx[2] - bx[0], bx[3] - bx[1]) > VIP_MAX_PAD:
+                continue
+            if any(o.kind == 'via' and o.net == net and p.shape.dist(*o.at) <= 0 for o in m.near(p.layers[0], bx)):
+                continue
+            done = False
+            for size, drill in sizes:
+                for at in vip_spots(p, size):
+                    if vip_margin(m, net, at, size, drill)[0] >= 0:
+                        added.append(m.add_via(net, at, size, drill, src='vip'))
+                        done = True
+                        break
+                if done:
+                    break
+    return added
+
+
+def vip_used(m, v):
+    """A via in a pad is used when a track of its net ends in it on a layer other than its pad's."""
+    for lay in M.LAYERS:
+        if any(o.kind == 'pad' and o.src == 'pad' and o.net == v.net and o.shape.dist(*v.at) <= 0
+               for o in m.near(lay, (v.at[0] - 0.5, v.at[1] - 0.5, v.at[0] + 0.5, v.at[1] + 0.5))):
+            continue
+        for o in m.near(lay, (v.at[0] - 1, v.at[1] - 1, v.at[0] + 1, v.at[1] + 1)):
+            if o.kind == 'track' and o.net == v.net and any(v.shape.dist(*e) <= 1e-4 for e in (o.a, o.b)):
+                return True
+            if o.kind == 'pad' and o.src == 'zone' and o.net == v.net and o.shape.dist(*v.at) <= 1e-4:
+                return True
+    return False
+
+
+def drop_unused_vips(m, net):
+    """Remove the vias in pads of `net` that no track uses. Returns the number removed."""
+    n = 0
+    for it in m.items:
+        if it.alive and it.kind == 'via' and it.src == 'vip' and it.net == net and not vip_used(m, it):
+            m.remove(it)
+            n += 1
+    return n
+
+
+# W2 PWR-A closure round 1, probe Y (--deep-entry): a completion track ends inside a small SMD pad at least half its width from
+# the pad edge (route run 45062920789: the A* entered the DVDT pins of U201 / U202 over a pad corner, two KiCad
+# connection_width errors). Pads up to DEEP_MAX on their short side; a pad too small for that keeps its whole area.
+DEEP_MAX = 1.0
+_COVERED = R.Grid.covered
+DEEP = {'width': None}
+
+
+def covered_deep(self, items, layer):
+    w = DEEP['width']
+    if not w:
+        return _COVERED(self, items, layer)
+    w = R.wof(w, layer)
+    small = [it for it in items if it.kind == 'pad' and it.src == 'pad' and layer in it.layers
+             and min(it.bbox[2] - it.bbox[0], it.bbox[3] - it.bbox[1]) <= DEEP_MAX]
+    ids = {it.id for it in small}
+    cov = _COVERED(self, [it for it in items if it.id not in ids], layer)
+    d = w / 2
+    for it in small:
+        win = self.win(it.bbox, 0.0)
+        if win is None:
+            continue
+        X, Y = self.X[win], self.Y[win]
+        full = R.shape_dist(X, Y, it.shape) <= 0.0
+        deep = full.copy()
+        for dx, dy in ((d, 0), (-d, 0), (0, d), (0, -d), (d * 0.7071, d * 0.7071), (-d * 0.7071, d * 0.7071),
+                       (d * 0.7071, -d * 0.7071), (-d * 0.7071, -d * 0.7071)):
+            deep &= R.shape_dist(X + dx, Y + dy, it.shape) <= 0.0
+        cov[win] |= deep if deep.any() else full
+    return cov
+
+
+_ROUTE_LINK = R.route_link
+
+
+def route_link_deep(m, net, isl_a, isl_b, box, width=0.15, **kw):
+    """R.route_link with the deep pad entry of the track width of this link (DEEP)."""
+    DEEP['width'] = width
+    try:
+        return _ROUTE_LINK(m, net, isl_a, isl_b, box, width=width, **kw)
+    finally:
+        DEEP['width'] = None
+
+
 # W2 PWR-TOOLS: why a net may be left open (--leave-open) in a harvest
 LEAVE_OPEN_WHY = {
     'E2_BONI_EF': ('the grid A* joins it only through a B.Cu end inside the copper of a diagonal E2_BONI_EF track, which KiCad '
@@ -422,6 +595,83 @@ LEAVE_OPEN_WHY = {
                    'route run 43354942122), while the net stayed open in KiCad; left open for the scripted power copper of '
                    'PWR-L6-SCRIPT'),
 }
+
+
+def centre_joints(m):
+    """A router/completion track end inside a same-net SMD pad less than half its width from the pad edge gets a track of its width
+    to the pad centre where that clears (KiCad 10.0.7 connection_width: a track that enters a pad over its corner, route runs
+    45062920789 and 45109912253); the port of route6.py centre_joints. Returns [(net, pad)]."""
+    added = []
+    for t in list(m.items):
+        if not (t.alive and t.kind == 'track' and t.src in ('router', 'new')):
+            continue
+        lay = t.layers[0]
+        for e in (t.a, t.b):
+            for p in m.near(lay, (e[0] - 0.01, e[1] - 0.01, e[0] + 0.01, e[1] + 0.01)):
+                if not (p.alive and p.kind == 'pad' and p.src == 'pad' and p.net == t.net and not p.drill):
+                    continue
+                if p.shape.dist(*e) > 0:
+                    continue
+                x0, y0, x1, y1 = p.bbox
+                depth = min(e[0] - x0, x1 - e[0], e[1] - y0, y1 - e[1])
+                c = ((x0 + x1) / 2, (y0 + y1) / 2)
+                if depth + 1e-6 >= t.width / 2 or math.dist(e, c) < 1e-4:
+                    continue
+                mg, _w = m.track_margin(t.net, lay, t.width, e, c)
+                if mg >= 0:
+                    m.add_track(t.net, lay, t.width, e, c, src='new')
+                    added.append((t.net, f'{p.ref}.{p.pad}'))
+    return added
+
+
+def rebase(m, art, prev):
+    """W2 PWR-A closure round 1, probe Y (--rebase): every track and via of the run's board and the fills of the scripted pours of
+    its board-spec.json go; the locked tracks and vias of the current board-spec.json (make_board.py without route-frozen-6l.json:
+    scripted, GND fan-out, signal escapes, planned copper) come in as scripted copper, and the frozen copper of --prev (router and
+    completion tracks and vias, its vias in pads as such) as router copper, so a harvest that was never routed in CI can be carried
+    too. The pads must be those of the run (same placement); spec_zones() then models the current pours. Returns counts."""
+    now = json.loads((HERE.parent / 'board-spec.json').read_text(encoding='utf-8'))
+    old = json.loads((art / 'board/board-spec.json').read_text(encoding='utf-8'))
+    pre = now['pre_route']
+    if any(t['id'].startswith(('RT-', 'FIN-')) for t in pre['tracks']) or any(v['id'].startswith(('RV-', 'FINV-')) for v in pre['vias']):
+        raise SystemExit('freeze6 --rebase: board-spec.json holds frozen copper; write it with make_board.py without route-frozen-6l.json')
+    pads_now = sorted((p['ref'], tuple(p['anchor']['at']), p['anchor'].get('rotation'), p['anchor'].get('side'))
+                      for p in now['parts'] if isinstance(p.get('anchor'), dict))
+    pads_old = sorted((p['ref'], tuple(p['anchor']['at']), p['anchor'].get('rotation'), p['anchor'].get('side'))
+                      for p in old['parts'] if isinstance(p.get('anchor'), dict))
+    if pads_now != pads_old:
+        raise SystemExit('freeze6 --rebase: the placement differs from the run; route again')
+    n_old = 0
+    for it in m.items:
+        if it.alive and it.kind in ('track', 'via'):
+            m.remove(it)
+            n_old += 1
+    fills = {z['id'] for z in old['pre_route']['zones'] if 'clearance_mm' in z} | {z['id'] for z in pre['zones'] if 'clearance_mm' in z}
+    n_fill = 0
+    for it in m.items:
+        if it.alive and it.src == 'zone' and it.pad in fills:
+            m.remove(it)
+            n_fill += 1
+    n_new = 0
+    for t in pre['tracks']:
+        for a, b in zip(t['path'], t['path'][1:]):
+            m.add_track(t['net'], t['layer'], t['width_mm'], K(*a), K(*b), locked=True, src='scripted')
+            n_new += 1
+    for v in pre['vias']:
+        m.add_via(v['net'], K(*v['at']), v['diameter_mm'], v['drill_mm'], locked=True, src='scripted')
+        n_new += 1
+    n_prev = 0
+    pvip = {(r['net'], K(*r['at'])) for r in prev.get('via_in_pad', [])}
+    for key in ('router_tracks', 'completion_tracks'):
+        for net, lay, w, path in prev[key]:
+            for a, b in zip(path, path[1:]):
+                m.add_track(net, lay, w, K(*a), K(*b), locked=False, src='router')
+                n_prev += 1
+    for key in ('router_vias', 'completion_vias'):
+        for net, x, y, d, drill in prev[key]:
+            m.add_via(net, K(x, y), d, drill, locked=False, src='vip' if (net, K(x, y)) in pvip else 'router')
+            n_prev += 1
+    return {'run_items_removed': n_old, 'old_pour_fills_removed': n_fill, 'scripted_items_added': n_new, 'frozen_items_added': n_prev}
 
 
 def spec_zones(m):
@@ -487,8 +737,33 @@ def main(argv=None):
     ap.add_argument('--leave-open', action='append', default=[], metavar='NET',
                     help='W2 PWR-TOOLS: a net the grid A* does not complete in this harvest (its DRC drops and pruning still '
                          'apply); recorded under fixes.left_open with LEAVE_OPEN_WHY')
+    ap.add_argument('--pad-vias', action='store_true',
+                    help='W2 PWR-A closure round 1, probe Y: a net left open tries again with a via in the SMD pads of its pins '
+                         '(add_pad_vias); unused ones are removed')
+    ap.add_argument('--deep-entry', action='store_true',
+                    help='W2 PWR-A closure round 1, probe Y: completion tracks end at least half their width inside small pads '
+                         '(covered_deep)')
+    ap.add_argument('--sense-branches', action='store_true',
+                    help='W2 PWR-A closure round 1, probe Y: sense/logic pins of ICs on a power net (pcb/check_boards.py role '
+                         'sense_logic_pin) take a 0.25 mm branch on the four routing layers, as test points do')
+    ap.add_argument('--tp-max', type=float, default=0.0,
+                    help='W2 PWR-A closure round 1, combine pass: longest test-point branch in mm (route6.py --tp-max; a test point '
+                         'carries no load current; 0: none beyond BRANCH_MAX)')
+    ap.add_argument('--centre-joints', action='store_true',
+                    help='W2 PWR-A closure round 1, combine pass: a router/completion track end inside a same-net SMD pad less than half its '
+                         'width from the pad edge gets a track to the pad centre (route6.py centre_joints; KiCad connection_width at '
+                         'D202.1 in route run 45109912253)')
+    ap.add_argument('--rebase', action='store_true',
+                    help='W2 PWR-A closure round 1, probe Y: carry the frozen copper of --prev onto changed scripted / planned '
+                         'copper (rebase(): the scripted copper of the run is replaced by that of the current board-spec.json, '
+                         'written by make_board.py without route-frozen-6l.json), and complete every net open in the model')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
+    if args.rebase and not args.prev:
+        raise SystemExit('freeze6: --rebase needs --prev (the frozen copper to carry over)')
+    if args.deep_entry:
+        R.Grid.covered = covered_deep
+        R.route_link = route_link_deep
     art = Path(args.artifact)
     report = json.loads((art / 'board/report.json').read_text(encoding='utf-8'))
     m = M.Model(str(art / 'board/PWR_A.kicad_pcb'))
@@ -506,6 +781,7 @@ def main(argv=None):
         for key in ('router_vias', 'completion_vias'):
             for net, x, y, d, drill in prev[key]:
                 pvias.add((net, K(x, y)))
+        pvip = {(r['net'], K(*r['at'])) for r in prev.get('via_in_pad', [])}
         hit = 0
         for it in m.items:
             if not it.alive or it.src != 'scripted':
@@ -514,8 +790,11 @@ def main(argv=None):
                                        (round(it.b[0], 4), round(it.b[1], 4))) in segs:
                 it.src, hit = 'router', hit + 1
             elif it.kind == 'via' and (it.net, (round(it.at[0], 4), round(it.at[1], 4))) in pvias:
-                it.src, hit = 'router', hit + 1
+                it.src, hit = ('vip' if (it.net, (round(it.at[0], 4), round(it.at[1], 4))) in pvip else 'router'), hit + 1
         print(f'ratchet: {hit} locked items of {args.prev} harvested again')
+    rebased = rebase(m, art, prev) if args.rebase else None
+    if rebased:
+        print('rebase:', rebased)
     stubs_hit, stubs_all = fix_stubs(m, art)
     print(f'via-centre stubs of the route log held fixed: {stubs_hit} of {stubs_all}')
     zones_modelled = spec_zones(m) if args.spec_zones else None
@@ -537,6 +816,16 @@ def main(argv=None):
     kicad_open = collections.Counter(n for u in drc.get('unconnected_items', []) for n in
                                      {re.search(r'\[([^\]]+)\]', i.get('description', '')).group(1)
                                       for i in u.get('items', []) if re.search(r'\[([^\]]+)\]', i.get('description', ''))})
+    if args.rebase:  # the DRC of the run measured the old scripted copper: every net open in the model is open now
+        for n in [n for n in kicad_open if n not in NEVER]:
+            del kicad_open[n]
+        for n, k in fz.unconnected().items():
+            if n not in NEVER:
+                kicad_open[n] = k
+        gone = [it for it in m.items if it.alive and it.src == 'router' and it.net in NEVER]
+        for it in gone:  # a net the new plan joins whole (scripted class) keeps only its planned copper
+            m.remove(it)
+        print('rebase: router items of scripted nets removed', len(gone), sorted({it.net for it in gone}))
     bad_never = sorted(set(kicad_open) & NEVER)
     if bad_never and (not args.spec_zones or 'GND' in bad_never):
         raise SystemExit(f'freeze6: KiCad reports open connections of {bad_never}: fix the GND fan-out and route again')
@@ -553,6 +842,11 @@ def main(argv=None):
     print('KiCad open connections:', dict(kicad_open))
     print('model-only islands (joined in KiCad by copper overlap, left as routed):', model_only)
     viol = set()
+    for it in m.items:  # probe Y: a via in pad of the previous harvest keeps its own check (vip_margin)
+        if it.alive and it.src == 'vip' and vip_margin(m, it.net, it.at, it.size, it.drill, ignore={it.id})[0] < 0:
+            print(f'  via in pad of {it.net} breaks a clearance: removed')
+            m.remove(it)
+            viol.add(it.net)
     for it in m.items:
         if not (it.alive and it.src == 'router'):
             continue
@@ -607,15 +901,39 @@ def main(argv=None):
                                         neck=(width(net), NECK_MAX, neck_ok) if layers(net) == OUTER else None,
                                         rip_wide=args.rip_wide, soft=('router', 'new') if args.rip_new else ('router',))
         necks += nk
+        vips = []
+        if not ok and args.pad_vias and layers(net) != OUTER:  # probe Y: a via in the pads of the walled-in pins, then again
+            vips = add_pad_vias(m, net)
+            if vips:
+                ok, ripped2, nk = fz.connect_all(net, width=width(net), layers=layers(net), allow_rip=not args.no_rip, neck=None,
+                                                 rip_wide=args.rip_wide, soft=('router', 'new') if args.rip_new else ('router',))
+                ripped += [n for n in ripped2 if n not in ripped]
+                necks += nk
         if not ok and layers(net) == OUTER:  # low-current branches of a power net (exemption policy: TP, R >= 100 ohm, sense pins)
-            bk = branch_kind(GRAPH)
-            okb, br = fz.branch_pass(net, lambda r: bk(r) is not None and branch_ok(r, net),
-                                     lambda refs: max(BRANCH_W[bk(r)] for r in refs),
-                                     lambda refs: ROUTING if all(bk(r) == 'TP' for r in refs) else OUTER, BRANCH_MAX,
-                                     target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= width(net))
-                                     or (i.kind == 'pad' and i.src == 'zone'))
-            branches += br
-            ok = ok or okb
+            bk = branch_kind(GRAPH, sense=args.sense_branches)
+            for attempt in ((False, True) if args.pad_vias else (False,)):
+                if attempt:  # probe Y: the branch parts get vias in their pads (branches on the routing layers only)
+                    vips += add_pad_vias(m, net, refs={i.ref for gr in m.islands(net) for i in gr if i.kind == 'pad'
+                                                       and bk(i.ref) in ('TP', 'S') and branch_ok(i.ref, net)})
+                okb, br = fz.branch_pass(net, lambda r: bk(r) is not None and branch_ok(r, net),
+                                         lambda refs: max(BRANCH_W[bk(r)] for r in refs),
+                                         lambda refs: ROUTING if all(bk(r) in ('TP', 'S') for r in refs) else OUTER, BRANCH_MAX,
+                                         target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= width(net))
+                                         or (i.kind == 'pad' and i.src == 'zone'))
+                branches += br
+                ok = ok or okb
+                if ok:
+                    break
+            if not ok and args.tp_max:  # combine pass: a test-point island joins by a longer 0.25 mm branch (route6.py --tp-max)
+                okt, brt = fz.branch_pass(net, lambda r: r is not None and r.startswith('TP') and branch_ok(r, net),
+                                          lambda refs: BRANCH_W['TP'], lambda refs: ROUTING, args.tp_max,
+                                          target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= width(net))
+                                          or (i.kind == 'pad' and i.src == 'zone'))
+                branches += brt
+                ok = ok or okt
+        if vips:
+            n_drop = drop_unused_vips(m, net)
+            print(f'  {net}: vias in pads added {len(vips)}, unused removed {n_drop}')
         m.keepouts[:] = base_keepouts
         print(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if not ok:
@@ -624,8 +942,12 @@ def main(argv=None):
         touched |= set(ripped)
     for n in sorted({i.net for i in m.items if i.alive and i.net and i.net not in M.PLANES}):
         F.prune(m, n, srcs=('router', 'new', 'escape'))  # an escape stub whose link failed goes too
+        drop_unused_vips(m, n)
     merged = merge_remainders(m)
     print('split remainders merged back:', len(merged))
+    joints = centre_joints(m) if args.centre_joints else []
+    if joints:
+        print('centre joints added (track end shallow inside a pad):', joints)
     open_, bad = verify(m)
     dropped = (0, [])
     if bad:
@@ -634,18 +956,43 @@ def main(argv=None):
         open_, bad = verify(m)
     open_ = {n: k for n, k in open_.items() if n in touched or n in left_open}
     bad = [b for b in bad if not (b[0] == 'dangling' and (b[2] in NEVER or b[2] in model_only))]
-    print('open connections', open_, 'clearance violations', len(bad), 'failed', sorted(set(failed)))
+    # W2 PWR-A closure round 1, probe Y: a locked via of a routed net (a signal escape of make_board.py signal_fanout) that its
+    # net's copper joins on one layer only is a KiCad via_dangling error in the run (reported here, not changed: scripted copper)
+    lone = []
+    for it in m.items:
+        if not (it.alive and it.kind == 'via' and it.src == 'scripted') or it.net in NEVER or it.net in M.PLANES:
+            continue
+        lays = set()
+        for lay in M.LAYERS:
+            for ot in m.near(lay, (it.at[0] - 1, it.at[1] - 1, it.at[0] + 1, it.at[1] + 1)):
+                if ot.id != it.id and ot.net == it.net and ((ot.kind == 'track' and (any(it.shape.dist(*e) <= 1e-4 for e in (ot.a, ot.b))
+                                                                                         or ot.shape.dist(*it.at) <= 1e-4))
+                                                            or (ot.kind == 'pad' and ot.shape.dist(*it.at) <= 1e-4)
+                                                            or (ot.kind == 'via' and math.dist(ot.at, it.at) <= 1e-4)):
+                    lays.add(lay)
+        if len(lays) < 2:
+            lone.append({'net': it.net, 'at': B(it.at)})
+    print('open connections', open_, 'clearance violations', len(bad), 'failed', sorted(set(failed)), 'scripted vias on one layer', lone)
     for b_ in bad[:12]:
         print('   ', b_)
     groups = collections.defaultdict(list)
     vias = {'router': [], 'new': []}
     for it in m.items:
-        if it.alive and it.src in ('router', 'new', 'escape'):
-            src = 'new' if it.src == 'escape' else it.src
+        if it.alive and it.src in ('router', 'new', 'escape', 'vip'):
+            src = 'new' if it.src in ('escape', 'vip') else it.src
             if it.kind == 'track':
                 groups[(src, it.net, it.layers[0], round(it.width, 4))].append((it.a, it.b))
             elif it.kind == 'via':
                 vias[src].append([it.net] + B(it.at) + [round(it.size, 4), round(it.drill, 4)])
+    vip_rec = []
+    for it in m.items:
+        if it.alive and it.kind == 'via' and it.src == 'vip':
+            pad = next((o for lay in ('F.Cu', 'B.Cu') for o in m.near(lay, it.bbox) if o.kind == 'pad' and o.src == 'pad'
+                        and o.net == it.net and o.shape.dist(*it.at) <= 0), None)
+            vip_rec.append({'net': it.net, 'at': B(it.at), 'diameter_mm': round(it.size, 4), 'drill_mm': round(it.drill, 4),
+                            'pad': f'{pad.ref}.{pad.pad}' if pad else None,
+                            'margin_mm': round(vip_margin(m, it.net, it.at, it.size, it.drill, ignore={it.id})[0], 4)})
+    vip_rec.sort(key=lambda r: (r['pad'] or '', r['net']))
     tracks, nseg = {'router': [], 'new': []}, collections.Counter()
     for (src, net, lay, w), segs in sorted(groups.items()):
         for path in chains(segs):
@@ -666,6 +1013,7 @@ def main(argv=None):
                        'PWR1A, PWR2A and PWR3A on F.Cu/B.Cu at their 2 oz widths, signals on F.Cu, In2.Cu, In3.Cu, B.Cu, no '
                        'plane layer) by build/kicad/boards/PWR_A/freeze/freeze6.py'),
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed)),
+                   **({'scripted_vias_one_layer': lone} if lone else {}),
                    **({'scripted_open_in_run': bad_never, 'scripted_split_in_model': scripted_split} if bad_never else {})},
         'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops, 'merged_split_remainders': len(merged), 'pad_escapes': escapes,
                   **({'spec_zones': {'modelled': zones_modelled[0], 'fill_items_removed': zones_modelled[1]}} if zones_modelled else {}),
@@ -676,6 +1024,8 @@ def main(argv=None):
         'segments': dict(nseg),
         'router_tracks': tracks['router'], 'router_vias': vias['router'],
         'completion_tracks': tracks['new'], 'completion_vias': vias['new'],
+        **({'via_in_pad': vip_rec} if vip_rec else {}),
+        **({'rebase': rebased} if rebased else {}),
     }
     if args.prev:  # carry the neck and branch records of the frozen copper harvested again
         for key in ('necks', 'branches'):

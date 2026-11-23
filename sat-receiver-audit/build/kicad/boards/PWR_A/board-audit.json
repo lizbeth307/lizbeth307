@@ -7,9 +7,9 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "73224ef783cff68b67b62f72138b4457615cb902701b115fb29f7e850cd130db",
+    "spec_sha256": "182b36a36eea7fb7af7de8dd1c63cde446b342d9f53cfbd0ef4c0e4a0884bc45",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
-    "lab5_budget_sha256": "d813a2892b7fdcb2d5bd78bbfe8c13c6bdf5809030db2c4e4528e1a114470974"
+    "lab5_budget_sha256": "90c53cbda601792847c6b5a572b734d931ed14ed1fbb83608f7c433d52a343d5"
   },
   "drc": null,
   "zones": [
@@ -199,9 +199,9 @@
       },
       "joined": true,
       "network": {
-        "tracks": 92,
+        "tracks": 91,
         "vias": 38,
-        "pads": 17,
+        "pads": 16,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
           "PE-LAB5-J208.10",
@@ -228,9 +228,9 @@
       },
       "joined": true,
       "network": {
-        "tracks": 92,
+        "tracks": 91,
         "vias": 38,
-        "pads": 17,
+        "pads": 16,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
           "PE-LAB5-J208.10",
@@ -530,7 +530,7 @@
   "class_widths": {
     "label": "MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to their outlines)",
     "findings": [],
-    "tracks_checked": 1103,
+    "tracks_checked": 1123,
     "exemption_policy": {
       "branch_roles": [
         "test_point",
@@ -551,8 +551,8 @@
       "branch_exempt": 6,
       "neck_exempt": 1,
       "pin_entry_pours": {
-        "declared": 18,
-        "accepted": 18
+        "declared": 17,
+        "accepted": 17
       },
       "pin_entry_measured": [
         {
@@ -621,30 +621,6 @@
           },
           "declared": {
             "strip_mm": 0.0,
-            "landing_mm": [
-              1.6,
-              1.6
-            ]
-          }
-        },
-        {
-          "zone": "PE-E2_BONI_IN-U213.15",
-          "pad": "U213.15",
-          "role": "ic_power_pin",
-          "carve_out": null,
-          "measured": {
-            "sides": [
-              {
-                "side": "+y",
-                "pad_side_mm": 0.75,
-                "strip_mm": 0.4
-              }
-            ],
-            "strip_mm": 0.4,
-            "problem": null
-          },
-          "declared": {
-            "strip_mm": 0.4,
             "landing_mm": [
               1.6,
               1.6
@@ -1023,9 +999,9 @@
   },
   "fill": {
     "label": "MODEL: KiCad courtyard boxes of the top footprints over the outline less the 7 hole keep-outs",
-    "top_courtyards_mm2": 3601.668,
+    "top_courtyards_mm2": 3578.658,
     "usable_mm2": 7640.6084,
-    "fill": 0.4714
+    "fill": 0.4684
   },
   "findings": [],
   "unverified": [],

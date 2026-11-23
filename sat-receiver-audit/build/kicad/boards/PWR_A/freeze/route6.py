@@ -56,6 +56,11 @@ def main(argv=None, mb=None):
     ap.add_argument('--first', default='', help='comma-separated nets joined first')
     ap.add_argument('--tp-max', type=float, default=0.0, help='longest test-point branch, mm (0: none beyond freeze6.BRANCH_MAX)')
     ap.add_argument('--summary', help='also write a short JSON summary here')
+    # W2 PWR-A closure round 1, combine pass: the probe-Y options of freeze6.py on the model route
+    ap.add_argument('--pad-vias', action='store_true', help='freeze6 --pad-vias: a net left open tries again with a via in its SMD pads')
+    ap.add_argument('--deep-entry', action='store_true', help='freeze6 --deep-entry: completion tracks end deep inside small pads')
+    ap.add_argument('--sense-branches', action='store_true', help='freeze6 --sense-branches: 0.25 mm branches to IC sense/logic pins')
+    ap.add_argument('--leave-open', action='append', default=[], metavar='NET', help='a net the model route does not join')
     a = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     t_start = time.time()
@@ -63,6 +68,9 @@ def main(argv=None, mb=None):
     p6 = load('plan6r', HERE / 'plan6.py')  # board_text / pad_shapes (sets R.Grid.covered to the eroded-pad test, as plan6 does)
     M, F = F6.M, F6.F
     K, B = F6.K, F6.B
+    if a.deep_entry:  # after plan6 (which sets the eroded-pad test): the deep entry of freeze6 for small pads
+        F6.R.Grid.covered = F6.covered_deep
+        F6.R.route_link = F6.route_link_deep
     mb = mb or p6.load_make_board()
     spec, inp, problems, nets = mb.build(frozen=False, planned=True)
     if problems:
@@ -101,6 +109,7 @@ def main(argv=None, mb=None):
         sd = json.loads(Path(a.seed).read_text(encoding='utf-8'))
         seed_run = sd.get('source', {}).get('route_run', '')
         seeded = removed = 0
+        svip = {(r['net'], K(*r['at'])) for r in sd.get('via_in_pad', [])}
         for key in ('router_tracks', 'completion_tracks'):
             for net, lay, w, pts in sd[key]:
                 if net not in nets or net in never:
@@ -112,9 +121,14 @@ def main(argv=None, mb=None):
             for net, x, y, d, drill in sd[key]:
                 if net not in nets or net in never:
                     continue
-                m.add_via(net, K(x, y), d, drill, locked=False, src='router')
+                m.add_via(net, K(x, y), d, drill, locked=False, src='vip' if (net, K(x, y)) in svip else 'router')
                 seeded += 1
         viol = set()
+        for it in m.items:  # a seeded via in pad keeps its own check (freeze6.vip_margin)
+            if it.alive and it.src == 'vip' and F6.vip_margin(m, it.net, it.at, it.size, it.drill, ignore={it.id})[0] < 0:
+                m.remove(it)
+                removed += 1
+                viol.add(it.net)
         for it in m.items:
             if not (it.alive and it.src == 'router'):
                 continue
@@ -158,10 +172,12 @@ def main(argv=None, mb=None):
     else:
         order = sorted(open0, key=lambda n: (layers(n) != F6.OUTER, n))
     order = first + [n for n in order if n not in first]
+    left_open = set(a.leave_open)
+    order = [n for n in order if n not in left_open]
     queue, rounds, t0 = collections.deque(order), 0, time.time()
     failed, necks, branches = [], [], []
     soft = () if a.soft == 'none' else (('router',) if a.soft == 'router' else ('router', 'new'))
-    bk = F6.branch_kind(F6.GRAPH)
+    bk = F6.branch_kind(F6.GRAPH, sense=a.sense_branches)
     while queue and rounds < a.rounds:
         net = queue.popleft()
         rounds += 1
@@ -170,26 +186,43 @@ def main(argv=None, mb=None):
                                         neck=(width(net), F6.NECK_MAX, neck_ok) if layers(net) == F6.OUTER else None,
                                         rip_wide=a.rip_wide, soft=soft or ('router',))
         necks += nk
+        vips = []
+        if not ok and a.pad_vias and layers(net) != F6.OUTER:  # freeze6 --pad-vias: vias in the pads of the walled-in pins, again
+            vips = F6.add_pad_vias(m, net)
+            if vips:
+                ok, ripped2, nk = fz.connect_all(net, width=width(net), layers=layers(net), allow_rip=bool(soft), neck=None,
+                                                 rip_wide=a.rip_wide, soft=soft or ('router',))
+                ripped += [n for n in ripped2 if n not in ripped]
+                necks += nk
         target = (lambda i, net=net: (i.kind == 'track' and i.width + 1e-6 >= width(net)) or (i.kind == 'pad' and i.src == 'zone'))
         if not ok and layers(net) == F6.OUTER:
-            okb, br = fz.branch_pass(net, lambda r, net=net: bk(r) is not None and branch_ok(r, net),
-                                     lambda refs: max(F6.BRANCH_W[bk(r)] for r in refs),
-                                     lambda refs: F6.ROUTING if all(bk(r) == 'TP' for r in refs) else F6.OUTER, F6.BRANCH_MAX,
-                                     target_ok=target)
-            branches += br
-            ok = ok or okb
+            for attempt in ((False, True) if a.pad_vias else (False,)):
+                if attempt:  # freeze6 --pad-vias: the branch parts get vias in their pads (branches on the routing layers only)
+                    vips += F6.add_pad_vias(m, net, refs={i.ref for gr in m.islands(net) for i in gr if i.kind == 'pad'
+                                                          and bk(i.ref) in ('TP', 'S') and branch_ok(i.ref, net)})
+                okb, br = fz.branch_pass(net, lambda r, net=net: bk(r) is not None and branch_ok(r, net),
+                                         lambda refs: max(F6.BRANCH_W[bk(r)] for r in refs),
+                                         lambda refs: F6.ROUTING if all(bk(r) in ('TP', 'S') for r in refs) else F6.OUTER,
+                                         F6.BRANCH_MAX, target_ok=target)
+                branches += br
+                ok = ok or okb
+                if ok:
+                    break
             if not ok and a.tp_max:
                 okt, brt = fz.branch_pass(net, lambda r, net=net: r is not None and r.startswith('TP') and branch_ok(r, net),
                                           lambda refs: F6.BRANCH_W['TP'], lambda refs: F6.ROUTING, a.tp_max, target_ok=target)
                 branches += brt
                 ok = ok or okt
+        if vips:
+            F6.drop_unused_vips(m, net)
         m.keepouts[:] = base_keepouts
         print(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if not ok:
             failed.append(net)
-        queue.extend(n for n in ripped if n not in queue)
+        queue.extend(n for n in ripped if n not in queue and n not in left_open)
     for n in sorted({i.net for i in m.items if i.alive and i.net and i.net not in M.PLANES}):
         F.prune(m, n, srcs=('router', 'new', 'escape'), log=lambda *x, **k: None)
+        F6.drop_unused_vips(m, n)
     F6.merge_remainders(m)
     joints = centre_joints(m)
     shorts = drop_short_pieces(m, F6, F)
@@ -207,8 +240,8 @@ def main(argv=None, mb=None):
     groups = collections.defaultdict(list)
     vias = {'router': [], 'new': []}
     for it in m.items:
-        if it.alive and it.src in ('router', 'new', 'escape'):
-            src = 'new' if it.src == 'escape' else it.src
+        if it.alive and it.src in ('router', 'new', 'escape', 'vip'):
+            src = 'new' if it.src in ('escape', 'vip') else it.src
             if it.kind == 'track':
                 groups[(src, it.net, it.layers[0], round(it.width, 4))].append((it.a, it.b))
             elif it.kind == 'via':
@@ -221,6 +254,15 @@ def main(argv=None, mb=None):
     for k in vias:
         vias[k].sort()
         tracks[k].sort()
+    vip_rec = []  # the vias in pads, as freeze6.py records them (make_board.py via_in_pad)
+    for it in m.items:
+        if it.alive and it.kind == 'via' and it.src == 'vip':
+            pad = next((o for lay in ('F.Cu', 'B.Cu') for o in m.near(lay, it.bbox) if o.kind == 'pad' and o.src == 'pad'
+                        and o.net == it.net and o.shape.dist(*it.at) <= 0), None)
+            vip_rec.append({'net': it.net, 'at': B(it.at), 'diameter_mm': round(it.size, 4), 'drill_mm': round(it.drill, 4),
+                            'pad': f'{pad.ref}.{pad.pad}' if pad else None,
+                            'margin_mm': round(F6.vip_margin(m, it.net, it.at, it.size, it.drill, ignore={it.id})[0], 4)})
+    vip_rec.sort(key=lambda r: (r['pad'] or '', r['net']))
     guard = mb.frozen_guard(inp, spec['pre_route']['tracks'], spec['pre_route']['vias'])
     doc = {
         'schema': 'srrx-pwra-frozen-route-v1',
@@ -236,13 +278,14 @@ def main(argv=None, mb=None):
         'segments': dict(nseg),
         'router_tracks': tracks['router'], 'router_vias': vias['router'],
         'completion_tracks': tracks['new'], 'completion_vias': vias['new'],
+        **({'via_in_pad': vip_rec} if vip_rec else {}),
     }
     Path(a.out).write_text(F6.dump(doc), encoding='utf-8', newline='\n')
     summ = {'open_nets': len(open_), 'open_joins': sum(open_.values()), 'open': open_, 'violations': len(bad),
             'power_open': {n: k for n, k in open_.items() if klass(n) in F6.POWER},
             'by_class': dict(collections.Counter(klass(n) for n in open_)), 'scripted_split': scripted_split,
             'joints': len(joints), 'dropped': dropped, 'seed': seed_note, 'segments': dict(nseg),
-            'vias': {k: len(v) for k, v in vias.items()}, 'seconds': round(time.time() - t_start), 'args': vars(a)}
+            'vias': {k: len(v) for k, v in vias.items()}, 'via_in_pad': [r['pad'] for r in vip_rec], 'seconds': round(time.time() - t_start), 'args': vars(a)}
     if a.summary:
         Path(a.summary).write_text(json.dumps(summ, indent=1), encoding='utf-8')
     print('SUMMARY', json.dumps({k: summ[k] for k in ('open_nets', 'open_joins', 'violations', 'power_open', 'seconds')}), flush=True)
