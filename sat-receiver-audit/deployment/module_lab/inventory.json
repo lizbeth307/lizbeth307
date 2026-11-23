@@ -9,12 +9,12 @@
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "2265ae3197e38f5f7ea787f70c2b0ca7c126115427fdb71a6e93b93170d7b03e",
-      "bytes": 162978
+      "sha256": "1bc7eb53a1823d2d5b2e17253bf2f59df06ecc5412c2516cbbbf54b534eb3e9f",
+      "bytes": 163329
     },
     "design/E2.json": {
-      "sha256": "9e3b73999f923c3093bd180274997277ad181bed0f45c17cf8d10bea79df9582",
-      "bytes": 416075
+      "sha256": "691b33679e239e32eb10317a9032253b3b31033bef335fdd142240827228d157",
+      "bytes": 416023
     },
     "design/E3.json": {
       "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
@@ -55,8 +55,8 @@
     "partition_refs_assigned_exactly_once": true,
     "missing_refs": [],
     "duplicate_refs": [],
-    "graph_connected_pins": 2758,
-    "graph_nc_pins": 282,
+    "graph_connected_pins": 2754,
+    "graph_nc_pins": 286,
     "canonical_nets": 499,
     "cross_assembly_nets": 232
   },
@@ -16151,7 +16151,6 @@
         "I2C2_SCL",
         "I2C2_SDA",
         "LAB5",
-        "LAB5_RLY",
         "LNA4V5",
         "LNB13V2",
         "OVP_LNB_N",
@@ -16260,9 +16259,9 @@
         },
         {
           "number": "17",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "18",
@@ -16284,9 +16283,9 @@
         },
         {
           "number": "21",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "22",
@@ -16809,7 +16808,6 @@
         "I2C2_SCL",
         "I2C2_SDA",
         "LAB5",
-        "LAB5_RLY",
         "LNA4V5",
         "LNB13V2",
         "OVP_LNB_N",
@@ -16924,9 +16922,9 @@
         },
         {
           "number": "18",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "19",
@@ -16948,9 +16946,9 @@
         },
         {
           "number": "22",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "23",
@@ -58244,38 +58242,6 @@
           "assembly": "E2-CIR-20"
         },
         {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "17",
-          "name": "LAB5_RLY",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "21",
-          "name": "LAB5_RLY",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "18",
-          "name": "LAB5_RLY",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "22",
-          "name": "LAB5_RLY",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
           "sheet": "E4",
           "ref": "D401",
           "pin": "3",
@@ -60979,6 +60945,14 @@
     {
       "sheet": "E2",
       "ref": "J208",
+      "pin": "17",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
       "pin": "18",
       "name": "NC",
       "electrical_type": "passive",
@@ -60988,6 +60962,14 @@
       "sheet": "E2",
       "ref": "J208",
       "pin": "20",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "21",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -61419,7 +61401,23 @@
     {
       "sheet": "E2",
       "ref": "J209",
+      "pin": "18",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
       "pin": "19",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "22",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -62840,8 +62838,8 @@
     "status": "PASS",
     "source_snapshot_hashes_unchanged": true,
     "all883refs_assigned_once": true,
-    "all2758connected_pin_net_triples_exact": true,
-    "all282NCpins_exact": true,
+    "all2754connected_pin_net_triples_exact": true,
+    "all286NCpins_exact": true,
     "all232subinterface_pin_arrays_exact": true,
     "all_catalogue_sources_exist": true,
     "no_project_files_written_by_inventory_task": true,
