@@ -55,8 +55,8 @@
   "violations": 0,
   "ratchet": {
    "from_guard": {
-    "pads_sha256": "efca7e3c06d74e7e84bb5c0d407a686fbaa7c2bf818e2634b9d2cee6635e2563",
-    "scripted_sha256": "85134d80664153db617dad57cea7e9ea8a5e2c71061719233a377722f4bf73a1",
+    "pads_sha256": "203cecb3554380991cbb60a91697a09f8435dfff31b388a58e87e9a5fd136b44",
+    "scripted_sha256": "9778784d1c3c1f3db8e195ca7b0f047967238084f36407cd87a54018bcad2527",
     "zones_sha256": "64361795216d8d29fcc0599e8711d1857cb4e0d12185b9d7675255e2b427b5bf"
    },
    "dropped": 0,
@@ -68,12 +68,12 @@
     "BONI13V8_PORT",
     "VBUS_HFP"
    ],
+   "pruned": {
+    "E2_LNA_IN": 2,
+    "E2_LNB_IN": 2,
+    "LAB5": 1
+   },
    "rule": "plan6.py --ratchet (W2 PWR-A closure probe X): the earlier plan copper that holds on the current inputs kept, the power nets it leaves open planned again"
-  },
-  "negotiate": {
-   "rounds": 1,
-   "kept": [],
-   "tries": 6
   }
  },
  "nets": {
@@ -4690,18 +4690,6 @@
      "B.Cu",
      1.05,
      [
-      53.2,
-      25.975
-     ],
-     [
-      53.5,
-      25.675
-     ]
-    ],
-    [
-     "B.Cu",
-     1.05,
-     [
       53.35,
       33.025
      ],
@@ -4720,18 +4708,6 @@
      [
       55.6,
       16.495
-     ]
-    ],
-    [
-     "B.Cu",
-     1.05,
-     [
-      57.8778,
-      20.869
-     ],
-     [
-      58.1,
-      20.625
      ]
     ],
     [
@@ -5995,30 +5971,6 @@
      [
       20.85,
       24.9
-     ]
-    ],
-    [
-     "B.Cu",
-     1.7,
-     [
-      14.35,
-      20.525
-     ],
-     [
-      14.7,
-      20.3
-     ]
-    ],
-    [
-     "B.Cu",
-     1.7,
-     [
-      14.35,
-      20.525
-     ],
-     [
-      15.03,
-      20.3
      ]
     ],
     [
@@ -7625,18 +7577,6 @@
      [
       89.05,
       13.88
-     ]
-    ],
-    [
-     "F.Cu",
-     1.05,
-     [
-      4.6,
-      93.875
-     ],
-     [
-      2.8,
-      95.125
      ]
     ],
     [
