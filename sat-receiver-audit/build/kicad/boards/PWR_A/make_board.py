@@ -1555,6 +1555,16 @@ def scripted_classes(inp, scripted_nets):
     return out
 
 
+def routed_class_layers(inp, nets, scripted):
+    """CLASS_LAYERS for the power classes that a routed (not scripted) net of the board still carries. W2 PWR-A closure round 2, probe X:
+    pcb/board_gen.py patch_dsn_class_layers refuses a class that the DSN does not carry, and the KiCad DSN export writes a class only with
+    its nets; once the plan joins every PWR2A net in full (all scripted), class PWR2A is no longer in the DSN (route run 45153294611:
+    'router.class_layers: the DSN has no single class PWR2A')."""
+    used = {p['netclass'] for p in inp.netclasses['kicad']['netclass_patterns'] if p['pattern'] in nets and p['pattern'] not in scripted}
+    used |= {c for n, c in BOARD_CLASS_OVERRIDES.items() if n in nets and n not in scripted}
+    return {c: layers for c, layers in CLASS_LAYERS.items() if c in used}
+
+
 def project_json(inp, nets, scripted=None):
     scripted = scripted or SCRIPTED_CLASSES
     proj = read(ENC_PROJECT)
@@ -1884,7 +1894,7 @@ def build(frozen=True, planned=True):
                  'ThermalVias drills 0.2 mm (JLC multilayer floor 0.15)')
         elif k == 'router':
             v = {'tool': 'freerouting', 'max_passes': 100, 'threads': 1, 'job_timeout': '00:32:00', 'timeout_s': 2040,
-                 'fanout': False, 'ignore_net_classes': sorted(set(scripted.values())), 'class_layers': CLASS_LAYERS,
+                 'fanout': False, 'ignore_net_classes': sorted(set(scripted.values())), 'class_layers': routed_class_layers(inp, nets, scripted),
                  'why': 'fanout false as on PWR_B: the Freerouting 2.5.0 fan-out pre-pass escaped SMD pins with 0.1124 mm '
                         'stubs (PWR_A probe run 42413833702); GND (class SCRIPTED_GND) is not autorouted: every SMD GND pad '
                         'has a scripted plane via (make_board.py gnd_fanout; placement probe 7, run 43148929963, left 140 GND '
