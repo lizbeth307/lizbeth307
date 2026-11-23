@@ -1453,9 +1453,16 @@ def track_chain(board, net, start_pads, max_len, width_ok):
 
     def inside(x, y, layer, pads):
         return any(layer in p['layers'] and p['geo'].contains(x, y) for p in pads)
+    # W2 PWR-A closure round 2, probe Z: a via in a start pad (freeze6.py --pad-vias, spec via_in_pad) is copper of that pad on every
+    # layer it passes, so the track ends it joins start the chain too (a test-point branch on In2.Cu from a via in TP202.1)
+    seeded = set()
+    for v in vias:
+        if any(p['geo'].contains(v['x'], v['y']) and set(p['layers']) & set(v['layers']) for p in start_pads):
+            seeded |= {n for n, (x, y, layer) in pts.items()
+                       if layer in v['layers'] and math.hypot(x - v['x'], y - v['y']) <= v['size'] / 2 + 1e-9}
     dist, heap = {}, []
     for n, (x, y, layer) in pts.items():
-        if inside(x, y, layer, start_pads):
+        if inside(x, y, layer, start_pads) or n in seeded:
             dist[n] = 0.0
             heap.append((0.0, n))
     heapq.heapify(heap)
