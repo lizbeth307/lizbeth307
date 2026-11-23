@@ -7,7 +7,7 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "1ad751733f66059bbc1c445d9101a126c5566d4ae7b669889045c6458c62954c",
+    "spec_sha256": "3b12595eba3a7893176b0bfdf68999e62cd255a2ade4d10021facae4df8d202b",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
     "lab5_budget_sha256": "d813a2892b7fdcb2d5bd78bbfe8c13c6bdf5809030db2c4e4528e1a114470974"
   },
@@ -194,13 +194,13 @@
         "L205.1"
       ],
       "mohm": {
-        "20C": 8.3524,
-        "50C": 9.3371
+        "20C": 8.4551,
+        "50C": 9.452
       },
       "joined": true,
       "network": {
-        "tracks": 105,
-        "vias": 47,
+        "tracks": 78,
+        "vias": 35,
         "pads": 17,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
@@ -223,13 +223,13 @@
         "J208.14"
       ],
       "mohm": {
-        "20C": 13.3615,
-        "50C": 14.9369
+        "20C": 13.46,
+        "50C": 15.047
       },
       "joined": true,
       "network": {
-        "tracks": 105,
-        "vias": 47,
+        "tracks": 78,
+        "vias": 35,
         "pads": 17,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
@@ -278,7 +278,7 @@
       },
       "joined": true,
       "network": {
-        "tracks": 5,
+        "tracks": 4,
         "vias": 0,
         "pads": 4,
         "zones_not_modelled": []
@@ -286,17 +286,17 @@
     },
     "B_total_20C": {
       "U210.1": {
-        "pwr_a_mohm": 13.3615,
+        "pwr_a_mohm": 13.46,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 3.3152,
-        "total_mohm": 20.4267,
+        "total_mohm": 20.5252,
         "within_10_mohm": false
       },
       "U221.1": {
-        "pwr_a_mohm": 13.3615,
+        "pwr_a_mohm": 13.46,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 4.3004,
-        "total_mohm": 21.4119,
+        "total_mohm": 21.5104,
         "within_10_mohm": false
       }
     }
@@ -305,48 +305,48 @@
     "label": "MODEL: copper of the drawn (planned or routed) board, IACS copper at 20 degC; E1-05 and its bench stay OPEN",
     "A": {
       "what": "L101.2 -> L205.1 (the LT3045 pair feed)",
-      "mohm_20c": 8.3524,
+      "mohm_20c": 8.4551,
       "limit_mohm": 10.0,
       "met": true
     },
     "B": {
       "what": "L101.2 -> J208 / J209 -> each TPS2553 input on PWR-B at the worst-case concurrent currents (NET_CURRENT protective column), segment by segment",
       "total_current_a": 2.363,
-      "pwr_a_mohm_20c": 13.3615,
+      "pwr_a_mohm_20c": 13.46,
       "per_destination": {
         "U210.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 31.5732,
+          "pwr_a_mv": 31.806,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 5.1207,
-          "total_mv": 45.5552,
+          "total_mv": 45.788,
           "limit_mv": 32.0,
           "met": false
         },
         "U221.1": {
           "current_a": 0.192,
-          "pwr_a_mv": 31.5732,
+          "pwr_a_mv": 31.806,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 6.0135,
-          "total_mv": 46.448,
+          "total_mv": 46.6808,
           "limit_mv": 32.0,
           "met": false
         },
         "U501.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 31.5732,
+          "pwr_a_mv": 31.806,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 11.4422,
-          "total_mv": 51.8767,
+          "total_mv": 52.1095,
           "limit_mv": 32.0,
           "met": false
         },
         "U502.1": {
           "current_a": 0.825,
-          "pwr_a_mv": 31.5732,
+          "pwr_a_mv": 31.806,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 8.5056,
-          "total_mv": 48.9401,
+          "total_mv": 49.1729,
           "limit_mv": 32.0,
           "met": false
         }
@@ -521,7 +521,7 @@
       {
         "check": "TVS D201.K on J21 at class width within 5.0 mm",
         "ok": true,
-        "detail": "3 class-width (PWR3A 0.95 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 1.8962 mm from the cathode pad",
+        "detail": "1 class-width (PWR3A 0.95 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 2.825 mm from the cathode pad",
         "label": "MODEL"
       }
     ],
@@ -530,7 +530,7 @@
   "class_widths": {
     "label": "MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to their outlines)",
     "findings": [],
-    "tracks_checked": 2414,
+    "tracks_checked": 1109,
     "exemption_policy": {
       "branch_roles": [
         "test_point",
@@ -563,16 +563,16 @@
           "measured": {
             "sides": [
               {
-                "side": "-y",
-                "pad_side_mm": 1.325,
-                "strip_mm": 0.0
+                "side": "-x",
+                "pad_side_mm": 0.6,
+                "strip_mm": 0.25
               }
             ],
-            "strip_mm": 0.0,
+            "strip_mm": 0.25,
             "problem": null
           },
           "declared": {
-            "strip_mm": 0.0,
+            "strip_mm": 0.25,
             "landing_mm": [
               1.6,
               1.6
