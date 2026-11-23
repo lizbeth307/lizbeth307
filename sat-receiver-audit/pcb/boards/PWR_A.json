@@ -10760,8 +10760,8 @@
             9.0782
           ],
           [
-            69.9718,
-            10.4218
+            69.3,
+            9.75
           ]
         ],
         "locked": true,
@@ -11480,8 +11480,8 @@
             9.0782
           ],
           [
-            69.9718,
-            10.4218
+            69.3,
+            9.75
           ]
         ],
         "locked": true,
@@ -38530,18 +38530,6 @@
         "id": "PLV-DISP12-25",
         "net": "DISP12",
         "at": [
-          69.9718,
-          10.4218
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of DISP12 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
-      },
-      {
-        "id": "PLV-DISP12-26",
-        "net": "DISP12",
-        "at": [
           125.4782,
           31.2718
         ],
@@ -38551,7 +38539,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of DISP12 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PLV-DISP12-27",
+        "id": "PLV-DISP12-26",
         "net": "DISP12",
         "at": [
           126.15,
@@ -38563,7 +38551,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of DISP12 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PLV-DISP12-28",
+        "id": "PLV-DISP12-27",
         "net": "DISP12",
         "at": [
           126.15,
@@ -38575,7 +38563,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of DISP12 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PLV-DISP12-29",
+        "id": "PLV-DISP12-28",
         "net": "DISP12",
         "at": [
           126.8218,
@@ -38587,7 +38575,7 @@
         "why": "W2 PWR-L6-SCRIPT planned PWR2A copper of DISP12 (script-planned-6l.json, freeze/plan6.py: grid A* at the 2 oz class width 0.4 mm on F.Cu/B.Cu, clearance 0.20 mm; kind power)"
       },
       {
-        "id": "PLV-DISP12-30",
+        "id": "PLV-DISP12-29",
         "net": "DISP12",
         "at": [
           127.7718,
@@ -46360,7 +46348,7 @@
       "E1_LAB5_FB",
       "E1_LAB5_RT"
     ],
-    "planned_file": "build/kicad/boards/PWR_A/script-planned-6l.json sha256 b39759221ceab9222146dea944e10523c5283792a62c4948e7b3b913db3a1137",
+    "planned_file": "build/kicad/boards/PWR_A/script-planned-6l.json sha256 823be36ffc119b116888985d814c46d8c1ef99589367fe5bea19b81a4660ad59",
     "planned_result": {
       "nets": 36,
       "power": [
@@ -46433,7 +46421,8 @@
         "tries": 4
       },
       "edits": [
-        "W2 PWR-A closure round 2, probe X: two DISP12 via-cluster pieces removed after route run 45154137000, KiCad 10.0.7 DRC errors on planned copper: track_dangling (a 0.95 mm B.Cu ring piece from the via at (41.25, 89.95) towards a cluster via that the final check had dropped, lying on the 0.5 mm link) and connection_width 0.1185 mm (the ring piece (69.97, 10.42)-(70.92, 10.42) touched the 0.5 mm B.Cu link from the via at (69.3, 9.75) over a sliver; its cluster via went with it, 4 vias stay at that transition, PWR2A vias_per_transition 3)"
+        "W2 PWR-A closure round 2, probe X: two DISP12 via-cluster pieces removed after route run 45154137000, KiCad 10.0.7 DRC errors on planned copper: track_dangling (a 0.95 mm B.Cu ring piece from the via at (41.25, 89.95) towards a cluster via that the final check had dropped, lying on the 0.5 mm link) and connection_width 0.1185 mm (the ring piece (69.97, 10.42)-(70.92, 10.42) touched the 0.5 mm B.Cu link from the via at (69.3, 9.75) over a sliver; its cluster via went with it, 4 vias stay at that transition, PWR2A vias_per_transition 3)",
+        "W2 PWR-A closure round 2, probe X: after route run 45167591123 (KiCad connection_width 0.1x mm between the 0.5 mm B.Cu DISP12 link from the via at (69.3, 9.75) and the cluster via at (69.97, 10.42)) that cluster via goes and the ring track from (68.63, 9.08) ends on the via at (69.3, 9.75); 3 vias stay at that transition (PWR2A vias_per_transition 3)"
       ]
     },
     "planned_nets": {

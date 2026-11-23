@@ -9,7 +9,7 @@
   ],
   "branches": [
   ],
-  "guard": {"pads_sha256": "77c3d2e8ba3d7c5b42ce74621ca951917250fd1aac283d7e9d1326d75c38086d", "scripted_sha256": "44b9c45b35b5ec9e78a1681d65c770098e23e539ad7339af5776f59164dcb866"},
+  "guard": {"pads_sha256": "77c3d2e8ba3d7c5b42ce74621ca951917250fd1aac283d7e9d1326d75c38086d", "scripted_sha256": "a6574d41e707778e1f707c339ef6db499be70c453817400ee39ab50da6fad34d"},
   "segments": {"new": 38, "router": 1074},
   "router_tracks": [
     ["3V3_Q6A", "B.Cu", 0.15, [[27.7851, 94.6593], [28.9, 94.6593]]],
@@ -529,5 +529,5 @@
     {"net": "E2_BONI_EF", "at": [97.175, 10.395], "diameter_mm": 0.6, "drill_mm": 0.3, "pad": "U214.5", "margin_mm": 0.035},
     {"net": "E5_U503_ILIM", "at": [37.55, 51.5875], "diameter_mm": 0.6, "drill_mm": 0.3, "pad": "U503.5", "margin_mm": 0.19}
   ],
-  "rebase": {"run_items_removed": 2574, "old_pour_fills_removed": 27, "scripted_items_added": 1893, "frozen_items_added": 1250}
+  "rebase": {"run_items_removed": 2574, "old_pour_fills_removed": 27, "scripted_items_added": 1892, "frozen_items_added": 1250}
 }
