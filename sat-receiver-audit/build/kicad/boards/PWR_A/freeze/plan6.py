@@ -1029,6 +1029,28 @@ def main(argv=None):
             rec['open_islands'] = [sorted(f'{i.ref}.{i.pad}' for i in g if i.kind == 'pad' and i.src == 'pad') for g in isl] if len(isl) > 1 else []
             rec['kind'] = 'power' if rec['open'] == 0 else 'link'
         bad = verify(pl)
+        # W2 PWR-A closure round 1, combine pass (ported in round 2, probe X): a net that lost a piece in the exact check (a simplified
+        # diagonal 0.0008 mm inside the project clearance of a GND via: E2_BONI_IN at (42.6, 16.8)) is linked again at a wider planning
+        # clearance, then checked again
+        again = sorted(n for n in {d[1] for d in dropped} if n in plan and plan[n]['open'])
+        for net in again:
+            planning_rules(PLAN_CLR + 0.05)
+            try:
+                relink(pl, plan[net], net, allow_rip=False)
+            finally:
+                planning_rules()
+        if again:
+            bad = verify(pl)
+            dropped2 = drop_failing(pl) if bad else []
+            print('linked again after the final check:', again, 'dropped again:', dropped2)
+            for net in again:
+                rec = plan[net]
+                rec['tracks'], rec['vias'] = pl.harvest(net)
+                isl = [g for g in pl.m.islands(net) if any(i.kind == 'pad' for i in g) or len(g) > 1]
+                rec['open'] = max(0, len(isl) - 1)
+                rec['open_islands'] = [sorted(f'{i.ref}.{i.pad}' for i in g if i.kind == 'pad' and i.src == 'pad') for g in isl] if len(isl) > 1 else []
+                rec['kind'] = 'power' if rec['open'] == 0 else 'link'
+            bad = verify(pl)
     result = {'nets': len(plan), 'power': sorted(n for n, r in plan.items() if r['kind'] == 'power'),
               'link': {n: r['open'] for n, r in sorted(plan.items()) if r['kind'] == 'link'}, 'violations': len(bad)}
     if args.first:

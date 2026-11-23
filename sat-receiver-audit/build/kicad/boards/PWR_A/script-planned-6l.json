@@ -81,7 +81,10 @@
     "round 1 VBUS_HFP: ripped ['E2_AUX_SWITCHED', 'DISP12', 'LAB5', 'E2_J21_EF', 'J21'], open 6 -> 5, kept (317 s)"
    ],
    "tries": 4
-  }
+  },
+  "edits": [
+   "W2 PWR-A closure round 2, probe X: two DISP12 via-cluster pieces removed after route run 45154137000, KiCad 10.0.7 DRC errors on planned copper: track_dangling (a 0.95 mm B.Cu ring piece from the via at (41.25, 89.95) towards a cluster via that the final check had dropped, lying on the 0.5 mm link) and connection_width 0.1185 mm (the ring piece (69.97, 10.42)-(70.92, 10.42) touched the 0.5 mm B.Cu link from the via at (69.3, 9.75) over a sliver; its cluster via went with it, 4 vias stay at that transition, PWR2A vias_per_transition 3)"
+  ]
  },
  "nets": {
   "AUX12": {
@@ -1215,18 +1218,6 @@
      "B.Cu",
      0.4,
      [
-      41.25,
-      89.95
-     ],
-     [
-      41.25,
-      89.0
-     ]
-    ],
-    [
-     "B.Cu",
-     0.4,
-     [
       62.35,
       9.75
      ],
@@ -1268,18 +1259,6 @@
      ],
      [
       69.9718,
-      10.4218
-     ]
-    ],
-    [
-     "B.Cu",
-     0.4,
-     [
-      69.9718,
-      10.4218
-     ],
-     [
-      70.9218,
       10.4218
      ]
     ],
@@ -1767,18 +1746,6 @@
      "F.Cu",
      0.4,
      [
-      69.9718,
-      10.4218
-     ],
-     [
-      70.9218,
-      10.4218
-     ]
-    ],
-    [
-     "F.Cu",
-     0.4,
-     [
       126.15,
       29.65
      ],
@@ -2223,12 +2190,6 @@
     ],
     [
      69.9718,
-     10.4218,
-     0.65,
-     0.3
-    ],
-    [
-     70.9218,
      10.4218,
      0.65,
      0.3
