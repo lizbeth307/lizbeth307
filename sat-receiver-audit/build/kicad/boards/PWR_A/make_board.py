@@ -1468,7 +1468,7 @@ def signal_fanout(inp, pre):
                 return False
         return True
 
-    def escape(name, width):
+    def escape(name, width, dirs=None, gaps=None):
         ref, _, num = name.partition('.')
         pa = inp.parts[ref]
         p = next(q for q in pa.pads if q['number'] == num)
@@ -1476,15 +1476,16 @@ def signal_fanout(inp, pre):
         cx, cy = p['at']
         hw, hh = (p['box'][2] - p['box'][0]) / 2, (p['box'][3] - p['box'][1]) / 2
         cands = []
-        for gap in (0.45, 0.6, 0.8, 1.0, 1.3):
-            for dx, dy in GND_DIRS:
+        # W2 PWR-A closure round 2, probe Y: a row may name its own directions and gaps (SIGNAL_FANOUT 4th element)
+        for gap in (gaps or (0.45, 0.6, 0.8, 1.0, 1.3)):
+            for dx, dy in (dirs or GND_DIRS):
                 nn = math.hypot(dx, dy)
                 ux, uy = dx / nn, dy / nn
                 reach = (abs(ux) * hw + abs(uy) * hh) if (dx == 0 or dy == 0) else max(hw, hh)
                 at = (r4(cx + ux * (reach + gap)), r4(cy + uy * (reach + gap)))
                 cands.append(([(cx, cy), at], at))
         chosen = next(((path, at) for path, at in cands if clear(path, at, layer, net, width)), None)
-        if chosen is None:
+        if chosen is None and not dirs:
             for path, at in fanout_paths(p, layer, net, width, pads, segs, pours, inp.outline):
                 if sum(math.hypot(q[0] - o[0], q[1] - o[1]) for o, q in zip(path, path[1:])) > SFO_MAX:
                     break
@@ -1498,7 +1499,8 @@ def signal_fanout(inp, pre):
     got = {}
     for name in order:  # table order (inner pins of a row first where it matters); a pin without an escape is reported, not forced
         width = table[name][1]
-        chosen, net, layer = escape(name, width)
+        opt = table[name][3] if len(table[name]) > 3 else {}
+        chosen, net, layer = escape(name, width, opt.get('dirs'), opt.get('gaps'))
         if chosen is None:
             continue
         path, at = chosen
@@ -1509,7 +1511,7 @@ def signal_fanout(inp, pre):
         segs.append({'net': net, 'layer': '*', 'a': at, 'b': at, 'r': r})
     for name in order:
         ref, _, num = name.partition('.')
-        _n, width, why = table[name]
+        _n, width, why = table[name][:3]
         if name not in got:
             net = next(q for q in inp.parts[ref].pads if q['number'] == num)['net']
             rows.append({'pad': name, 'net': net, 'result': 'no escape'})
@@ -2086,6 +2088,13 @@ def build(frozen=True, planned=True):
                                                   else ([], [], None, [], [], []))
     heights, sources, unread = heights_block(inp)
     nets = set(spec['instances']['template_nets'])
+    # W2 PWR-A closure round 2, probe Y: router.class_layers names only the power classes that still have a routed (not scripted) net on
+    # the board; KiCad writes no DSN class without nets and pcb/board_gen.py refuses a class_layers entry the DSN does not carry
+    # (route run 45157560381: every PWR1A net planned whole, 'the DSN has no single class PWR1A', no route)
+    cls_of = {n: v['class'] for n, v in inp.netclasses['nets'].items()}
+    cls_of.update(BOARD_CLASS_OVERRIDES)
+    routed_classes = {cls_of.get(n) for n in nets if n not in scripted}
+    class_layers = {c: lays for c, lays in CLASS_LAYERS.items() if c in routed_classes}
     out = {}
     for k, v in spec.items():
         if k == 'status':
@@ -2117,7 +2126,7 @@ def build(frozen=True, planned=True):
                  'ThermalVias drills 0.2 mm (JLC multilayer floor 0.15)')
         elif k == 'router':
             v = {'tool': 'freerouting', 'max_passes': 100, 'threads': 1, 'job_timeout': '00:32:00', 'timeout_s': 2040,
-                 'fanout': False, 'ignore_net_classes': sorted(set(scripted.values())), 'class_layers': CLASS_LAYERS,
+                 'fanout': False, 'ignore_net_classes': sorted(set(scripted.values())), 'class_layers': class_layers,
                  'why': 'fanout false as on PWR_B: the Freerouting 2.5.0 fan-out pre-pass escaped SMD pins with 0.1124 mm '
                         'stubs (PWR_A probe run 42413833702); GND (class SCRIPTED_GND) is not autorouted: every SMD GND pad '
                         'has a scripted plane via (make_board.py gnd_fanout; placement probe 7, run 43148929963, left 140 GND '
