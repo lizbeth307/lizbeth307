@@ -1303,6 +1303,22 @@ class CtrlFaultPathsCtrl6(unittest.TestCase):
             f = self.flows(pad, self.F102_135, True)
             self.assertLessEqual(max(f.values()), cap, (pad, sorted(round(i, 3) for i in f.values())))
 
+    # review RV-CTRL6-E2-1 (orchestrator decision (b) of W2 CTRL-6): the GND pads of the Pico VSYS branch carry F102 at 110 %
+    # on at least 5 vias like U315.2 and C321.2, although the PTC F302 sits ahead of them (the conservative case)
+    PICO_GND_PADS = ('U316.2', 'C344.2')
+
+    def test_pico_branch_gnd_pads_carry_f102_on_five_vias(self):
+        fit = self.nc['formulas']['via']['current_a_dt20']
+        cap = fit * (self.LAMINATE_DT / 20.0) ** 0.44
+        for pad in self.PICO_GND_PADS:
+            for joined in (False, True):
+                f = self.flows(pad, self.F102_110, joined)
+                self.assertGreaterEqual(len(f), 5, (pad, joined))
+                self.assertAlmostEqual(sum(f.values()), self.F102_110, places=6, msg=pad)
+                self.assertLessEqual(max(f.values()), fit, (pad, joined, sorted(round(i, 3) for i in f.values())))
+            f = self.flows(pad, self.F102_135, True)
+            self.assertLessEqual(max(f.values()), cap, (pad, sorted(round(i, 3) for i in f.values())))
+
 
 if __name__ == '__main__':
     unittest.main()

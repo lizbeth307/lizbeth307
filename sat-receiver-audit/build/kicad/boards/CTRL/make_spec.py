@@ -272,8 +272,12 @@ ANCHORS = {
              'B.Cu LAB5 feed under cut-out 1, pad 2 (LAB5_PICO) down towards U316'),
     'U316': (anchor((38.0, 59.7), 0), PICO_NOTE + ': the limiter below F302, IN/GND/EN (pins 1-3) towards J304, OUT/ILIM (6, 5) '
              'towards BZ301'),
-    'C344': (anchor((38.4, 56.9), 0), PICO_NOTE + ': U316 input capacitor below U316, pad 1 (LAB5_PICO) under U316.3'),
-    'R397': (anchor((38.4, 55.15), 180), PICO_NOTE + ': RILIM of U316 below C344, above the Pico courtyard (y 54.4)'),
+    'C344': (anchor((39.15, 56.5), 270), PICO_NOTE + ': U316 input capacitor upright under U316.3 (W2 CTRL-6, review RV-CTRL6-E2-1; '
+             'was horizontal below U316), pad 1 (LAB5_PICO) at the top on a 1.5 mm drop from U316.3, pad 2 (GND) at the bottom '
+             'towards the U16 via cluster in the J304 courtyard'),
+    'R397': (anchor((37.65, 55.9), 270), PICO_NOTE + ': RILIM of U316 upright left of C344 (W2 CTRL-6, review RV-CTRL6-E2-1; was '
+             'horizontal below C344), pad 1 (E3_U316_ILIM) at the top towards U316.5, pad 2 (GND) 0.2 mm right of the PWR_ON_KEY via '
+             '(36.65, 55.1), above the Pico courtyard (y 54.4)'),
     # W2 CTRL-6: the blower PTC on the top side in the left edge strip between the J305 and J314 pegs, and the blower capacitors on
     # the top side between the J314 pins and J317 (design/E3.json R-E3-19)
     'F303': (anchor((6.6, 63.5005), 270, 'F'), BLOWER5_NOTE + ': the PTC on the top side between the J314 and J305 pegs, pad 1 '
@@ -686,8 +690,9 @@ def pico_vsys(cu):
     cu.track('PICO-EN', 'LAB5_PICO', 'B.Cu', 0.4, [u1, (uc[0], u1[1]), (uc[0], u3[1]), u3],
              PICO_WHY + ': EN tied to IN under the SOT-23-6 body between the pad rows (0.275 mm from U316.2/U316.5), 0.4 mm: it '
              'carries the PTC current only with an EN-GND bridge (1.67 A at +20 degC, +16.6 degC at 1.54 A, MODEL)')
-    cu.track('PICO-C344', 'LAB5_PICO', 'B.Cu', PICO_W, [u3, (c344_1[0], round(u3[1] - 0.6, 4)), c344_1],
-             PICO_WHY + ': U316.3 to C344.1')
+    cu.track('PICO-C344', 'LAB5_PICO', 'B.Cu', PICO_W, [u3, c344_1],
+             PICO_WHY + ': U316.3 straight down to C344.1 (W2 CTRL-6, review RV-CTRL6-E2-1: C344 upright under U316.3; review '
+             'RV-CTRL6-E2-4: C344 still reaches IN only through the EN-IN jumper, OPEN in build/15)')
     for k, at in enumerate(VLIM_VIAS):
         cu.via(f'VLIM-V{k + 1}', 'E3_PICO_VLIM', at, VLIM_WHY)
     v1, v2 = VLIM_VIAS
@@ -1037,12 +1042,21 @@ GND_CLUSTERS = {
            'src': 'PTC F301 (Itrip 1.5 A at 23 degC, the protective current of the class; about 2.02 A at -20 degC, an '
                   'assumption): a D305 short',
            'vias': [(37.75, 89.45), (40.05, 89.6), (40.34, 88.6)]},  # W2 CTRL-6: third via for the cold 2.02 A case
-    # W2 CTRL-6: the GND pads of the Pico VSYS branch behind the PTC F302 (MF-MSMF050: Itrip 1.00 A at 23 degC, about 1.54 A at
-    # -40 degC by the Ihold ratio, an assumption): an IN-GND bridge of U316 (pin 1 next to pin 2) or a C344 short
-    'U16': {'pads': {'U316.2': [0, 1, 2]}, 'hub': {'U316.2': (40.15, 59.7)}, 'links': [], 'amps': 1.54, 'w': 0.6,
-            'src': 'PTC F302 (Itrip 1.00 A at 23 degC, about 1.54 A at -40 degC, an assumption): a U316 IN-GND or EN-GND bridge; '
-                   'the spurs leave the SOT-23-6 middle pad straight out past its end',
-            'vias': [(40.75, 59.7), (41.55, 60.5), (41.55, 58.9)]},
+    # W2 CTRL-6 (review RV-CTRL6-E2-1; orchestrator decision (b): U316.2 at 4.4 A, 110 % of F102, on >= 5 vias): the GND pads of the
+    # Pico VSYS branch, an IN-GND or EN-GND bridge of U316 (pin 1 next to pin 2) or a C344 short, share one cluster right of U316 in
+    # the J304 courtyard (vias only, no parts there); sized at F102 4.4 A although the PTC F302 (MF-MSMF050, about 1.54 A cold
+    # trip) sits ahead of the branch. C344 stands upright under U316.3 (its GND pad 2 at the bottom faces the cluster) and R397
+    # upright left of it (the column between BZ301 and J304 has no room for a horizontal 0603 beside an upright one), clear of the
+    # PWR_ON_KEY via below. Positions: a search over the free sites (the frozen copper of E3_ENC2_B and E3_LED_DRIVE through the
+    # cluster joined again) with every via at x <= 41.8, so that a channel stays open between the cluster and the J304 pin column
+    # for the nets that run along it, for the lowest hottest via in the star and the joined-spur models (MODEL)
+    'U16': {'pads': {'U316.2': [0, 1, 2, 3, 4, 5, 6], 'C344.2': [0, 1, 2, 3, 4, 5, 6]},
+            'hub': {'U316.2': (40.3, 59.7), 'C344.2': (40.45, 56.4)}, 'links': [], 'amps': 4.4, 'w': 0.8,
+            'src': 'F102 at 110 % (4.4 A, the Littelfuse MINI holds it for 360000 s; the PTC F302 ahead of the branch trips at about '
+                   '1.54 A cold, so this is the conservative case of the orchestrator decision): a U316 IN-GND or EN-GND bridge or a '
+                   'C344 short, one at a time; the U316.2 spurs leave the SOT-23-6 middle pad straight out past its end, the C344.2 '
+                   'spurs leave through a hub right of the pad',
+            'vias': [(41.3, 55.45), (41.15, 59.65), (41.8, 60.45), (41.75, 58.85), (41.7, 54.4), (41.35, 57.2), (40.55, 58.6)]},
     # W2 CTRL-6 (band re-placement; orchestrator decision: C321.2 and U315.2 at 4.4 A, 110 % of F102, on >= 5 vias): the LAB5 feed
     # leaves its old place right of U315 (it now rises at x 29.9 and comes down to U315.1 from above), so U315.2 and C321.2 reach a
     # shared cluster there, above the U301 pad row (no via fits between those F.Cu pads) and clear of the L1/L3 signal routes
@@ -1050,9 +1064,6 @@ GND_CLUSTERS = {
            'w': 0.6, 'src': 'F102 at 110 % (4.4 A, the Littelfuse MINI holds it for 360000 s): a U315 IN-GND bridge (SOT-23-6 pin 1 '
                             'next to pin 2) or a C321 short, one at a time; both pads reach the shared cluster',
            'vias': [(25.75, 96.95), (26.75, 96.95), (25.75, 97.95), (26.75, 97.95), (27.4, 95.15), (28.4, 95.15), (27.9, 96.3)]},
-    'C44': {'pads': {'C344.2': [0, 1]}, 'links': [], 'amps': 1.54, 'w': 0.6,
-            'src': 'PTC F302 (Itrip 1.00 A at 23 degC, about 1.54 A at -40 degC, an assumption): a C344 short',
-            'vias': [(36.45, 56.45), (36.45, 57.45)]},
 }
 GND_CLUSTER_PADS = {pad for c in GND_CLUSTERS.values() for pad in list(c['pads']) + [a for a, _b in c['links']]}
 
@@ -1351,9 +1362,10 @@ def spec_texts(spec, inp, cu, skipped):
                    'why': 'solid GND plane L2 (build/15 "План шарів"); every SMD GND pad joins it through its scripted via, every THT '
                           'GND pin directly (solid connection)'}],
         'gnd_vias_note': ('W2 CTRL-5/CTRL-6: the GND pads of the fault loops have scripted via clusters instead (GND_CLUSTERS in '
-                          'make_spec.py): C320.2/C322.2 7 vias and Q305.2 5 at F102 4 A, U315.2/C321.2 8 at 4.4 A (110 % of F102, W2 '
+                          'make_spec.py): C320.2/C322.2 7 vias and Q305.2 5 at F102 4 A, U315.2/C321.2 7 at 4.4 A (110 % of F102, W2 '
                           'CTRL-6 band re-placement), C319.2 with C318.2 and D305.2 3 each (W2 CTRL-6: third via for the assumed cold '
-                          '2.02 A trip of F301), U316.2 3 and C344.2 2 behind the PTC F302 (W2 CTRL-6); R394.2, whose via place went '
+                          '2.02 A trip of F301), U316.2/C344.2 7 at 4.4 A although the PTC F302 sits ahead of them (W2 CTRL-6, review '
+                          'RV-CTRL6-E2-1); R394.2, whose via place went '
                           'to the Q304 gate via, joins the Q306.2 GND pad. Otherwise '
                           'one locked 0.65/0.3 mm through via and a 0.25 mm stub per SMD GND pad, placed by a deterministic search '
                           '(24 directions, growing radius, directions away from the part first) on the exact pad shapes: 0.2 mm to '

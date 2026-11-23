@@ -1011,7 +1011,7 @@
         "continuous_a": 0.223,
         "protective_a": 0.223,
         "protection": "U316 TPS2553DBVR, сталий струм (RILIM 140k: 165–223 mA)",
-        "current_source": "VSYS Pico: оцінка ≈0.145 A при VSYS 4.5 V без прочитаного джерела, з падінням F302 і U316 — до 0.159 A (модель, build/15), межа — IOSmax U316 (TI SLVS841G); W2 CTRL-6"
+        "current_source": "VSYS Pico: оцінка зверху ≈0.145 A при VSYS 4.5 V (даташит Pico, реліз 22: Popcorn із платою VGA до 95.6 мА при 5 В, плюс навантаження E3_PICO3V3; не гарантоване значення), з падінням F302, U316 і міді E3_PICO_VSYS — до 0.161 A (модель, build/15), межа — IOSmax U316 (TI SLVS841G); W2 CTRL-6"
       },
       "in_graph": true,
       "required_outer_width_mm": 0.0379
